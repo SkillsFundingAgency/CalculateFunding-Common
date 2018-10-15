@@ -7,5 +7,7 @@
         bool IsAllocationLineMajorMinorVersioningEnabled();
 
         bool IsAggregateSupportInCalculationsEnabled();
+
+        bool IsPublishButtonEnabled();
     }
 }
