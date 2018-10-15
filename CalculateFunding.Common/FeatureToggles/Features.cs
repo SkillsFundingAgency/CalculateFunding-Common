@@ -26,6 +26,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("aggregateSupportInCalculationsEnabled");
         }
 
+        public bool IsPublishButtonEnabled()
+        {
+            return CheckSetting("publishButtonEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

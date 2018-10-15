@@ -261,5 +261,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsPublishButtonEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishButtonEnabled")].Returns((string)null);
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsPublishButtonEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsPublishButtonEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishButtonEnabled")].Returns(string.Empty);
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsPublishButtonEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsPublishButtonEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishButtonEnabled")].Returns("not a bool");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsPublishButtonEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsPublishButtonEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishButtonEnabled")].Returns("false");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsPublishButtonEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsPublishButtonEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishButtonEnabled")].Returns("true");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsPublishButtonEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
