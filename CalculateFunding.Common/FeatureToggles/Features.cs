@@ -31,6 +31,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("publishButtonEnabled");
         }
 
+        public bool IsCalculationTimeoutEnabled()
+        {
+            return CheckSetting("calculationTimeoutEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

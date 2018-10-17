@@ -341,5 +341,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsCalculationTimeoutEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("calculationTimeoutEnabled")].Returns((string)null);
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsCalculationTimeoutEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCalculationTimeoutEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("calculationTimeoutEnabled")].Returns(string.Empty);
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsCalculationTimeoutEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCalculationTimeoutEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("calculationTimeoutEnabled")].Returns("not a bool");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsCalculationTimeoutEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCalculationTimeoutEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("calculationTimeoutEnabled")].Returns("false");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsCalculationTimeoutEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCalculationTimeoutEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("calculationTimeoutEnabled")].Returns("true");
+
+            Features features = new Features(config);
+
+            // Act
+            bool result = features.IsCalculationTimeoutEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }
