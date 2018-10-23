@@ -10,6 +10,8 @@
 
         bool IsPublishButtonEnabled();
 
+		bool IsPublishAndApprovePageFiltersEnabled();
+
         bool IsCalculationTimeoutEnabled();
     }
 }

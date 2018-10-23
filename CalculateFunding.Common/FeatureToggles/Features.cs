@@ -36,7 +36,12 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("calculationTimeoutEnabled");
         }
 
-        private bool CheckSetting(string featureName)
+		public bool IsPublishAndApprovePageFiltersEnabled()
+		{
+			return CheckSetting("publishAndApprovePageFiltersEnabled");
+		}
+
+		private bool CheckSetting(string featureName)
         {
             if (_config == null)
             {
@@ -61,5 +66,5 @@ namespace CalculateFunding.Common.FeatureToggles
                 }
             }
         }
-    }
+	}
 }

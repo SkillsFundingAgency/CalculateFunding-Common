@@ -421,5 +421,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
-    }
+
+		[TestMethod]
+		public void IsPublishAndApproveFilterEnabled_WhenConfigNotPresent_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns((string)null);
+
+			Features features = new Features(config);
+
+			// Act
+			bool result = features.IsPublishAndApprovePageFiltersEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsPublishAndApproveFilterEnabled_WhenConfigEmptyString_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns(string.Empty);
+
+			Features features = new Features(config);
+
+			// Act
+			bool result = features.IsPublishAndApprovePageFiltersEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsPublishAndApproveFilterEnabled_WhenConfigNotBoolean_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("not a bool");
+
+			Features features = new Features(config);
+
+			// Act
+			bool result = features.IsPublishAndApprovePageFiltersEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsPublishAndApproveFilterEnabled_WhenConfigFalse_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("false");
+
+			Features features = new Features(config);
+
+			// Act
+			bool result = features.IsPublishAndApprovePageFiltersEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsPublishAndApproveFilterEnabled_WhenConfigTrue_ReturnsTrue()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("true");
+
+			Features features = new Features(config);
+
+			// Act
+			bool result = features.IsPublishAndApprovePageFiltersEnabled();
+
+			// Assert
+			result.Should().BeTrue();
+		}
+	}
 }
