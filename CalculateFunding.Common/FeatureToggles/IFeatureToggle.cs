@@ -9,5 +9,9 @@
         bool IsAggregateSupportInCalculationsEnabled();
 
         bool IsPublishButtonEnabled();
+
+		bool IsPublishAndApprovePageFiltersEnabled();
+
+        bool IsCalculationTimeoutEnabled();
     }
 }
