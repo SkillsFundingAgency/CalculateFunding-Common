@@ -23,7 +23,7 @@ Param(
 	[string] $sourceNameInNugetConfig = "CalculateFundingService"
 )
 
-$nugetPath = $ENV:BUILD_REPOSITORY_LOCALPATH
+$nugetPath = $ENV:BUILD_BINARIESDIRECTORY
 Write-Host "Nuget path is $nugetPath"
 
 $currDir = Split-Path $MyInvocation.MyCommand.Path
