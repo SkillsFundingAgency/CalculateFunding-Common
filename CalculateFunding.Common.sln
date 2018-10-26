@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.UnitTests", "CalculateFunding.Common.UnitTests\CalculateFunding.Common.UnitTests.csproj", "{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.UnitTests", "CalculateFunding.Common.UnitTests\CalculateFunding.Common.UnitTests.csproj", "{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Identity", "CalculateFunding.Common.Identity\CalculateFunding.Common.Identity.csproj", "{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Identity.UnitTests", "CalculateFunding.Common.Identity.UnitTests\CalculateFunding.Common.Identity.UnitTests.csproj", "{FC93E724-6805-4866-BDFB-F3C682DC65F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC93E724-6805-4866-BDFB-F3C682DC65F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC93E724-6805-4866-BDFB-F3C682DC65F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC93E724-6805-4866-BDFB-F3C682DC65F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC93E724-6805-4866-BDFB-F3C682DC65F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
