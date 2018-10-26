@@ -37,7 +37,7 @@ if (![string]::IsNullOrEmpty($nugetPath) -And !$nugetPath.EndsWith("\"))
 }
 
 Write-Host "Updating source in nuget.config with credentials to nuget feed"
-& "$($nugetPath)nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey -ConfigFile "Nuget.config"
+& "$($nugetPath)nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
 
 $items = Get-Item -Path $packagePathWithFilter 
 ForEach($item in $items)
@@ -46,7 +46,7 @@ ForEach($item in $items)
     $ps = new-object System.Diagnostics.Process
     $ps.StartInfo.WorkingDirectory = $currDir 
     $ps.StartInfo.Filename = "$($nugetPath)nuget.exe"
-    $argumentStr = " push ""$($item.Name)"" -NonInteractive  -Source ""$feedUrl"" -ApiKey ""VSTS"" -ConfigFile ""Nuget.config"" -Verbosity Detailed"
+    $argumentStr = " push ""$($item.Name)"" -NonInteractive  -Source ""$feedUrl"" -ApiKey ""VSTS"" -Verbosity Detailed"
     $ps.StartInfo.Arguments = $argumentStr
     $ps.StartInfo.RedirectStandardOutput = $True
     $ps.StartInfo.RedirectStandardError = $True
