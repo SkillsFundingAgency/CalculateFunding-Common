@@ -23,21 +23,20 @@ Param(
 	[string] $sourceNameInNugetConfig = "CalculateFundingService"
 )
 
-$nugetPath = $ENV:BUILD_BINARIESDIRECTORY
-Write-Host "Nuget path is $nugetPath"
+#$nugetPath = $ENV:BUILD_BINARIESDIRECTORY
+#Write-Host "Nuget path is $nugetPath"
 
 $currDir = Split-Path $MyInvocation.MyCommand.Path
 Write-Host "Current directory is $currDir"
 Set-Location -Path $currDir
 
-if (![string]::IsNullOrEmpty($nugetPath) -And !$nugetPath.EndsWith("\"))
-{
-	$nugetPath = "$nugetPath\" 
-    Write-Host "Nuget path passed in $nugetPath"
-}
+#if (![string]::IsNullOrEmpty($nugetPath) -And !$nugetPath.EndsWith("\"))
+#{
+#	$nugetPath = "$nugetPath\" 
+#}
 
 Write-Host "Updating source in nuget.config with credentials to nuget feed"
-& "$($nugetPath)nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
+& "nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
 
 $items = Get-Item -Path $packagePathWithFilter 
 ForEach($item in $items)
@@ -45,7 +44,7 @@ ForEach($item in $items)
     Write-Host "Pushing to NuGet server, package $($item.Name)"
     $ps = new-object System.Diagnostics.Process
     $ps.StartInfo.WorkingDirectory = $currDir 
-    $ps.StartInfo.Filename = "$($nugetPath)nuget.exe"
+    $ps.StartInfo.Filename = "nuget.exe"
     $argumentStr = " push ""$($item.Name)"" -NonInteractive  -Source ""$feedUrl"" -ApiKey ""VSTS"" -Verbosity Detailed"
     $ps.StartInfo.Arguments = $argumentStr
     $ps.StartInfo.RedirectStandardOutput = $True
