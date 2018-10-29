@@ -13,7 +13,7 @@ namespace CalculateFunding.Common.UnitTests
         public void WhenConfigNull_ReturnsFalse()
         {
             // Arrange
-            Features features = new Features(null);
+            IFeatureToggle features = new Features(null);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -29,7 +29,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("allocationLineMajorMinorVersioningEnabled")].Returns((string)null);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -45,7 +45,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("allocationLineMajorMinorVersioningEnabled")].Returns(string.Empty);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -61,7 +61,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("allocationLineMajorMinorVersioningEnabled")].Returns("not a bool");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -77,7 +77,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("allocationLineMajorMinorVersioningEnabled")].Returns("false");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -93,7 +93,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("allocationLineMajorMinorVersioningEnabled")].Returns("true");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAllocationLineMajorMinorVersioningEnabled();
@@ -109,7 +109,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("providerProfilingServiceDisabled")].Returns((string)null);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsProviderProfilingServiceDisabled();
@@ -125,7 +125,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("providerProfilingServiceDisabled")].Returns(string.Empty);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsProviderProfilingServiceDisabled();
@@ -141,7 +141,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("providerProfilingServiceDisabled")].Returns("not a bool");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsProviderProfilingServiceDisabled();
@@ -157,7 +157,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("providerProfilingServiceDisabled")].Returns("false");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsProviderProfilingServiceDisabled();
@@ -173,7 +173,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("providerProfilingServiceDisabled")].Returns("true");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsProviderProfilingServiceDisabled();
@@ -189,7 +189,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("aggregateSupportInCalculationsEnabled")].Returns((string)null);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAggregateSupportInCalculationsEnabled();
@@ -205,7 +205,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("aggregateSupportInCalculationsEnabled")].Returns(string.Empty);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAggregateSupportInCalculationsEnabled();
@@ -221,7 +221,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("aggregateSupportInCalculationsEnabled")].Returns("not a bool");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAggregateSupportInCalculationsEnabled();
@@ -237,7 +237,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("aggregateSupportInCalculationsEnabled")].Returns("false");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAggregateSupportInCalculationsEnabled();
@@ -253,7 +253,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("aggregateSupportInCalculationsEnabled")].Returns("true");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsAggregateSupportInCalculationsEnabled();
@@ -269,7 +269,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("publishButtonEnabled")].Returns((string)null);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsPublishButtonEnabled();
@@ -285,7 +285,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("publishButtonEnabled")].Returns(string.Empty);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsPublishButtonEnabled();
@@ -301,7 +301,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("publishButtonEnabled")].Returns("not a bool");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsPublishButtonEnabled();
@@ -317,7 +317,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("publishButtonEnabled")].Returns("false");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsPublishButtonEnabled();
@@ -333,7 +333,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("publishButtonEnabled")].Returns("true");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsPublishButtonEnabled();
@@ -349,7 +349,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("calculationTimeoutEnabled")].Returns((string)null);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsCalculationTimeoutEnabled();
@@ -365,7 +365,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("calculationTimeoutEnabled")].Returns(string.Empty);
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsCalculationTimeoutEnabled();
@@ -381,7 +381,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("calculationTimeoutEnabled")].Returns("not a bool");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsCalculationTimeoutEnabled();
@@ -397,7 +397,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("calculationTimeoutEnabled")].Returns("false");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsCalculationTimeoutEnabled();
@@ -413,7 +413,7 @@ namespace CalculateFunding.Common.UnitTests
             IConfigurationSection config = Substitute.For<IConfigurationSection>();
             config[Arg.Is("calculationTimeoutEnabled")].Returns("true");
 
-            Features features = new Features(config);
+            IFeatureToggle features = new Features(config);
 
             // Act
             bool result = features.IsCalculationTimeoutEnabled();
@@ -429,7 +429,7 @@ namespace CalculateFunding.Common.UnitTests
 			IConfigurationSection config = Substitute.For<IConfigurationSection>();
 			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns((string)null);
 
-			Features features = new Features(config);
+			IFeatureToggle features = new Features(config);
 
 			// Act
 			bool result = features.IsPublishAndApprovePageFiltersEnabled();
@@ -445,7 +445,7 @@ namespace CalculateFunding.Common.UnitTests
 			IConfigurationSection config = Substitute.For<IConfigurationSection>();
 			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns(string.Empty);
 
-			Features features = new Features(config);
+			IFeatureToggle features = new Features(config);
 
 			// Act
 			bool result = features.IsPublishAndApprovePageFiltersEnabled();
@@ -461,7 +461,7 @@ namespace CalculateFunding.Common.UnitTests
 			IConfigurationSection config = Substitute.For<IConfigurationSection>();
 			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("not a bool");
 
-			Features features = new Features(config);
+			IFeatureToggle features = new Features(config);
 
 			// Act
 			bool result = features.IsPublishAndApprovePageFiltersEnabled();
@@ -477,7 +477,7 @@ namespace CalculateFunding.Common.UnitTests
 			IConfigurationSection config = Substitute.For<IConfigurationSection>();
 			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("false");
 
-			Features features = new Features(config);
+			IFeatureToggle features = new Features(config);
 
 			// Act
 			bool result = features.IsPublishAndApprovePageFiltersEnabled();
@@ -493,7 +493,7 @@ namespace CalculateFunding.Common.UnitTests
 			IConfigurationSection config = Substitute.For<IConfigurationSection>();
 			config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns("true");
 
-			Features features = new Features(config);
+			IFeatureToggle features = new Features(config);
 
 			// Act
 			bool result = features.IsPublishAndApprovePageFiltersEnabled();
@@ -501,5 +501,85 @@ namespace CalculateFunding.Common.UnitTests
 			// Assert
 			result.Should().BeTrue();
 		}
-	}
+
+        [TestMethod]
+        public void IsRoleBasedAccessEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("publishAndApprovePageFiltersEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsRoleBasedAccessEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsRoleBasedAccessEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("roleBasedAccessEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsRoleBasedAccessEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsRoleBasedAccessEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("roleBasedAccessEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsRoleBasedAccessEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsRoleBasedAccessEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("roleBasedAccessEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsRoleBasedAccessEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsRoleBasedAccessEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("roleBasedAccessEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsRoleBasedAccessEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
+    }
 }

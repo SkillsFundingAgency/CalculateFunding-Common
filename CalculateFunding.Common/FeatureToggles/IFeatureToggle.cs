@@ -13,5 +13,7 @@
 		bool IsPublishAndApprovePageFiltersEnabled();
 
         bool IsCalculationTimeoutEnabled();
+
+        bool IsRoleBasedAccessEnabled();
     }
 }
