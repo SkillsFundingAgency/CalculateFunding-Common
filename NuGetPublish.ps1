@@ -62,7 +62,7 @@ ForEach($item in $items)
     {
         Write-Host "Package was not pushed. Exit code is $($ps.ExitCode)" -foregroundcolor yellow
         $errMsg = $ps.StandardError.ReadToEnd()
-        if ($errMsg -like '*409 (Conflict)*')
+        if ($errMsg -like '*The feed already contains*')
         {
             Write-Host "Package with same version already exists. Do you need to update the version number?" -foregroundcolor yellow
             Write-Host $ps.StandardOutput.ReadToEnd()  
