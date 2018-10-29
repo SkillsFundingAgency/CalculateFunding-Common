@@ -36,7 +36,7 @@ if (![string]::IsNullOrEmpty($currDir) -And !$currDir.EndsWith("\"))
 }
 
 Write-Host "Updating source in nuget.config with credentials to nuget feed"
-& "$($currDir)nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
+& "$($currDir)nuget.exe" sources Add -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
 
 $items = Get-Item -Path $packagePathWithFilter 
 ForEach($item in $items)
