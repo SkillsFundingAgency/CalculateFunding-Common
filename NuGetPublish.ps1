@@ -30,13 +30,13 @@ $currDir = Split-Path $MyInvocation.MyCommand.Path
 Write-Host "Current directory is $currDir"
 Set-Location -Path $currDir
 
-#if (![string]::IsNullOrEmpty($nugetPath) -And !$nugetPath.EndsWith("\"))
-#{
-#	$nugetPath = "$nugetPath\" 
-#}
+if (![string]::IsNullOrEmpty($currDir) -And !$currDir.EndsWith("\"))
+{
+	$currDir = "$currDir\" 
+}
 
 Write-Host "Updating source in nuget.config with credentials to nuget feed"
-& "nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
+& "$($currDir)nuget.exe" sources Update -NonInteractive -Name $sourceNameInNugetConfig -Source $feedUrl -Username $userName -Password $accessKey #-ConfigFile "Nuget.config"
 
 $items = Get-Item -Path $packagePathWithFilter 
 ForEach($item in $items)
@@ -44,7 +44,7 @@ ForEach($item in $items)
     Write-Host "Pushing to NuGet server, package $($item.Name)"
     $ps = new-object System.Diagnostics.Process
     $ps.StartInfo.WorkingDirectory = $currDir 
-    $ps.StartInfo.Filename = "nuget.exe"
+    $ps.StartInfo.Filename = "$($currDir)nuget.exe"
     $argumentStr = " push ""$($item.Name)"" -NonInteractive  -Source ""$feedUrl"" -ApiKey ""VSTS"" -Verbosity Detailed"
     $ps.StartInfo.Arguments = $argumentStr
     $ps.StartInfo.RedirectStandardOutput = $True
