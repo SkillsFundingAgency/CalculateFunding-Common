@@ -41,7 +41,12 @@ namespace CalculateFunding.Common.FeatureToggles
 			return CheckSetting("publishAndApprovePageFiltersEnabled");
 		}
 
-		private bool CheckSetting(string featureName)
+        public bool IsRoleBasedAccessEnabled()
+        {
+            return CheckSetting("roleBasedAccessEnabled");
+        }
+
+        private bool CheckSetting(string featureName)
         {
             if (_config == null)
             {
