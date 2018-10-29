@@ -40,7 +40,7 @@ ForEach($item in $items)
 {
     Write-Host "Pushing to NuGet server, package $($item.Name)"
 
-    $fullFilePath = Path.Combine($item.DirectoryName, $item.Name)
+    $fullFilePath = Join-Path $item.DirectoryName $item.Name
 
     $ps = new-object System.Diagnostics.Process
     $ps.StartInfo.WorkingDirectory = $currDir 
