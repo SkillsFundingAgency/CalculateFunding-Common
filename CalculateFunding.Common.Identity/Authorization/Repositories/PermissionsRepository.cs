@@ -24,12 +24,12 @@ namespace CalculateFunding.Common.Identity.Authorization.Repositories
 
         public async Task<EffectiveSpecificationPermission> GetPermissionForUserBySpecificationId(string userId, string specificationId)
         {
-            return await ExecuteHttpRequest<EffectiveSpecificationPermission>($"api/users/{userId}/effectivepermissions/{specificationId}");
+            return await ExecuteHttpRequest<EffectiveSpecificationPermission>($"{userId}/effectivepermissions/{specificationId}");
         }
 
         public async Task<IEnumerable<FundingStreamPermission>> GetPermissionsForUser(string userId)
         {
-            return await ExecuteHttpRequest<IEnumerable<FundingStreamPermission>>($"api/users/{userId}/permissions");
+            return await ExecuteHttpRequest<IEnumerable<FundingStreamPermission>>($"{userId}/permissions");
         }
 
         private async Task<T> ExecuteHttpRequest<T>(string endpoint)
