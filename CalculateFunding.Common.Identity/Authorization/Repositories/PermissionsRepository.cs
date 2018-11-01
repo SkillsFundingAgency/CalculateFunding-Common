@@ -12,11 +12,13 @@ namespace CalculateFunding.Common.Identity.Authorization.Repositories
     {
         private readonly HttpClient _httpClient;
 
-        public PermissionsRepository(IHttpClientFactory httpClientFactory)
+        public PermissionsRepository(IHttpClientFactory httpClientFactory, PermissionOptions options)
         {
             Guard.ArgumentNotNull(httpClientFactory, nameof(httpClientFactory));
+            Guard.ArgumentNotNull(options, nameof(options));
+            Guard.IsNullOrWhiteSpace(options.HttpClientName, nameof(options.HttpClientName));
 
-            _httpClient = httpClientFactory.CreateClient(Constants.PermissionsHttpClientName);
+            _httpClient = httpClientFactory.CreateClient(options.HttpClientName);
         }
 
         public async Task<EffectiveSpecificationPermission> GetPermissionForUserBySpecificationId(string userId, string specificationId)
