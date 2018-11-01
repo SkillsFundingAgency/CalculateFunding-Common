@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Utility;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.Identity.Authorization.Repositories
@@ -12,13 +13,13 @@ namespace CalculateFunding.Common.Identity.Authorization.Repositories
     {
         private readonly HttpClient _httpClient;
 
-        public PermissionsRepository(IHttpClientFactory httpClientFactory, PermissionOptions options)
+        public PermissionsRepository(IHttpClientFactory httpClientFactory, IOptions<PermissionOptions> options)
         {
             Guard.ArgumentNotNull(httpClientFactory, nameof(httpClientFactory));
             Guard.ArgumentNotNull(options, nameof(options));
-            Guard.IsNullOrWhiteSpace(options.HttpClientName, nameof(options.HttpClientName));
+            Guard.IsNullOrWhiteSpace(options.Value.HttpClientName, nameof(options.Value.HttpClientName));
 
-            _httpClient = httpClientFactory.CreateClient(options.HttpClientName);
+            _httpClient = httpClientFactory.CreateClient(options.Value.HttpClientName);
         }
 
         public async Task<EffectiveSpecificationPermission> GetPermissionForUserBySpecificationId(string userId, string specificationId)

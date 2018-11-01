@@ -8,6 +8,7 @@ using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Identity.Authorization.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
@@ -17,7 +18,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
     public class FundingStreamPermissionHandlerTests
     {
         private const string WellKnownFundingStreamId = "fs1";
-        private PermissionOptions options = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
+        private PermissionOptions actualOptions = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
 
         [TestMethod]
         public async Task WhenUserIsNotKnown_ShouldNotSucceed()
@@ -28,6 +29,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, fundingStreamIds);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
@@ -47,6 +51,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, fundingStreamIds);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
@@ -69,6 +76,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(Enumerable.Empty<FundingStreamPermission>());
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -85,13 +95,16 @@ namespace CalculateFunding.Common.Identity.UnitTests
             List<Claim> claims = new List<Claim>
             {
                 new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, options.AdminGroupId.ToString())
+                new Claim(ClaimTypes.Role, actualOptions.AdminGroupId.ToString())
             };
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
             List<string> fundingStreamIds = new List<string> { WellKnownFundingStreamId };
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, fundingStreamIds);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
@@ -120,6 +133,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(new List<FundingStreamPermission> { actualPermission });
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -146,6 +162,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(new List<FundingStreamPermission> { actualPermission });
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
@@ -174,6 +193,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(actualPermissions);
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -201,6 +223,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(actualPermissions);
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -227,6 +252,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionsForUser(Arg.Is(userId)).Returns(actualPermissions);
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(permissionsRepository, options);
 

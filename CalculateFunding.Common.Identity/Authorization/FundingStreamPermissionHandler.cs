@@ -6,6 +6,7 @@ using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Identity.Authorization.Repositories;
 using CalculateFunding.Common.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace CalculateFunding.Common.Identity.Authorization
 {
@@ -14,13 +15,13 @@ namespace CalculateFunding.Common.Identity.Authorization
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PermissionOptions _permissionOptions;
 
-        public FundingStreamPermissionHandler(IPermissionsRepository permissionsRepository, PermissionOptions permissionOptions)
+        public FundingStreamPermissionHandler(IPermissionsRepository permissionsRepository, IOptions<PermissionOptions> permissionOptions)
         {
             Guard.ArgumentNotNull(permissionsRepository, nameof(permissionsRepository));
             Guard.ArgumentNotNull(permissionOptions, nameof(permissionOptions));
 
             _permissionsRepository = permissionsRepository;
-            _permissionOptions = permissionOptions;
+            _permissionOptions = permissionOptions.Value;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, FundingStreamRequirement requirement, IEnumerable<string> resource)

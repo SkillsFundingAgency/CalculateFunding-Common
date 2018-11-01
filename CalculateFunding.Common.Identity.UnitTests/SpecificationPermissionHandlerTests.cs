@@ -7,6 +7,7 @@ using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Identity.Authorization.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
@@ -16,7 +17,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
     public class SpecificationPermissionHandlerTests
     {
         private const string WellKnownSpecificationId = "abc123";
-        private PermissionOptions options = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
+        private PermissionOptions actualOptions = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
 
         [TestMethod]
         public async Task WhenUserIsNotKnown_ShouldNotSucceed()
@@ -27,6 +28,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
@@ -46,6 +50,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
@@ -68,6 +75,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), WellKnownSpecificationId).Returns(new EffectiveSpecificationPermission());
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -84,13 +94,16 @@ namespace CalculateFunding.Common.Identity.UnitTests
             List<Claim> claims = new List<Claim>
             {
                 new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, options.AdminGroupId.ToString())
+                new Claim(ClaimTypes.Role, actualOptions.AdminGroupId.ToString())
             };
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
@@ -119,6 +132,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -145,6 +161,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
@@ -173,6 +192,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -199,6 +221,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
@@ -227,6 +252,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
 
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
             // Act
@@ -253,6 +281,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
             permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
 
             SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options);
 
