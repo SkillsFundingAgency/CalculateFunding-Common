@@ -2,6 +2,7 @@
 {
     public enum FundingStreamActionTypes
     {
-        CanCreateSpecification
+        CanCreateSpecification,
+        CanChooseFunding
     }
 }
