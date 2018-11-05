@@ -26,9 +26,24 @@ namespace CalculateFunding.Common.Identity.Authorization.Models
         public bool CanChooseFunding { get; set; }
 
         [JsonProperty("canApproveFunding")]
+        public bool CanRefreshFunding { get; set; }
+
+        [JsonProperty("canApproveFunding")]
         public bool CanApproveFunding { get; set; }
 
         [JsonProperty("canPublishFunding")]
         public bool CanPublishFunding { get; set; }
+
+        [JsonProperty("canAdministerFundingStream")]
+        public bool CanAdministerFundingStream { get; set; }
+
+        [JsonProperty("canCreateQaTests")]
+        public bool CanCreateQaTests { get; set; }
+
+        [JsonProperty("canEditQaTests")]
+        public bool CanEditQaTests { get; set; }
+
+        [JsonProperty("canApproveSpecification")]
+        public bool CanApproveSpecification { get; set; }
     }
 }
