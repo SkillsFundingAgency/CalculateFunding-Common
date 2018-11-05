@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Identity.Authorization.Repositories;
 using CalculateFunding.Common.Utility;
@@ -12,18 +13,27 @@ namespace CalculateFunding.Common.Identity.Authorization
     {
         private readonly IPermissionsRepository _permissionsRepository;
         private readonly PermissionOptions _permissionOptions;
+        private readonly IFeatureToggle _features;
 
-        public SpecificationPermissionHandler(IPermissionsRepository permissionsRepository, IOptions<PermissionOptions> permissionOptions)
+        public SpecificationPermissionHandler(IPermissionsRepository permissionsRepository, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
         {
             Guard.ArgumentNotNull(permissionsRepository, nameof(permissionsRepository));
             Guard.ArgumentNotNull(permissionOptions, nameof(permissionOptions));
+            Guard.ArgumentNotNull(features, nameof(features));
 
             _permissionsRepository = permissionsRepository;
             _permissionOptions = permissionOptions.Value;
+            _features = features;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SpecificationRequirement requirement, ISpecificationAuthorizationEntity resource)
         {
+            if (!_features.IsRoleBasedAccessEnabled())
+            {
+                context.Succeed(requirement);
+                return;
+            }
+
             // If user belongs to the admin group then allow them access
             if (context.User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.ToLowerInvariant() == _permissionOptions.AdminGroupId.ToString().ToLowerInvariant()))
             {
