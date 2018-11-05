@@ -83,6 +83,21 @@ namespace CalculateFunding.Common.Identity.Authorization
                 case SpecificationActionTypes.CanPublishFunding:
                     return actualPermissions.CanPublishFunding;
 
+                case SpecificationActionTypes.CanRefreshFunding:
+                    return actualPermissions.CanRefreshFunding;
+
+                case SpecificationActionTypes.CanCreateQaTests:
+                    return actualPermissions.CanCreateQaTests;
+
+                case SpecificationActionTypes.CanEditQaTests:
+                    return actualPermissions.CanEditQaTests;
+
+                case SpecificationActionTypes.CanApproveSpecification:
+                    return actualPermissions.CanApproveSpecification;
+
+                case SpecificationActionTypes.CanAdministerFundingStream:
+                    return actualPermissions.CanAdministerFundingStream;
+
                 default:
                     return false;
             }
