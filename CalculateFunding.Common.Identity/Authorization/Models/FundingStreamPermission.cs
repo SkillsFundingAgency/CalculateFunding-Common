@@ -25,7 +25,7 @@ namespace CalculateFunding.Common.Identity.Authorization.Models
         [JsonProperty("canChooseFunding")]
         public bool CanChooseFunding { get; set; }
 
-        [JsonProperty("canApproveFunding")]
+        [JsonProperty("canRefreshFunding")]
         public bool CanRefreshFunding { get; set; }
 
         [JsonProperty("canApproveFunding")]
