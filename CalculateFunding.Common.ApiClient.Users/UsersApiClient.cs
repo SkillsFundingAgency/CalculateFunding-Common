@@ -37,12 +37,12 @@ namespace CalculateFunding.Common.ApiClient.Users
             return await GetAsync<IEnumerable<FundingStreamPermission>>($"{userId}/permissions");
         }
 
-        public async Task<ApiResponse<FundingStreamPermission>> GetEffectivePermissionsForUser(string userId, string specificationId)
+        public async Task<ApiResponse<EffectiveSpecificationPermission>> GetEffectivePermissionsForUser(string userId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(userId, nameof(userId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<FundingStreamPermission>($"{userId}/effectivepermissions/{specificationId}");
+            return await GetAsync<EffectiveSpecificationPermission>($"{userId}/effectivepermissions/{specificationId}");
         }
 
         public async Task<ValidatedApiResponse<FundingStreamPermission>> UpdateFundingStreamPermission(string userId, string fundingStreamId, FundingStreamPermissionUpdateModel permissions)

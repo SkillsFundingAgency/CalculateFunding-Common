@@ -13,7 +13,7 @@ namespace CalculateFunding.Common.ApiClient.Interfaces
 
         Task<ApiResponse<IEnumerable<FundingStreamPermission>>> GetFundingStreamPermissionsForUser(string userId);
 
-        Task<ApiResponse<FundingStreamPermission>> GetEffectivePermissionsForUser(string userId, string specificationId);
+        Task<ApiResponse<EffectiveSpecificationPermission>> GetEffectivePermissionsForUser(string userId, string specificationId);
 
         Task<ValidatedApiResponse<FundingStreamPermission>> UpdateFundingStreamPermission(string userId, string fundingStreamId, FundingStreamPermissionUpdateModel permissions);
     }
