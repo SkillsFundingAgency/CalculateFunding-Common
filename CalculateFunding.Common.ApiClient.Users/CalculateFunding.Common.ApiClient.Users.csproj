@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Users microservice client</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

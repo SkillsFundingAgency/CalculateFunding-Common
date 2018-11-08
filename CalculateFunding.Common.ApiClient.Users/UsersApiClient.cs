@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient;
 using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.Utility;
-using CalculateFunding.Frontend.Interfaces.ApiClient;
 using Serilog;
 
-namespace CalculateFunding.Frontend.Clients.UsersClient
+namespace CalculateFunding.Common.ApiClient.Users
 {
     public class UsersApiClient : BaseApiClient, IUsersApiClient
     {

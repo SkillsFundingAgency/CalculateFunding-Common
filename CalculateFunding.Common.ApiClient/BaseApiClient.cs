@@ -1,4 +1,4 @@
-﻿namespace CalculateFunding.Frontend.Clients
+﻿namespace CalculateFunding.Common.ApiClient
 {
     using System;
     using System.Collections.Generic;

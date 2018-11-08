@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 
-namespace CalculateFunding.Frontend.Clients
+namespace CalculateFunding.Common.ApiClient
 {
     public class ApiClientHandler : HttpClientHandler
     {

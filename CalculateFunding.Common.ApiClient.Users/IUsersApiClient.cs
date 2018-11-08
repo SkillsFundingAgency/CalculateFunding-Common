@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
 
-namespace CalculateFunding.Frontend.Interfaces.ApiClient
+namespace CalculateFunding.Common.ApiClient.Interfaces
 {
     public interface IUsersApiClient
     {
