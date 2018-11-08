@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using CalculateFunding.Common.Utility;
 
-    internal class SearchQueryRequest
+    public class SearchQueryRequest
     {
         public int PageNumber { get; set; }
 
