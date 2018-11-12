@@ -123,11 +123,13 @@ namespace CalculateFunding.Common.Identity.Authentication
 
             HttpRequestMessage graphRequest = new HttpRequestMessage(HttpMethod.Get, graphUrl);
             graphRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", userDetails.GraphAccessToken);
+            Logger.LogInformation("Making call to MS Graph to get group memberships");
 
             using (HttpResponseMessage graphResponse = await _graphHttpClient.SendAsync(graphRequest))
             {
                 if (!graphResponse.IsSuccessStatusCode)
                 {
+                    Logger.LogError($"Unable to fetch users group memberships. {graphResponse.StatusCode}");
                     throw new WebException($"Unable to fetch users group memberships. {graphResponse.StatusCode}");
                 }
 
@@ -135,11 +137,13 @@ namespace CalculateFunding.Common.Identity.Authentication
 
                 try
                 {
+                    Logger.LogInformation("Parsing group memberships");
                     JToken result = JToken.Parse(content);
                     userDetails.GroupMemberships = result.Value<JArray>("value");
                 }
                 catch
                 {
+                    Logger.LogError("Could not retreive json from graph endpoint.");
                     throw new WebException("Could not retreive json from graph endpoint.");
                 }
             }
@@ -183,7 +187,8 @@ namespace CalculateFunding.Common.Identity.Authentication
 
         private HttpRequestMessage CreateAuthRequest(string endPoint)
         {
-            string uriString = $"{Context.Request.Scheme}://{Context.Request.Host}";
+            string uriString = $"{Context.Request.Scheme}://{Context.Request.Host}{endPoint}";
+            Logger.LogInformation($"Creating request for {uriString}");
             List<string> cookieValues = new List<string>();
 
             // Have to copy the cookies into a header as it is not possible to add cookies directly when using a IHttpClientFactory
@@ -192,13 +197,15 @@ namespace CalculateFunding.Common.Identity.Authentication
                 cookieValues.Add($"{c.Key}={c.Value}");
             }
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}{endPoint}");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uriString);
+            Logger.LogInformation($"Adding cookies as headers to request {string.Join("; ", cookieValues)}");
             request.Headers.Add("Cookie", string.Join("; ", cookieValues));
 
             foreach (KeyValuePair<string, Microsoft.Extensions.Primitives.StringValues> header in Context.Request.Headers)
             {
                 if (header.Key.StartsWith("X-ZUMO-"))
                 {
+                    Logger.LogInformation($"Adding header to request {header.Key}/{header.Value[0]}");
                     request.Headers.Add(header.Key, header.Value[0]);
                 }
             }
