@@ -46,6 +46,16 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("roleBasedAccessEnabled");
         }
 
+        public bool IsJobServiceEnabled()
+        {
+            return CheckSetting("jobServiceEnabled");
+        }
+
+        public bool IsNotificationsEnabled()
+        {
+            return CheckSetting("notificationsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
