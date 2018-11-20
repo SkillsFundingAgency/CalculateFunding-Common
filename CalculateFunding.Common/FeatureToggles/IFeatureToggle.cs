@@ -15,5 +15,9 @@
         bool IsCalculationTimeoutEnabled();
 
         bool IsRoleBasedAccessEnabled();
+
+        bool IsJobServiceEnabled();
+
+        bool IsNotificationsEnabled();
     }
 }
