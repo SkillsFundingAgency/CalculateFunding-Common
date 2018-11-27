@@ -35,7 +35,7 @@ namespace CalculateFunding.Common.Identity.Authorization
             }
 
             // If user belongs to the admin group then allow them access
-            if (context.User.HasClaim(c => c.Type == ClaimTypes.Role && c.Value.ToLowerInvariant() == _permissionOptions.AdminGroupId.ToString().ToLowerInvariant()))
+            if (context.User.HasClaim(c => c.Type == Constants.GroupsClaimType && c.Value.ToLowerInvariant() == _permissionOptions.AdminGroupId.ToString().ToLowerInvariant()))
             {
                 context.Succeed(requirement);
             }

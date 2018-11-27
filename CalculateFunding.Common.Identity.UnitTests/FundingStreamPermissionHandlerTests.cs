@@ -102,7 +102,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             List<Claim> claims = new List<Claim>
             {
                 new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, actualOptions.AdminGroupId.ToString())
+                new Claim(Constants.GroupsClaimType, actualOptions.AdminGroupId.ToString())
             };
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
             List<string> fundingStreamIds = new List<string> { WellKnownFundingStreamId };
