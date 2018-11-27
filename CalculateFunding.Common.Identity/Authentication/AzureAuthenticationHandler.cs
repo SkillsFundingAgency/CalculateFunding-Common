@@ -173,7 +173,7 @@ namespace CalculateFunding.Common.Identity.Authentication
                 bool isSecurityGroup = group["securityEnabled"].Value<bool>();
                 if (isSecurityGroup)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, group["id"].ToString()));
+                    claims.Add(new Claim(Constants.GroupsClaimType, group["id"].ToString()));
                 }
             }
 

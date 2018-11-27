@@ -54,7 +54,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             result.Succeeded.Should().BeTrue();
             result.Ticket.Principal.Identity.Name.Should().Be("test@testdomain.com");
             result.Ticket.Principal.HasClaim(c => c.Type == ClaimTypes.GivenName && c.Value == "Fred");
-            result.Ticket.Principal.HasClaim(c => c.Type == ClaimTypes.Role && c.Value == "e73a963b-059e-45e4-acb1-f3fe748f93a4");
+            result.Ticket.Principal.HasClaim(c => c.Type == Constants.GroupsClaimType && c.Value == "e73a963b-059e-45e4-acb1-f3fe748f93a4");
         }
 
         [TestMethod]
