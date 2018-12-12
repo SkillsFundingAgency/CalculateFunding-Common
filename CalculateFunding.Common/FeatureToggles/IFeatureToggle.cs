@@ -19,5 +19,7 @@
         bool IsJobServiceEnabled();
 
         bool IsNotificationsEnabled();
+
+        bool IsAggregateOverCalculationsEnabled();
     }
 }

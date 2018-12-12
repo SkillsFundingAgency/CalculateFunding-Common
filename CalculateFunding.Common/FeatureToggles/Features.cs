@@ -56,6 +56,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("notificationsEnabled");
         }
 
+        public bool IsAggregateOverCalculationsEnabled()
+        {
+            return CheckSetting("aggregateOverCalculationsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
