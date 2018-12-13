@@ -21,5 +21,7 @@
         bool IsNotificationsEnabled();
 
         bool IsAggregateOverCalculationsEnabled();
+
+        bool IsCalculationResultsNotificationsEnabled();
     }
 }
