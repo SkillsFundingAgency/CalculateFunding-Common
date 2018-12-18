@@ -15,5 +15,7 @@
         public const string TestEngine = "TestEngine";
 
         public const string Users = "Users";
+
+        public const string Jobs = "Jobs";
     }
 }
