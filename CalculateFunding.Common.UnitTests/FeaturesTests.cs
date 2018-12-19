@@ -901,5 +901,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsNewEditCalculationPageEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("newEditCalculationPageEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsNewEditCalculationPageEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsNewEditCalculationPageEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("newEditCalculationPageEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsNewEditCalculationPageEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsNewEditCalculationPageEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("newEditCalculationPageEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsNewEditCalculationPageEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsNewEditCalculationPageEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("newEditCalculationPageEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsNewEditCalculationPageEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsNewEditCalculationPageEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("newEditCalculationPageEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsNewEditCalculationPageEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

@@ -66,6 +66,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("calculationResultsNotificationsEnabled");
         }
 
+        public bool IsNewEditCalculationPageEnabled()
+        {
+            return CheckSetting("newEditCalculationPageEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

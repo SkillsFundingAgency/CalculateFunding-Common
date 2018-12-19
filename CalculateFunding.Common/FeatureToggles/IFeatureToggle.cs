@@ -23,5 +23,7 @@
         bool IsAggregateOverCalculationsEnabled();
 
         bool IsCalculationResultsNotificationsEnabled();
+
+        bool IsNewEditCalculationPageEnabled();
     }
 }
