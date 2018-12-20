@@ -25,5 +25,7 @@
         bool IsCalculationResultsNotificationsEnabled();
 
         bool IsNewEditCalculationPageEnabled();
+
+        bool IsNewManageDataSourcesPageEnabled();
     }
 }

@@ -71,6 +71,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("newEditCalculationPageEnabled");
         }
 
+        public bool IsNewManageDataSourcesPageEnabled()
+        {
+            return CheckSetting("newManageDataSourcesPageEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
