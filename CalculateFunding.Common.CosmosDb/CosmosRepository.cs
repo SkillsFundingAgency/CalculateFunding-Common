@@ -42,7 +42,7 @@ namespace CalculateFunding.Common.CosmosDb
             _collectionName = settings.CollectionName;
             _partitionKey = settings.PartitionKey;
             _databaseName = settings.DatabaseName;
-            _documentClient = DocumentDbConnectionString.Parse(settings.ConnectionString);
+            _documentClient = CosmosDbConnectionString.Parse(settings.ConnectionString);
             _collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseName, _collectionName);
         }
 
