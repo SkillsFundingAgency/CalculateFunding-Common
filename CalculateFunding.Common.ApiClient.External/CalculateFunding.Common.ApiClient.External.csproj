@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Authors>Calculate Funding Service</Authors>
+    <Company>Department for Education</Company>
+    <Product>Calculate Funding Service</Product>
+    <Description>External API HTTP Client</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
+  </ItemGroup>
+
+</Project>
