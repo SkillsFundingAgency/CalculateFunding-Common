@@ -19,15 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.External", "CalculateFunding.Common.ApiClient.External\CalculateFunding.Common.ApiClient.External.csproj", "{9666696A-2D54-49D5-8759-C6D5D07B996E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Caching", "CalculateFunding.Common.Caching\CalculateFunding.Common.Caching.csproj", "{EA2A5440-ACD6-4987-ADB5-28C821EA7E8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Caching", "CalculateFunding.Common.Caching\CalculateFunding.Common.Caching.csproj", "{EA2A5440-ACD6-4987-ADB5-28C821EA7E8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{6D586895-4914-4C85-87ED-79B5A10D0431}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{0617EEE5-A7A1-4493-B8CD-D5E6F26FE3DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.CosmosDb", "CalculateFunding.Common.CosmosDb\CalculateFunding.Common.CosmosDb.csproj", "{DA80774F-BCE5-49DB-9249-F92E1F4D4A2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.CosmosDb", "CalculateFunding.Common.CosmosDb\CalculateFunding.Common.CosmosDb.csproj", "{DA80774F-BCE5-49DB-9249-F92E1F4D4A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Models", "CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj", "{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Models", "CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj", "{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Jobs", "CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj", "{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +93,7 @@ Global
 		{9666696A-2D54-49D5-8759-C6D5D07B996E} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{EA2A5440-ACD6-4987-ADB5-28C821EA7E8D} = {6D586895-4914-4C85-87ED-79B5A10D0431}
 		{DA80774F-BCE5-49DB-9249-F92E1F4D4A2D} = {6D586895-4914-4C85-87ED-79B5A10D0431}
+		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}
