@@ -1,7 +1,7 @@
-﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
-using CalculateFunding.Common.ApiClient.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Jobs.Models;
+using CalculateFunding.Common.ApiClient.Models;
 
 namespace CalculateFunding.Common.ApiClient.Jobs
 {
@@ -10,6 +10,8 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         Task<ApiResponse<JobLog>> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel);
 
         Task<ApiResponse<JobViewModel>> GetJobById(string jobId);
+
+        Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes);
 
         Task<Job> CreateJob(JobCreateModel jobCreateModel);
 

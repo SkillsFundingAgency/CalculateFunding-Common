@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Jobs microservice client</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <Authors>Calculate Funding Service</Authors>
+    <Company>Department for Education</Company>
   </PropertyGroup>
 
   <ItemGroup>

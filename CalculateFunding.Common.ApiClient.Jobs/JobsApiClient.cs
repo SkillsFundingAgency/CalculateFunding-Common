@@ -1,21 +1,21 @@
-﻿using CalculateFunding.Common.ApiClient.Interfaces;
-using CalculateFunding.Common.ApiClient.Jobs.Models;
-using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.Utility;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Interfaces;
+using CalculateFunding.Common.ApiClient.Jobs.Models;
+using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.Utility;
+using Serilog;
 
 namespace CalculateFunding.Common.ApiClient.Jobs
 {
-    public class JobsApiClient: BaseApiClient, IJobsApiClient
+    public class JobsApiClient : BaseApiClient, IJobsApiClient
     {
         public JobsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider)
           : base(httpClientFactory, HttpClientKeys.Jobs, logger, cancellationTokenProvider)
-        {}
+        { }
 
         public async Task<ApiResponse<JobLog>> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel)
         {
@@ -34,6 +34,20 @@ namespace CalculateFunding.Common.ApiClient.Jobs
             string url = $"jobs/{jobId}";
 
             return await GetAsync<JobViewModel>(url);
+        }
+
+        public async Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            string api = $"latest?specificationId={specificationId}";
+
+            if (jobTypes != null && jobTypes.Count() > 0)
+            {
+                api += $"&jobTypes={string.Join(",", jobTypes)}";
+            }
+
+            return await GetAsync<JobSummary>(api);
         }
 
         public async Task<Job> CreateJob(JobCreateModel jobCreateModel)
