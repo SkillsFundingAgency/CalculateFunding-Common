@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Cos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Models", "CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj", "{7D35B8F3-94F2-48F4-8C3D-8BE80845AC9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Jobs", "CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj", "{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Jobs", "CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj", "{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.WebApi", "CalculateFunding.Common.WebApi\CalculateFunding.Common.WebApi.csproj", "{46ED8AE0-0152-47F2-A600-CF7C886B66E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{119D438F-8AC5-4DEC-A757-98BFFBEA5F68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46ED8AE0-0152-47F2-A600-CF7C886B66E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46ED8AE0-0152-47F2-A600-CF7C886B66E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46ED8AE0-0152-47F2-A600-CF7C886B66E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46ED8AE0-0152-47F2-A600-CF7C886B66E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
