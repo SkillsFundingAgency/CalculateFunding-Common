@@ -1061,5 +1061,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsJobServiceForMainActionsEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("jobServiceForMainActionsEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsJobServiceForMainActionsEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsJobServiceForMainActionsEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("jobServiceForMainActionsEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsJobServiceForMainActionsEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsJobServiceForMainActionsEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("jobServiceForMainActionsEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsJobServiceForMainActionsEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsJobServiceForMainActionsEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("jobServiceForMainActionsEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsJobServiceForMainActionsEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsJobServiceForMainActionsEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("jobServiceForMainActionsEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsJobServiceForMainActionsEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

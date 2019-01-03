@@ -76,6 +76,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("newManageDataSourcesPageEnabled");
         }
 
+        public bool IsJobServiceForMainActionsEnabled()
+        {
+            return CheckSetting("jobServiceForMainActionsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

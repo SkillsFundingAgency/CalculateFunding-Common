@@ -27,5 +27,7 @@
         bool IsNewEditCalculationPageEnabled();
 
         bool IsNewManageDataSourcesPageEnabled();
+
+        bool IsJobServiceForMainActionsEnabled();
     }
 }
