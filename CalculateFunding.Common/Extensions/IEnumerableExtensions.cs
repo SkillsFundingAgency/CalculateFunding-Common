@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
-namespace System.Linq
+namespace CalculateFunding.Common.Extensions
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     static public class IEnumerableExtensions
