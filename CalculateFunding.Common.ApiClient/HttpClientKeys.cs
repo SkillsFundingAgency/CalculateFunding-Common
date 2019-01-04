@@ -17,5 +17,9 @@
         public const string Users = "Users";
 
         public const string Jobs = "Jobs";
+
+        public const string Profiling = "Profiling";
+
+        public const string External = "External";
     }
 }
