@@ -5,7 +5,7 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Description>Calculate Funding Service WebApi Common Functionality</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
 

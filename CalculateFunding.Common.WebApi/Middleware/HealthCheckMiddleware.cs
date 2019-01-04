@@ -6,7 +6,7 @@
 	using System.Threading.Tasks;
 	using Common.Extensions;
 	using Microsoft.AspNetCore.Http;
-	using Models;
+	using Models.HealthCheck;
 
 	public class HealthCheckMiddleware : IMiddleware
     {

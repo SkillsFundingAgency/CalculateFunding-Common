@@ -1,4 +1,4 @@
-﻿namespace CalculateFunding.Common.WebApi.Models
+﻿namespace CalculateFunding.Common.Models.HealthCheck
 {
     public class DependencyHealth
     {

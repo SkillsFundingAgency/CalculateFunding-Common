@@ -1,7 +1,7 @@
-﻿namespace CalculateFunding.Common.WebApi.Models
-{
-	using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace CalculateFunding.Common.Models.HealthCheck
+{
 	public class OverallHealth
     {
         public bool OverallHealthOk { get; set; }
