@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Bearer Token client for Azure Active Directory</Description>
+    <Authors>Calculate Funding Service</Authors>
+    <Company>Department for Education</Company>
+    <Product>Calculate Funding Service</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.Caching\CalculateFunding.Common.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
