@@ -7,8 +7,8 @@
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using CalculateFunding.Common.ApiClient.Interfaces;
     using CalculateFunding.Common.ApiClient.Models;
+    using CalculateFunding.Common.Interfaces;
     using CalculateFunding.Common.Utility;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;

@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using CalculateFunding.Common.ApiClient.Interfaces;
+﻿using CalculateFunding.Common.Interfaces;
+using System.Threading;
 
 namespace CalculateFunding.Common.ApiClient
 {

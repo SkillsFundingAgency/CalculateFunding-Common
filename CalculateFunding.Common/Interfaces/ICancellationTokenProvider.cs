@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace CalculateFunding.Common.ApiClient.Interfaces
+namespace CalculateFunding.Common.Interfaces
 {
     public interface ICancellationTokenProvider
     {

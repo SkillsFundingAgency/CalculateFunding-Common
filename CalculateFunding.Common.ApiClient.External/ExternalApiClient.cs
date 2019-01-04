@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.External.Models;
-using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
