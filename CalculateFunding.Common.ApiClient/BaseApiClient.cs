@@ -34,7 +34,7 @@
             _clientKey = clientKey;
             _logger = logger;
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = _httpClientFactory.CreateClient();
 
             _logger.Debug("AbstractApiClient created with Client Key: {clientkey} with base address: {baseAddress}", clientKey, httpClient.BaseAddress);
             _cancellationTokenProvider = cancellationTokenProvider;
@@ -55,7 +55,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
             httpClient.Timeout = TimeSpan.FromMinutes(5);
 
             _logger.Debug("ApiClient GET: {clientKey}://{url}", _clientKey, url);
@@ -89,7 +89,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
 
             string json = JsonConvert.SerializeObject(request, _serializerSettings);
             _logger.Debug($"ApiClient POST: {{clientKey}}://{{url}} ({typeof(TRequest).Name} => {typeof(TResponse).Name})", _clientKey, url);
@@ -123,7 +123,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
             if (timeout.HasValue)
             {
                 httpClient.Timeout = timeout.Value;
@@ -167,7 +167,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
 
             if (cancellationToken == default(CancellationToken))
             {
@@ -194,7 +194,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
 
             if (cancellationToken == default(CancellationToken))
             {
@@ -220,7 +220,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
 
             if (cancellationToken == default(CancellationToken))
             {
@@ -247,7 +247,7 @@
                 throw new ArgumentNullException(nameof(url));
             }
 
-            HttpClient httpClient = GetHttpClient();
+            HttpClient httpClient = await GetHttpClient();
 
             if (cancellationToken == default(CancellationToken))
             {
@@ -281,10 +281,14 @@
             }
         }
 
-        private HttpClient GetHttpClient()
+        protected HttpClient CreateHttpClient()
         {
-
             return _httpClientFactory.CreateClient(_clientKey);
+        }
+
+        public virtual async Task<HttpClient> GetHttpClient()
+        {
+            return await Task.FromResult(_httpClientFactory.CreateClient(_clientKey));
         }
 
         private CancellationToken CurrentCancellationToken()

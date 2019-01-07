@@ -6,9 +6,11 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Caching\CalculateFunding.Common.Caching.csproj" />
   </ItemGroup>
 
