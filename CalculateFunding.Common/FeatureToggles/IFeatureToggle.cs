@@ -29,5 +29,7 @@
         bool IsNewManageDataSourcesPageEnabled();
 
         bool IsJobServiceForMainActionsEnabled();
+
+        bool IsAllAllocationResultsVersionsInFeedIndexEnabled();
     }
 }

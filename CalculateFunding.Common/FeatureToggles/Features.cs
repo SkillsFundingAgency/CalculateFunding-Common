@@ -81,6 +81,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("jobServiceForMainActionsEnabled");
         }
 
+        public bool IsAllAllocationResultsVersionsInFeedIndexEnabled()
+        {
+            return CheckSetting("allAllocationResultsVersionsInFeedIndexEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
