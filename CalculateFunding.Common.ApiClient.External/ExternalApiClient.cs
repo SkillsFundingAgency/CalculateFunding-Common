@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Bearer;
 using CalculateFunding.Common.ApiClient.External.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
@@ -8,13 +9,14 @@ using Serilog;
 
 namespace CalculateFunding.Common.ApiClient.External
 {
-    public class ExternalApiClient : BaseApiClient, IExternalApiClient
+    public class ExternalApiClient : BearerBaseApiClient, IExternalApiClient
     {
         public ExternalApiClient(
             IHttpClientFactory httpClientFactory,
             string clientKey,
             ILogger logger,
-            ICancellationTokenProvider cancellationTokenProvider = null) : base(httpClientFactory, clientKey, logger, cancellationTokenProvider)
+            IBearerTokenProvider bearerTokenProvider,
+            ICancellationTokenProvider cancellationTokenProvider = null) : base(httpClientFactory, clientKey, logger, bearerTokenProvider, cancellationTokenProvider)
         {
         }
 

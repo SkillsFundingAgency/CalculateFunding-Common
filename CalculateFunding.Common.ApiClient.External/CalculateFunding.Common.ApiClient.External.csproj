@@ -6,10 +6,11 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>External API HTTP Client</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Bearer\CalculateFunding.Common.ApiClient.Bearer.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
