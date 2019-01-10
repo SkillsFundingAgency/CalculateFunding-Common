@@ -1221,5 +1221,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsApprovalBatchingServerSideEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("approvalBatchingServerSideEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsApprovalBatchingServerSideEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsApprovalBatchingServerSideEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("approvalBatchingServerSideEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsApprovalBatchingServerSideEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsApprovalBatchingServerSideEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("approvalBatchingServerSideEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsApprovalBatchingServerSideEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsApprovalBatchingServerSideEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("approvalBatchingServerSideEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsApprovalBatchingServerSideEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsApprovalBatchingServerSideEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("approvalBatchingServerSideEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsApprovalBatchingServerSideEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

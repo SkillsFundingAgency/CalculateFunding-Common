@@ -86,6 +86,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("allAllocationResultsVersionsInFeedIndexEnabled");
         }
 
+        public bool IsApprovalBatchingServerSideEnabled()
+        {
+            return CheckSetting("approvalBatchingServerSideEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

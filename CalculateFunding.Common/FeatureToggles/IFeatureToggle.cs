@@ -31,5 +31,7 @@
         bool IsJobServiceForMainActionsEnabled();
 
         bool IsAllAllocationResultsVersionsInFeedIndexEnabled();
+
+        bool IsApprovalBatchingServerSideEnabled();
     }
 }
