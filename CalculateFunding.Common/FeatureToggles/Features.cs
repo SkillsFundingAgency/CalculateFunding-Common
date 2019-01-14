@@ -91,6 +91,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("approvalBatchingServerSideEnabled");
         }
 
+        public bool IsJobServiceForPublishProviderResultsEnabled()
+        {
+            return CheckSetting("jobServiceForPublishProviderResultsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

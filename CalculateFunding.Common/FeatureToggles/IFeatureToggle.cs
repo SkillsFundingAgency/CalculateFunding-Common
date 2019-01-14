@@ -33,5 +33,7 @@
         bool IsAllAllocationResultsVersionsInFeedIndexEnabled();
 
         bool IsApprovalBatchingServerSideEnabled();
+
+        bool IsJobServiceForPublishProviderResultsEnabled();
     }
 }
