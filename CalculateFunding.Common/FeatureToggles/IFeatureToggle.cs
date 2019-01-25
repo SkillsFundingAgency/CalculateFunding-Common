@@ -35,5 +35,7 @@
         bool IsApprovalBatchingServerSideEnabled();
 
         bool IsJobServiceForPublishProviderResultsEnabled();
+
+        bool IsProviderVariationsEnabled();
     }
 }

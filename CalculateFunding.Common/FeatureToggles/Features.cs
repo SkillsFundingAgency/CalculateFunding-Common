@@ -96,6 +96,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("jobServiceForPublishProviderResultsEnabled");
         }
 
+        public bool IsProviderVariationsEnabled()
+        {
+            return CheckSetting("providerVariationsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
