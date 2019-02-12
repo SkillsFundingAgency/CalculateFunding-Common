@@ -101,6 +101,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("providerVariationsEnabled");
         }
 
+        public bool IsNewProviderCalculationResultsIndexEnabled()
+        {
+            return CheckSetting("newProviderCalculationResultsIndexEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

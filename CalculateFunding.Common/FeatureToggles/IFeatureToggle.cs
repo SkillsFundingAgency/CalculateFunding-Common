@@ -37,5 +37,7 @@
         bool IsJobServiceForPublishProviderResultsEnabled();
 
         bool IsProviderVariationsEnabled();
+
+        bool IsNewProviderCalculationResultsIndexEnabled();
     }
 }
