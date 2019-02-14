@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -85,6 +87,30 @@ namespace CalculateFunding.Common.Caching
             var database = GetDatabase();
 
             return database.KeyDeleteAsync(key);
+        }
+
+        public async Task RemoveByPatternAsync(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                return;
+
+            if (!key.Contains("*"))
+                key += "*";
+
+            ConnectionMultiplexer multiplexer = _connectionMultiplexer.Value;
+
+            IDatabase database = multiplexer.GetDatabase();
+
+            foreach (EndPoint ep in multiplexer.GetEndPoints())
+            {
+                IServer server = multiplexer.GetServer(ep);
+                IEnumerable<RedisKey> keys = server.Keys(pattern: key, pageSize: 100);
+
+                if (!keys.IsNullOrEmpty())
+                {
+                    await database.KeyDeleteAsync(keys.ToArray());
+                }
+            }
         }
 
         async public Task CreateListAsync<T>(IEnumerable<T> items, string key)

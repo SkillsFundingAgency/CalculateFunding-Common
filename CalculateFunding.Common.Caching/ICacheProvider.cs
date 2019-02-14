@@ -19,6 +19,8 @@ namespace CalculateFunding.Common.Caching
 
         Task RemoveAsync<T>(string key);
 
+        Task RemoveByPatternAsync(string key);
+
         Task<bool> KeyExists<T>(string key);
 
         Task CreateListAsync<T>(IEnumerable<T> items, string key);
