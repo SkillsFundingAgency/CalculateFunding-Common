@@ -39,5 +39,7 @@
         bool IsProviderVariationsEnabled();
 
         bool IsNewProviderCalculationResultsIndexEnabled();
-    }
+
+	    bool IsProviderInformationViewInViewFundingPageEnabled();
+	}
 }

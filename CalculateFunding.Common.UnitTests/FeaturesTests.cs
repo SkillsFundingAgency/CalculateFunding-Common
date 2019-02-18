@@ -1542,5 +1542,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
-    }
+
+		[TestMethod]
+		public void IsProviderInformationViewInViewFundingPageEnabled_WhenConfigNotPresent_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("providerInformationViewInViewFundingPageEnabled")].Returns((string)null);
+
+			IFeatureToggle features = new Features(config);
+
+			// Act
+			bool result = features.IsProviderInformationViewInViewFundingPageEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsProviderInformationViewInViewFundingPageEnabled_WhenConfigEmptyString_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("providerInformationViewInViewFundingPageEnabled")].Returns(string.Empty);
+
+			IFeatureToggle features = new Features(config);
+
+			// Act
+			bool result = features.IsProviderInformationViewInViewFundingPageEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsProviderInformationViewInViewFundingPageEnabled_WhenConfigNotBoolean_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("providerInformationViewInViewFundingPageEnabled")].Returns("not a bool");
+
+			IFeatureToggle features = new Features(config);
+
+			// Act
+			bool result = features.IsProviderInformationViewInViewFundingPageEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsProviderInformationViewInViewFundingPageEnabled_WhenConfigFalse_ReturnsFalse()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("providerInformationViewInViewFundingPageEnabled")].Returns("false");
+
+			IFeatureToggle features = new Features(config);
+
+			// Act
+			bool result = features.IsProviderInformationViewInViewFundingPageEnabled();
+
+			// Assert
+			result.Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void IsProviderInformationViewInViewFundingPageEnabled_WhenConfigTrue_ReturnsTrue()
+		{
+			// Arrange
+			IConfigurationSection config = Substitute.For<IConfigurationSection>();
+			config[Arg.Is("providerInformationViewInViewFundingPageEnabled")].Returns("true");
+
+			IFeatureToggle features = new Features(config);
+
+			// Act
+			bool result = features.IsProviderInformationViewInViewFundingPageEnabled();
+
+			// Assert
+			result.Should().BeTrue();
+		}
+	}
 }
