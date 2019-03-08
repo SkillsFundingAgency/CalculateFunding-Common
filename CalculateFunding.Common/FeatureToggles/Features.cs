@@ -111,7 +111,12 @@ namespace CalculateFunding.Common.FeatureToggles
 		    return CheckSetting("providerInformationViewInViewFundingPageEnabled");
 	    }
 
-		private bool CheckSetting(string featureName)
+        public bool IsCheckJobStatusForChooseAndRefreshEnabled()
+        {
+            return CheckSetting("checkJobStatusForChooseAndRefreshEnabled");
+        }
+
+        private bool CheckSetting(string featureName)
         {
             if (_config == null)
             {

@@ -1622,5 +1622,85 @@ namespace CalculateFunding.Common.UnitTests
 			// Assert
 			result.Should().BeTrue();
 		}
-	}
+
+        [TestMethod]
+        public void IsCheckJobStatusForChooseAndRefreshEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("checkJobStatusForChooseAndRefreshEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsCheckJobStatusForChooseAndRefreshEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCheckJobStatusForChooseAndRefreshEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("checkJobStatusForChooseAndRefreshEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsCheckJobStatusForChooseAndRefreshEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCheckJobStatusForChooseAndRefreshEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("checkJobStatusForChooseAndRefreshEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsCheckJobStatusForChooseAndRefreshEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCheckJobStatusForChooseAndRefreshEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("checkJobStatusForChooseAndRefreshEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsCheckJobStatusForChooseAndRefreshEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsCheckJobStatusForChooseAndRefreshEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("checkJobStatusForChooseAndRefreshEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsCheckJobStatusForChooseAndRefreshEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
+    }
 }

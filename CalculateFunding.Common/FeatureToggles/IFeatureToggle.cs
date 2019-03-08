@@ -41,5 +41,7 @@
         bool IsNewProviderCalculationResultsIndexEnabled();
 
 	    bool IsProviderInformationViewInViewFundingPageEnabled();
-	}
+
+        bool IsCheckJobStatusForChooseAndRefreshEnabled();
+    }
 }
