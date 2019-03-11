@@ -46,11 +46,6 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("roleBasedAccessEnabled");
         }
 
-        public bool IsJobServiceEnabled()
-        {
-            return CheckSetting("jobServiceEnabled");
-        }
-
         public bool IsNotificationsEnabled()
         {
             return CheckSetting("notificationsEnabled");
@@ -59,11 +54,6 @@ namespace CalculateFunding.Common.FeatureToggles
         public bool IsAggregateOverCalculationsEnabled()
         {
             return CheckSetting("aggregateOverCalculationsEnabled");
-        }
-
-        public bool IsCalculationResultsNotificationsEnabled()
-        {
-            return CheckSetting("calculationResultsNotificationsEnabled");
         }
 
         public bool IsNewEditCalculationPageEnabled()
@@ -76,24 +66,9 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("newManageDataSourcesPageEnabled");
         }
 
-        public bool IsJobServiceForMainActionsEnabled()
-        {
-            return CheckSetting("jobServiceForMainActionsEnabled");
-        }
-
         public bool IsAllAllocationResultsVersionsInFeedIndexEnabled()
         {
             return CheckSetting("allAllocationResultsVersionsInFeedIndexEnabled");
-        }
-
-        public bool IsApprovalBatchingServerSideEnabled()
-        {
-            return CheckSetting("approvalBatchingServerSideEnabled");
-        }
-
-        public bool IsJobServiceForPublishProviderResultsEnabled()
-        {
-            return CheckSetting("jobServiceForPublishProviderResultsEnabled");
         }
 
         public bool IsProviderVariationsEnabled()
