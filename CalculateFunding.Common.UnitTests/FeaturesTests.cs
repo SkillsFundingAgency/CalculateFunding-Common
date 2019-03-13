@@ -1302,5 +1302,85 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsDuplicateCalculationNameCheckEnabled_WhenConfigNotPresent_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("duplicateCalculationNameCheckEnabled")].Returns((string)null);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsDuplicateCalculationNameCheckEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsDuplicateCalculationNameCheckEnabled_WhenConfigEmptyString_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("duplicateCalculationNameCheckEnabled")].Returns(string.Empty);
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsDuplicateCalculationNameCheckEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsDuplicateCalculationNameCheckEnabled_WhenConfigNotBoolean_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("duplicateCalculationNameCheckEnabled")].Returns("not a bool");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsDuplicateCalculationNameCheckEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsDuplicateCalculationNameCheckEnabled_WhenConfigFalse_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("duplicateCalculationNameCheckEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsDuplicateCalculationNameCheckEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsDuplicateCalculationNameCheckEnabled_WhenConfigTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("duplicateCalculationNameCheckEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsDuplicateCalculationNameCheckEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

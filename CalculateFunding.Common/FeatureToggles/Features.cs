@@ -91,6 +91,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("checkJobStatusForChooseAndRefreshEnabled");
         }
 
+        public bool IsDuplicateCalculationNameCheckEnabled()
+        {
+            return CheckSetting("duplicateCalculationNameCheckEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

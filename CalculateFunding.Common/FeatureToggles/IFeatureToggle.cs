@@ -33,5 +33,7 @@
 	    bool IsProviderInformationViewInViewFundingPageEnabled();
 
         bool IsCheckJobStatusForChooseAndRefreshEnabled();
+
+        bool IsDuplicateCalculationNameCheckEnabled();
     }
 }
