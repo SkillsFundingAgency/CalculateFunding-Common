@@ -35,5 +35,7 @@
         bool IsCheckJobStatusForChooseAndRefreshEnabled();
 
         bool IsDuplicateCalculationNameCheckEnabled();
+
+        bool IsDynamicBuildProjectEnabled();
     }
 }

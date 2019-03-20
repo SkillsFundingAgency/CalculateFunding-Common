@@ -96,6 +96,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("duplicateCalculationNameCheckEnabled");
         }
 
+        public bool IsDynamicBuildProjectEnabled()
+        {
+            return CheckSetting("dynamicBuildProjectEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)
