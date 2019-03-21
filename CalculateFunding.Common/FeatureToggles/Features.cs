@@ -101,6 +101,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("dynamicBuildProjectEnabled");
         }
 
+        public bool IsSearchModeAllEnabled()
+        {
+            return CheckSetting("searchModeAllEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

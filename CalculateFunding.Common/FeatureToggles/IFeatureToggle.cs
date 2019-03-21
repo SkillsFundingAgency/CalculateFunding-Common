@@ -37,5 +37,7 @@
         bool IsDuplicateCalculationNameCheckEnabled();
 
         bool IsDynamicBuildProjectEnabled();
+
+        bool IsSearchModeAllEnabled();
     }
 }
