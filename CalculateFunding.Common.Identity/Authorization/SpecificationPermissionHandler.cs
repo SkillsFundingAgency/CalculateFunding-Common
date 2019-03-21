@@ -1,8 +1,11 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Interfaces;
+using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization.Models;
-using CalculateFunding.Common.Identity.Authorization.Repositories;
 using CalculateFunding.Common.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -11,17 +14,17 @@ namespace CalculateFunding.Common.Identity.Authorization
 {
     public class SpecificationPermissionHandler : AuthorizationHandler<SpecificationRequirement, ISpecificationAuthorizationEntity>
     {
-        private readonly IPermissionsRepository _permissionsRepository;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly PermissionOptions _permissionOptions;
         private readonly IFeatureToggle _features;
 
-        public SpecificationPermissionHandler(IPermissionsRepository permissionsRepository, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
+        public SpecificationPermissionHandler(IUsersApiClient usersApiClient, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
         {
-            Guard.ArgumentNotNull(permissionsRepository, nameof(permissionsRepository));
+            Guard.ArgumentNotNull(usersApiClient, nameof(usersApiClient));
             Guard.ArgumentNotNull(permissionOptions, nameof(permissionOptions));
             Guard.ArgumentNotNull(features, nameof(features));
 
-            _permissionsRepository = permissionsRepository;
+            _usersApiClient = usersApiClient;
             _permissionOptions = permissionOptions.Value;
             _features = features;
         }
@@ -45,10 +48,15 @@ namespace CalculateFunding.Common.Identity.Authorization
                 if (context.User.HasClaim(c => c.Type == Constants.ObjectIdentifierClaimType))
                 {
                     string userId = context.User.FindFirst(Constants.ObjectIdentifierClaimType).Value;
-                    EffectiveSpecificationPermission permission = await _permissionsRepository.GetPermissionForUserBySpecificationId(userId, resource.GetSpecificationId());
+                    ApiResponse<EffectiveSpecificationPermission> permissionResponse = await _usersApiClient.GetEffectivePermissionsForUser(userId, resource.GetSpecificationId());
+
+                    if (permissionResponse == null || permissionResponse.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception($"Error calling the permissions service - {permissionResponse.StatusCode}");
+                    }
 
                     // Check user has permissions for funding stream
-                    if (HasPermission(requirement.ActionType, permission))
+                    if (HasPermission(requirement.ActionType, permissionResponse.Content))
                     {
                         context.Succeed(requirement);
                     }
@@ -97,6 +105,15 @@ namespace CalculateFunding.Common.Identity.Authorization
 
                 case SpecificationActionTypes.CanAdministerFundingStream:
                     return actualPermissions.CanAdministerFundingStream;
+
+                case SpecificationActionTypes.CanDeleteSpecification:
+                    return actualPermissions.CanDeleteSpecification;
+
+                case SpecificationActionTypes.CanDeleteCalculations:
+                    return actualPermissions.CanDeleteCalculations;
+
+                case SpecificationActionTypes.CanDeleteQaTests:
+                    return actualPermissions.CanDeleteQaTests;
 
                 default:
                     return false;

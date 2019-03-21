@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Interfaces;
+using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization;
 using CalculateFunding.Common.Identity.Authorization.Models;
-using CalculateFunding.Common.Identity.Authorization.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -28,7 +31,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -36,7 +39,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -51,17 +54,18 @@ namespace CalculateFunding.Common.Identity.UnitTests
             // Arrange
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()) }));
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
+            specification.GetSpecificationId().Returns(WellKnownSpecificationId);
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Any<string>(), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, new EffectiveSpecificationPermission()));
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -77,10 +81,11 @@ namespace CalculateFunding.Common.Identity.UnitTests
             string userId = Guid.NewGuid().ToString();
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
+            specification.GetSpecificationId().Returns(WellKnownSpecificationId);
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), WellKnownSpecificationId).Returns(new EffectiveSpecificationPermission());
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, new EffectiveSpecificationPermission()));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -88,7 +93,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -110,7 +115,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -118,7 +123,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -142,8 +147,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanEditSpecification = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -151,7 +156,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -175,8 +180,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanEditCalculations = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -184,7 +189,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -208,8 +213,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanMapDatasets = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -217,7 +222,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -241,8 +246,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanChooseFunding = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -250,7 +255,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -274,8 +279,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanApproveFunding = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -283,7 +288,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -307,8 +312,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanPublishFunding = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -316,7 +321,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -340,8 +345,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanRefreshFunding = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -349,7 +354,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -373,8 +378,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanCreateQaTests = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -382,7 +387,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -406,8 +411,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanEditQaTests = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -415,7 +420,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -439,8 +444,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanApproveSpecification = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -448,7 +453,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -472,8 +477,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
                 CanAdministerFundingStream = true
             };
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(actualPermission);
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -481,7 +486,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(true);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -498,7 +503,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -506,7 +511,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(false);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -523,7 +528,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -531,7 +536,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(false);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -549,8 +554,8 @@ namespace CalculateFunding.Common.Identity.UnitTests
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
 
-            IPermissionsRepository permissionsRepository = Substitute.For<IPermissionsRepository>();
-            permissionsRepository.GetPermissionForUserBySpecificationId(Arg.Is(userId), WellKnownSpecificationId).Returns(new EffectiveSpecificationPermission());
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), WellKnownSpecificationId).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, new EffectiveSpecificationPermission()));
 
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
@@ -558,7 +563,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IFeatureToggle features = Substitute.For<IFeatureToggle>();
             features.IsRoleBasedAccessEnabled().Returns(false);
 
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(permissionsRepository, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
 
             // Act
             await authHandler.HandleAsync(authContext);

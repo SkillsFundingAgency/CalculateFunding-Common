@@ -5,7 +5,7 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Description>Calculate Funding Service Common Identity Functionality</Description>
-    <Version>1.1.8</Version>
+    <Version>1.1.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Users\CalculateFunding.Common.ApiClient.Users.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
 

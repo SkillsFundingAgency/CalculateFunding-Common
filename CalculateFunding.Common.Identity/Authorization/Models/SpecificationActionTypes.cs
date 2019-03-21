@@ -12,6 +12,9 @@
         CanCreateQaTests,
         CanEditQaTests,
         CanApproveSpecification,
-        CanAdministerFundingStream
+        CanAdministerFundingStream,
+        CanDeleteSpecification,
+        CanDeleteCalculations,
+        CanDeleteQaTests
     }
 }

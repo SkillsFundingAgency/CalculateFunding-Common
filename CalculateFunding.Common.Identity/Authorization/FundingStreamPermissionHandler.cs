@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
+using System.Net;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Interfaces;
+using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization.Models;
-using CalculateFunding.Common.Identity.Authorization.Repositories;
 using CalculateFunding.Common.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -13,17 +16,17 @@ namespace CalculateFunding.Common.Identity.Authorization
 {
     public class FundingStreamPermissionHandler : AuthorizationHandler<FundingStreamRequirement, IEnumerable<string>>
     {
-        private readonly IPermissionsRepository _permissionsRepository;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly PermissionOptions _permissionOptions;
         private readonly IFeatureToggle _features;
 
-        public FundingStreamPermissionHandler(IPermissionsRepository permissionsRepository, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
+        public FundingStreamPermissionHandler(IUsersApiClient usersApiClient, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
         {
-            Guard.ArgumentNotNull(permissionsRepository, nameof(permissionsRepository));
+            Guard.ArgumentNotNull(usersApiClient, nameof(usersApiClient));
             Guard.ArgumentNotNull(permissionOptions, nameof(permissionOptions));
             Guard.ArgumentNotNull(features, nameof(features));
 
-            _permissionsRepository = permissionsRepository;
+            _usersApiClient = usersApiClient;
             _permissionOptions = permissionOptions.Value;
             _features = features;
         }
@@ -47,10 +50,15 @@ namespace CalculateFunding.Common.Identity.Authorization
                 if (context.User.HasClaim(c => c.Type == Constants.ObjectIdentifierClaimType))
                 {
                     string userId = context.User.FindFirst(Constants.ObjectIdentifierClaimType).Value;
-                    IEnumerable<FundingStreamPermission> permissions = await _permissionsRepository.GetPermissionsForUser(userId);
+                    ApiResponse<IEnumerable<FundingStreamPermission>> permissionsResponse = await _usersApiClient.GetFundingStreamPermissionsForUser(userId);
+
+                    if (permissionsResponse == null || permissionsResponse.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception($"Error calling the permissions service - {permissionsResponse.StatusCode}");
+                    }
 
                     // Check user has permissions for funding stream
-                    if (HasPermissionToAllFundingStreams(resource, requirement.ActionType, permissions))
+                    if (HasPermissionToAllFundingStreams(resource, requirement.ActionType, permissionsResponse.Content))
                     {
                         context.Succeed(requirement);
                     }
