@@ -13,5 +13,7 @@
         public IEnumerable<string> SearchFields { get; set; }
 
         public int FacetCount { get; set; }
+
+        public SearchMode SearchMode { get; set; }
     }
 }

@@ -10,6 +10,8 @@
 
         public bool IncludeFacets { get; set; }
 
+        public SearchMode SearchMode { get; set; }
+
         public IDictionary<string, string[]> Filters { get; set; }
     }
 }
