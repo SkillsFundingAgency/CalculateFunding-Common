@@ -17,6 +17,8 @@
 
         public IDictionary<string, string[]> Filters { get; set; }
 
+        public SearchMode SearchMode { get; set; }
+
         public static SearchQueryRequest FromSearchFilterRequest(SearchFilterRequest filterOptions)
         {
             Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
@@ -28,7 +30,8 @@
                 SearchTerm = filterOptions.SearchTerm,
                 IncludeFacets = filterOptions.IncludeFacets,
                 Filters = filterOptions.Filters,
-                FacetCount = filterOptions.FacetCount
+                FacetCount = filterOptions.FacetCount,
+                SearchMode = filterOptions.SearchMode
             };
 
             return result;
