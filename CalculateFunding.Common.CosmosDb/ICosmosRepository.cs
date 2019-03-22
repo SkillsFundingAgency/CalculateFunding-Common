@@ -23,5 +23,9 @@ namespace CalculateFunding.Common.CosmosDb
         Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
         Task<IEnumerable<T>> QueryPartitionedEntity<T>(string directSql, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable;
+
+        Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
+
+        Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
     }
 }
