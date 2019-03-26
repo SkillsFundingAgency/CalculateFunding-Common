@@ -106,6 +106,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("searchModeAllEnabled");
         }
 
+        public bool IsUseFieldDefinitionIdsInSourceDatasetsEnabled()
+        {
+            return CheckSetting("useFieldDefinitionIdsInSourceDatasetsEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

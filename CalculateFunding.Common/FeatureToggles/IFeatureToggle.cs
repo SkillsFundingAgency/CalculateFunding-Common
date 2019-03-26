@@ -39,5 +39,7 @@
         bool IsDynamicBuildProjectEnabled();
 
         bool IsSearchModeAllEnabled();
+
+        bool IsUseFieldDefinitionIdsInSourceDatasetsEnabled();
     }
 }
