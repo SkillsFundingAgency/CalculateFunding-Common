@@ -111,6 +111,16 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("useFieldDefinitionIdsInSourceDatasetsEnabled");
         }
 
+        public bool IsProcessDatasetDefinitionNameChangesEnabled()
+        {
+            return CheckSetting("processDatasetDefinitionNameChangesEnabled");
+        }
+
+        public bool IsProcessDatasetDefinitionFieldChangesEnabled()
+        {
+            return CheckSetting("processDatasetDefinitionFieldChangesEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

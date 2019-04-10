@@ -41,5 +41,9 @@
         bool IsSearchModeAllEnabled();
 
         bool IsUseFieldDefinitionIdsInSourceDatasetsEnabled();
+
+        bool IsProcessDatasetDefinitionNameChangesEnabled();
+
+        bool IsProcessDatasetDefinitionFieldChangesEnabled();
     }
 }
