@@ -121,6 +121,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("processDatasetDefinitionFieldChangesEnabled");
         }
 
+        public bool IsExceptionMessagesEnabled()
+        {
+            return CheckSetting("exceptionMessagesEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

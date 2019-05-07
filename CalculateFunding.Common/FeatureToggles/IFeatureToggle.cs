@@ -45,5 +45,7 @@
         bool IsProcessDatasetDefinitionNameChangesEnabled();
 
         bool IsProcessDatasetDefinitionFieldChangesEnabled();
+
+        bool IsExceptionMessagesEnabled();
     }
 }
