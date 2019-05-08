@@ -5,11 +5,12 @@
 
     public class SearchPagedResult<T> : PagedResult<T>
     {
-        public SearchPagedResult(SearchFilterRequest filterOptions, int totalCount)
+        public SearchPagedResult(SearchFilterRequest filterOptions, int totalCount, int totalErrorCount = 0)
         {
             Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
 
             TotalItems = totalCount;
+            TotalErrorItems = totalErrorCount;
             PageNumber = filterOptions.Page;
             PageSize = filterOptions.PageSize;
 
