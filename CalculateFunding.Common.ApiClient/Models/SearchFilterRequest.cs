@@ -8,6 +8,8 @@
 
         public bool IncludeFacets { get; set; }
 
+        public bool? ErrorToggle { get; set; }
+
         public IDictionary<string, string[]> Filters { get; set; }
 
         public IEnumerable<string> SearchFields { get; set; }

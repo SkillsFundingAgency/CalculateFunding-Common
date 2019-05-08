@@ -11,6 +11,8 @@
 
         public string SearchTerm { get; set; }
 
+        public bool? ErrorToggle { get; set; }
+
         public bool IncludeFacets { get; set; }
 
         public int FacetCount { get; set; }
@@ -31,7 +33,8 @@
                 IncludeFacets = filterOptions.IncludeFacets,
                 Filters = filterOptions.Filters,
                 FacetCount = filterOptions.FacetCount,
-                SearchMode = filterOptions.SearchMode
+                SearchMode = filterOptions.SearchMode,
+                ErrorToggle = filterOptions.ErrorToggle
             };
 
             return result;
