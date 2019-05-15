@@ -79,7 +79,6 @@ namespace CalculateFunding.Common.CosmosDb
             //Fetch the resource to be updated
             OfferV2 offer = (OfferV2)_documentClient.CreateOfferQuery()
                 .Where(r => r.ResourceLink == _collection.Resource.SelfLink)
-                .AsEnumerable()
                 .SingleOrDefault();
 
             if (offer.Content.OfferThroughput != requestUnits)
@@ -208,9 +207,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             while (queryable.HasMoreResults)
             {
-                FeedResponse<dynamic> queryResponse = await queryable.ExecuteNextAsync<dynamic>();
-
-                results = results.Concat(queryResponse.AsEnumerable());
+                results = results.Concat(await queryable.ExecuteNextAsync<dynamic>());
             }
 
             return results;
@@ -278,9 +275,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             while (queryable.HasMoreResults)
             {
-                FeedResponse<DocumentEntity<T>> queryResponse = await queryable.ExecuteNextAsync<DocumentEntity<T>>();
-
-                allResults.AddRange(queryResponse.AsEnumerable());
+                allResults.AddRange(await queryable.ExecuteNextAsync<DocumentEntity<T>>());
             }
 
             return allResults;
@@ -298,12 +293,75 @@ namespace CalculateFunding.Common.CosmosDb
 
             while (queryable.HasMoreResults)
             {
-                FeedResponse<DocumentEntity<T>> queryResponse = await queryable.ExecuteNextAsync<DocumentEntity<T>>();
-
-                allResults.AddRange(queryResponse.AsEnumerable());
+                allResults.AddRange(await queryable.ExecuteNextAsync<DocumentEntity<T>>());
             }
 
             return allResults;
+        }
+
+        public async Task DocumentsBatchProcessingAsync<T>(Func<List<DocumentEntity<T>>, Task> persistBatchToIndex, int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable
+        {
+            FeedOptions options = new FeedOptions() { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = true };
+
+            List<DocumentEntity<T>> allResults = new List<DocumentEntity<T>>();
+
+            IDocumentQuery<DocumentEntity<T>> queryable = null;
+
+            if (query == null)
+            {
+                queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, options)
+                    .Where(d => d.DocumentType == GetDocumentType<T>())
+                    .AsDocumentQuery();
+            }
+            else
+            {
+                queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, options)
+                    .Where(query)
+                    .AsDocumentQuery();
+            }
+
+            while (queryable.HasMoreResults)
+            {
+                if (allResults.Count() >= itemsPerPage)
+                {
+                    await persistBatchToIndex(allResults);
+                    allResults.Clear();
+                }
+
+                allResults.AddRange(await queryable.ExecuteNextAsync<DocumentEntity<T>>());
+            }
+
+            if (allResults.Count() > 0)
+            {
+                await persistBatchToIndex(allResults);
+                allResults.Clear();
+            }
+        }
+
+        public async Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, string sql, int itemsPerPage = 1000) where T : IIdentifiable
+        {
+            FeedOptions options = new FeedOptions() { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = true };
+
+            List<T> results = new List<T>();
+
+            IDocumentQuery<T> queryable = _documentClient.CreateDocumentQuery<T>(_collectionUri, sql, options).AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                if (results.Count() >= itemsPerPage)
+                {
+                    await persistBatchToIndex(results);
+                    results.Clear();
+                }
+
+                results.AddRange(await queryable.ExecuteNextAsync<T>());
+            }
+
+            if (results.Count() > 0)
+            {
+                await persistBatchToIndex(results);
+                results.Clear();
+            }
         }
 
         public IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql = null, int itemsPerPage = -1) where T : IIdentifiable
@@ -376,7 +434,7 @@ namespace CalculateFunding.Common.CosmosDb
                 PartitionKey = string.IsNullOrWhiteSpace(partitionKey) ? null : new PartitionKey(partitionKey)
             };
 
-            DocumentEntity<T> doc = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions).Where(d => d.Id == entity.Id).AsEnumerable().SingleOrDefault();
+            DocumentEntity<T> doc = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions).Where(d => d.Id == entity.Id).SingleOrDefault();
 
             if (doc == null)
             {
