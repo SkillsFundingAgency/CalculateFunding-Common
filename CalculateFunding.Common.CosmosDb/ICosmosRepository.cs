@@ -24,6 +24,14 @@ namespace CalculateFunding.Common.CosmosDb
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
+        /// </summary>
+        /// <typeparam name="T">Type of document stored in cosmos</typeparam>
+        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
+        /// <returns></returns>
+        IQueryable<T> Query<T>(bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+
+        /// <summary>
+        /// Query cosmos using IQueryable on a given entity.
         /// NOTE: The directSql may not work, only linq queries
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
@@ -38,10 +46,9 @@ namespace CalculateFunding.Common.CosmosDb
         /// NOTE: The directSql may not work, only linq queries
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
-        /// <param name="directSql">Direct SQL Query - may not work</param>
+        /// <param name="sqlQuerySpec">SQL Query Spec - may not work</param>
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
-        [Obsolete]
         IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         [Obsolete]

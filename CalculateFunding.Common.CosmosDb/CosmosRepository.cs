@@ -122,14 +122,11 @@ namespace CalculateFunding.Common.CosmosDb
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
-        /// NOTE: The directSql may not work, only linq queries
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
-        /// <param name="directSql">Direct SQL Query - may not work</param>
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
-        [Obsolete]
-        public IQueryable<T> Query<T>(string directSql = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public IQueryable<T> Query<T>(bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions
@@ -139,15 +136,10 @@ namespace CalculateFunding.Common.CosmosDb
                 MaxDegreeOfParallelism = 50,
             };
 
-            if (!string.IsNullOrEmpty(directSql))
-            {
-                // This probably doesn't work - it may need an .AsDocumentQuery() before the .Select
-                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
-                    directSql,
-                    queryOptions).Select(x => x.Content);
-            }
-
-            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted).Select(x => x.Content);
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions)
+                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
+                .Select(x => x.Content);
         }
 
         /// <summary>
@@ -158,8 +150,11 @@ namespace CalculateFunding.Common.CosmosDb
         /// <param name="directSql">Direct SQL Query - may not work</param>
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
-        public IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        [Obsolete]
+        public IQueryable<T> Query<T>(string directSql, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
+            Guard.IsNullOrWhiteSpace(directSql, nameof(directSql));
+
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions
             {
@@ -168,15 +163,36 @@ namespace CalculateFunding.Common.CosmosDb
                 MaxDegreeOfParallelism = 50,
             };
 
-            if (sqlQuerySpec != null)
-            {
-                // This probably doesn't work - it may need an .AsDocumentQuery() before the .Select
-                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
-                    sqlQuerySpec,
-                    queryOptions).Select(x => x.Content);
-            }
+            // This probably doesn't work - it may need an .AsDocumentQuery() before the .Select
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, directSql, queryOptions)
+                .Select(x => x.Content);
+        }
 
-            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted).Select(x => x.Content);
+        /// <summary>
+        /// Query cosmos using IQueryable on a given entity.
+        /// NOTE: The directSql may not work, only linq queries
+        /// </summary>
+        /// <typeparam name="T">Type of document stored in cosmos</typeparam>
+        /// <param name="sqlQuerySpec">SQL Query Spec - may not work</param>
+        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
+        /// <returns></returns>
+        public IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        {
+            Guard.ArgumentNotNull(sqlQuerySpec, nameof(sqlQuerySpec));
+
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+                MaxBufferedItemCount = 100,
+                MaxDegreeOfParallelism = 50,
+            };
+
+            // This probably doesn't work - it may need an .AsDocumentQuery() before the .Select
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, sqlQuerySpec, queryOptions)
+                .Select(x => x.Content);
         }
 
         [Obsolete]
