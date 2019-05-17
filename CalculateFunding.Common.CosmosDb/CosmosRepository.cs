@@ -91,6 +91,16 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
+        public int GetThroughput()
+        {
+            //Fetch the resource to be updated
+            OfferV2 offer = (OfferV2)_documentClient.CreateOfferQuery()
+                .Where(r => r.ResourceLink == _collection.Resource.SelfLink)
+                .SingleOrDefault();
+
+            return offer.Content.OfferThroughput;
+        }
+
         private static string GetDocumentType<T>()
         {
             return typeof(T).Name;
