@@ -126,6 +126,11 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("exceptionMessagesEnabled");
         }
 
+        public bool IsCosmosDynamicScalingEnabled()
+        {
+            return CheckSetting("cosmosDynamicScalingEnabled");
+        }
+
         private bool CheckSetting(string featureName)
         {
             if (_config == null)

@@ -47,5 +47,7 @@
         bool IsProcessDatasetDefinitionFieldChangesEnabled();
 
         bool IsExceptionMessagesEnabled();
+
+        bool IsCosmosDynamicScalingEnabled();
     }
 }

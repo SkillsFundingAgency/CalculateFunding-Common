@@ -7,7 +7,7 @@ using NSubstitute;
 namespace CalculateFunding.Common.UnitTests
 {
     [TestClass]
-    public class FeaturesTests
+    public partial class FeaturesTests
     {
         [TestMethod]
         public void WhenConfigNull_ReturnsFalse()
