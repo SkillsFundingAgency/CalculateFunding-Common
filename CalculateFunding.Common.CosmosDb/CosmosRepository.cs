@@ -118,6 +118,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// <param name="directSql">Direct SQL Query - may not work</param>
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
+        [Obsolete]
         public IQueryable<T> Query<T>(string directSql = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             // Set some common query options
@@ -139,6 +140,36 @@ namespace CalculateFunding.Common.CosmosDb
             return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted).Select(x => x.Content);
         }
 
+        /// <summary>
+        /// Query cosmos using IQueryable on a given entity.
+        /// NOTE: The directSql may not work, only linq queries
+        /// </summary>
+        /// <typeparam name="T">Type of document stored in cosmos</typeparam>
+        /// <param name="directSql">Direct SQL Query - may not work</param>
+        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
+        /// <returns></returns>
+        public IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+                MaxBufferedItemCount = 100,
+                MaxDegreeOfParallelism = 50,
+            };
+
+            if (sqlQuerySpec != null)
+            {
+                // This probably doesn't work - it may need an .AsDocumentQuery() before the .Select
+                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
+                    sqlQuerySpec,
+                    queryOptions).Select(x => x.Content);
+            }
+
+            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted).Select(x => x.Content);
+        }
+
+        [Obsolete]
         public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(string directSql, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable
         {
             if (string.IsNullOrEmpty(directSql))
@@ -157,10 +188,30 @@ namespace CalculateFunding.Common.CosmosDb
             };
 
             return (await _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
-                       directSql,
-                       queryOptions).AsDocumentQuery().ExecuteNextAsync<DocumentEntity<T>>()).Select(x => x.Content);
+                directSql,
+                queryOptions).AsDocumentQuery().ExecuteNextAsync<DocumentEntity<T>>()).Select(x => x.Content);
         }
 
+        public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable
+        {
+            if (sqlQuerySpec == null) throw new ArgumentNullException(nameof(sqlQuerySpec));
+
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                MaxItemCount = itemsPerPage,
+                EnableCrossPartitionQuery = false,
+                PartitionKey = new PartitionKey(partitionEntityId),
+                MaxDegreeOfParallelism = 50,
+                MaxBufferedItemCount = 100,
+            };
+
+            return (await _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
+                sqlQuerySpec,
+                queryOptions).AsDocumentQuery().ExecuteNextAsync<DocumentEntity<T>>()).Select(x => x.Content);
+        }
+
+        [Obsolete]
         public IQueryable<dynamic> DynamicQuery<dynamic>(string sql, bool enableCrossPartitionQuery = false)
         {
             // Set some common query options
@@ -174,6 +225,20 @@ namespace CalculateFunding.Common.CosmosDb
             return query;
         }
 
+        public IQueryable<dynamic> DynamicQuery<dynamic>(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+            };
+
+            IQueryable<dynamic> query = _documentClient.CreateDocumentQuery<dynamic>(_collectionUri, sqlQuerySpec, queryOptions);
+
+            return query;
+        }
+
+        [Obsolete]
         public IQueryable<dynamic> DynamicQueryPartionedEntity<dynamic>(string sql, string partitionEntityId = null)
         {
             // Set some common query options
@@ -190,7 +255,24 @@ namespace CalculateFunding.Common.CosmosDb
             return query;
         }
 
-        public async Task<IEnumerable<dynamic>> QueryDynamic<dynamic>(string sql, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000)
+        public IQueryable<dynamic> DynamicQueryPartionedEntity<dynamic>(SqlQuerySpec sqlQuerySpec, string partitionEntityId = null)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = false,
+                PartitionKey = new PartitionKey(partitionEntityId),
+                MaxDegreeOfParallelism = 50,
+                MaxBufferedItemCount = 100,
+            };
+
+            IQueryable<dynamic> query = _documentClient.CreateDocumentQuery<dynamic>(_collectionUri, sqlQuerySpec, queryOptions);
+
+            return query;
+        }
+
+        [Obsolete]
+        public async Task<IEnumerable<dynamic>> QueryDynamic(string sql, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000)
         {
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions
@@ -213,6 +295,30 @@ namespace CalculateFunding.Common.CosmosDb
             return results;
         }
 
+        public async Task<IEnumerable<dynamic>> QueryDynamic(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+                MaxItemCount = itemsPerPage,
+                MaxDegreeOfParallelism = 50,
+                MaxBufferedItemCount = 100,
+            };
+
+            IEnumerable<dynamic> results = new List<dynamic>();
+
+            IDocumentQuery<dynamic> queryable = _documentClient.CreateDocumentQuery<dynamic>(_collectionUri, sqlQuerySpec, queryOptions).AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                results = results.Concat(await queryable.ExecuteNextAsync<dynamic>());
+            }
+
+            return results;
+        }
+
+        [Obsolete]
         public IQueryable<T> RawQuery<T>(string directSql, int itemsPerPage = -1, bool enableCrossPartitionQuery = false)
         {
             // Set some common query options
@@ -229,6 +335,23 @@ namespace CalculateFunding.Common.CosmosDb
                 queryOptions).AsQueryable();
         }
 
+        public IQueryable<T> RawQuery<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, bool enableCrossPartitionQuery = false)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                MaxItemCount = itemsPerPage,
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+                MaxDegreeOfParallelism = 50,
+                MaxBufferedItemCount = 100,
+            };
+
+            return _documentClient.CreateDocumentQuery<T>(_collectionUri,
+                sqlQuerySpec,
+                queryOptions).AsQueryable();
+        }
+
+        [Obsolete]
         public async Task<IEnumerable<T>> QuerySql<T>(string directSql, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             // Set some common query options
@@ -241,6 +364,29 @@ namespace CalculateFunding.Common.CosmosDb
             List<T> results = new List<T>();
 
             IDocumentQuery<DocumentEntity<T>> queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, directSql, queryOptions).AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                FeedResponse<DocumentEntity<T>> queryResponse = await queryable.ExecuteNextAsync<DocumentEntity<T>>();
+
+                results.AddRange(queryResponse.Select(s => s.Content));
+            }
+
+            return results;
+        }
+
+        public async Task<IEnumerable<T>> QuerySql<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions
+            {
+                EnableCrossPartitionQuery = enableCrossPartitionQuery,
+                MaxItemCount = itemsPerPage
+            };
+
+            List<T> results = new List<T>();
+
+            IDocumentQuery<DocumentEntity<T>> queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, sqlQuerySpec, queryOptions).AsDocumentQuery();
 
             while (queryable.HasMoreResults)
             {
@@ -281,6 +427,7 @@ namespace CalculateFunding.Common.CosmosDb
             return allResults;
         }
 
+        [Obsolete]
         public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(string sql, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable
         {
             FeedOptions options = new FeedOptions() { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = enableCrossPartitionQuery };
@@ -290,6 +437,24 @@ namespace CalculateFunding.Common.CosmosDb
             IDocumentQuery<DocumentEntity<T>> queryable = null;
 
             queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, sql, options).AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                allResults.AddRange(await queryable.ExecuteNextAsync<DocumentEntity<T>>());
+            }
+
+            return allResults;
+        }
+
+        public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable
+        {
+            FeedOptions options = new FeedOptions { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = enableCrossPartitionQuery };
+
+            List<DocumentEntity<T>> allResults = new List<DocumentEntity<T>>();
+
+            IDocumentQuery<DocumentEntity<T>> queryable = null;
+
+            queryable = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, sqlQuerySpec, options).AsDocumentQuery();
 
             while (queryable.HasMoreResults)
             {
@@ -338,6 +503,7 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
+        [Obsolete]
         public async Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, string sql, int itemsPerPage = 1000) where T : IIdentifiable
         {
             FeedOptions options = new FeedOptions() { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = true };
@@ -364,6 +530,33 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
+        public async Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, SqlQuerySpec sqlQuerySpec, int itemsPerPage = 1000) where T : IIdentifiable
+        {
+            FeedOptions options = new FeedOptions() { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = true };
+
+            List<T> results = new List<T>();
+
+            IDocumentQuery<T> queryable = _documentClient.CreateDocumentQuery<T>(_collectionUri, sqlQuerySpec, options).AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                if (results.Count >= itemsPerPage)
+                {
+                    await persistBatchToIndex(results);
+                    results.Clear();
+                }
+
+                results.AddRange(await queryable.ExecuteNextAsync<T>());
+            }
+
+            if (results.Any())
+            {
+                await persistBatchToIndex(results);
+                results.Clear();
+            }
+        }
+
+        [Obsolete]
         public IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql = null, int itemsPerPage = -1) where T : IIdentifiable
         {
             // Set some common query options
@@ -379,12 +572,41 @@ namespace CalculateFunding.Common.CosmosDb
             return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).AsQueryable();
         }
 
+        public IQueryable<DocumentEntity<T>> QueryDocuments<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1) where T : IIdentifiable
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
+
+            if (sqlQuerySpec != null)
+            {
+                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
+                    sqlQuerySpec,
+                    queryOptions).AsQueryable();
+            }
+
+            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).AsQueryable();
+        }
+
+        [Obsolete]
         public IEnumerable<string> QueryAsJson(string directSql = null, int itemsPerPage = -1)
         {
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
 
             IEnumerable<Document> documents = _documentClient.CreateDocumentQuery<Document>(_collectionUri, directSql, queryOptions).ToArray();
+            foreach (Document document in documents)
+            {
+                dynamic json = document;
+                yield return JsonConvert.SerializeObject(json.Content); // haven't tried this yet!
+            }
+        }
+
+        public IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec = null, int itemsPerPage = -1)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
+
+            IEnumerable<Document> documents = _documentClient.CreateDocumentQuery<Document>(_collectionUri, sqlQuerySpec, queryOptions).ToArray();
             foreach (Document document in documents)
             {
                 dynamic json = document;
