@@ -198,10 +198,7 @@ namespace CalculateFunding.Common.CosmosDb
         [Obsolete]
         public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(string directSql, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable
         {
-            if (string.IsNullOrEmpty(directSql))
-            {
-                throw new ArgumentNullException(nameof(directSql));
-            }
+            Guard.IsNullOrWhiteSpace(directSql, nameof(directSql));
 
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions
@@ -220,7 +217,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable
         {
-            if (sqlQuerySpec == null) throw new ArgumentNullException(nameof(sqlQuerySpec));
+            Guard.ArgumentNotNull(sqlQuerySpec, nameof(sqlQuerySpec));
 
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions
@@ -582,40 +579,59 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        [Obsolete]
-        public IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql = null, int itemsPerPage = -1) where T : IIdentifiable
+        public IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable
         {
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
 
-            if (!string.IsNullOrEmpty(directSql))
-            {
-                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
-                    directSql,
-                    queryOptions).AsQueryable();
-            }
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions)
+                .AsQueryable();
+        }
 
-            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).AsQueryable();
+        [Obsolete]
+        public IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql, int itemsPerPage = -1) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(directSql, nameof(directSql));
+
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
+
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, directSql, queryOptions)
+                .AsQueryable();
         }
 
         public IQueryable<DocumentEntity<T>> QueryDocuments<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1) where T : IIdentifiable
         {
+            Guard.ArgumentNotNull(sqlQuerySpec, nameof(sqlQuerySpec));
+
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
 
-            if (sqlQuerySpec != null)
-            {
-                return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri,
-                    sqlQuerySpec,
-                    queryOptions).AsQueryable();
-            }
+            return _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, sqlQuerySpec, queryOptions)
+                .AsQueryable();
+        }
 
-            return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).AsQueryable();
+        public IEnumerable<string> QueryAsJson(int itemsPerPage = -1)
+        {
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
+
+            IEnumerable<Document> documents = _documentClient.CreateDocumentQuery<Document>(_collectionUri, (string)null, queryOptions).ToArray();
+            foreach (Document document in documents)
+            {
+                dynamic json = document;
+                yield return JsonConvert.SerializeObject(json.Content); // haven't tried this yet!
+            }
         }
 
         [Obsolete]
-        public IEnumerable<string> QueryAsJson(string directSql = null, int itemsPerPage = -1)
+        public IEnumerable<string> QueryAsJson(string directSql, int itemsPerPage = -1)
         {
+            Guard.IsNullOrWhiteSpace(directSql, nameof(directSql));
+
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
 
@@ -627,8 +643,10 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec = null, int itemsPerPage = -1)
+        public IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1)
         {
+            Guard.ArgumentNotNull(sqlQuerySpec, nameof(sqlQuerySpec));
+
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
 

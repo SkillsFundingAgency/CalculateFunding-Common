@@ -95,13 +95,19 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, SqlQuerySpec sqlQuerySpec, int itemsPerPage = 1000) where T : IIdentifiable;
 
-        IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql = null, int itemsPerPage = -1) where T : IIdentifiable;
+        IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable;
+
+        [Obsolete]
+        IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql, int itemsPerPage = -1) where T : IIdentifiable;
 
         IQueryable<DocumentEntity<T>> QueryDocuments<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1) where T : IIdentifiable;
 
-        IEnumerable<string> QueryAsJson(string directSql = null, int itemsPerPage = -1);
+        IEnumerable<string> QueryAsJson(int itemsPerPage = -1);
 
-        IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec = null, int itemsPerPage = -1);
+        [Obsolete]
+        IEnumerable<string> QueryAsJson(string directSql, int itemsPerPage = -1);
+
+        IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1);
 
         Task<HttpStatusCode> DeleteAsync<T>(string id) where T : IIdentifiable;
 
