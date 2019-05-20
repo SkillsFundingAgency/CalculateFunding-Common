@@ -39,7 +39,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
         [Obsolete]
-        IQueryable<T> Query<T>(string directSql = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        IQueryable<T> Query<T>(string directSql, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
@@ -49,7 +49,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// <param name="sqlQuerySpec">SQL Query Spec - may not work</param>
         /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
-        IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec = null, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         [Obsolete]
         Task<IEnumerable<T>> QueryPartitionedEntity<T>(string directSql, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable;
