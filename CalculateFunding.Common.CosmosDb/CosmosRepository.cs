@@ -700,9 +700,17 @@ namespace CalculateFunding.Common.CosmosDb
                 PartitionKey = string.IsNullOrWhiteSpace(partitionKey) ? null : new PartitionKey(partitionKey)
             };
 
-            DocumentEntity<T> doc = _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions).Where(d => d.Id == entity.Id).SingleOrDefault();
+            //SingleOrDefault not supported on the current Cosmos driver
+            List<DocumentEntity<T>> documents = _documentClient
+                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions)
+                .Where(d => d.Id == entity.Id)
+                .ToList();
 
-            if (doc == null)
+            DocumentEntity<T> doc = new DocumentEntity<T>();
+
+            if (documents.Count > 1) throw new Exception($"Expected 1 record, found {documents.Count}, aborting");
+
+            if (documents.Count == 0)
             {
                 doc = new DocumentEntity<T>(entity)
                 {
@@ -713,6 +721,8 @@ namespace CalculateFunding.Common.CosmosDb
             }
             else
             {
+                doc = documents.ElementAt(0);
+
                 doc.Content = entity;
                 doc.UpdatedAt = DateTimeOffset.Now;
             }
