@@ -82,5 +82,24 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
             return jobs.Content;
         }
+
+        public async Task<ApiResponse<IEnumerable<JobDefinition>>> GetJobDefinitions()
+        {
+            string url = "jobdefinitions";
+
+            return await GetAsync<IEnumerable<JobDefinition>>(url);
+        }
+
+        public async Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo)
+        {
+            const string dateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
+
+            string dateTimeFromAsString = dateTimeFrom.ToUniversalTime().ToString(dateFormat);
+            string dateTimeToAsString = dateTimeTo.ToUniversalTime().ToString(dateFormat);
+
+            string url = $"noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}";
+
+            return await GetAsync<IEnumerable<JobSummary>>(url);
+        }
     }
 }

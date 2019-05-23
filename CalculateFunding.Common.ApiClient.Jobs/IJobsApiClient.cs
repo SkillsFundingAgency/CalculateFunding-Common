@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
@@ -16,5 +17,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         Task<Job> CreateJob(JobCreateModel jobCreateModel);
 
         Task<IEnumerable<Job>> CreateJobs(IEnumerable<JobCreateModel> jobCreateModels);
+
+        Task<ApiResponse<IEnumerable<JobDefinition>>> GetJobDefinitions();
+
+        Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
     }
 }
