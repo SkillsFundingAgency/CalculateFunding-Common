@@ -133,6 +133,6 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
 
-        int GetThroughput();
+        Task<int> GetThroughput();
     }
 }

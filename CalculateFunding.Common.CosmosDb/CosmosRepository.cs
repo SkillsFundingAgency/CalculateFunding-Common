@@ -76,29 +76,61 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task SetThroughput(int requestUnits)
         {
-            //Fetch the resource to be updated
-            OfferV2 offer = (OfferV2)_documentClient.CreateOfferQuery()
-                .Where(r => r.ResourceLink == _collection.Resource.SelfLink)
-                .SingleOrDefault();
+            await EnsureCollectionExists();
 
-            if (offer.Content.OfferThroughput != requestUnits)
+            int currentThroughput = await GetThroughput();
+
+            if(currentThroughput == requestUnits)
             {
-                // Set the throughput to the new value, for example 12,000 request units per second
-                offer = new OfferV2(offer, requestUnits);
-
-                //Now persist these changes to the database by replacing the original resource
-                await _documentClient.ReplaceOfferAsync(offer);
+                return;
             }
+
+            OfferV2 existingOffer = null;
+
+            IDocumentQuery<Offer> offerQuery = _documentClient.CreateOfferQuery()
+                  .Where(o => o.ResourceLink == _collection.Resource.SelfLink)
+                 .AsDocumentQuery();
+
+            while (offerQuery.HasMoreResults)
+            {
+                foreach (var offer in await offerQuery.ExecuteNextAsync<OfferV2>())
+                {
+                    existingOffer = offer;
+                }
+            }
+            if (existingOffer == null)
+            {
+                throw new Exception("Failed to retrieve current offer to update");
+            }
+
+            OfferV2 newOffer = new OfferV2(existingOffer, requestUnits);
+
+            await _documentClient.ReplaceOfferAsync(newOffer);
         }
 
-        public int GetThroughput()
+        public async Task<int> GetThroughput()
         {
-            //Fetch the resource to be updated
-            OfferV2 offer = (OfferV2)_documentClient.CreateOfferQuery()
-                .Where(r => r.ResourceLink == _collection.Resource.SelfLink)
-                .SingleOrDefault();
+            await EnsureCollectionExists();
 
-            return offer.Content.OfferThroughput;
+            OfferV2 existingOffer = null;
+
+            IDocumentQuery<Offer> offerQuery = _documentClient.CreateOfferQuery()
+                  .Where(o => o.ResourceLink == _collection.Resource.SelfLink)
+                 .AsDocumentQuery();
+
+            while (offerQuery.HasMoreResults)
+            {
+                foreach (var offer in await offerQuery.ExecuteNextAsync<OfferV2>())
+                {
+                    existingOffer = offer;
+                }
+            }
+            if (existingOffer == null)
+            {
+                throw new Exception("Failed to retrieve current offer to update");
+            }
+
+            return existingOffer.Content.OfferThroughput;
         }
 
         private static string GetDocumentType<T>()
