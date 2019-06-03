@@ -97,7 +97,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
             string dateTimeFromAsString = dateTimeFrom.ToUniversalTime().ToString(dateFormat);
             string dateTimeToAsString = dateTimeTo.ToUniversalTime().ToString(dateFormat);
 
-            string url = $"noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}";
+            string url = $"jobs/noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}";
 
             return await GetAsync<IEnumerable<JobSummary>>(url);
         }
