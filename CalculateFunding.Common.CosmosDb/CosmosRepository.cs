@@ -85,19 +85,10 @@ namespace CalculateFunding.Common.CosmosDb
                 return;
             }
 
-            OfferV2 existingOffer = null;
-
-            IDocumentQuery<Offer> offerQuery = _documentClient.CreateOfferQuery()
+            Offer existingOffer = _documentClient.CreateOfferQuery()
                   .Where(o => o.ResourceLink == _collection.Resource.SelfLink)
-                 .AsDocumentQuery();
+                 .AsEnumerable().FirstOrDefault();
 
-            while (offerQuery.HasMoreResults)
-            {
-                foreach (var offer in await offerQuery.ExecuteNextAsync<OfferV2>())
-                {
-                    existingOffer = offer;
-                }
-            }
             if (existingOffer == null)
             {
                 throw new Exception("Failed to retrieve current offer to update");
@@ -112,25 +103,16 @@ namespace CalculateFunding.Common.CosmosDb
         {
             await EnsureCollectionExists();
 
-            OfferV2 existingOffer = null;
-
-            IDocumentQuery<Offer> offerQuery = _documentClient.CreateOfferQuery()
+            Offer existingOffer = _documentClient.CreateOfferQuery()
                   .Where(o => o.ResourceLink == _collection.Resource.SelfLink)
-                 .AsDocumentQuery();
+                 .AsEnumerable().FirstOrDefault();
 
-            while (offerQuery.HasMoreResults)
-            {
-                foreach (var offer in await offerQuery.ExecuteNextAsync<OfferV2>())
-                {
-                    existingOffer = offer;
-                }
-            }
             if (existingOffer == null)
             {
                 throw new Exception("Failed to retrieve current offer to update");
             }
 
-            return existingOffer.Content.OfferThroughput;
+            return ((OfferV2)existingOffer).Content.OfferThroughput;
         }
 
         private static string GetDocumentType<T>()
