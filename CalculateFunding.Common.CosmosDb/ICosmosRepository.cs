@@ -18,9 +18,9 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task SetThroughput(int requestUnits);
 
-        IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable;
+        IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        Task<DocumentEntity<T>> ReadAsync<T>(string id) where T : IIdentifiable;
+        Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
@@ -109,7 +109,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1);
 
-        Task<HttpStatusCode> DeleteAsync<T>(string id) where T : IIdentifiable;
+        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 

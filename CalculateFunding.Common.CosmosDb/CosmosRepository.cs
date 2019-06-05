@@ -120,17 +120,21 @@ namespace CalculateFunding.Common.CosmosDb
             return typeof(T).Name;
         }
 
-        public IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
+        public IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             // Set some common query options
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage };
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = itemsPerPage, EnableCrossPartitionQuery = enableCrossPartitionQuery };
 
             return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
         }
 
-        public async Task<DocumentEntity<T>> ReadAsync<T>(string id) where T : IIdentifiable
+        public async Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
-            FeedResponse<DocumentEntity<T>> response = await Read<T>(itemsPerPage: 1).Where(x => x.Id == id).AsDocumentQuery().ExecuteNextAsync<DocumentEntity<T>>();
+            FeedResponse<DocumentEntity<T>> response = await Read<T>(itemsPerPage: 1, enableCrossPartitionQuery: enableCrossPartitionQuery)
+                .Where(x => x.Id == id)
+                .AsDocumentQuery()
+                .ExecuteNextAsync<DocumentEntity<T>>();
+
             return response.FirstOrDefault();
         }
 
@@ -672,9 +676,9 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task<HttpStatusCode> DeleteAsync<T>(string id) where T : IIdentifiable
+        public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
-            DocumentEntity<T> doc = await ReadAsync<T>(id);
+            DocumentEntity<T> doc = await ReadAsync<T>(id, enableCrossPartitionQuery);
             doc.Deleted = true;
             ResourceResponse<Document> response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), doc);
             return response.StatusCode;
