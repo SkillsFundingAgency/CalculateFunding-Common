@@ -20,7 +20,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        DocumentEntity<T> Read<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.

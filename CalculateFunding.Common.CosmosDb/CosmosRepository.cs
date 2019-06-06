@@ -128,12 +128,20 @@ namespace CalculateFunding.Common.CosmosDb
             return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
         }
 
-        public DocumentEntity<T> Read<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
-            IQueryable<DocumentEntity<T>> queryable = Read<T>(itemsPerPage: 1, enableCrossPartitionQuery: enableCrossPartitionQuery)
-                .Where(x => x.Id == id);
+            List<DocumentEntity<T>> allResults = new List<DocumentEntity<T>>();
 
-            return queryable.AsEnumerable().FirstOrDefault();
+            IDocumentQuery<DocumentEntity<T>> queryable = Read<T>(itemsPerPage: 1, enableCrossPartitionQuery: enableCrossPartitionQuery)
+                .Where(x => x.Id == id)
+                .AsDocumentQuery();
+
+            while (queryable.HasMoreResults)
+            {
+                allResults.AddRange(await queryable.ExecuteNextAsync<DocumentEntity<T>>());
+            }
+
+            return allResults.FirstOrDefault();
         }
 
         /// <summary>
@@ -676,7 +684,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable
         {
-            DocumentEntity<T> doc = Read<T>(id, enableCrossPartitionQuery);
+            DocumentEntity<T> doc = await ReadAsync<T>(id, enableCrossPartitionQuery);
             ResourceResponse<Document> response;
 
             if (hardDelete)
