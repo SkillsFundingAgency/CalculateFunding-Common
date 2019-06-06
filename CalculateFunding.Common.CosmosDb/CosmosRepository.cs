@@ -718,10 +718,11 @@ namespace CalculateFunding.Common.CosmosDb
             return doc;
         }
 
-        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false) where T : IIdentifiable
         {
             FeedOptions feedOptions = new FeedOptions()
             {
+                EnableCrossPartitionQuery = string.IsNullOrWhiteSpace(partitionKey) ? enableCrossPartitionQuery : false,
                 PartitionKey = string.IsNullOrWhiteSpace(partitionKey) ? null : new PartitionKey(partitionKey)
             };
 
@@ -830,15 +831,15 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
             {
-                Task.WaitAll(UpsertAsync(item));
+                Task.WaitAll(UpsertAsync(entity: item, enableCrossPartitionQuery: enableCrossPartitionQuery));
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
             List<Task> allTasks = new List<Task>(entities.Count());
             SemaphoreSlim throttler = new SemaphoreSlim(initialCount: degreeOfParallelism);
@@ -850,7 +851,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity.Value, entity.Key);
+                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery);
                         }
                         finally
                         {
