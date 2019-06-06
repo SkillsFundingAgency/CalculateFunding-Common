@@ -128,14 +128,12 @@ namespace CalculateFunding.Common.CosmosDb
             return _documentClient.CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, queryOptions).Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
         }
 
-        public async Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public DocumentEntity<T> Read<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
         {
-            FeedResponse<DocumentEntity<T>> response = await Read<T>(itemsPerPage: 1, enableCrossPartitionQuery: enableCrossPartitionQuery)
-                .Where(x => x.Id == id)
-                .AsDocumentQuery()
-                .ExecuteNextAsync<DocumentEntity<T>>();
+            IQueryable<DocumentEntity<T>> queryable = Read<T>(itemsPerPage: 1, enableCrossPartitionQuery: enableCrossPartitionQuery)
+                .Where(x => x.Id == id);
 
-            return response.FirstOrDefault();
+            return queryable.AsEnumerable().FirstOrDefault();
         }
 
         /// <summary>
@@ -676,11 +674,20 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable
         {
-            DocumentEntity<T> doc = await ReadAsync<T>(id, enableCrossPartitionQuery);
-            doc.Deleted = true;
-            ResourceResponse<Document> response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), doc);
+            DocumentEntity<T> doc = Read<T>(id, enableCrossPartitionQuery);
+            ResourceResponse<Document> response;
+
+            if (hardDelete)
+            {
+                response = await _documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id));
+            }
+            else
+            {
+                doc.Deleted = true;
+                response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), doc);
+            }
             return response.StatusCode;
         }
 
@@ -711,7 +718,7 @@ namespace CalculateFunding.Common.CosmosDb
             return doc;
         }
 
-        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable
+        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false) where T : IIdentifiable
         {
             FeedOptions feedOptions = new FeedOptions()
             {
@@ -743,6 +750,12 @@ namespace CalculateFunding.Common.CosmosDb
 
                 doc.Content = entity;
                 doc.UpdatedAt = DateTimeOffset.Now;
+            }
+
+            if (undelete)
+            {
+                // need to reset the deleted flag
+                doc.Deleted = false;
             }
 
             ResourceResponse<Document> response = await _documentClient.UpsertDocumentAsync(_collectionUri, doc);
@@ -856,7 +869,7 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task<HttpStatusCode> UpdateAsync<T>(T entity) where T : Reference
+        public async Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference
         {
             string documentType = GetDocumentType<T>();
             DocumentEntity<T> doc = new DocumentEntity<T>(entity);
@@ -866,6 +879,13 @@ namespace CalculateFunding.Common.CosmosDb
             }
             doc.DocumentType = documentType; // in case not specified
             doc.UpdatedAt = DateTimeOffset.Now;
+
+            if (undelete)
+            {
+                // need to reset deleted flag
+                doc.Deleted = false;
+            }
+
             ResourceResponse<Document> response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, entity.Id), doc);
             return response.StatusCode;
         }

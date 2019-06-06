@@ -20,7 +20,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        DocumentEntity<T> Read<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
@@ -109,13 +109,13 @@ namespace CalculateFunding.Common.CosmosDb
 
         IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1);
 
-        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool undelete = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
         Task<DocumentEntity<T>> CreateDocumentAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
-        Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
+        Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(KeyValuePair<string, T> entity) where T : IIdentifiable;
 
@@ -129,7 +129,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
-        Task<HttpStatusCode> UpdateAsync<T>(T entity) where T : Reference;
+        Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
 
