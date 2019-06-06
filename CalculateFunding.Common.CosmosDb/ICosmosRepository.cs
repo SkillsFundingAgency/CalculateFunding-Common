@@ -109,7 +109,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1);
 
-        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool undelete = false) where T : IIdentifiable;
+        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
