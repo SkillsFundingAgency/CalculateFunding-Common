@@ -648,14 +648,21 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false, string partitionKey = null) where T : IIdentifiable
         {
             DocumentEntity<T> doc = await ReadAsync<T>(id, enableCrossPartitionQuery);
             ResourceResponse<Document> response;
 
             if (hardDelete)
             {
-                response = await _documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id));
+                RequestOptions requestOptions = null;
+
+                if (partitionKey != null)
+                {
+                    requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionKey) };
+                }
+
+                response = await _documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), options: requestOptions);
             }
             else
             {
