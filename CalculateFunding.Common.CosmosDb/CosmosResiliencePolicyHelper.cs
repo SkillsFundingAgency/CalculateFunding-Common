@@ -59,7 +59,7 @@ namespace CalculateFunding.Common.CosmosDb
                 .WaitAndRetry(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(120) });
 
             Policy opertionInProgressExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode == 423)
-                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60) });
+                .WaitAndRetry(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60) });
 
             Policy circuitBreaker = Policy.Handle<DocumentClientException>().CircuitBreaker(1000, TimeSpan.FromMinutes(1));
 
