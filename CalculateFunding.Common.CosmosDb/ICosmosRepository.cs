@@ -121,6 +121,10 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<ResourceResponse<Document>> CreateWithResponseAsync<T>(T entity) where T : IIdentifiable;
 
+        Task BulkDeleteAsync<T>(IEnumerable<T> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable;
+
+        Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable;
+
         Task BulkCreateAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
         Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;

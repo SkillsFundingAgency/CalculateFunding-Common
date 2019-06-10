@@ -71,6 +71,30 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
+        private async Task<HttpStatusCode> DeleteAsync<T>(DocumentEntity<T> entity, bool hardDelete = false, string partitionKey = null) where T : IIdentifiable
+        {
+            ResourceResponse<Document> response;
+
+            if (hardDelete)
+            {
+                RequestOptions requestOptions = null;
+
+                if (partitionKey != null)
+                {
+                    requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionKey) };
+                }
+
+                response = await _documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, entity.Id), options: requestOptions);
+            }
+            else
+            {
+                entity.Deleted = true;
+                response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, entity.Id), entity);
+            }
+
+            return response.StatusCode;
+        }
+
         private static string GetDocumentType<T>()
         {
             return typeof(T).Name;
@@ -651,25 +675,8 @@ namespace CalculateFunding.Common.CosmosDb
         public async Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false, string partitionKey = null) where T : IIdentifiable
         {
             DocumentEntity<T> doc = await ReadAsync<T>(id, enableCrossPartitionQuery);
-            ResourceResponse<Document> response;
 
-            if (hardDelete)
-            {
-                RequestOptions requestOptions = null;
-
-                if (partitionKey != null)
-                {
-                    requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionKey) };
-                }
-
-                response = await _documentClient.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), options: requestOptions);
-            }
-            else
-            {
-                doc.Deleted = true;
-                response = await _documentClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseName, _collectionName, doc.Id), doc);
-            }
-            return response.StatusCode;
+            return await DeleteAsync(doc, hardDelete, partitionKey);
         }
 
         public async Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable
@@ -810,6 +817,32 @@ namespace CalculateFunding.Common.CosmosDb
                     throw task.Exception;
                 }
             }
+        }
+
+        public async Task BulkDeleteAsync<T>(IEnumerable<T> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable
+        {
+            await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
+            {
+                DocumentEntity<T> document = new DocumentEntity<T>(item)
+                {
+                    UpdatedAt = DateTimeOffset.Now
+                };
+
+                Task.WaitAll(DeleteAsync(entity: document, hardDelete: hardDelete));
+            }));
+        }
+
+        public async Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable
+        {
+            await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
+            {
+                DocumentEntity<T> document = new DocumentEntity<T>(item.Value)
+                {
+                    UpdatedAt = DateTimeOffset.Now
+                };
+
+                Task.WaitAll(DeleteAsync(entity: document, hardDelete: hardDelete, partitionKey: item.Key));
+            }));
         }
 
         public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable
