@@ -115,7 +115,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<DocumentEntity<T>> CreateDocumentAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
-        Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false) where T : IIdentifiable;
+        Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(KeyValuePair<string, T> entity) where T : IIdentifiable;
 
@@ -129,9 +129,9 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
-        Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable;
 
-        Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable;
 
         Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
 

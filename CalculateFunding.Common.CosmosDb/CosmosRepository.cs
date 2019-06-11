@@ -706,7 +706,7 @@ namespace CalculateFunding.Common.CosmosDb
             return doc;
         }
 
-        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable
         {
             FeedOptions feedOptions = new FeedOptions()
             {
@@ -714,30 +714,36 @@ namespace CalculateFunding.Common.CosmosDb
                 PartitionKey = string.IsNullOrWhiteSpace(partitionKey) ? null : new PartitionKey(partitionKey)
             };
 
-            //SingleOrDefault not supported on the current Cosmos driver
-            List<DocumentEntity<T>> documents = _documentClient
-                .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions)
-                .Where(d => d.Id == entity.Id)
-                .ToList();
-
             DocumentEntity<T> doc = new DocumentEntity<T>();
 
-            if (documents.Count > 1) throw new Exception($"Expected 1 record, found {documents.Count}, aborting");
-
-            if (documents.Count == 0)
+            if (maintainCreatedDate)
             {
-                doc = new DocumentEntity<T>(entity)
+                //SingleOrDefault not supported on the current Cosmos driver
+                List<DocumentEntity<T>> documents = _documentClient
+                    .CreateDocumentQuery<DocumentEntity<T>>(_collectionUri, feedOptions)
+                    .Where(d => d.Id == entity.Id)
+                    .ToList();
+
+
+                if (documents.Count > 1) throw new Exception($"Expected 1 record, found {documents.Count}, aborting");
+
+                if (documents.Count == 0)
                 {
-                    DocumentType = GetDocumentType<T>(),
-                    CreatedAt = DateTimeOffset.Now,
-                    UpdatedAt = DateTimeOffset.Now
-                };
+                    doc.DocumentType = GetDocumentType<T>();
+                    doc.CreatedAt = DateTimeOffset.Now;
+                    doc.UpdatedAt = DateTimeOffset.Now;
+                }
+                else
+                {
+                    doc = documents.ElementAt(0);
+                    doc.UpdatedAt = DateTimeOffset.Now;
+                }
+
             }
             else
             {
-                doc = documents.ElementAt(0);
-
-                doc.Content = entity;
+                doc.DocumentType = GetDocumentType<T>();
+                doc.CreatedAt = DateTimeOffset.Now;
                 doc.UpdatedAt = DateTimeOffset.Now;
             }
 
@@ -746,6 +752,8 @@ namespace CalculateFunding.Common.CosmosDb
                 // need to reset the deleted flag
                 doc.Deleted = false;
             }
+
+            doc.Content = entity;
 
             ResourceResponse<Document> response = await _documentClient.UpsertDocumentAsync(_collectionUri, doc);
             return response.StatusCode;
@@ -845,15 +853,15 @@ namespace CalculateFunding.Common.CosmosDb
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable
         {
             await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
             {
-                Task.WaitAll(UpsertAsync(entity: item, enableCrossPartitionQuery: enableCrossPartitionQuery));
+                Task.WaitAll(UpsertAsync(item, maintainCreatedDate: maintainCreatedDate, enableCrossPartitionQuery: enableCrossPartitionQuery));
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable
         {
             List<Task> allTasks = new List<Task>(entities.Count());
             SemaphoreSlim throttler = new SemaphoreSlim(initialCount: degreeOfParallelism);
@@ -865,7 +873,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery);
+                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery, maintainCreatedDate: maintainCreatedDate);
                         }
                         finally
                         {
