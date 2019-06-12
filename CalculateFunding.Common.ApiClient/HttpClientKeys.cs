@@ -21,5 +21,7 @@
         public const string Profiling = "Profiling";
 
         public const string External = "External";
+
+        public const string Providers = "Providers";
     }
 }

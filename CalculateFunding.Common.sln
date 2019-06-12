@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2041
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
 EndProject
@@ -41,7 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Profiling", "CalculateFunding.Common.ApiClient.Profiling\CalculateFunding.Common.ApiClient.Profiling.csproj", "{0AE851C6-9132-423B-846E-E3DAE3B3C48E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Storage", "CalculateFunding.Common.Storage\CalculateFunding.Common.Storage.csproj", "{D4903252-C5E9-4424-866C-BF3109914435}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Storage", "CalculateFunding.Common.Storage\CalculateFunding.Common.Storage.csproj", "{D4903252-C5E9-4424-866C-BF3109914435}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Providers", "CalculateFunding.Common.ApiClient.Providers\CalculateFunding.Common.ApiClient.Providers.csproj", "{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,10 @@ Global
 		{D4903252-C5E9-4424-866C-BF3109914435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4903252-C5E9-4424-866C-BF3109914435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4903252-C5E9-4424-866C-BF3109914435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +137,7 @@ Global
 		{2EA540A6-C59F-440D-87FE-2A199786B803} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{0AE851C6-9132-423B-846E-E3DAE3B3C48E} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{D4903252-C5E9-4424-866C-BF3109914435} = {6D586895-4914-4C85-87ED-79B5A10D0431}
+		{BE66FFEA-13AC-41B1-B0BF-F729A243EDC7} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}
