@@ -129,9 +129,9 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
-        Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable;
+        Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable;
 
-        Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable;
+        Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
 

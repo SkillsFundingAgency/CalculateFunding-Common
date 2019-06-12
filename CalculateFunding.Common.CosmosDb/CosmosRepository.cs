@@ -853,15 +853,15 @@ namespace CalculateFunding.Common.CosmosDb
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
         {
             await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
             {
-                Task.WaitAll(UpsertAsync(item, maintainCreatedDate: maintainCreatedDate, enableCrossPartitionQuery: enableCrossPartitionQuery));
+                Task.WaitAll(UpsertAsync(item, maintainCreatedDate: maintainCreatedDate, enableCrossPartitionQuery: enableCrossPartitionQuery, undelete: undelete));
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
         {
             List<Task> allTasks = new List<Task>(entities.Count());
             SemaphoreSlim throttler = new SemaphoreSlim(initialCount: degreeOfParallelism);
@@ -873,7 +873,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery, maintainCreatedDate: maintainCreatedDate);
+                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
                         }
                         finally
                         {
