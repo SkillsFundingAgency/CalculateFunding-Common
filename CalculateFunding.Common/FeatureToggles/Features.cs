@@ -11,19 +11,11 @@ namespace CalculateFunding.Common.FeatureToggles
             _config = config;
         }
 
-        public bool IsAllocationLineMajorMinorVersioningEnabled()
-        {
-            return CheckSetting("allocationLineMajorMinorVersioningEnabled");
-        }
+        
 
         public bool IsProviderProfilingServiceDisabled()
         {
             return CheckSetting("providerProfilingServiceDisabled");
-        }
-
-        public bool IsAggregateSupportInCalculationsEnabled()
-        {
-            return CheckSetting("aggregateSupportInCalculationsEnabled");
         }
 
         public bool IsPublishButtonEnabled()
@@ -51,11 +43,6 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("notificationsEnabled");
         }
 
-        public bool IsAggregateOverCalculationsEnabled()
-        {
-            return CheckSetting("aggregateOverCalculationsEnabled");
-        }
-
         public bool IsNewEditCalculationPageEnabled()
         {
             return CheckSetting("newEditCalculationPageEnabled");
@@ -64,16 +51,6 @@ namespace CalculateFunding.Common.FeatureToggles
         public bool IsNewManageDataSourcesPageEnabled()
         {
             return CheckSetting("newManageDataSourcesPageEnabled");
-        }
-
-        public bool IsAllAllocationResultsVersionsInFeedIndexEnabled()
-        {
-            return CheckSetting("allAllocationResultsVersionsInFeedIndexEnabled");
-        }
-
-        public bool IsProviderVariationsEnabled()
-        {
-            return CheckSetting("providerVariationsEnabled");
         }
 
         public bool IsNewProviderCalculationResultsIndexEnabled()
@@ -85,16 +62,6 @@ namespace CalculateFunding.Common.FeatureToggles
 	    {
 		    return CheckSetting("providerInformationViewInViewFundingPageEnabled");
 	    }
-
-        public bool IsCheckJobStatusForChooseAndRefreshEnabled()
-        {
-            return CheckSetting("checkJobStatusForChooseAndRefreshEnabled");
-        }
-
-        public bool IsDuplicateCalculationNameCheckEnabled()
-        {
-            return CheckSetting("duplicateCalculationNameCheckEnabled");
-        }
 
         public bool IsDynamicBuildProjectEnabled()
         {

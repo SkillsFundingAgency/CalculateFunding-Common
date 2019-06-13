@@ -4,10 +4,6 @@
     {
         bool IsProviderProfilingServiceDisabled();
 
-        bool IsAllocationLineMajorMinorVersioningEnabled();
-
-        bool IsAggregateSupportInCalculationsEnabled();
-
         bool IsPublishButtonEnabled();
 
 		bool IsPublishAndApprovePageFiltersEnabled();
@@ -18,23 +14,13 @@
 
         bool IsNotificationsEnabled();
 
-        bool IsAggregateOverCalculationsEnabled();
-
         bool IsNewEditCalculationPageEnabled();
 
         bool IsNewManageDataSourcesPageEnabled();
 
-        bool IsAllAllocationResultsVersionsInFeedIndexEnabled();
-
-        bool IsProviderVariationsEnabled();
-
         bool IsNewProviderCalculationResultsIndexEnabled();
 
 	    bool IsProviderInformationViewInViewFundingPageEnabled();
-
-        bool IsCheckJobStatusForChooseAndRefreshEnabled();
-
-        bool IsDuplicateCalculationNameCheckEnabled();
 
         bool IsDynamicBuildProjectEnabled();
 
