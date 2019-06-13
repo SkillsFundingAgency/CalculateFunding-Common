@@ -160,6 +160,54 @@
             }
         }
 
+        public async Task<NoValidatedContentApiResponse> ValidatedPostAsync<TRequest>(string url, TRequest request, CancellationToken cancellationToken = default(CancellationToken), TimeSpan? timeout = null)
+        {
+            if (url == null)
+            {
+                throw new ArgumentNullException(nameof(url));
+            }
+
+            HttpClient httpClient = await GetHttpClient();
+            if (timeout.HasValue)
+            {
+                httpClient.Timeout = timeout.Value;
+            }
+
+            if (cancellationToken == default(CancellationToken))
+            {
+                cancellationToken = CurrentCancellationToken();
+            }
+
+            string json = JsonConvert.SerializeObject(request, _serializerSettings);
+            _logger.Debug($"ApiClient Validated POST: {{clientKey}}://{{url}} ({typeof(TRequest).Name})", _clientKey, url);
+            using (HttpResponseMessage response = await httpClient.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken))
+            {
+                if (response == null)
+                {
+                    throw new HttpRequestException($"Unable to connect to server. Url={httpClient.BaseAddress.AbsoluteUri}{url}");
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new NoValidatedContentApiResponse(response.StatusCode);
+                }
+
+                NoValidatedContentApiResponse apiResponse = new NoValidatedContentApiResponse(response.StatusCode);
+
+                if (apiResponse.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    if (response.Content != null)
+                    {
+                        apiResponse.ModelState = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(await response.Content.ReadAsStringAsync(), _serializerSettings);
+                    }
+
+                }
+
+                return apiResponse;
+            }
+        }
+
+
         public async Task<HttpStatusCode> PostAsync<TRequest>(string url, TRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (url == null)

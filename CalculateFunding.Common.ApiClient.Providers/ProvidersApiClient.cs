@@ -6,11 +6,8 @@ using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.Providers
@@ -59,14 +56,14 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await GetAsync<ProviderVersionSearchResults>(url);
         }
 
-        public async Task<HttpStatusCode> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers)
+        public async Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
             Guard.ArgumentNotNull(providers, nameof(providers));
 
             string url = $"providers/versions/{providerVersionId}";
 
-            return await PostAsync(url, providers);
+            return await ValidatedPostAsync<ProviderVersionViewModel>(url, providers);
         }
 
         public async Task<HttpStatusCode> SetProviderDateProviderVersion(int year, int month, int day, string providerVersionId)

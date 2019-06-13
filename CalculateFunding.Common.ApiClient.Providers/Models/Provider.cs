@@ -6,16 +6,16 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
     public class Provider
     {
         [JsonProperty("providerVersionId_providerId")]
-        public string ProviderVersionIdProviderId;
+        public string ProviderVersionIdProviderId { get; set; }
 
         [JsonProperty("providerVersionId")]
-        public string ProviderVersionId;
+        public string ProviderVersionId { get; set; }
 
         [JsonProperty("providerId")]
-        public string ProviderId;
+        public string ProviderId { get; set; }
 
         [JsonProperty("trustStatus")]
-        public string TrustStatusViewModelString;
+        public string TrustStatusViewModelString { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -79,25 +79,6 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("successor")]
         public string Successor { get; set; }
-
-        [JsonIgnore]
-
-        public TrustStatus TrustStatus
-        {
-            get
-            {
-                if (Enum.TryParse<TrustStatus>(TrustStatusViewModelString, true, out var result))
-                {
-                    return result;
-                }
-
-                return TrustStatus.NotApplicable;
-            }
-            set
-            {
-                TrustStatusViewModelString = value.ToString();
-            }
-        }
 
         [JsonProperty("trustName")]
         public string TrustName { get; set; }
