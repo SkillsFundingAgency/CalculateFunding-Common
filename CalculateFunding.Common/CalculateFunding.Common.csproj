@@ -7,7 +7,7 @@
     <Description>Calculate Funding Service Common Functionality</Description>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.32.0</Version>
+    <Version>1.33.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

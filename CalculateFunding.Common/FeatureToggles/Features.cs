@@ -58,7 +58,12 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("newProviderCalculationResultsIndexEnabled");
         }
 
-	    public bool IsProviderInformationViewInViewFundingPageEnabled()
+        public bool IsProviderResultsSpecificationCleanupEnabled()
+        {
+            return CheckSetting("providerResultsSpecificationCleanupEnabled");
+        }
+
+        public bool IsProviderInformationViewInViewFundingPageEnabled()
 	    {
 		    return CheckSetting("providerInformationViewInViewFundingPageEnabled");
 	    }

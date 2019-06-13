@@ -1241,5 +1241,37 @@ namespace CalculateFunding.Common.UnitTests
             // Assert
             result.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void IsProviderResultsSpecificationCleanupEnabledTrue_ReturnsFalse()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("providerResultsSpecificationCleanupEnabled")].Returns("false");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsProviderResultsSpecificationCleanupEnabled();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsProviderResultsSpecificationCleanupEnabledTrue_ReturnsTrue()
+        {
+            // Arrange
+            IConfigurationSection config = Substitute.For<IConfigurationSection>();
+            config[Arg.Is("providerResultsSpecificationCleanupEnabled")].Returns("true");
+
+            IFeatureToggle features = new Features(config);
+
+            // Act
+            bool result = features.IsProviderResultsSpecificationCleanupEnabled();
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

@@ -19,8 +19,9 @@
         bool IsNewManageDataSourcesPageEnabled();
 
         bool IsNewProviderCalculationResultsIndexEnabled();
+        bool IsProviderResultsSpecificationCleanupEnabled();
 
-	    bool IsProviderInformationViewInViewFundingPageEnabled();
+        bool IsProviderInformationViewInViewFundingPageEnabled();
 
         bool IsDynamicBuildProjectEnabled();
 
