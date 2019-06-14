@@ -124,5 +124,14 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             return await PutAsync(url, masterProviderVersion);
         }
+
+        public async Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId)
+        {
+            Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
+
+            string url = $"providers/versions/{providerVersionId}";
+
+            return await GetAsync(url);
+        }
     }
 }

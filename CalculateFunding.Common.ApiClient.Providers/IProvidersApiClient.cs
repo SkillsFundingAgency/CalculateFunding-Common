@@ -22,5 +22,6 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<HttpStatusCode> SetMasterProviderVersion(MasterProviderVersionViewModel masterProviderVersion);
         Task<HttpStatusCode> SetProviderDateProviderVersion(int year, int month, int day, string providerVersionId);
         Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers);
+        Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId);
     }
 }

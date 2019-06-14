@@ -82,6 +82,34 @@
             }
         }
 
+        public async Task<HttpStatusCode> GetAsync(string url, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (url == null)
+            {
+                throw new ArgumentNullException(nameof(url));
+            }
+
+            HttpClient httpClient = await GetHttpClient();
+            httpClient.Timeout = TimeSpan.FromMinutes(5);
+
+            _logger.Debug("ApiClient GET: {clientKey}://{url}", _clientKey, url);
+
+            if (cancellationToken == default(CancellationToken))
+            {
+                cancellationToken = CurrentCancellationToken();
+            }
+
+            using (HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken))
+            {
+                if (response == null)
+                {
+                    throw new HttpRequestException($"Unable to connect to server. Url={httpClient.BaseAddress.AbsoluteUri}{url}");
+                }
+
+                return response.StatusCode;
+            }
+        }
+
         public async Task<ApiResponse<TResponse>> PostAsync<TResponse, TRequest>(string url, TRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (url == null)
