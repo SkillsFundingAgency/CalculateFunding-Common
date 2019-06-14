@@ -1,8 +1,7 @@
-﻿using CalculateFunding.Common.ApiClient.Providers.Models;
-using CalculateFunding.Common.Models;
+﻿using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
-namespace CalculateFunding.Models.Providers
+namespace CalculateFunding.Common.ApiClient.Providers.Models
 {
     public class ProviderVersionByDate : ProviderVersionMetadata, IIdentifiable
     {
