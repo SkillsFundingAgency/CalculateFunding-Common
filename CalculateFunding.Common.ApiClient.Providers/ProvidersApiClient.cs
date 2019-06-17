@@ -15,7 +15,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
     public class ProvidersApiClient : BaseApiClient, IProvidersApiClient
     {
         public ProvidersApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
-         : base(httpClientFactory, HttpClientKeys.Jobs, logger, cancellationTokenProvider)
+         : base(httpClientFactory, HttpClientKeys.Providers, logger, cancellationTokenProvider)
         { }
 
         public async Task<ApiResponse<ProviderVersionSearchResults>> SearchProviderVersions(SearchModel searchModel)
