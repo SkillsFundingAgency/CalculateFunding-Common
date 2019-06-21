@@ -2,8 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Utility;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.Storage
