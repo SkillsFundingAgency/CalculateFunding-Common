@@ -11,8 +11,6 @@ namespace CalculateFunding.Common.FeatureToggles
             _config = config;
         }
 
-        
-
         public bool IsProviderProfilingServiceDisabled()
         {
             return CheckSetting("providerProfilingServiceDisabled");
@@ -23,11 +21,6 @@ namespace CalculateFunding.Common.FeatureToggles
             return CheckSetting("publishButtonEnabled");
         }
 
-        public bool IsCalculationTimeoutEnabled()
-        {
-            return CheckSetting("calculationTimeoutEnabled");
-        }
-
 		public bool IsPublishAndApprovePageFiltersEnabled()
 		{
 			return CheckSetting("publishAndApprovePageFiltersEnabled");
@@ -36,11 +29,6 @@ namespace CalculateFunding.Common.FeatureToggles
         public bool IsRoleBasedAccessEnabled()
         {
             return CheckSetting("roleBasedAccessEnabled");
-        }
-
-        public bool IsNotificationsEnabled()
-        {
-            return CheckSetting("notificationsEnabled");
         }
 
         public bool IsNewEditCalculationPageEnabled()
@@ -112,21 +100,11 @@ namespace CalculateFunding.Common.FeatureToggles
 
             string value = _config[featureName];
 
-            if (string.IsNullOrEmpty(value))
-            {
-                return false;
-            }
-            else
-            {
-                if (bool.TryParse(value, out var result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            return string.IsNullOrEmpty(value)
+                ? false
+                : bool.TryParse(value, out var result)
+                    ? result
+                    : false;
         }
 	}
 }

@@ -8,11 +8,7 @@
 
 		bool IsPublishAndApprovePageFiltersEnabled();
 
-        bool IsCalculationTimeoutEnabled();
-
         bool IsRoleBasedAccessEnabled();
-
-        bool IsNotificationsEnabled();
 
         bool IsNewEditCalculationPageEnabled();
 
