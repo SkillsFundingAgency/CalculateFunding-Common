@@ -3,6 +3,7 @@ using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Common.ApiClient.Providers.Models.Search;
 using CalculateFunding.Common.ApiClient.Providers.ViewModels;
 using CalculateFunding.Common.Models.Search;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -23,5 +24,8 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<HttpStatusCode> SetProviderDateProviderVersion(int year, int month, int day, string providerVersionId);
         Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers);
         Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId);
+        Task<ApiResponse<IEnumerable<ProviderSummary>>> FetchCoreProviderData(string specificationId);
+        Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId);
+        Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId);
     }
 }

@@ -6,6 +6,7 @@ using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -132,6 +133,33 @@ namespace CalculateFunding.Common.ApiClient.Providers
             string url = $"providers/versions/{providerVersionId}";
 
             return await GetAsync(url);
+        }
+
+        public async Task<ApiResponse<IEnumerable<ProviderSummary>>> FetchCoreProviderData(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            string url = $"scopedproviders/get-provider-summaries/{specificationId}";
+
+            return await GetAsync<IEnumerable<ProviderSummary>>(url);
+        }
+
+        public async Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            string url = $"scopedproviders/set-cached-providers/{specificationId}";
+
+            return await GetAsync<int?>(url);
+        }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            string url = $"scopedproviders/get-provider-ids/{specificationId}";
+
+            return await GetAsync<IEnumerable<string>>(url);
         }
     }
 }
