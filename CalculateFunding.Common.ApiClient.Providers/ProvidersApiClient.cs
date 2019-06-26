@@ -108,13 +108,13 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
         }
 
-        public async Task<ApiResponse<ProviderVersionSearchResults>> GetProviderByIdFromMaster(string providerId)
+        public async Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
             string url = $"providers/master/{providerId}";
 
-            return await GetAsync<ProviderVersionSearchResults>(url);
+            return await GetAsync<ProviderVersionSearchResult>(url);
         }
 
         public async Task<HttpStatusCode> SetMasterProviderVersion(MasterProviderVersionViewModel masterProviderVersion)
