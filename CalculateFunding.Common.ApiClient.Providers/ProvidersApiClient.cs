@@ -47,14 +47,14 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await GetAsync<ProviderVersion>(url);
         }
 
-        public async Task<ApiResponse<ProviderVersionSearchResults>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId)
+        public async Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
             string url = $"providers/versions/{providerVersionId}/{providerId}";
 
-            return await GetAsync<ProviderVersionSearchResults>(url);
+            return await GetAsync<ProviderVersionSearchResult>(url);
         }
 
         public async Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers)

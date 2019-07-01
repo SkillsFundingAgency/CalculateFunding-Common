@@ -13,7 +13,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
     {
         Task<ApiResponse<ProviderVersion>> GetAllMasterProviders();
         Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId);
-        Task<ApiResponse<ProviderVersionSearchResults>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId);
+        Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId);
         Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(int year, int month, int day);
         Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(string providerVersionId);
         Task<ApiResponse<ProviderVersionSearchResults>> SearchMasterProviders(SearchModel searchModel);
