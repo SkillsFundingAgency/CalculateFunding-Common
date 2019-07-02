@@ -74,5 +74,11 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("trustCode")]
         public string TrustCode { get; set; }
+
+        [JsonProperty("town")]
+        public string Town { get; set; }
+
+        [JsonProperty("postcode")]
+        public string Postcode { get; set; }
     }
 }

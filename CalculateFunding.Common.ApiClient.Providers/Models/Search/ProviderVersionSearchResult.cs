@@ -58,5 +58,9 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
         public string TrustName { get; set; }
 
         public string TrustCode { get; set; }
+
+        public string Town { get; set; }
+
+        public string Postcode { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
 {
     public interface IProvidersApiClient
     {
+        Task<PagedResult<ProviderVersionSearchResult>> SearchMasterProviders(SearchFilterRequest filterOptions);
         Task<ApiResponse<ProviderVersion>> GetAllMasterProviders();
         Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId);
         Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId);
