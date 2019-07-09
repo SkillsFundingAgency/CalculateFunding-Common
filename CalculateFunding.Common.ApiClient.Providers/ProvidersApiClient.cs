@@ -79,6 +79,15 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
         }
 
+        public async Task<ApiResponse<IEnumerable<ProviderVersion>>> GetProviderVersions(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            string url = $"providers/versions-by-fundingstream/{fundingStreamId}";
+
+            return await GetAsync<IEnumerable<ProviderVersion>>(url);
+        }
+
         public async Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(string providerVersionId)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));

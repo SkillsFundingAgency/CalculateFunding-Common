@@ -14,7 +14,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
     public class PoliciesApiClient : BaseApiClient, IPoliciesApiClient
     {
         public PoliciesApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
-         : base(httpClientFactory, HttpClientKeys.Providers, logger, cancellationTokenProvider)
+         : base(httpClientFactory, HttpClientKeys.Policies, logger, cancellationTokenProvider)
         { }
 
         public async Task<ApiResponse<FundingConfiguration>> GetFundingConfiguration(string fundingStreamId, string fundingPeriodId)

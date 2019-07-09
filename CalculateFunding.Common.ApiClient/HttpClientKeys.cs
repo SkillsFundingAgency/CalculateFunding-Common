@@ -23,5 +23,7 @@
         public const string External = "External";
 
         public const string Providers = "Providers";
+
+        public const string Policies = "Policies";
     }
 }

@@ -17,6 +17,15 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
         [JsonProperty("description")]
         public string Description { get; set; }
 
+        [JsonProperty("version")]
+        public int Version { get; set; }
+
+        [JsonProperty("targetDate")]
+        public DateTimeOffset TargetDate { get; set; }
+
+        [JsonProperty("fundingStream")]
+        public string FundingStream { get; set; }
+
         [JsonProperty("created")]
         public DateTimeOffset Created { get; set; }
     }
