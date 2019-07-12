@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.Storage
 {
-    public abstract class BlobClient
+    public class BlobClient : IBlobClient
     {
         private Lazy<CloudBlobContainer> _container;
         private readonly BlobStorageOptions _azureStorageSettings;
@@ -24,7 +24,21 @@ namespace CalculateFunding.Common.Storage
             EnsureBlobClient();
         }
 
-        public static void VerifyFileName(string fileName)
+        public void Initialize()
+        {
+            _container = new Lazy<CloudBlobContainer>(() =>
+            {
+                CloudStorageAccount credentials = CloudStorageAccount.Parse(_azureStorageSettings.ConnectionString);
+                CloudBlobClient client = credentials.CreateCloudBlobClient();
+                CloudBlobContainer container = client.GetContainerReference(_azureStorageSettings.ContainerName.ToLower());
+
+                container.CreateIfNotExists();
+
+                return container;
+            });
+        }
+
+        public void VerifyFileName(string fileName)
         {
             Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
 
@@ -69,7 +83,9 @@ namespace CalculateFunding.Common.Storage
             return await blob.ExistsAsync();
         }
 
-        public string GetBlobSasUrl(string blobName, DateTimeOffset finish, SharedAccessBlobPermissions permissions)
+        public string GetBlobSasUrl(string blobName,
+            DateTimeOffset finish,
+            SharedAccessBlobPermissions permissions)
         {
             ICloudBlob blob = GetBlockBlobReference(blobName);
             
@@ -105,7 +121,7 @@ namespace CalculateFunding.Common.Storage
             return await UploadFileAsync(blobName, json);
         }
 
-        protected ICloudBlob GetBlockBlobReference(string blobName)
+        public ICloudBlob GetBlockBlobReference(string blobName)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
@@ -114,7 +130,7 @@ namespace CalculateFunding.Common.Storage
             return _container.Value.GetBlockBlobReference(blobName);
         }
 
-        protected Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName)
+        public Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
@@ -123,7 +139,7 @@ namespace CalculateFunding.Common.Storage
             return _container.Value.GetBlobReferenceFromServerAsync(blobName);
         }
 
-        protected async Task<Stream> DownloadToStreamAsync(ICloudBlob blob)
+        public async Task<Stream> DownloadToStreamAsync(ICloudBlob blob)
         {
             Guard.ArgumentNotNull(blob, nameof(blob));
 
@@ -136,7 +152,7 @@ namespace CalculateFunding.Common.Storage
             return stream;
         }
 
-        protected async Task<string> UploadFileAsync(string blobName, string fileContents)
+        public async Task<string> UploadFileAsync(string blobName, string fileContents)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
@@ -154,18 +170,24 @@ namespace CalculateFunding.Common.Storage
         private void EnsureBlobClient()
         {
             if (_container == null)
-            {
-                _container = new Lazy<CloudBlobContainer>(() =>
-                {
-                    CloudStorageAccount credentials = CloudStorageAccount.Parse(_azureStorageSettings.ConnectionString);
-                    CloudBlobClient client = credentials.CreateCloudBlobClient();
-                    CloudBlobContainer container = client.GetContainerReference(_azureStorageSettings.ContainerName.ToLower());
+                Initialize();
+        }
 
-                    container.CreateIfNotExists();
+        public async Task<bool> BlobExistsAsync(string blobName)
+        {
+            EnsureBlobClient();
+            var blob = await _container.Value.GetBlobReferenceFromServerAsync(blobName);
 
-                    return container;
-                });
-            }
+            return await blob.ExistsAsync(null, null);
+        }
+
+        public async Task<Stream> GetAsync(string blobName)
+        {
+            EnsureBlobClient();
+
+            ICloudBlob blob = await _container.Value.GetBlobReferenceFromServerAsync(blobName);
+
+            return await blob.OpenReadAsync(null, null, null);
         }
     }
 }
