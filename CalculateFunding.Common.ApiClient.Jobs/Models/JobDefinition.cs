@@ -93,5 +93,11 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         /// </summary>
         [JsonProperty("copyOutcomeFromLogWhenSingleLogReported")]
         public bool CopyOutcomeFromLogWhenSingleLogReported { get; set; }
+
+        /// <summary>
+        /// Assigned session message property
+        /// </summary>
+        [JsonProperty("sessionMessageProperty")]
+        public string SessionMessageProperty { get; set; }
     }
 }
