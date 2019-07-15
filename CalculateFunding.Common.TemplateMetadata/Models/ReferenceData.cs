@@ -1,9 +1,15 @@
-﻿namespace CalculateFunding.Common.TemplateMetadata.Models
-{
-    public interface ReferenceData
-    {
-        string TemplateReferenceId { get; set; }
+﻿using CalculateFunding.Common.TemplateMetadata.Enums;
 
-        string Name { get; set; }
+namespace CalculateFunding.Common.TemplateMetadata.Models
+{
+    public class ReferenceData
+    {
+        public uint TemplateReferenceId { get; set; }
+
+        public string Name { get; set; }
+
+        public ReferenceDataValueFormat Format { get; set; }
+
+        public AggregationType AggregationType { get; set; }
     }
 }

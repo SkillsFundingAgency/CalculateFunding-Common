@@ -1,13 +1,20 @@
 ﻿using System.Collections.Generic;
+using CalculateFunding.Common.TemplateMetadata.Enums;
 
 namespace CalculateFunding.Common.TemplateMetadata.Models
 {
-    public interface Calculation
+    public class Calculation
     {
-        string TemplateCalculationId { get; set; }
+        public uint TemplateCalculationId { get; set; }
 
-        string Name { get; set; }
+        public string Name { get; set; }
 
-        IEnumerable<ReferenceData> ReferenceData { get; set; }
+        public CalculationValueFormat ValueFormat { get; set; }
+
+        public CalculationType Type { get; set; }
+
+        public AggregationType AggregationType { get; set; }
+
+        public IEnumerable<ReferenceData> ReferenceData { get; set; }
     }
 }

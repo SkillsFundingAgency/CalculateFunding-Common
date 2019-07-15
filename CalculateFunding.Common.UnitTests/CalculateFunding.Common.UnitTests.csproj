@@ -1,10 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="dsg1.0.json" />
+    <None Remove="Resources\dsg1.0.error.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\dsg1.0.error.json" />
+    <EmbeddedResource Include="Resources\dsg1.0.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.4.2" />
@@ -16,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema10\CalculateFunding.Common.TemplateMetadata.Schema10.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
 
