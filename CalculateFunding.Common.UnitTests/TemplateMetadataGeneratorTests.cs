@@ -19,11 +19,15 @@ namespace CalculateFunding.Common.UnitTests
         [TestMethod]
         public void TemplateMetadataSchema10_GetInvalidMetaData_ReturnsEmptyContents()
         {
+            //Arrange
             ILogger logger = CreateLogger();
 
             TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+
+            //Act
             TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.error.json"));
 
+            //Assert
             logger
                 .Received(1)
                 .Error(Arg.Is<Exception>(x => x.GetType().Name == "JsonSerializationException"), Arg.Any<string>());
@@ -32,9 +36,13 @@ namespace CalculateFunding.Common.UnitTests
         [TestMethod]
         public void TemplateMetadataSchema10_GetValidMetaData_ReturnsValidContents()
         {
+            //Arrange
             TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
+
+            //Act
             TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
 
+            //Assert
             contents.RootFundingLines.Count()
                 .Should()
                 .Be(2);
