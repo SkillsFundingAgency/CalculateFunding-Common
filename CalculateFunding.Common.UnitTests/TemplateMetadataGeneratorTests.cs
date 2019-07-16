@@ -2,6 +2,7 @@
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10;
 using FluentAssertions;
+using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
@@ -34,6 +35,40 @@ namespace CalculateFunding.Common.UnitTests
         }
 
         [TestMethod]
+        public void TemplateMetadataValidatorSchema10_ValidMetaDataSupplied_ReturnsValid()
+        {
+            //Arrange
+            ILogger logger = CreateLogger();
+
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+
+            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
+
+            result.IsValid
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema10_InvalidMetaDataSupplied_ReturnsInvalid()
+        {
+            //Arrange
+            ILogger logger = CreateLogger();
+
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+
+            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.invalid.json"));
+
+            result.IsValid
+                .Should()
+                .Be(false);
+
+            result.Errors.First().PropertyName
+                .Should()
+                .Be("ProfilePeriods");
+        }
+
+        [TestMethod]
         public void TemplateMetadataSchema10_GetValidMetaData_ReturnsValidContents()
         {
             //Arrange
@@ -45,7 +80,7 @@ namespace CalculateFunding.Common.UnitTests
             //Assert
             contents.RootFundingLines.Count()
                 .Should()
-                .Be(2);
+                .Be(1);
 
             contents.RootFundingLines.First().Name
                 .Should()
@@ -57,11 +92,11 @@ namespace CalculateFunding.Common.UnitTests
 
             contents.RootFundingLines.Last().Name
                 .Should()
-                .Be("PostDeductionForRecoupmentAndHighNeeds");
+                .Be("PriorToRecoupment");
 
             contents.RootFundingLines.Last().FundingLineCode
                 .Should()
-                .Be("DSG-001");
+                .BeNull();
 
             contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().Name
                 .Should()

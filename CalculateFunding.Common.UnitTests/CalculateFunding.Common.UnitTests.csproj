@@ -9,9 +9,11 @@
   <ItemGroup>
     <None Remove="dsg1.0.json" />
     <None Remove="Resources\dsg1.0.error.json" />
+    <None Remove="Resources\dsg1.0.invalid.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\dsg1.0.invalid.json" />
     <EmbeddedResource Include="Resources\dsg1.0.error.json" />
     <EmbeddedResource Include="Resources\dsg1.0.json" />
   </ItemGroup>

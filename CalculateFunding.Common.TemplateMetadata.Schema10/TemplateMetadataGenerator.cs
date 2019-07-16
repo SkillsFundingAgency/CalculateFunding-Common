@@ -2,7 +2,10 @@
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10.Models;
+using CalculateFunding.Common.TemplateMetadata.Schema10.Validators;
 using CalculateFunding.Common.Utility;
+using FluentValidation;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using Serilog;
 using System;
@@ -11,15 +14,17 @@ using System.Linq;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10
 {
-    public class TemplateMetadataGenerator : ITemplateMetadataGenerator
+    public class TemplateMetadataGenerator : AbstractValidator<string>, ITemplateMetadataGenerator
     {
-        ILogger _logger;
+        private readonly ILogger _logger;
+        private readonly TemplateMetadataValidator _templateMetadataValidator;
 
         public TemplateMetadataGenerator(ILogger logger)
         {
             Guard.ArgumentNotNull(logger, nameof(logger));
 
             _logger = logger;
+            _templateMetadataValidator = new TemplateMetadataValidator();
         }
 
         /// <summary>
@@ -31,36 +36,49 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
         {
             Guard.IsNullOrWhiteSpace(templateContents, nameof(templateContents));
 
+            FeedBaseModel feedBaseModel = GetFeed(templateContents);
+
+            if (feedBaseModel != null && !feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.IsNullOrEmpty())
+            {
+                IEnumerable<Models.FundingLine> FundingLines = feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.FirstOrDefault()?.FundingLines;
+
+                TemplateMetadataContents contents = new TemplateMetadataContents
+                {
+                    RootFundingLines = FundingLines?.Select(x => GetFundingLines(new TemplateMetadata.Models.FundingLine
+                    {
+                        Name = x.Name,
+                        ReferenceId = x.TemplateLineId,
+                        FundingLineCode = x.FundingLineCode,
+                        Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), x.Type.ToString())
+                    },
+                            x.FundingLines)
+                    )
+                };
+
+                return contents;
+            }
+
+            return null;
+        }
+
+        public override ValidationResult Validate(ValidationContext<string> context)
+        {
+            FeedBaseModel feedBaseModel = GetFeed(context.InstanceToValidate);
+
+            return _templateMetadataValidator.Validate(feedBaseModel);
+        }
+
+        private FeedBaseModel GetFeed(string templateContents)
+        {
             try
             {
-                FeedBaseModel feedBaseModel = JsonConvert.DeserializeObject<FeedBaseModel>(templateContents);
-
-                if (!feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.IsNullOrEmpty())
-                {
-                    IEnumerable<Models.FundingLine> FundingLines = feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.FirstOrDefault()?.FundingLines;
-
-                    TemplateMetadataContents contents = new TemplateMetadataContents
-                    {
-                        RootFundingLines = FundingLines?.Select(x => GetFundingLines(new TemplateMetadata.Models.FundingLine
-                                {
-                                    Name = x.Name,
-                                    ReferenceId = x.TemplateLineId,
-                                    FundingLineCode = x.FundingLineCode,
-                                    Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), x.Type.ToString())
-                                },
-                                x.FundingLines)
-                        )
-                    };
-
-                    return contents;
-                }
+                return JsonConvert.DeserializeObject<FeedBaseModel>(templateContents);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Failed to deserialize template : {ex.Message}");
+                return null;
             }
-
-            return null;
         }
 
         private TemplateMetadata.Models.FundingLine GetFundingLines(TemplateMetadata.Models.FundingLine fundingLine, IEnumerable<Models.FundingLine> fundingLines)
