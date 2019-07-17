@@ -65,7 +65,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
         {
             FeedBaseModel feedBaseModel = GetFeed(context.InstanceToValidate);
 
-            return _templateMetadataValidator.Validate(feedBaseModel);
+            return feedBaseModel == null ? new ValidationResult(new[] { new ValidationFailure("Template", "Instance cannot be null") }) : _templateMetadataValidator.Validate(feedBaseModel);
         }
 
         private FeedBaseModel GetFeed(string templateContents)

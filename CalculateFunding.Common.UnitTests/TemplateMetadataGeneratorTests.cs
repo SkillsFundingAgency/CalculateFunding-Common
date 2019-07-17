@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Common.TemplateMetadata.Enums;
+﻿using CalculateFunding.Common.TemplateMetadata;
+using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10;
 using FluentAssertions;
@@ -23,7 +24,7 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
             //Act
             TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.error.json"));
@@ -40,7 +41,7 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
             ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
 
@@ -55,7 +56,7 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
             ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.invalid.json"));
 
@@ -72,7 +73,7 @@ namespace CalculateFunding.Common.UnitTests
         public void TemplateMetadataSchema10_GetValidMetaData_ReturnsValidContents()
         {
             //Arrange
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
+            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
 
             //Act
             TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
@@ -123,7 +124,7 @@ namespace CalculateFunding.Common.UnitTests
                 .Be(ReferenceDataValueFormat.Number);
         }
 
-        public TemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
+        public ITemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
         {
             return new TemplateMetadataGenerator(logger ?? CreateLogger());
         }
