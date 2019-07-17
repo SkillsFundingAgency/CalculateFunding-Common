@@ -81,7 +81,7 @@ namespace CalculateFunding.Common.UnitTests
             //Assert
             contents.RootFundingLines.Count()
                 .Should()
-                .Be(1);
+                .Be(2);
 
             contents.RootFundingLines.First().Name
                 .Should()
@@ -93,11 +93,11 @@ namespace CalculateFunding.Common.UnitTests
 
             contents.RootFundingLines.Last().Name
                 .Should()
-                .Be("PriorToRecoupment");
+                .Be("PostDeductionForRecoupmentAndHighNeeds");
 
             contents.RootFundingLines.Last().FundingLineCode
                 .Should()
-                .BeNull();
+                .Be("DSG-001");
 
             contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().Name
                 .Should()
