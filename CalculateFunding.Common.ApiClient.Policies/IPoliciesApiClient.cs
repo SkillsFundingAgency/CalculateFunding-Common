@@ -19,7 +19,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
         Task<ApiResponse<FundingStream>> SaveFundingStream();
         Task<ApiResponse<string>> GetFundingSchemaByVersion(string schemaVersion);
         Task<ApiResponse<string>> SaveFundingSchema(string schema);
-        Task<ApiResponse<string>> GetFundingTemplate(string templateVersion);
+        Task<ApiResponse<string>> GetFundingTemplate(string fundingStreamId, string templateVersion);
         Task<ApiResponse<string>> SaveFundingTemplate(string templateJson);
     }
 }

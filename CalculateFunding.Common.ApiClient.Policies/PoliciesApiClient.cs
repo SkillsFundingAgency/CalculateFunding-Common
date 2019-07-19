@@ -68,11 +68,12 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<IEnumerable<FundingStream>>(url);
         }
 
-        public async Task<ApiResponse<string>> GetFundingTemplate(string templateVersion)
+        public async Task<ApiResponse<string>> GetFundingTemplate(string fundingStreamId, string templateVersion)
         {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
 
-            string url = $"templates/{templateVersion}";
+            string url = $"templates/{fundingStreamId}/{templateVersion}";
 
             return await GetAsync<string>(url);
         }
