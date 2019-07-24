@@ -6,6 +6,7 @@ using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Policies.Models.ViewModels;
 using CalculateFunding.Common.Interfaces;
+using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
@@ -68,14 +69,14 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<IEnumerable<FundingStream>>(url);
         }
 
-        public async Task<ApiResponse<string>> GetFundingTemplate(string fundingStreamId, string templateVersion)
+        public async Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
 
             string url = $"templates/{fundingStreamId}/{templateVersion}";
 
-            return await GetAsync<string>(url);
+            return await GetAsync<FundingTemplateContents>(url);
         }
 
         public async Task<ApiResponse<FundingConfiguration>> SaveFundingConfiguration(string fundingStreamId, string fundingPeriodId, FundingConfigurationUpdateViewModel configuration)
@@ -114,6 +115,26 @@ namespace CalculateFunding.Common.ApiClient.Policies
 
             string url = "templates";
             return await PostAsync<string, object>(url, null);
+        }
+
+        public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            string url = $"templates/{fundingStreamId}/{templateVersion}/sourcefile";
+
+            return await GetAsync<string>(url);
+        }
+
+        public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            string url = $"templates/{fundingStreamId}/{templateVersion}/metadata";
+
+            return await GetAsync<TemplateMetadataContents>(url);
         }
     }
 }
