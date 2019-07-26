@@ -182,7 +182,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             string url = $"providers/versions/{providerVersionId}";
 
-            return await GetAsync(url);
+            return await HeadAsync(url);
         }
 
         public async Task<ApiResponse<IEnumerable<ProviderSummary>>> FetchCoreProviderData(string specificationId)
