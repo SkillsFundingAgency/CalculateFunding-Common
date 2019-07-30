@@ -52,7 +52,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                         Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), x.Type.ToString())
                     },
                             x.FundingLines)
-                    )
+                    ),
+                    SchemaVersion = feedBaseModel.SchemaVersion
                 };
 
                 return contents;

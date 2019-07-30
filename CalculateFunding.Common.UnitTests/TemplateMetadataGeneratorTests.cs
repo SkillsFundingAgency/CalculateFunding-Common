@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -122,6 +121,10 @@ namespace CalculateFunding.Common.UnitTests
             contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().ReferenceData.First().Format
                 .Should()
                 .Be(ReferenceDataValueFormat.Number);
+
+            contents.SchemaVersion
+                .Should()
+                .Be("1.0");
         }
 
         public ITemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
