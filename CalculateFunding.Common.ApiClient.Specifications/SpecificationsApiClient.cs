@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -35,6 +36,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await GetAsync<IEnumerable<SpecificationSummary>>(
                 $"{UrlRoot}/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}");
+        }
+
+        public async Task<HttpStatusCode> SetAssignedTemplateVersion(string specificationId, string templateVersion, string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await PutAsync(
+                $"{UrlRoot}/{specificationId}/templates/{fundingStreamId}", templateVersion);
         }
     }
 }
