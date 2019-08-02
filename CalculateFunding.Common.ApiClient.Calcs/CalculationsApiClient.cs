@@ -16,7 +16,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         private const string UrlRoot = "calcs";
 
         public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
-         : base(httpClientFactory, HttpClientKeys.Policies, logger, cancellationTokenProvider)
+         : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
         { }
 
         public async Task<ApiResponse<IEnumerable<CalculationSummaryModel>>> GetCalculationSummariesForSpecification(string specificationId)
