@@ -97,23 +97,25 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             return new ApiResponse<bool>(HttpStatusCode.OK, httpStatusCode == HttpStatusCode.OK);
         }
 
-        public async Task<ValidatedApiResponse<Calculation>> CreateAdditionalCalculation(CalculationCreateModel calculationCreateModel)
+        public async Task<ValidatedApiResponse<Calculation>> CreateCalculation(string specificationId, CalculationCreateModel calculationCreateModel)
         {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(calculationCreateModel, nameof(calculationCreateModel));
 
-            string url = $"{UrlRoot}/additional";
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations";
 
             return await ValidatedPostAsync<Calculation,CalculationCreateModel>(url, calculationCreateModel);
         }
 
-        public async Task<ApiResponse<UpdateCalculationResult>> UpdateCalculation(string calculationId, SaveSourceCodeVersion calculation)
+        public async Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel)
         {
-            Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
-            Guard.ArgumentNotNull(calculation, nameof(calculation));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(calculationEditModel, nameof(calculationEditModel));
 
-            string url = $"{UrlRoot}/calculation-save-version?calculationId={calculationId}";
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{calculationId}";
 
-            return await PostAsync<UpdateCalculationResult, SaveSourceCodeVersion>(url, calculation);
+            return await ValidatedPutAsync<Calculation, CalculationEditModel>(url, calculationEditModel);
         }
 
         public async Task<ApiResponse<PreviewResponse>> PreviewCompile(PreviewRequest previewRequest)

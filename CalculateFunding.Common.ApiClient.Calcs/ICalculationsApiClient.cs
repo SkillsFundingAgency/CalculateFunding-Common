@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Calcs.Models.Code;
 using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.Interfaces;
-using CalculateFunding.Common.Utility;
 
 namespace CalculateFunding.Common.ApiClient.Calcs
 {
@@ -20,8 +17,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<HttpStatusCode>> CompileAndSaveAssembly(string specificationId);
         Task<ApiResponse<Calculation>> GetCalculationById(string calculationId);
         Task<ApiResponse<bool>> IsCalculationNameValid(string specificationId, string calculationName, string existingCalculationId = null);
-        Task<ValidatedApiResponse<Calculation>> CreateAdditionalCalculation(CalculationCreateModel calculationCreateModel);
-        Task<ApiResponse<UpdateCalculationResult>> UpdateCalculation(string calculationId, SaveSourceCodeVersion calculation);
+        Task<ValidatedApiResponse<Calculation>> CreateCalculation(string specificationId, CalculationCreateModel calculationCreateModel);
+        Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
         Task<ApiResponse<PreviewResponse>> PreviewCompile(PreviewRequest previewRequest);
         Task<ApiResponse<IEnumerable<CalculationVersion>>> GetAllVersionsByCalculationId(string calculationId);
         Task<ApiResponse<IEnumerable<CalculationVersion>>> GetMultipleVersionsByCalculationId(IEnumerable<int> versionIds, string calculationId);
