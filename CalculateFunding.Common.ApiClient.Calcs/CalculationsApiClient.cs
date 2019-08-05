@@ -192,5 +192,14 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return results;
         }
+
+        public async Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculations(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/metadata";
+
+            return await GetAsync<IEnumerable<CalculationMetadata>>(url);
+        }
     }
 }

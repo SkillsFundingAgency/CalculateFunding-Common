@@ -26,5 +26,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ValidatedApiResponse<PublishStatusResult>> UpdatePublishStatus(string calculationId, PublishStatusEditModel model);
         Task<ApiResponse<IEnumerable<CalculationStatusCounts>>> GetCalculationStatusCounts(SpecificationIdsRequestModel request);
         Task<ApiResponse<SearchResults<CalculationSearchResult>>> FindCalculations(SearchFilterRequest filterOptions);
+        Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculations(string specificationId);
     }
 }
