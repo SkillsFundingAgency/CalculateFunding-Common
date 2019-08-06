@@ -8,13 +8,11 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public ProviderProfilingResponseModel()
         {
             DeliveryProfilePeriods = Enumerable.Empty<ProfilingPeriod>();
-            FinancialEnvelopes = Enumerable.Empty<FinancialEnvelope>();
+            DistributionPeriods = Enumerable.Empty<DistributionPeriods>();
         }
-
-        public ProviderProfilingRequestModel AllocationProfileRequest { get; set; }
 
         public IEnumerable<ProfilingPeriod> DeliveryProfilePeriods { get; set; }
 
-        public IEnumerable<FinancialEnvelope> FinancialEnvelopes { get; set; }
+        public IEnumerable<DistributionPeriods> DistributionPeriods { get; }
     }
 }

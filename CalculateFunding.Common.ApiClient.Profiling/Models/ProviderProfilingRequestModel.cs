@@ -7,11 +7,13 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
     {
         public ProviderProfilingRequestModel()
         {
-            AllocationValueByDistributionPeriod = Enumerable.Empty<AllocationPeriodValue>();
         }
+        public string FundingStreamId { get; set; }
 
-        public string FundingStreamPeriod { get; set; }
+        public string FundingPeriodId { get; set; }
 
-        public IEnumerable<AllocationPeriodValue> AllocationValueByDistributionPeriod { get; set; }
+        public string FundingLineCode { get; set; }
+
+        public decimal FundingValue { get; set; }
     }
 }
