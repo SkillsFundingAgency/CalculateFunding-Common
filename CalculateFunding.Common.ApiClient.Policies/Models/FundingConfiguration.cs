@@ -1,18 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 {
     public class FundingConfiguration
     {
-        public FundingConfiguration()
-        {
-            OrganisationGroupings = Enumerable.Empty<OrganisationGroupingConfiguration>();
+        [JsonProperty("organisationGroupings")]
+        public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; } 
+            = Enumerable.Empty<OrganisationGroupingConfiguration>();
+        
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
-        }
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
 
-        public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; }
+        [JsonProperty("fundingPeriodId")]
+        public string FundingPeriodId { get; set; }
+        
+        [JsonProperty("defaultTemplateVersion")]
+        public string DefaultTemplateVersion { get; set; }
     }
 }
