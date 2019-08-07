@@ -14,5 +14,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             string fundingPeriodId);
 
         Task<HttpStatusCode> SetAssignedTemplateVersion(string specificationId, string templateVersion, string fundingStreamId);
+
+        Task<HttpStatusCode> SelectSpecificationForfunding(string specificationId);
     }
 }

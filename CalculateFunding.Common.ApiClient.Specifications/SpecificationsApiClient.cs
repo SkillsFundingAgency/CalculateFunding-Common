@@ -47,5 +47,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await PutAsync(
                 $"{UrlRoot}/{specificationId}/templates/{fundingStreamId}", templateVersion);
         }
+
+        public async Task<HttpStatusCode> SelectSpecificationForfunding(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync($"{UrlRoot}/select-for-funding?specificationId={specificationId}");
+        }
     }
 }
