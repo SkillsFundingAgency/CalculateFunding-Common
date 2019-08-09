@@ -25,5 +25,7 @@
         public const string Providers = "Providers";
 
         public const string Policies = "Policies";
+
+        public const string Publishing = "Publishing";
     }
 }
