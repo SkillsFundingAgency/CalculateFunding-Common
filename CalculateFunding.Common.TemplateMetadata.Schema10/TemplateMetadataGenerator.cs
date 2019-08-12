@@ -11,6 +11,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Schema10FundingLine = CalculateFunding.Common.TemplateMetadata.Models.FundingLine;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10
 {
@@ -25,6 +26,13 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
 
             _logger = logger;
             _templateMetadataValidator = new TemplateMetadataValidator();
+        }
+
+        public override ValidationResult Validate(ValidationContext<string> context)
+        {
+            FeedBaseModel feedBaseModel = GetFeed(context.InstanceToValidate);
+
+            return feedBaseModel == null ? new ValidationResult(new[] { new ValidationFailure("Template", "Instance cannot be null") }) : _templateMetadataValidator.Validate(feedBaseModel);
         }
 
         /// <summary>
@@ -44,15 +52,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
 
                 TemplateMetadataContents contents = new TemplateMetadataContents
                 {
-                    RootFundingLines = FundingLines?.Select(x => GetFundingLines(new TemplateMetadata.Models.FundingLine
-                    {
-                        Name = x.Name,
-                        ReferenceId = x.TemplateLineId,
-                        FundingLineCode = x.FundingLineCode,
-                        Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), x.Type.ToString())
-                    },
-                            x.FundingLines)
-                    ),
+                    RootFundingLines = FundingLines?.Select(x => ToFundingLine(x)),
                     SchemaVersion = feedBaseModel.SchemaVersion
                 };
 
@@ -62,11 +62,38 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
             return null;
         }
 
-        public override ValidationResult Validate(ValidationContext<string> context)
+        private static Schema10FundingLine ToFundingLine(Models.FundingLine source)
         {
-            FeedBaseModel feedBaseModel = GetFeed(context.InstanceToValidate);
+            return new Schema10FundingLine
+            {
+                Name = source.Name,
+                TemplateLineId = source.TemplateLineId,
+                FundingLineCode = source.FundingLineCode,
+                Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), source.Type.ToString()),
+                Calculations = source.Calculations?.Select(calculationMap => ToCalculation(calculationMap)),
+                FundingLines = source.FundingLines?.Select(x => ToFundingLine(x)),
+                Value = source.Value
+            };
+        }
 
-            return feedBaseModel == null ? new ValidationResult(new[] { new ValidationFailure("Template", "Instance cannot be null") }) : _templateMetadataValidator.Validate(feedBaseModel);
+        private static TemplateMetadata.Models.Calculation ToCalculation(Models.Calculation source)
+        {
+            return new TemplateMetadata.Models.Calculation
+            {
+                Name = source.Name,
+                ValueFormat = (CalculationValueFormat)Enum.Parse(typeof(CalculationValueFormat), source.ValueFormat.ToString()),
+                AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), source.AggregationType.ToString()),
+                Type = (CalculationType)Enum.Parse(typeof(CalculationType), source.Type.ToString()),
+                TemplateCalculationId = source.TemplateCalculationId,
+                ReferenceData = source.ReferenceData.Select(x => new TemplateMetadata.Models.ReferenceData
+                {
+                    Name = x.Name,
+                    TemplateReferenceId = x.TemplateReferenceId,
+                    AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), x.AggregationType.ToString()),
+
+                }),
+                Calculations = source.Calculations?.Select(x => ToCalculation(x))
+            };
         }
 
         private FeedBaseModel GetFeed(string templateContents)
@@ -80,48 +107,6 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                 _logger.Error(ex, $"Failed to deserialize template : {ex.Message}");
                 return null;
             }
-        }
-
-        private TemplateMetadata.Models.FundingLine GetFundingLines(TemplateMetadata.Models.FundingLine fundingLine, IEnumerable<Models.FundingLine> fundingLines)
-        {
-            if (!fundingLines.IsNullOrEmpty())
-            {
-                List<TemplateMetadata.Models.FundingLine> fundingLinesList = new List<TemplateMetadata.Models.FundingLine> { };
-
-                foreach (Models.FundingLine fundingLineMap in fundingLines)
-                {
-                    TemplateMetadata.Models.FundingLine fundingLineLocal = new TemplateMetadata.Models.FundingLine
-                    {
-                        Name = fundingLineMap.Name,
-                        ReferenceId = fundingLineMap.TemplateLineId,
-                        FundingLineCode = fundingLineMap.FundingLineCode,
-                        Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), fundingLineMap.Type.ToString())
-                    };
-
-                    fundingLineLocal.Calculations = fundingLineMap.Calculations?.Select(calculationMap => new TemplateMetadata.Models.Calculation
-                    {
-                        Name = calculationMap.Name,
-                        ValueFormat = (CalculationValueFormat)Enum.Parse(typeof(CalculationValueFormat), calculationMap.ValueFormat.ToString()),
-                        AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), calculationMap.AggregationType.ToString()),
-                        Type = (CalculationType)Enum.Parse(typeof(CalculationType), calculationMap.Type.ToString()),
-                        TemplateCalculationId = calculationMap.TemplateCalculationId,
-                        ReferenceData = calculationMap.ReferenceData.Select(x => new TemplateMetadata.Models.ReferenceData
-                        {
-                            Name = x.Name,
-                            TemplateReferenceId = x.TemplateReferenceId,
-                            AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), x.AggregationType.ToString()),
-
-                        })
-                    });
-
-                    GetFundingLines(fundingLineLocal, fundingLineMap.FundingLines);
-                    fundingLinesList.Add(fundingLineLocal);
-                }
-
-                fundingLine.FundingLines = fundingLinesList;
-            }
-
-            return fundingLine;
         }
     }
 }

@@ -18,5 +18,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// Informational only.
         /// </summary>
         Information,
+
+        /// <summary>
+        /// Contracting
+        /// </summary>
+        Contacting,
     }
 }
