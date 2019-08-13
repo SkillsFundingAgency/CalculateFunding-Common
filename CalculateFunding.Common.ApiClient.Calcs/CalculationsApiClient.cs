@@ -104,7 +104,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             string url = $"{UrlRoot}/specifications/{specificationId}/calculations";
 
-            return await ValidatedPostAsync<Calculation,CalculationCreateModel>(url, calculationCreateModel);
+            return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
         }
 
         public async Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel)
@@ -200,6 +200,16 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             string url = $"{UrlRoot}/specifications/{specificationId}/calculations/metadata";
 
             return await GetAsync<IEnumerable<CalculationMetadata>>(url);
+        }
+
+        public async Task<ApiResponse<TemplateMapping>> GetTemplateMapping(string specificationId, string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/templatemapping/{fundingStreamId}";
+
+            return await GetAsync<TemplateMapping>(url);
         }
     }
 }
