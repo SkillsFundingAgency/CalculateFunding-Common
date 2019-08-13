@@ -31,5 +31,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("lastCalculationUpdatedAt")]
         public DateTimeOffset? LastCalculationUpdatedAt { get; set; }
+
+        /// <summary>
+        /// Assigned template versions for each funding stream in this specification.
+        /// Key is the funding stream ID, value is the version of the funding template for that funding stream
+        /// </summary>
+        [JsonProperty("templateIds")]
+        public IDictionary<string, string> TemplateIds { get; set; }
     }
 }
