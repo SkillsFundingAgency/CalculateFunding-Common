@@ -8,6 +8,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Models
 
         public string Name { get; set; }
 
+        public object Value { get; set; }
+
         public ReferenceDataValueFormat Format { get; set; }
 
         public AggregationType AggregationType { get; set; }

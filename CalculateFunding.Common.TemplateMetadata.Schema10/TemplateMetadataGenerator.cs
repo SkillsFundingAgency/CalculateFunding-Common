@@ -85,12 +85,12 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                 AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), source.AggregationType.ToString()),
                 Type = (CalculationType)Enum.Parse(typeof(CalculationType), source.Type.ToString()),
                 TemplateCalculationId = source.TemplateCalculationId,
-                ReferenceData = source.ReferenceData.Select(x => new TemplateMetadata.Models.ReferenceData
+                ReferenceData = source.ReferenceData?.Select(x => new TemplateMetadata.Models.ReferenceData
                 {
                     Name = x.Name,
                     TemplateReferenceId = x.TemplateReferenceId,
                     AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), x.AggregationType.ToString()),
-
+                    Value = x.Value
                 }),
                 Calculations = source.Calculations?.Select(x => ToCalculation(x))
             };
