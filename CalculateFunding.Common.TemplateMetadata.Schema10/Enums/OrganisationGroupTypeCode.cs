@@ -7,7 +7,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
     /// Valid list of organisation group types.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum OrganisationType
+    public enum OrganisationGroupTypeCode
     {
         /// <summary>
         /// Local Authority (e.g. Warwickshire).
@@ -78,5 +78,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// 
         /// </summary>
         LocalGovernmentGroup,
+
+        /// <summary>
+        /// Non maintained special school
+        /// </summary>
+        NMSS,
     }
 }

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
 {
@@ -12,12 +12,12 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         /// The funding value amount in pence. Rolled up from all child Funding Lines where Type = Payment
         /// </summary>
         [JsonProperty("totalValue")]
-        public long TotalValue { get; set; }
+        public decimal TotalValue { get; set; }
 
         /// <summary>
-        /// An array showing the amounts by the periods (envelopes) they are paid in (e.g. for PE + Sport there are 2 periods per year, with a 7/5 split).
+        /// The lines that make up this funding. 
         /// </summary>
-        [JsonProperty("fundingValueByDistributionPeriod")]
-        public IEnumerable<FundingValueByDistributionPeriod> FundingValueByDistributionPeriod { get; set; }
+        [JsonProperty("fundingLines")]
+        public IEnumerable<FundingLine> FundingLines { get; set; }
     }
 }

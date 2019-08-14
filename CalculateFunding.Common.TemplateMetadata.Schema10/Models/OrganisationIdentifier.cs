@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel.DataAnnotations;
 using CalculateFunding.Common.TemplateMetadata.Schema10.Enums;
-using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
 {
@@ -10,11 +10,11 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
     public class OrganisationIdentifier
     {
         /// <summary>
-        /// The type of organisation identifier (e.g. UKPRN). 
+        /// The type of orgranisation identifier (e.g. UKPRN). 
         /// </summary>
-        [EnumDataType(typeof(OrganisationIdentifierType))]
+        [EnumDataType(typeof(OrganisationGroupTypeIdentifier))]
         [JsonProperty("type")]
-        public OrganisationIdentifierType Type { get; set; }
+        public OrganisationGroupTypeIdentifier Type { get; set; }
 
         /// <summary>
         /// The value of this identifier type (e.g. if the type is UKPRN, then the value may be 12345678. 

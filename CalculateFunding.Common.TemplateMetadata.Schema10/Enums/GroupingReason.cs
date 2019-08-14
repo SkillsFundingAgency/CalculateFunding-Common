@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
 {
     /// <summary>
-    /// The reason for the groupig. Is it paid based on this grouping, or just informational.
+    /// The reason for the grouping
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum GroupingReason
@@ -22,6 +22,6 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// <summary>
         /// Contracting
         /// </summary>
-        Contacting,
+        Contracting,
     }
 }

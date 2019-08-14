@@ -1,13 +1,19 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
 {
     /// <summary>
     /// An organisation.
     /// </summary>
-    public class Organisation
+    public class Provider
     {
+        /// <summary>
+        /// The ID of the organisation. This is the UKRPN of the provider
+        /// </summary>
+        [JsonProperty("identifier")]
+        public string Identifier { get; set; }
+
         /// <summary>
         /// The name of the organisation.
         /// </summary>
@@ -23,8 +29,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         /// <summary>
         /// Identifier numbers for this organisation.
         /// </summary>
-        [JsonProperty("identifiers")]
-        public IEnumerable<OrganisationIdentifier> Identifiers { get; set; }
+        [JsonProperty("otherIdentifiers")]
+        public IEnumerable<ProviderIdentifier> OtherIdentifiers { get; set; }
 
         /// <summary>
         /// ID on the provider lookup API.
@@ -45,9 +51,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         public string ProviderSubType { get; set; }
 
         /// <summary>
-        /// Organisation Details. This property is optional
+        /// Provider Details. This property is optional
         /// </summary>
-        [JsonProperty("organisationDetails")]
-        public OrganisationDetails OrganisationDetails { get; set; }
+        [JsonProperty("providerDetails")]
+        public ProviderDetails ProviderDetails { get; set; }
     }
 }

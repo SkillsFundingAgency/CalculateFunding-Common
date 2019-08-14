@@ -7,10 +7,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
     /// A period that a funding line covers.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum FundingLinePeriodType
+    public enum ProfilePeriodType
     {
         /// <summary>
-        /// A Calender month.
+        /// A calendar month.
         /// </summary>
         CalendarMonth,
     }

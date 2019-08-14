@@ -46,9 +46,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
 
             FeedBaseModel feedBaseModel = GetFeed(templateContents);
 
-            if (feedBaseModel != null && !feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.IsNullOrEmpty())
+            if (feedBaseModel != null && !feedBaseModel.Funding.ProviderFundings.IsNullOrEmpty())
             {
-                IEnumerable<Models.FundingLine> FundingLines = feedBaseModel.Funding.FundingValue.FundingValueByDistributionPeriod.FirstOrDefault()?.FundingLines;
+                IEnumerable<Models.FundingLine> FundingLines = feedBaseModel.Funding.ProviderFundings.FirstOrDefault()?.FundingValue.FundingLines;
 
                 TemplateMetadataContents contents = new TemplateMetadataContents
                 {

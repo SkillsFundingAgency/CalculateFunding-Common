@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using CalculateFunding.Common.TemplateMetadata.Schema10.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CalculateFunding.Common.TemplateMetadata.Schema10.Enums;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
 {
@@ -15,7 +15,6 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         /// </summary>
         public FundingLine()
         {
-            Type = FundingLineType.Information;
         }
 
         /// <summary>
@@ -51,10 +50,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         public FundingLineType Type { get; set; }
 
         /// <summary>
-        /// The periods that this funding line where paid in / are due to be paid in.
+        /// Distrubution periods for this funding line
         /// </summary>
-        [JsonProperty("profilePeriods", NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<FundingLinePeriod> ProfilePeriods { get; set; }
+        [JsonProperty("distributionPeriods")]
+        public IEnumerable<DistributionPeriod> DistributionPeriods { get; set; }
 
         /// <summary>
         /// Calculations that make up this funding line.

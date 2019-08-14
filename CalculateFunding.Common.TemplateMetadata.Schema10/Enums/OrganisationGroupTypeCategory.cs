@@ -4,19 +4,19 @@ using Newtonsoft.Json.Converters;
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
 {
     /// <summary>
-    /// The periods of time a period can relate to.
+    /// Valid list of organisation group categories.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum PeriodType
+    public enum OrganisationGroupTypeClassification
     {
         /// <summary>
-        /// An academic year (early September till end of July).
+        /// Legal entity
         /// </summary>
-        AcademicYear,
+        LegalEntity,
 
         /// <summary>
-        /// A financial year (1 April to 31 March).
+        /// Geographical boundary
         /// </summary>
-        FinancialYear,
+        GeographicalBoundary,
     }
 }

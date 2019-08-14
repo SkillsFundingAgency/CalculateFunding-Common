@@ -1,29 +1,29 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
 {
     /// <summary>
     /// Funding values grouped by the distribution period (envelope) they are paid in.
     /// </summary>
-    public class FundingValueByDistributionPeriod
+    public class DistributionPeriod
     {
         /// <summary>
         /// The overall value for the distribution period in pence. Rolled up from all child Funding Lines where Type = Payment
         /// </summary>
         [JsonProperty("value")]
-        public long Value { get; set; }
+        public decimal Value { get; set; }
 
         /// <summary>
         /// The funding period the funding relates to.
         /// </summary>
-        [JsonProperty("distributionPeriodCode")]
-        public string DistributionPeriodCode { get; set; }
+        [JsonProperty("distributionPeriodId")]
+        public string DistributionPeriodId { get; set; }
 
         /// <summary>
-        /// The lines that make up this funding. 
+        /// The periods that this funding line where paid in / are due to be paid in.
         /// </summary>
-        [JsonProperty("fundingLines")]
-        public IEnumerable<FundingLine> FundingLines { get; set; }
+        [JsonProperty("profilePeriods", NullValueHandling = NullValueHandling.Ignore)]
+        public IEnumerable<ProfilePeriod> ProfilePeriods { get; set; }
     }
 }

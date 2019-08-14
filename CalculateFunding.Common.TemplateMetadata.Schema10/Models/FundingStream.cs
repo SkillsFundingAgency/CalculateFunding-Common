@@ -5,7 +5,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
     /// <summary>
     /// Details around a funding stream.
     /// </summary>
-    public class Stream
+    public class FundingStream
     {
         /// <summary>
         /// The code for the funding stream (e.g. PESport).

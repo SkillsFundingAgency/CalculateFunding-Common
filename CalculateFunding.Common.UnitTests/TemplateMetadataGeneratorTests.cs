@@ -65,7 +65,7 @@ namespace CalculateFunding.Common.UnitTests
 
             result.Errors.First().PropertyName
                 .Should()
-                .Be("ProfilePeriods");
+                .Be("DistributionPeriods");
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace CalculateFunding.Common.UnitTests
 
             contents.RootFundingLines.First().Name
                 .Should()
-                .Be("PriorToRecoupment");
+                .Be("Prior To Recoupment");
 
             contents.RootFundingLines.First().Type
                 .Should()
@@ -92,33 +92,29 @@ namespace CalculateFunding.Common.UnitTests
 
             contents.RootFundingLines.Last().Name
                 .Should()
-                .Be("PostDeductionForRecoupmentAndHighNeeds");
+                .Be("Post Deduction For Recoupment And High Needs");
 
             contents.RootFundingLines.Last().FundingLineCode
                 .Should()
-                .Be("DSG-001");
+                .Be("PostDeductionForRecoupmentAndHighNeeds");
 
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().Name
+            contents.RootFundingLines.Last().Calculations.First().ValueFormat
                 .Should()
-                .Be("2019-20 mobility and premises funding");
+                .Be(CalculationValueFormat.Number);
 
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().ValueFormat
-                .Should()
-                .Be(CalculationValueFormat.Currency);
-
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().AggregationType
+            contents.RootFundingLines.Last().Calculations.First().AggregationType
                 .Should()
                 .Be(AggregationType.Sum);
 
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().Type
+            contents.RootFundingLines.Last().Calculations.First().Type
                 .Should()
-                .Be(CalculationType.LumpSum);
+                .Be(CalculationType.PupilNumber);
 
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().ReferenceData.First().AggregationType
+            contents.RootFundingLines.Last().Calculations.First().ReferenceData.First().AggregationType
                 .Should()
                 .Be(AggregationType.Sum);
 
-            contents.RootFundingLines.Last().FundingLines.First().FundingLines.First().Calculations.First().ReferenceData.First().Format
+            contents.RootFundingLines.Last().Calculations.First().ReferenceData.First().Format
                 .Should()
                 .Be(ReferenceDataValueFormat.Number);
 

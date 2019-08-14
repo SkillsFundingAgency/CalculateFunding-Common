@@ -11,13 +11,20 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
     public abstract class Funding
     {
         /// <summary>
-        /// Unique identifier of this funding group / business event (in format 'TODO').
+        /// Unique identifier of this funding group / business event (in format 'FundingStreamCode-FundingPeriodId-OrganisationGroupGroupTypeCode-OrganisationGroupIdentifierValue-FundingVersion').
         /// </summary>
         [JsonProperty("id", Order = 1)]
-        public string Id { get; set; }
+        public string Id => $"{FundingStream.Code}-{FundingPeriod.Id}-{GroupingReason}-{OrganisationGroup.GroupTypeCode}-{OrganisationGroup.IdentifierValue}-{FundingVersion}";
+
+        /// <summary>
+        /// The version of the template (e.g. this is Version 2 of PE and sport template).
+        /// </summary>
+        [JsonProperty("templateVersion")]
+        public string TemplateVersion { get; set; }
 
         /// <summary>
         /// Version number of the published data. If there are changes to the funding for this organisation in this period, this number would increase.
+        /// Major and minor are seperated by an underscore eg 1_0
         /// </summary>
         [JsonProperty("fundingVersion", Order = 2)]
         public string FundingVersion { get; set; }
@@ -33,7 +40,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         /// The funding stream the funding relates to.
         /// </summary>
         [JsonProperty("fundingStream", Order = 4)]
-        public StreamWithTemplateVersion FundingStream { get; set; }
+        public FundingStream FundingStream { get; set; }
 
         /// <summary>
         /// The funding period the funding relates to.
@@ -73,9 +80,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         public DateTimeOffset ExternalPublicationDate { get; set; }
 
         /// <summary>
-        /// The date the payment will be made to the provider.
+        /// The earliest date the payment will be made available to pay to the provider.
         /// </summary>
-        [JsonProperty("paymentDate", Order = 12)]
-        public DateTimeOffset? PaymentDate { get; set; }
+        [JsonProperty("earliestPaymentAvailableDate", Order = 12)]
+        public DateTimeOffset? EarliestPaymentAvailableDate { get; set; }
     }
 }
