@@ -20,14 +20,14 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
             calculationDictionary = new ConcurrentDictionary<uint, Calculation>();
             referenceDataDictionary = new ConcurrentDictionary<uint, ReferenceData>();
 
-            RuleFor(model => model.Funding.ProviderFundings.FirstOrDefault())
+            RuleFor(model => model.Funding.FundingValue)
                 .NotEmpty()
                 .WithMessage("No funding lines provided for TemplateMetadataValidator")
                 .Custom((fundingValue, context) =>
                 {
-                    if (!fundingValue.FundingValue.FundingLines.IsNullOrEmpty())
+                    if (!fundingValue.FundingLines.IsNullOrEmpty())
                     {
-                        fundingValue.FundingValue.FundingLines.ToList().ForEach(x => ValidateFundingLine(context, x));
+                        fundingValue.FundingLines.ToList().ForEach(x => ValidateFundingLine(context, x));
                     }
                 });
         }

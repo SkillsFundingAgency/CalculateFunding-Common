@@ -40,37 +40,90 @@
       "totalValue": 2400,
       "fundingLines": [
         {
-          "name": "Total funding line",
-          "fundingLineCode": "TotalFundingLine",
-          "value": 1400,
+          "name": "Prior To Recoupment",
+          "fundingLineCode": "PriorToRecoupment",
+          "value": 700,
           "templateLineId": 1,
-          "type": "Payment",
-          "distributionPeriods": [
+          "type": "Information",
+          "calculations": [
             {
-              "value": 2800,
-              "distributionPeriodId": "FY1920",
-              "profilePeriods": [
+              "name": "Number of pupils",
+              "templateCalculationId": 1,
+              "value": "456",
+              "valueFormat": "Number",
+              "type": "PupilNumber",
+              "formulaText": "Something * something",
+              "aggregationType": "Sum",
+              "referenceData": [
                 {
-                  "type": "CalendarMonth",
-                  "typeValue": "October",
-                  "year": 2019,
-                  "occurrence": 1,
-                  "profiledValue": 2800,
-                  "distributionPeriodId": "FY1920"
+                  "name": "Academic year 2018 to 2019 pupil number on roll",
+                  "templateReferenceId": 1,
+                  "format": "Number",
+                  "value": "1",
+                  "aggregationType": "Sum"
                 }
               ]
             },
             {
-              "value": 2000,
-              "distributionPeriodId": "FY2021",
-              "profilePeriods": [
+              "name": "Number of pupils",
+              "templateCalculationId": 1,
+              "value": "456",
+              "valueFormat": "Number",
+              "type": "PupilNumber",
+              "formulaText": "Something * something",
+              "aggregationType": "Sum",
+              "referenceData": [
                 {
-                  "type": "CalendarMonth",
-                  "typeValue": "October",
-                  "year": 2020,
-                  "occurrence": 1,
-                  "profiledValue": 2000,
-                  "distributionPeriodId": "FY2021"
+                  "name": "Academic year 2018 to 2019 pupil number on roll",
+                  "templateReferenceId": 1,
+                  "format": "Number",
+                  "value": "1",
+                  "aggregationType": "Sum"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Post Deduction For Recoupment And High Needs",
+          "fundingLineCode": "PostDeductionForRecoupmentAndHighNeeds",
+          "value": 700,
+          "templateLineId": 1,
+          "type": "Information",
+          "calculations": [
+            {
+              "name": "Number of pupils",
+              "templateCalculationId": 1,
+              "value": "456",
+              "valueFormat": "Number",
+              "type": "PupilNumber",
+              "formulaText": "Something * something",
+              "aggregationType": "Sum",
+              "referenceData": [
+                {
+                  "name": "Academic year 2018 to 2019 pupil number on roll",
+                  "templateReferenceId": 1,
+                  "format": "Number",
+                  "value": "1",
+                  "aggregationType": "Sum"
+                }
+              ]
+            },
+            {
+              "name": "Number of pupils",
+              "templateCalculationId": 1,
+              "value": "456",
+              "valueFormat": "Number",
+              "type": "PupilNumber",
+              "formulaText": "Something * something",
+              "aggregationType": "Sum",
+              "referenceData": [
+                {
+                  "name": "Academic year 2018 to 2019 pupil number on roll",
+                  "templateReferenceId": 1,
+                  "format": "Number",
+                  "value": "1",
+                  "aggregationType": "Sum"
                 }
               ]
             }

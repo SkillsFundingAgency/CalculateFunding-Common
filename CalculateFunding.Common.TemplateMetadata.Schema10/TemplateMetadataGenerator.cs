@@ -46,13 +46,11 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
 
             FeedBaseModel feedBaseModel = GetFeed(templateContents);
 
-            if (feedBaseModel != null && !feedBaseModel.Funding.ProviderFundings.IsNullOrEmpty())
+            if (feedBaseModel != null)
             {
-                IEnumerable<Models.FundingLine> FundingLines = feedBaseModel.Funding.ProviderFundings.FirstOrDefault()?.FundingValue.FundingLines;
-
                 TemplateMetadataContents contents = new TemplateMetadataContents
                 {
-                    RootFundingLines = FundingLines?.Select(x => ToFundingLine(x)),
+                    RootFundingLines = feedBaseModel.Funding.FundingValue.FundingLines?.Select(x => ToFundingLine(x)),
                     SchemaVersion = feedBaseModel.SchemaVersion
                 };
 
@@ -85,6 +83,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                 AggregationType = (AggregationType)Enum.Parse(typeof(AggregationType), source.AggregationType.ToString()),
                 Type = (CalculationType)Enum.Parse(typeof(CalculationType), source.Type.ToString()),
                 TemplateCalculationId = source.TemplateCalculationId,
+                FormulaText = source.FormulaText,
                 ReferenceData = source.ReferenceData?.Select(x => new TemplateMetadata.Models.ReferenceData
                 {
                     Name = x.Name,
