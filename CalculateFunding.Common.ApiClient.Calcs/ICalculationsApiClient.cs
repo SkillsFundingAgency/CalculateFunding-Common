@@ -43,5 +43,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculations(string specificationId);
 
         Task<ApiResponse<TemplateMapping>> GetTemplateMapping(string specificationId, string fundingStreamId);
+
+        Task<ApiResponse<BooleanResponseModel>> CheckHasAllApprovedTemplateCalculationsForSpecificationId(string specificationId);
     }
 }

@@ -211,5 +211,14 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await GetAsync<TemplateMapping>(url);
         }
+
+        public async Task<ApiResponse<BooleanResponseModel>> CheckHasAllApprovedTemplateCalculationsForSpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/templateCalculations/allApproved";
+
+            return await GetAsync<BooleanResponseModel>(url);
+        }
     }
 }
