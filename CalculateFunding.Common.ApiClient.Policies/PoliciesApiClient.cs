@@ -28,6 +28,15 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<FundingConfiguration>(url);
         }
 
+        public async Task<ApiResponse<IEnumerable<FundingConfiguration>>> GetFundingConfigurationsByFundingStreamId(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            string url = $"configuration/{fundingStreamId}";
+
+            return await GetAsync<IEnumerable<FundingConfiguration>>(url);
+        }
+
         public async Task<ApiResponse<Period>> GetFundingPeriodById(string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
