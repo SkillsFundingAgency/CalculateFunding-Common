@@ -1,4 +1,6 @@
-﻿namespace CalculateFunding.Common.ApiClient.Calcs.Models
+﻿using System;
+
+namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
     public class CalculationSearchResult
     {
@@ -11,5 +13,7 @@
         public string Namespace { get; set; }
         public bool WasTemplateCalculation { get; set; }
         public string Description { get; set; }
+        public string Status { get; set; }
+        public DateTimeOffset? LastUpdatedDate { get; set; }
     }
 }
