@@ -21,7 +21,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
         public async Task<ApiResponse<FundingConfiguration>> GetFundingConfiguration(string fundingStreamId, string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));  
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
             string url = $"configuration/{fundingStreamId}/{fundingPeriodId}";
 
@@ -37,20 +37,20 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<IEnumerable<FundingConfiguration>>(url);
         }
 
-        public async Task<ApiResponse<Period>> GetFundingPeriodById(string fundingPeriodId)
+        public async Task<ApiResponse<FundingPeriod>> GetFundingPeriodById(string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
             string url = $"fundingperiods/{fundingPeriodId}";
 
-            return await GetAsync<Period>(url);
+            return await GetAsync<FundingPeriod>(url);
         }
 
-        public async Task<ApiResponse<IEnumerable<Period>>> GetFundingPeriods()
+        public async Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods()
         {
             string url = "fundingperiods";
 
-            return await GetAsync<IEnumerable<Period>>(url);
+            return await GetAsync<IEnumerable<FundingPeriod>>(url);
         }
 
         public async Task<ApiResponse<string>> GetFundingSchemaByVersion(string schemaVersion)
@@ -92,16 +92,16 @@ namespace CalculateFunding.Common.ApiClient.Policies
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
-              
+
             string url = $"configuration/{fundingStreamId}/{fundingPeriodId}";
 
             return await PostAsync<FundingConfiguration, FundingConfigurationUpdateViewModel>(url, configuration);
         }
 
-        public async Task<ApiResponse<Period>> SaveFundingPeriods()
+        public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods()
         {
             string url = "fundingperiods";
-            return await PostAsync<Period, object>(url, null);
+            return await PostAsync<FundingPeriod, object>(url, null);
         }
 
         public async Task<ApiResponse<string>> SaveFundingSchema(string schema)

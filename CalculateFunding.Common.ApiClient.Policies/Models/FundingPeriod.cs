@@ -1,13 +1,17 @@
-﻿using CalculateFunding.Common.Models;
-using System;
+﻿using System;
+using CalculateFunding.Common.Models;
 
 namespace CalculateFunding.Common.ApiClient.Policies.Models
 {
-    public class Period : Reference
+    public class FundingPeriod : Reference
     {
         public DateTimeOffset StartDate { get; set; }
 
         public DateTimeOffset EndDate { get; set; }
+
+        public string Period { get; set; }
+
+        public FundingPeriodType Type { get; set; }
 
         public int StartYear
         {

@@ -1,10 +1,10 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Policies.Models.ViewModels;
 using CalculateFunding.Common.TemplateMetadata.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.Policies
 {
@@ -12,9 +12,9 @@ namespace CalculateFunding.Common.ApiClient.Policies
     {
         Task<ApiResponse<FundingConfiguration>> GetFundingConfiguration(string fundingStreamId, string fundingPeriodId);
         Task<ApiResponse<FundingConfiguration>> SaveFundingConfiguration(string fundingStreamId, string fundingPeriodId, FundingConfigurationUpdateViewModel configuration);
-        Task<ApiResponse<IEnumerable<Period>>> GetFundingPeriods();
-        Task<ApiResponse<Period>> GetFundingPeriodById(string fundingPeriodId);
-        Task<ApiResponse<Period>> SaveFundingPeriods();
+        Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods();
+        Task<ApiResponse<FundingPeriod>> GetFundingPeriodById(string fundingPeriodId);
+        Task<ApiResponse<FundingPeriod>> SaveFundingPeriods();
         Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams();
         Task<ApiResponse<FundingStream>> GetFundingStreamById(string fundingStreamId);
         Task<ApiResponse<FundingStream>> SaveFundingStream();
