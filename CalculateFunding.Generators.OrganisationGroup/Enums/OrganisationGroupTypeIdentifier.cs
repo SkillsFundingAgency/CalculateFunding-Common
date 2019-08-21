@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CalculateFunding.Common.ApiClient.Policies.Models
+namespace CalculateFunding.Generators.OrganisationGroup.Enums
 {
     /// <summary>
     /// Valid list of organisation group types.

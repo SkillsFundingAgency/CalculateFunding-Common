@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Policies\CalculateFunding.Common.ApiClient.Policies.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Providers\CalculateFunding.Common.ApiClient.Providers.csproj" />
+  </ItemGroup>
+
+</Project>

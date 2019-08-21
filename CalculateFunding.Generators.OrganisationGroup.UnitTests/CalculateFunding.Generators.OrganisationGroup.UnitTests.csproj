@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Bearer\CalculateFunding.Common.ApiClient.Bearer.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Generators.OrganisationGroup\CalculateFunding.Generators.OrganisationGroup.csproj" />
   </ItemGroup>
 
 </Project>

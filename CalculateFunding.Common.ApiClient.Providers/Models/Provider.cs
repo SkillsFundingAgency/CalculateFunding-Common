@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Providers.Models
 {
@@ -15,7 +15,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
         public string ProviderId { get; set; }
 
         [JsonProperty("trustStatus")]
-        public string TrustStatusViewModelString { get; set; }
+        public TrustStatus TrustStatus { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }

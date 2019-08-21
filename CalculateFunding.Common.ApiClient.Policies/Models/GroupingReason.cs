@@ -4,5 +4,6 @@
     {
         Payment,
         Information,
+        Contracting,
     }
 }
