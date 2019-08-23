@@ -1,4 +1,6 @@
-﻿namespace CalculateFunding.Common.ApiClient.Calcs.Models
+﻿using CalculateFunding.Common.ApiClient.Models;
+
+namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
     public class CalculationMetadata
     {
@@ -21,5 +23,7 @@
         public string SpecificationId { get; set; }
 
         public string FundingStreamId { get; set; }
+        
+        public PublishStatus PublishStatus { get; set; }
     }
 }
