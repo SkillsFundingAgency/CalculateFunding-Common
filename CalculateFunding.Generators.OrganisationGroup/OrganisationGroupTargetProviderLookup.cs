@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Providers;
 using CalculateFunding.Common.ApiClient.Providers.Models;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
@@ -76,7 +77,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 {
                     Identifier = targetProvider.UKPRN,
                     Name = targetProvider.Name,
-                    Identifiers = GenerateAllIdentifiersForProvider(targetProvider),
+                    Identifiers = Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>().SelectMany(x => GenerateIdentifiersForProvider(targetProvider, x)),
                 };
             }
             else
@@ -88,17 +89,18 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 {
                     Name = GetOrganisationGroupName(firstProvider, groupTypeIdentifier),
                     Identifier = GetOrganisationGroupIdentifier(firstProvider, groupTypeIdentifier),
-                    Identifiers = GenerateAllIdentifiersForProvider(firstProvider),
+                    Identifiers = Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>().SelectMany(x => GenerateIdentifiersForProvider(firstProvider, x)),
                 };
             }
-
-            throw new NotImplementedException();
         }
 
-        private IEnumerable<OrganisationIdentifier> GenerateAllIdentifiersForProvider(Provider targetProvider)
+        private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(Provider targetProvider, OrganisationGroupTypeIdentifier organisationGroupTypeIdentifier)
         {
-            // foreach of the items in the enum OrganisationGroupTypeIdentifier, check to see if this provider has a value for that field, then add to a list and return
-            throw new NotImplementedException();
+            string targetProviderGroupTypeIdentifierValue = GetOrganisationGroupIdentifier(targetProvider, organisationGroupTypeIdentifier);
+            if (!string.IsNullOrWhiteSpace(targetProviderGroupTypeIdentifierValue))
+            {
+                yield return new OrganisationIdentifier { Type = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(), Value = targetProviderGroupTypeIdentifierValue };
+            }
         }
 
         private async Task<IEnumerable<Provider>> GetAllProviders(string providerVersionId)
@@ -116,10 +118,11 @@ namespace CalculateFunding.Generators.OrganisationGroup
             {
                 case OrganisationGroupTypeIdentifier.AcademyTrustCode:
                     return provider.TrustCode;
-                case OrganisationGroupTypeIdentifier.UKPRN:
-                    return provider.UKPRN;
+                case OrganisationGroupTypeIdentifier.UID:
+                case OrganisationGroupTypeIdentifier.GroupId:
+                    return string.Empty;
                 default:
-                    throw new Exception("Unable to resolve field to identifier value");
+                    return identifierType.PropertyMapping(provider)?.ToString();
             }
         }
 
@@ -136,6 +139,22 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.Authority;
                 case OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode:
                     return provider.ParliamentaryConstituencyName;
+                case OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode:
+                    return provider.MiddleSuperOutputAreaName;
+                case OrganisationGroupTypeIdentifier.CensusWardCode:
+                    return provider.CensusWardName;
+                case OrganisationGroupTypeIdentifier.DistrictCode:
+                    return provider.DistrictName;
+                case OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode:
+                    return provider.GovernmentOfficeRegionName;
+                case OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode:
+                    return provider.LowerSuperOutputAreaName;
+                case OrganisationGroupTypeIdentifier.WardCode:
+                    return provider.WardName;
+                case OrganisationGroupTypeIdentifier.RscRegionCode:
+                    return provider.RscRegionName;
+                case OrganisationGroupTypeIdentifier.CountryCode:
+                    return provider.CountryName;
                 default:
                     throw new Exception("Unable to resolve field to identifier value");
             }

@@ -56,7 +56,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         /// RSCRegionCode
         /// </summary>
         [EnumMember(Value = "RSCRegionCode")]
-        RSCRegionCode,
+        RscRegionCode,
 
         /// <summary>
         /// GovernmentOfficeRegionCode

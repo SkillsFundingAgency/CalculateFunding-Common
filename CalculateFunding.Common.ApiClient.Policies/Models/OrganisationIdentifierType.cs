@@ -56,7 +56,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// RSCRegionCode
         /// </summary>
         [EnumMember(Value = "RSCRegionCode")]
-        RSCRegionCode,
+        RscRegionCode,
 
         /// <summary>
         /// GovernmentOfficeRegionCode
@@ -104,7 +104,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// DfeNumber
         /// </summary>
         [EnumMember(Value = "DfeNumber")]
-        DfeNumber,
+        DfeEstablishmentNumber,
 
         /// <summary>
         /// AcademyTrustCode

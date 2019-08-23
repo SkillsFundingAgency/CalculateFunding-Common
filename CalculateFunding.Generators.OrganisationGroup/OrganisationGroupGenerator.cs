@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Providers.Models;
+using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Utility;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
 
@@ -21,6 +23,10 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
         public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(FundingConfiguration fundingConfiguration, IEnumerable<Provider> scopedProviders, string providerVersionId)
         {
+            Guard.ArgumentNotNull(fundingConfiguration, nameof(fundingConfiguration));
+            Guard.ArgumentNotNull(scopedProviders, nameof(scopedProviders));
+            Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
+
             List<OrganisationGroupResult> results = new List<OrganisationGroupResult>();
 
             foreach (OrganisationGroupingConfiguration grouping in fundingConfiguration.OrganisationGroupings)
@@ -29,14 +35,14 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason);
 
                 // Filter providers based on provider type and subtypes
-                IEnumerable<Provider> providersForGroup = FilterProviders(scopedProviders, grouping.ProviderTypeMatch);
+                IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.SelectMany(_ => FilterProviders(_, grouping.ProviderTypeMatch));
 
                 // Group providers by the fields and discard any providers with null values for that field
                 IEnumerable<IGrouping<string, Provider>> groupedProviders = providersForGroup.GroupBy(providerFilterAttribute);
 
                 // Common values for all groups
                 Enums.OrganisationGroupTypeClassification organisationGroupTypeClassification = grouping.GroupingReason == GroupingReason.Payment ? Enums.OrganisationGroupTypeClassification.LegalEntity : Enums.OrganisationGroupTypeClassification.GeographicalBoundary;
-                Enums.OrganisationGroupTypeCode organisationGroupTypeCode = GetGroupTypeCode(grouping.OrganisationGroupTypeCode);
+                Enums.OrganisationGroupTypeCode organisationGroupTypeCode = grouping.OrganisationGroupTypeCode.AsMatchingEnum<Enums.OrganisationGroupTypeCode>();
 
                 // Generate Organisation Group results based on the grouped providers
                 foreach (IGrouping<string, Provider> providerGrouping in groupedProviders)
@@ -58,7 +64,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     {
                         GroupTypeClassification = organisationGroupTypeClassification,
                         GroupTypeCode = organisationGroupTypeCode,
-                        GroupTypeIdentifier = GetGroupTypeIdentifier(grouping.GroupTypeIdentifier),
+                        GroupTypeIdentifier = grouping.GroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(),
                         IdentifierValue = targetOrganisationGroup.Identifier,
                         Name = targetOrganisationGroup.Name,
                         Identifiers = targetOrganisationGroup.Identifiers,
@@ -81,37 +87,6 @@ namespace CalculateFunding.Generators.OrganisationGroup
         private string GenerateSearchableName(string name)
         {
             return name.Replace(" ", "");
-        }
-
-        private Enums.OrganisationGroupTypeIdentifier GetGroupTypeIdentifier(OrganisationGroupTypeIdentifier organisationGroupingType)
-        {
-            switch (organisationGroupingType)
-            {
-                case OrganisationGroupTypeIdentifier.UKPRN:
-                    return Enums.OrganisationGroupTypeIdentifier.UKPRN;
-                case OrganisationGroupTypeIdentifier.LACode:
-                    return Enums.OrganisationGroupTypeIdentifier.LACode;
-                case OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode:
-                    return Enums.OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode;
-                default:
-                    throw new Exception("OrganisationGroupTypeIdentifier not found");
-            }
-        }
-
-        private Enums.OrganisationGroupTypeCode GetGroupTypeCode(OrganisationGroupTypeCode organisationGroupingType)
-        {
-            // TODO - map all types
-            switch (organisationGroupingType)
-            {
-                case OrganisationGroupTypeCode.LocalAuthority:
-                    return Enums.OrganisationGroupTypeCode.LocalAuthority;
-                case OrganisationGroupTypeCode.Provider:
-                    return Enums.OrganisationGroupTypeCode.Provider;
-                case OrganisationGroupTypeCode.ParliamentaryConstituency:
-                    return Enums.OrganisationGroupTypeCode.ParliamentaryConstituency;
-                default:
-                    throw new Exception("Unknown type code");
-            }
         }
 
         private Func<Provider, string> GetProviderFieldForGrouping(OrganisationGroupTypeIdentifier identifierType, OrganisationGroupTypeCode organisationGroupTypeCode, GroupingReason groupingReason)
@@ -140,18 +115,38 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         return c => c.TrustCode;
                     case OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode:
                         return c => c.ParliamentaryConstituencyCode;
+                    case OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode:
+                        return c => c.MiddleSuperOutputAreaCode;
+                    case OrganisationGroupTypeIdentifier.CensusWardCode:
+                        return c => c.CensusWardCode;
+                    case OrganisationGroupTypeIdentifier.DistrictCode:
+                        return c => c.DistrictCode;
+                    case OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode:
+                        return c => c.GovernmentOfficeRegionCode;
+                    case OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode:
+                        return c => c.LowerSuperOutputAreaCode;
+                    case OrganisationGroupTypeIdentifier.WardCode:
+                        return c => c.WardCode;
+                    case OrganisationGroupTypeIdentifier.RscRegionCode:
+                        return c => c.RscRegionCode;
+                    case OrganisationGroupTypeIdentifier.CountryCode:
+                        return c => c.CountryCode;
                 }
             }
-
 
             throw new Exception("Unknown type");
         }
 
-        private IEnumerable<Provider> FilterProviders(IEnumerable<Provider> scopedProviders, IEnumerable<ProviderTypeMatch> providerTypeMatch)
+        private IEnumerable<Provider> FilterProviders(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatchs)
         {
             // Todo - filter based on provider type and provider subtype against the provider matches. Include in list if it matches any provider type and subtype
-
-            return scopedProviders;
+            foreach(ProviderTypeMatch providerTypeMatch in providerTypeMatchs)
+            {
+                if (provider.ProviderType == providerTypeMatch.ProviderType || provider.ProviderSubType == providerTypeMatch.ProviderSubtype)
+                {
+                    yield return provider;
+                }
+            }
         }
     }
 }
