@@ -145,7 +145,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 if (provider.ProviderType == providerTypeMatch.ProviderType || provider.ProviderSubType == providerTypeMatch.ProviderSubtype)
                 {
                     yield return provider;
-                    continue;
+                    break;
                 }
             }
         }
