@@ -15,6 +15,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
     public class OrganisationGroupTargetProviderLookup : IOrganisationGroupTargetProviderLookup
     {
         private readonly IProvidersApiClient _providersApiClient;
+        private IEnumerable<Provider> _providers = null;
 
         // TODO: pass in Policy for providers client
         public OrganisationGroupTargetProviderLookup(IProvidersApiClient providersApiClient)
@@ -77,7 +78,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 {
                     Identifier = targetProvider.UKPRN,
                     Name = targetProvider.Name,
-                    Identifiers = Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>().SelectMany(x => GenerateIdentifiersForProvider(targetProvider, x)),
+                    Identifiers = GenerateIdentifiersForProvider(targetProvider)
                 };
             }
             else
@@ -89,26 +90,26 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 {
                     Name = GetOrganisationGroupName(firstProvider, groupTypeIdentifier),
                     Identifier = GetOrganisationGroupIdentifier(firstProvider, groupTypeIdentifier),
-                    Identifiers = Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>().SelectMany(x => GenerateIdentifiersForProvider(firstProvider, x)),
+                    Identifiers = GenerateIdentifiersForProvider(firstProvider)
                 };
             }
         }
 
-        private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(Provider targetProvider, OrganisationGroupTypeIdentifier organisationGroupTypeIdentifier)
+        private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(Provider targetProvider)
         {
-            string targetProviderGroupTypeIdentifierValue = GetOrganisationGroupIdentifier(targetProvider, organisationGroupTypeIdentifier);
-            if (!string.IsNullOrWhiteSpace(targetProviderGroupTypeIdentifierValue))
+            foreach (OrganisationGroupTypeIdentifier organisationGroupTypeIdentifier in Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>())
             {
-                yield return new OrganisationIdentifier { Type = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(), Value = targetProviderGroupTypeIdentifierValue };
+                string targetProviderGroupTypeIdentifierValue = GetOrganisationGroupIdentifier(targetProvider, organisationGroupTypeIdentifier);
+                if (!string.IsNullOrWhiteSpace(targetProviderGroupTypeIdentifierValue))
+                {
+                    yield return new OrganisationIdentifier { Type = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(), Value = targetProviderGroupTypeIdentifierValue };
+                }
             }
         }
 
         private async Task<IEnumerable<Provider>> GetAllProviders(string providerVersionId)
         {
-            // Cache this call within the instance of this class
-
-            return (await _providersApiClient.GetProvidersByVersion(providerVersionId)).Content.Providers;
-
+            return _providers ?? (await _providersApiClient.GetProvidersByVersion(providerVersionId)).Content.Providers;
         }
 
         private string GetOrganisationGroupIdentifier(Provider provider, OrganisationGroupTypeIdentifier identifierType)

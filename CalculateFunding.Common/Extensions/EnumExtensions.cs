@@ -25,7 +25,18 @@ namespace CalculateFunding.Common.Extensions
         public static TTargetEnum AsEnum<TTargetEnum>(this string enumLiteral)
             where TTargetEnum : struct
         {
-            Enum.TryParse<TTargetEnum>(enumLiteral, out TTargetEnum targetEnum);
+            if (Enum.TryParse(enumLiteral, true, out TTargetEnum targetEnum))
+            {
+                if (!Enum.IsDefined(typeof(TTargetEnum), targetEnum))
+                {
+                    throw new ArgumentException($"{enumLiteral} is not an underlying value of the {typeof(TTargetEnum).Name} enumeration.");
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"{enumLiteral} is not a member of the {typeof(TTargetEnum).Name} enumeration.");
+            }
+
             return targetEnum;
         }
     }
