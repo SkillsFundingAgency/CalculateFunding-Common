@@ -1,0 +1,101 @@
+[
+  {
+    "name": "funding line 1",
+    "type": "Information",
+    "fundinglines": [
+      {
+        "name": "funding line 2",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 6",
+            "type": "Information",
+            "calculations": [
+              {
+                "name":  "calculation 1",
+                "value": "1.7",
+                "type": "Weighting"
+              },
+              {
+                "name": "calculation 8",
+                "value": "8000",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 3",
+        "type": "Payment",
+        "calculations": [
+          {
+            "name": "calculation 10",
+            "value": "1500",
+            "type": "Cash"
+          }
+        ],
+        "fundinglines": [
+          {
+            "name": "funding line 7",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 2",
+                "value": "500",
+                "type": "Cash",
+                "calculations": [
+                  {
+                    "name": "calculation 7",
+                    "value": "20",
+                    "type": "Rate"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "funding line 8",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 3",
+                "value": "1200",
+                "type": "Cash",
+                "calculations": [
+                  {
+                    "name": "calculation 9",
+                    "value": "300",
+                    "type": "Cash"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 4",
+        "type": "Payment",
+        "calculations": [
+          {
+            "name": "calculation 5",
+            "value": "5000.63",
+            "type": "Cash"
+          }
+        ]
+      },
+      {
+        "name": "funding line 5",
+        "type": "Information",
+        "calculations": [
+          {
+            "name": "calculation 6",
+            "value": "80",
+            "type": "Pupil Numbers"
+          }
+        ]
+      }
+    ]
+  }
+]
