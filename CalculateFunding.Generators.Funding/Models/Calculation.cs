@@ -17,14 +17,33 @@ namespace CalculateFunding.Generators.Funding.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("value")]
+        /// <summary>
+        /// The template calculation id (i.e. a way to get to this property in the template).
+        /// This value can be the same for multiple calculations within the hierarchy. 
+        /// This indicates they will return the same value from the output.
+        /// It allows input template to link calculations together, so a single calculation implemenation will be created instead of multiple depending on the hierarchy.
+        /// 
+        /// When templates are versioned, template IDs should be kept the same if they refer to the same thing, otherwise a new, unused ID should be used.
+        /// </summary>
+        [JsonProperty("templateCalculationId")]
+        public uint TemplateCalculationId { get; set; }
+
+        /// <summary>
+        /// The value the calculation is resulting in.
+        /// </summary>[JsonProperty("value")]
         public decimal Value { get; set; }
 
+        /// <summary>
+        /// The type of calculation.
+        /// </summary>
         [EnumDataType(typeof(CalculationType))]
         [JsonProperty("type")]
         public CalculationType Type { get; set; }
 
-        [JsonProperty("calculations")]
+        /// <summary>
+        /// Sub level calculations.
+        /// </summary>
+        [JsonProperty("calculations", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<Calculation> Calculations { get; set; }
     }
 }
