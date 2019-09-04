@@ -1,5 +1,5 @@
 ﻿using CalculateFunding.Common.ApiClient.Specifications.Models;
-using CalculateFunding.Common.UnitTests.Utilities.Builders;
+using CalculateFunding.Common.Testing;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 {

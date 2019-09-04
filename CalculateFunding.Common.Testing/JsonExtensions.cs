@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
-namespace CalculateFunding.Common.UnitTests.Utilities.Serialisation
+namespace CalculateFunding.Common.Testing
 {
     public static class JsonExtensions
     {

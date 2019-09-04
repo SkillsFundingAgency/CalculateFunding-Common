@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -14,5 +15,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<string>> GetPublishedProviderVersionBody(string publishedProviderVersionId);
 
         Task<ApiResponse<SpecificationCheckChooseForFundingResult>> CanChooseForFunding(string specificationId);
+
+        Task<HttpStatusCode> RefreshFundingForSpecification(string specificationId);
+
+        Task<HttpStatusCode> ApproveSpecification(string specificationId);
     }
 }

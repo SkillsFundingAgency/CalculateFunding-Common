@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
-namespace CalculateFunding.Common.UnitTests.Utilities.Builders
+namespace CalculateFunding.Common.Testing
 {
     public class RandomString
     {
         private readonly string _value;
 
         public RandomString()
-            : this(Guid.NewGuid().ToString())
+            : this((string) Guid.NewGuid().ToString())
         {
         }
 

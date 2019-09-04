@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
+namespace CalculateFunding.Common.Testing
 {
     public class HttpMessageHandlerStub : HttpMessageHandler
     {
@@ -19,13 +19,17 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return Task.FromResult(_responses.Dequeue());
         }
 
-        public void SetupStringResponse(string uri,
-            string responseContent,
+        public void SetupStatusCodeResponse(HttpStatusCode statusCode)
+        {
+            SetupStringResponse(null, statusCode);
+        }
+
+        public void SetupStringResponse(string responseContent,
             HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             _responses.Enqueue(new HttpResponseMessage(statusCode)
             {
-                Content = new StringContent(responseContent)
+                Content = responseContent == null ? null : new StringContent(responseContent)
             });
         }
 

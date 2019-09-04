@@ -6,8 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
-using CalculateFunding.Common.UnitTests.Utilities.Builders;
-using CalculateFunding.Common.UnitTests.Utilities.Serialisation;
+using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -16,27 +15,14 @@ using Serilog;
 namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 {
     [TestClass]
-    public class SpecificationsApiClientTests
+    public class SpecificationsApiClientTests : ApiClientTestBase
     {
-        private const string HttpStubUri = "http://stuburi";
-
-        private HttpMessageHandlerStub _messageHandler;
         private SpecificationsApiClient _client;
 
         [TestInitialize]
         public void SetUp()
         {
-            _messageHandler = new HttpMessageHandlerStub();
-
-            IHttpClientFactory clientFactory = Substitute.For<IHttpClientFactory>();
-
-            clientFactory.CreateClient(Arg.Any<string>())
-                .Returns(new HttpClient(_messageHandler)
-                {
-                    BaseAddress = new Uri(HttpStubUri)
-                });
-
-            _client = new SpecificationsApiClient(clientFactory,
+            _client = new SpecificationsApiClient(ClientFactory,
                 Substitute.For<ILogger>());
         }
 
@@ -44,16 +30,18 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         public async Task GetSpecificationsSelectedForFundingByPeriodAsyncMakesGetCallToRetrieveSpecificationSummariesByPeriodId()
         {
             string fundingPeriodId = NewRandomString();
-            IEnumerable<SpecificationSummary> expectedSummarySpecification = new  [] {
+            IEnumerable<SpecificationSummary> expectedSummarySpecification = new[]
+            {
                 NewSpecificationSummary(),
                 NewSpecificationSummary(),
-                NewSpecificationSummary()};
+                NewSpecificationSummary()
+            };
 
             string expectedGetByIdUri = GetSummariesByFundingPeriodIdUriFor(fundingPeriodId);
 
-            GivenTheTheSpecificationSummariesForPeriodId(expectedGetByIdUri, expectedSummarySpecification);
+            GivenTheResponse(expectedSummarySpecification);
 
-            ApiResponse<IEnumerable<SpecificationSummary>> apiResponse = 
+            ApiResponse<IEnumerable<SpecificationSummary>> apiResponse =
                 await WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(fundingPeriodId);
 
             apiResponse?.StatusCode
@@ -90,7 +78,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             SpecificationSummary expectedSummarySpecification = NewSpecificationSummary();
             string expectedGetByIdUri = GetSummaryByIdUriFor(specificationId);
 
-            GivenTheTheSpecificationSummaryWithId(expectedGetByIdUri, expectedSummarySpecification);
+            GivenTheResponse(expectedSummarySpecification);
 
             ApiResponse<SpecificationSummary> apiResponse = await WhenTheSpecificationSummaryIsQueriedById(specificationId);
 
@@ -130,18 +118,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return $"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}";
         }
 
-        private void GivenTheTheSpecificationSummariesForPeriodId(string uri,
-            IEnumerable<SpecificationSummary> specificationSummaries)
-        {
-            _messageHandler.SetupStringResponse(uri, specificationSummaries.AsJson());
-        }
-
-        private void GivenTheTheSpecificationSummaryWithId(string uri,
-            SpecificationSummary specificationSummary)
-        {
-            _messageHandler.SetupStringResponse(uri, specificationSummary.AsJson());
-        }
-
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
@@ -153,29 +129,17 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.GetSpecificationsSelectedForFundingByPeriod(fundingPeriod);
         }
 
+        private SpecificationSummary NewSpecificationSummary()
+        {
+            return new SummarySpecificationBuilder()
+                .Build();
+        }
+        
         public static IEnumerable<string[]> MissingIdExamples()
         {
             yield return new[] {""};
             yield return new[] {string.Empty};
             yield return new[] {(string) null};
-        }
-
-        private void AndTheUrisShouldHaveBeenRequested(params string[] expectedUris)
-        {
-            _messageHandler.RequestedUris
-                .Should()
-                .BeEquivalentTo(expectedUris.Select(uri => $"{HttpStubUri}/{uri}"));
-        }
-
-        private string NewRandomString()
-        {
-            return new RandomString();
-        }
-
-        private SpecificationSummary NewSpecificationSummary()
-        {
-            return new SummarySpecificationBuilder()
-                .Build();
         }
     }
 }

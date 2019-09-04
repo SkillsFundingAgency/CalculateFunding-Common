@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.8.0" />
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
@@ -30,6 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema10\CalculateFunding.Common.TemplateMetadata.Schema10.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities\Builders" />
+    <Folder Include="Utilities\Serialisation" />
   </ItemGroup>
 
 </Project>

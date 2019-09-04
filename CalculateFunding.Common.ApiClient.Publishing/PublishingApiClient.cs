@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string url = $"specifications/{specificationId}/funding/canChoose";
 
             return await GetAsync<SpecificationCheckChooseForFundingResult>(url);
+        }
+
+        public async Task<HttpStatusCode> RefreshFundingForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync($"specifications/{specificationId}/refresh");
+        }
+
+        public async Task<HttpStatusCode> ApproveSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync($"specifications/{specificationId}/approve");
         }
     }
 }
