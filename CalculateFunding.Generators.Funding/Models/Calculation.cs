@@ -45,5 +45,11 @@ namespace CalculateFunding.Generators.Funding.Models
         /// </summary>
         [JsonProperty("calculations", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<Calculation> Calculations { get; set; }
+
+        /// <summary>
+        /// reference data.
+        /// </summary>
+        [JsonProperty("referenceData", NullValueHandling = NullValueHandling.Ignore)]
+        public IEnumerable<ReferenceData> ReferenceData { get; set; }
     }
 }
