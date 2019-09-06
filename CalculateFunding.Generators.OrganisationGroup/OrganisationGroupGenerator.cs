@@ -12,7 +12,7 @@ using CalculateFunding.Generators.OrganisationGroup.Models;
 
 namespace CalculateFunding.Generators.OrganisationGroup
 {
-    public class OrganisationGroupGenerator
+    public class OrganisationGroupGenerator : IOrganisationGroupGenerator
     {
         private readonly IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
 
@@ -140,7 +140,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         private IEnumerable<Provider> FilterProviders(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatchs)
         {
             // Todo - filter based on provider type and provider subtype against the provider matches. Include in list if it matches any provider type and subtype
-            foreach(ProviderTypeMatch providerTypeMatch in providerTypeMatchs)
+            foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatchs)
             {
                 if (provider.ProviderType == providerTypeMatch.ProviderType || provider.ProviderSubType == providerTypeMatch.ProviderSubtype)
                 {

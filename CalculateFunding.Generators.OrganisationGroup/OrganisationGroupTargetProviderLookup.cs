@@ -39,34 +39,25 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <returns></returns>
         public async Task<TargetOrganisationGroup> GetTargetProviderDetails(string identifierValue, GroupingReason groupingReason, OrganisationGroupTypeCode organisationGroupTypeCode, OrganisationGroupTypeIdentifier groupTypeIdentifier, string providerVersionId, IEnumerable<Provider> providersInGroup)
         {
-            IEnumerable<Provider> allProviders = await GetAllProviders(providerVersionId);
             Provider targetProvider = null;
             if (groupingReason == GroupingReason.Payment)
             {
                 // Always return a UKRPN, as we need to pay a LegalEntity
-
                 if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
-                    // Single academy trust
-                    if (providersInGroup.Count() == 1 && providersInGroup.First().TrustStatus == TrustStatus.SupportedByASingleAacademyTrust)
-                    {
-                        targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue);
-                    }
-                    else
-                    {
-                        // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                        targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && p.ProviderType == "Multi-academy trust");
-                    }
-
+                    // Group each trust by it's own UKRPN
+                    targetProvider = providersInGroup.SingleOrDefault(p => p.UKPRN == identifierValue);
                 }
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
                 {
+                    IEnumerable<Provider> allProviders = await GetAllProviders(providerVersionId);
+
                     // Lookup the local authority by LACode and provider type and subtype
                     targetProvider = allProviders.SingleOrDefault(p => p.ProviderType == "Local Authority" && p.ProviderSubType == "Local Authority" && p.LACode == identifierValue);
                 }
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.Provider)
                 {
-                    targetProvider = allProviders.SingleOrDefault(p => p.UKPRN == identifierValue);
+                    targetProvider = providersInGroup.SingleOrDefault(p => p.UKPRN == identifierValue);
                 }
                 else
                 {

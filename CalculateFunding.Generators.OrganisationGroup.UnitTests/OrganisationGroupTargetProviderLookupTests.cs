@@ -1,15 +1,14 @@
-﻿using CalculateFunding.Common.ApiClient.Providers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Providers;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 {
@@ -68,7 +67,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.Provider,
                 Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 _providerVersionId,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() });
+                new List<Provider> { scopedProviders.Where(_ => _.UKPRN == "1002").First() });
 
             group.Identifiers.Any();
 
@@ -105,12 +104,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
 
-            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails("102",
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails("1003",
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
                 Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
-                Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 _providerVersionId,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() });
+                new List<Provider> { scopedProviders.Where(_ => _.UKPRN == "1003").First() });
 
             group.Identifiers.Any();
 
@@ -132,12 +131,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
 
-            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails("101",
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails("1001",
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
                 Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
-                Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 _providerVersionId,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "101").First() });
+                new List<Provider> { scopedProviders.Where(_ => _.UKPRN == "1001").First() });
 
             group.Identifiers.Any();
 
@@ -495,7 +494,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
         private Common.ApiClient.Models.ApiResponse<ProviderVersion> GetProviderVersion()
         {
-            return new Common.ApiClient.Models.ApiResponse<ProviderVersion> ( System.Net.HttpStatusCode.OK,  new ProviderVersion { Providers = GenerateScopedProviders() } );
+            return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = GenerateScopedProviders() });
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()
