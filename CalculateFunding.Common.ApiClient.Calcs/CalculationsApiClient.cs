@@ -220,5 +220,16 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await GetAsync<BooleanResponseModel>(url);
         }
+
+        public async Task<ApiResponse<TemplateMapping>> AssociateTemplateIdWithSpecification(string specificationId, string templateVersion, string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/templates/{fundingStreamId}";
+
+            return await PutAsync<TemplateMapping,string>(url, templateVersion);
+        }
     }
 }
