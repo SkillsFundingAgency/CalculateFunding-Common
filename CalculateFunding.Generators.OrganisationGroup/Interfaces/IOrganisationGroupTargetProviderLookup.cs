@@ -7,6 +7,14 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
 {
     public interface IOrganisationGroupTargetProviderLookup
     {
-        Task<TargetOrganisationGroup> GetTargetProviderDetails(string organisationIdentifier, GroupingReason groupingReason, OrganisationGroupTypeCode organisationGroupTypeCode, OrganisationGroupTypeIdentifier groupTypeIdentifier, string providerVersionId, IEnumerable<Common.ApiClient.Providers.Models.Provider> providers);
+        /// <summary>
+        /// Returns the target organisations groups details, based on the configuration of the funding output.
+        /// eg will lookup
+        /// - Parlimentary Consituency code and name, based on the Parlimentary Consituency code for information
+        /// </summary>
+        /// <param name="groupTypeIdentifier">Group Type Identifier</param>
+        /// <param name="providersInGroup">Providers in group</param>
+        /// <returns></returns>
+        Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Common.ApiClient.Providers.Models.Provider> providersInGroup);
     }
 }

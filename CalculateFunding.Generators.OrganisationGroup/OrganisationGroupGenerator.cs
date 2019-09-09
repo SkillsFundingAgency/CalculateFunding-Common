@@ -53,7 +53,17 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         continue;
                     }
 
-                    TargetOrganisationGroup targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(providerGrouping.Key, grouping.GroupingReason, grouping.OrganisationGroupTypeCode, grouping.GroupTypeIdentifier, providerVersionId, providerGrouping);
+                    TargetOrganisationGroup targetOrganisationGroup = null;
+
+                    OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters {
+                        identifierValue = providerGrouping.Key,
+                        organisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
+                        providerVersionId = providerVersionId,
+                        groupTypeIdentifier = grouping.GroupTypeIdentifier
+                    };
+
+                    targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);
+
                     if (targetOrganisationGroup == null)
                     {
                         // TODO: improve logging
