@@ -126,9 +126,11 @@ namespace CalculateFunding.Common.ApiClient
 
             using (HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url))
             {
+                requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
                 return await StatusCodeResponse(url,
                     httpClient,
-                    async () => await httpClient.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken));
+                    async () => await httpClient.SendAsync(requestMessage, cancellationToken));
             }
         }
 
