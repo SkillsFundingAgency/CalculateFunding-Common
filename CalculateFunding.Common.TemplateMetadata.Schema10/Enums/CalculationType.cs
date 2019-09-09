@@ -58,5 +58,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// 
         /// </summary>
         ProviderLedFunding,
+
+        /// <summary>
+        /// Number
+        /// </summary>
+        Number,
     }
 }

@@ -1,4 +1,7 @@
-﻿using CalculateFunding.Common.TemplateMetadata;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10;
@@ -7,10 +10,6 @@ using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace CalculateFunding.Common.UnitTests
 {
@@ -23,10 +22,10 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
             //Act
-            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.error.json"));
+            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.error.json"));
 
             //Assert
             logger
@@ -40,9 +39,24 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
-            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
+            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json"));
+
+            result.IsValid
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema10_ValidMetaDataSuppliedPsg10_ReturnsValid()
+        {
+            //Arrange
+            ILogger logger = CreateLogger();
+
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+
+            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.psg1.0.json"));
 
             result.IsValid
                 .Should()
@@ -55,9 +69,9 @@ namespace CalculateFunding.Common.UnitTests
             //Arrange
             ILogger logger = CreateLogger();
 
-            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
 
-            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.invalid.json"));
+            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.invalid.json"));
 
             result.IsValid
                 .Should()
@@ -72,10 +86,10 @@ namespace CalculateFunding.Common.UnitTests
         public void TemplateMetadataSchema10_GetValidMetaData_ReturnsValidContents()
         {
             //Arrange
-            ITemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
+            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
 
             //Act
-            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.Common.UnitTests.Resources.dsg1.0.json"));
+            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json"));
 
             //Assert
             contents.RootFundingLines.Count()
@@ -123,7 +137,7 @@ namespace CalculateFunding.Common.UnitTests
                 .Be("1.0");
         }
 
-        public ITemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
+        public TemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
         {
             return new TemplateMetadataGenerator(logger ?? CreateLogger());
         }

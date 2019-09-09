@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Common.Extensions;
+﻿using System;
+using System.Linq;
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10.Models;
@@ -8,9 +9,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Schema10FundingLine = CalculateFunding.Common.TemplateMetadata.Models.FundingLine;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10
@@ -30,9 +28,21 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
 
         public override ValidationResult Validate(ValidationContext<string> context)
         {
-            FeedBaseModel feedBaseModel = GetFeed(context.InstanceToValidate);
+            (FeedBaseModel feedBaseModel, string errorMessage) = GetFeed(context.InstanceToValidate);
 
-            return feedBaseModel == null ? new ValidationResult(new[] { new ValidationFailure("Template", "Instance cannot be null") }) : _templateMetadataValidator.Validate(feedBaseModel);
+            if (string.IsNullOrWhiteSpace(errorMessage))
+            {
+                if (feedBaseModel == null)
+                {
+                    return new ValidationResult(new[] { new ValidationFailure("Template", "Instance cannot be null") });
+                }
+
+                return _templateMetadataValidator.Validate(feedBaseModel);
+            }
+            else
+            {
+                return new ValidationResult(new[] { new ValidationFailure("Template", errorMessage) });
+            }
         }
 
         /// <summary>
@@ -44,7 +54,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
         {
             Guard.IsNullOrWhiteSpace(templateContents, nameof(templateContents));
 
-            FeedBaseModel feedBaseModel = GetFeed(templateContents);
+            (FeedBaseModel feedBaseModel, string errorMessage) = GetFeed(templateContents);
 
             if (feedBaseModel != null)
             {
@@ -95,16 +105,16 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
             };
         }
 
-        private FeedBaseModel GetFeed(string templateContents)
+        private (FeedBaseModel template, string errorMessage) GetFeed(string templateContents)
         {
             try
             {
-                return JsonConvert.DeserializeObject<FeedBaseModel>(templateContents);
+                return (JsonConvert.DeserializeObject<FeedBaseModel>(templateContents), null);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Failed to deserialize template : {ex.Message}");
-                return null;
+                return (null, ex.Message);
             }
         }
     }

@@ -1,4 +1,8 @@
-﻿using CalculateFunding.Common.ApiClient.Providers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Providers;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
@@ -566,7 +570,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
         private Common.ApiClient.Models.ApiResponse<ProviderVersion> GetProviderVersion()
         {
-            return new Common.ApiClient.Models.ApiResponse<ProviderVersion> ( System.Net.HttpStatusCode.OK,  new ProviderVersion { Providers = GenerateScopedProviders() } );
+            return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = GenerateScopedProviders() });
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()

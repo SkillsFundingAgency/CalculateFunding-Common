@@ -54,5 +54,10 @@
         /// 
         /// </summary>
         ProviderLedFunding,
+
+        /// <summary>
+        /// Number
+        /// </summary>
+        Number,
     }
 }
