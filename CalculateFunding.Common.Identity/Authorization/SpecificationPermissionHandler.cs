@@ -88,8 +88,8 @@ namespace CalculateFunding.Common.Identity.Authorization
                 case SpecificationActionTypes.CanMapDatasets:
                     return actualPermissions.CanMapDatasets;
 
-                case SpecificationActionTypes.CanPublishFunding:
-                    return actualPermissions.CanPublishFunding;
+                case SpecificationActionTypes.CanReleaseFunding:
+                    return actualPermissions.CanReleaseFunding;
 
                 case SpecificationActionTypes.CanRefreshFunding:
                     return actualPermissions.CanRefreshFunding;

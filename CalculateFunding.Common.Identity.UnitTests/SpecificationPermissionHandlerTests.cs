@@ -298,18 +298,18 @@ namespace CalculateFunding.Common.Identity.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenUserCanPublishFunding_ShouldSucceed()
+        public async Task WhenUserCanReleaseFunding_ShouldSucceed()
         {
             // Arrange
             string userId = Guid.NewGuid().ToString();
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
             ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
             specification.GetSpecificationId().Returns(WellKnownSpecificationId);
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanPublishFunding, specification);
+            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanReleaseFunding, specification);
 
             EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
             {
-                CanPublishFunding = true
+                CanReleaseFunding = true
             };
 
             IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();

@@ -7,7 +7,7 @@
         CanMapDatasets,
         CanChooseFunding,
         CanApproveFunding,
-        CanPublishFunding,
+        CanReleaseFunding,
         CanRefreshFunding,
         CanCreateQaTests,
         CanEditQaTests,
