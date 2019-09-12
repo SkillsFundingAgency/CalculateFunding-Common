@@ -5,7 +5,7 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Description>Calculate Funding Service Common Identity Functionality</Description>
-    <Version>1.1.9</Version>
+    <Version>1.1.10</Version>    
   </PropertyGroup>
 
   <ItemGroup>
