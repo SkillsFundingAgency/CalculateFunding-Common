@@ -29,6 +29,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.Models
         public OrganisationGroupTypeIdentifier GroupTypeIdentifier { get; set; }
 
         /// <summary>
+        /// The organisation group reason. eg Payment or Information
+        /// </summary>
+        [EnumDataType(typeof(OrganisationGroupingReason))]
+        [JsonProperty("groupReason")]
+        public OrganisationGroupingReason GroupReason { get; set; }
+
+        /// <summary>
         /// Value of the organisation type key, eg the actual UKPRN or LACode. 100023 or 202
         /// </summary>
         [JsonProperty("identifierValue")]

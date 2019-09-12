@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Product>Calculate Funding Service</Product>
     <Description>Organistation Group Generator to group providers into publishing groups for the funding model</Description>
   </PropertyGroup>

@@ -75,6 +75,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         GroupTypeClassification = organisationGroupTypeClassification,
                         GroupTypeCode = organisationGroupTypeCode,
                         GroupTypeIdentifier = grouping.GroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(),
+                        GroupReason = grouping.GroupingReason.AsMatchingEnum<Enums.OrganisationGroupingReason>(),
                         IdentifierValue = targetOrganisationGroup.Identifier,
                         Name = targetOrganisationGroup.Name,
                         Identifiers = targetOrganisationGroup.Identifiers,
