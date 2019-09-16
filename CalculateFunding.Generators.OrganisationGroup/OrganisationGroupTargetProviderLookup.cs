@@ -17,9 +17,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
     {
         private readonly IProvidersApiClient _providersApiClient;
         private readonly Policy _providersApiClientPolicy;
-        private readonly Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> _additionalIdentifierKeys;
+        private readonly IDictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> _additionalIdentifierKeys;
 
-        private IEnumerable<Provider> _providers = null;
+        private IDictionary<string, IEnumerable<Provider>> _providers = null;
 
         public OrganisationGroupTargetProviderLookup(IProvidersApiClient providersApiClient, IOrganisationGroupResiliencePolicies resiliencePolicies)
         {
@@ -29,6 +29,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             _providersApiClient = providersApiClient;
             _providersApiClientPolicy = resiliencePolicies.ProvidersApiClient;
             _additionalIdentifierKeys = GenerateAdditionalKeys();
+            _providers = new Dictionary<string, IEnumerable<Provider>>();
         }
 
         private Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> GenerateAdditionalKeys()
@@ -183,7 +184,12 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
         private async Task<IEnumerable<Provider>> GetAllProviders(string providerVersionId)
         {
-            return _providers ?? (await _providersApiClientPolicy.ExecuteAsync(() => _providersApiClient.GetProvidersByVersion(providerVersionId))).Content.Providers;
+            if (!_providers.ContainsKey(providerVersionId))
+            {
+                _providers.Add(providerVersionId, (await _providersApiClientPolicy.ExecuteAsync(() => _providersApiClient.GetProvidersByVersion(providerVersionId))).Content.Providers);
+            }
+
+            return _providers[providerVersionId];
         }
 
         private string GetOrganisationGroupIdentifier(Provider provider, OrganisationGroupTypeIdentifier identifierType)
