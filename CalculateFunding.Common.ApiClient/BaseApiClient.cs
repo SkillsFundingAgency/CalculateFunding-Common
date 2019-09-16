@@ -107,7 +107,7 @@ namespace CalculateFunding.Common.ApiClient
             {
                 return await StatusCodeResponse(url,
                     httpClient,
-                    async () => await httpClient.GetAsync(url, cancellationToken));
+                    async () => await httpClient.SendAsync(request, cancellationToken));
             }
         }
 
