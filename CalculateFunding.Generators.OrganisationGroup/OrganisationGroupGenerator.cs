@@ -56,10 +56,10 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     TargetOrganisationGroup targetOrganisationGroup = null;
 
                     OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters {
-                        identifierValue = providerGrouping.Key,
-                        organisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
-                        providerVersionId = providerVersionId,
-                        groupTypeIdentifier = grouping.GroupTypeIdentifier
+                        IdentifierValue = providerGrouping.Key,
+                        OrganisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
+                        ProviderVersionId = providerVersionId,
+                        GroupTypeIdentifier = grouping.GroupTypeIdentifier
                     };
 
                     targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);

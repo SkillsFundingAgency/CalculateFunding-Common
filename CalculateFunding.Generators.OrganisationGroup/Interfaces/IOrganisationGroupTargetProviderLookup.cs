@@ -12,7 +12,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
         /// eg will lookup
         /// - Parlimentary Consituency code and name, based on the Parlimentary Consituency code for information
         /// </summary>
-        /// <param name="groupTypeIdentifier">Group Type Identifier</param>
+        /// <param name="organisationGroupLookupParameters">Grouping Lookup Parameters</param>
+        /// <param name="groupingReason">Grouping Reason</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
         Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Common.ApiClient.Providers.Models.Provider> providersInGroup);

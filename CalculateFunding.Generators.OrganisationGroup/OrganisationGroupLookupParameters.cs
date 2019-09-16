@@ -7,9 +7,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
 {
     public class OrganisationGroupLookupParameters
     {
-        public string identifierValue { get; set; }
-        public OrganisationGroupTypeCode organisationGroupTypeCode { get; set; }
-        public string providerVersionId { get; set; }
-        public OrganisationGroupTypeIdentifier groupTypeIdentifier { get; set; }
+        public string IdentifierValue { get; set; }
+        public OrganisationGroupTypeCode? OrganisationGroupTypeCode { get; set; }
+        public string ProviderVersionId { get; set; }
+        public OrganisationGroupTypeIdentifier? GroupTypeIdentifier { get; set; }
     }
 }

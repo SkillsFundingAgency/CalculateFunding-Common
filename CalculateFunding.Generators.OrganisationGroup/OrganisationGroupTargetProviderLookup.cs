@@ -17,6 +17,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
     {
         private readonly IProvidersApiClient _providersApiClient;
         private readonly Policy _providersApiClientPolicy;
+        private readonly Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> _additionalIdentifierKeys;
 
         private IEnumerable<Provider> _providers = null;
 
@@ -27,6 +28,32 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
             _providersApiClient = providersApiClient;
             _providersApiClientPolicy = resiliencePolicies.ProvidersApiClient;
+            _additionalIdentifierKeys = GenerateAdditionalKeys();
+        }
+
+        private Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> GenerateAdditionalKeys()
+        {
+            Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> additionalIdentifierKeys = new Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>>();
+
+            Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>> paymentKeys = new Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>();
+
+            paymentKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
+            paymentKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.CountryCode });
+
+            additionalIdentifierKeys.Add(GroupingReason.Payment, paymentKeys);
+
+            Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>> informationKeys = new Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>();
+
+            informationKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.CountryCode });
+            informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.CountryCode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.CountryCode });
+            informationKeys.Add(OrganisationGroupTypeCode.Provider, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber });
+            informationKeys.Add(OrganisationGroupTypeCode.ParliamentaryConstituency, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.RscRegionCode, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode, OrganisationGroupTypeIdentifier.CountryCode });
+
+            additionalIdentifierKeys.Add(GroupingReason.Information, informationKeys);
+
+            return additionalIdentifierKeys;
         }
 
         /// <summary>
@@ -34,7 +61,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// eg will lookup
         /// - Parlimentary Consituency code and name, based on the Parlimentary Consituency code for information
         /// </summary>
-        /// <param name="groupTypeIdentifier">Group Type Identifier</param>
+        /// <param name="organisationGroupLookupParameters">Grouping Lookup Parameters</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
         public async Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Provider> providersInGroup)
@@ -43,24 +70,23 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
             if (groupReason == GroupingReason.Payment)
             {
-                Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.identifierValue, nameof(organisationGroupLookupParameters.identifierValue));
-                Guard.ArgumentNotNull(organisationGroupLookupParameters.organisationGroupTypeCode, nameof(organisationGroupLookupParameters.organisationGroupTypeCode));
-                Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.providerVersionId, nameof(organisationGroupLookupParameters.providerVersionId));
+                Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.IdentifierValue, nameof(organisationGroupLookupParameters.IdentifierValue));
+                Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.ProviderVersionId, nameof(organisationGroupLookupParameters.ProviderVersionId));
 
-                return await GetTargetProviderDetailsForPayment(organisationGroupLookupParameters.identifierValue, organisationGroupLookupParameters.organisationGroupTypeCode, organisationGroupLookupParameters.providerVersionId, providersInGroup);
+                return await GetTargetProviderDetailsForPayment(organisationGroupLookupParameters.IdentifierValue, organisationGroupLookupParameters.OrganisationGroupTypeCode, organisationGroupLookupParameters.ProviderVersionId, providersInGroup);
             }
             else
             {
-                Guard.ArgumentNotNull(organisationGroupLookupParameters.groupTypeIdentifier, nameof(organisationGroupLookupParameters.groupTypeIdentifier));
-                
+                Guard.ArgumentNotNull(organisationGroupLookupParameters.GroupTypeIdentifier, nameof(organisationGroupLookupParameters.GroupTypeIdentifier));
+
                 // Get the first of the scoped providers, then obtain the ID and name from the properties of that.
                 Provider firstProvider = providersInGroup.First();
 
                 return new TargetOrganisationGroup()
                 {
-                    Name = GetOrganisationGroupName(firstProvider, organisationGroupLookupParameters.groupTypeIdentifier),
-                    Identifier = GetOrganisationGroupIdentifier(firstProvider, organisationGroupLookupParameters.groupTypeIdentifier),
-                    Identifiers = GenerateIdentifiersForProvider(firstProvider)
+                    Name = GetOrganisationGroupName(firstProvider, organisationGroupLookupParameters.GroupTypeIdentifier.Value),
+                    Identifier = GetOrganisationGroupIdentifier(firstProvider, organisationGroupLookupParameters.GroupTypeIdentifier.Value),
+                    Identifiers = organisationGroupLookupParameters.OrganisationGroupTypeCode.HasValue ? GenerateIdentifiersForProvider(groupReason, organisationGroupLookupParameters.OrganisationGroupTypeCode.Value, firstProvider) : null
                 };
             }
         }
@@ -76,34 +102,39 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <param name="providerVersionId">Provider version</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
-        public async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPayment(string identifierValue, OrganisationGroupTypeCode organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup)
+        private async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPayment(string identifierValue, OrganisationGroupTypeCode? organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup)
         {
-            IEnumerable<Provider> allProviders = await GetAllProviders(providerVersionId);
+            if (!organisationGroupTypeCode.HasValue)
+            {
+                throw new Exception("Unable to lookup target provider, no OrganisationGroupTypeCode given");
+            }
 
             Provider targetProvider = null;
 
             // Always return a UKRPN, as we need to pay a LegalEntity
-            if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
+            if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust || organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
             {
-                // Single academy trust
-                if (providersInGroup.Count() == 1 && providersInGroup.First().TrustStatus == TrustStatus.SupportedByASingleAacademyTrust)
+                IEnumerable<Provider> allProviders = await GetAllProviders(providerVersionId);
+
+                if (organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
                 {
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue);
+                    // Lookup the local authority by LACode and provider type and subtype
+                    targetProvider = allProviders.SingleOrDefault(p => p.ProviderType == "Local Authority" && p.ProviderSubType == "Local Authority" && p.LACode == identifierValue);
                 }
-                else
+                else if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
                     // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && p.ProviderType == "Multi-academy trust");
+                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && (p.ProviderType == "Multi-academy trust" || p.ProviderType == "Single-academy trust"));
+
+                    if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
+                    {
+                        targetProvider = new Provider { ProviderId = identifierValue, UKPRN = identifierValue, TrustCode = identifierValue, Name = providersInGroup?.First().TrustName };
+                    }
                 }
-            }
-            else if (organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
-            {
-                // Lookup the local authority by LACode and provider type and subtype
-                targetProvider = allProviders.SingleOrDefault(p => p.ProviderType == "Local Authority" && p.ProviderSubType == "Local Authority" && p.LACode == identifierValue);
             }
             else if (organisationGroupTypeCode == OrganisationGroupTypeCode.Provider)
             {
-                targetProvider = allProviders.SingleOrDefault(p => p.UKPRN == identifierValue);
+                targetProvider = providersInGroup.SingleOrDefault(p => p.UKPRN == identifierValue);
             }
             else
             {
@@ -120,18 +151,32 @@ namespace CalculateFunding.Generators.OrganisationGroup
             {
                 Identifier = targetProvider.UKPRN,
                 Name = targetProvider.Name,
-                Identifiers = GenerateIdentifiersForProvider(targetProvider)
+                Identifiers = GenerateIdentifiersForProvider(GroupingReason.Payment, organisationGroupTypeCode.Value, targetProvider)
             };
         }
 
-        private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(Provider targetProvider)
+        private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(GroupingReason groupingReason, OrganisationGroupTypeCode organisationGroupTypeCode, Provider targetProvider)
         {
-            foreach (OrganisationGroupTypeIdentifier organisationGroupTypeIdentifier in Enum.GetValues(typeof(OrganisationGroupTypeIdentifier)).Cast<OrganisationGroupTypeIdentifier>())
+            if (_additionalIdentifierKeys[groupingReason].ContainsKey(organisationGroupTypeCode))
             {
-                string targetProviderGroupTypeIdentifierValue = GetOrganisationGroupIdentifier(targetProvider, organisationGroupTypeIdentifier);
-                if (!string.IsNullOrWhiteSpace(targetProviderGroupTypeIdentifierValue))
+                foreach (OrganisationGroupTypeIdentifier organisationGroupTypeIdentifier in _additionalIdentifierKeys[groupingReason][organisationGroupTypeCode])
                 {
-                    yield return new OrganisationIdentifier { Type = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>(), Value = targetProviderGroupTypeIdentifierValue };
+                    string targetProviderGroupTypeIdentifierValue = GetOrganisationGroupIdentifier(targetProvider, organisationGroupTypeIdentifier);
+                    if (!string.IsNullOrWhiteSpace(targetProviderGroupTypeIdentifierValue))
+                    {
+                        Enums.OrganisationGroupTypeIdentifier typeIdentifier;
+
+                        if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.DfeEstablishmentNumber)
+                        {
+                            typeIdentifier = Enums.OrganisationGroupTypeIdentifier.DfeNumber;
+                        }
+                        else
+                        {
+                            typeIdentifier = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>();
+                        }
+
+                        yield return new OrganisationIdentifier { Type = typeIdentifier, Value = targetProviderGroupTypeIdentifierValue };
+                    }
                 }
             }
         }
@@ -165,6 +210,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.Name;
                 case OrganisationGroupTypeIdentifier.LACode:
                     return provider.Authority;
+                case OrganisationGroupTypeIdentifier.DfeEstablishmentNumber:
+                    return provider.DfeEstablishmentNumber;
                 case OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode:
                     return provider.ParliamentaryConstituencyName;
                 case OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode:
