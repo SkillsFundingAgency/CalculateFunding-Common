@@ -39,7 +39,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 
             string expectedGetByIdUri = GetSummariesByFundingPeriodIdUriFor(fundingPeriodId);
 
-            GivenTheResponse(expectedSummarySpecification);
+            GivenTheResponse($"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}", expectedSummarySpecification, HttpMethod.Get);
 
             ApiResponse<IEnumerable<SpecificationSummary>> apiResponse =
                 await WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(fundingPeriodId);
@@ -78,7 +78,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             SpecificationSummary expectedSummarySpecification = NewSpecificationSummary();
             string expectedGetByIdUri = GetSummaryByIdUriFor(specificationId);
 
-            GivenTheResponse(expectedSummarySpecification);
+            GivenTheResponse($"specs/specification-summary-by-id?specificationId={specificationId}", expectedSummarySpecification, HttpMethod.Get);
 
             ApiResponse<SpecificationSummary> apiResponse = await WhenTheSpecificationSummaryIsQueriedById(specificationId);
 

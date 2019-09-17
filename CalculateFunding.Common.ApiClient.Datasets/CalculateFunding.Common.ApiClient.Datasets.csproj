@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <RootNamespace>CalculateFunding.Common.ApiClient.DataSets</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
+      <ProjectReference Include="..\CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj" />
+      <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
+    </ItemGroup>
+
+</Project>

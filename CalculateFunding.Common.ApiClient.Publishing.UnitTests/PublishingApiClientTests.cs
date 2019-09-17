@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
@@ -29,7 +30,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string specificationId = NewRandomString();
             string expectedUri = $"specifications/{specificationId}/refresh";
 
-            GivenTheStatusCode(expectedStatusCode);
+            GivenTheStatusCode(expectedUri, expectedStatusCode, HttpMethod.Post);
 
             HttpStatusCode actualStatusCode = await _client.RefreshFundingForSpecification(specificationId);
 
@@ -49,7 +50,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string specificationId = NewRandomString();
             string expectedUri = $"specifications/{specificationId}/approve";
 
-            GivenTheStatusCode(expectedStatusCode);
+            GivenTheStatusCode(expectedUri, expectedStatusCode, HttpMethod.Post);
 
             HttpStatusCode actualStatusCode = await _client.ApproveSpecification(specificationId);
 

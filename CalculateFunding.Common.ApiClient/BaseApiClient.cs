@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Newtonsoft.Json;
@@ -27,7 +29,7 @@ namespace CalculateFunding.Common.ApiClient
         };
         private readonly ICancellationTokenProvider _cancellationTokenProvider;
 
-        public BaseApiClient(IHttpClientFactory httpClientFactory, string clientKey, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
+        protected BaseApiClient(IHttpClientFactory httpClientFactory, string clientKey, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
         {
             Guard.ArgumentNotNull(httpClientFactory, nameof(httpClientFactory));
             Guard.IsNullOrWhiteSpace(clientKey, nameof(clientKey));
@@ -72,7 +74,7 @@ namespace CalculateFunding.Common.ApiClient
 
         private async Task<ApiResponse<T>> TypedRequest<T>(string url, HttpMethod httpMethod, CancellationToken cancellationToken)
         {
-            IsOk(httpMethod, new[] { HttpMethod.Get });
+            IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Post });
 
             HttpClient httpClient = await PrepareRequest(url,
                 TimeSpan.FromMinutes(5),
@@ -91,7 +93,11 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
-        private async Task<HttpStatusCode> StatusCodeRequest(string url, HttpMethod httpMethod, CancellationToken cancellationToken)
+        private async Task<HttpStatusCode> StatusCodeRequest(string url, 
+            HttpMethod httpMethod, 
+            CancellationToken cancellationToken, 
+            string rawContent = null,
+            params string[] customerHeaders)
         {
             IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post });
 
@@ -101,13 +107,39 @@ namespace CalculateFunding.Common.ApiClient
                 _clientKey,
                 url);
 
+            EnsureCustomHeadersSet(customerHeaders, httpClient);
+
             if (cancellationToken == default(CancellationToken)) cancellationToken = CurrentCancellationToken();
 
             using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, url))
             {
+                EnsureRawBodyContentSet(rawContent, request);
+                
                 return await StatusCodeResponse(url,
                     httpClient,
                     async () => await httpClient.SendAsync(request, cancellationToken));
+            }
+        }
+
+        private static void EnsureRawBodyContentSet(string rawBodyContent, HttpRequestMessage request)
+        {
+            if (rawBodyContent.IsNullOrEmpty()) return;
+            
+            request.Content = new StringContent(rawBodyContent, Encoding.UTF8);
+        }
+
+        private static void EnsureCustomHeadersSet(string[] customerHeaders, HttpClient httpClient)
+        {
+            if (customerHeaders?.Any() != true) return;
+            
+            if (customerHeaders.Length % 2 != 0)
+            {
+                throw new InvalidOperationException("Customer headers must be supplied in name value pairs");
+            }
+
+            for (int headerName = 0; headerName < customerHeaders.Length; headerName += 2)
+            {
+                httpClient.DefaultRequestHeaders.Add(customerHeaders[headerName], new[] {customerHeaders[headerName + 1]});
             }
         }
 
@@ -182,7 +214,7 @@ namespace CalculateFunding.Common.ApiClient
                 requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 using (HttpResponseMessage response = await httpClient.SendAsync(requestMessage, cancellationToken))
                 {
-                    return await ValidatedApiResponse<TResponse, TRequest>(url, response, httpClient);
+                    return await ValidatedApiResponse<TResponse>(url, response, httpClient);
                 }
             }
         }
@@ -207,7 +239,7 @@ namespace CalculateFunding.Common.ApiClient
             return new ApiResponse<T>(response.StatusCode);
         }
 
-        private async Task<ValidatedApiResponse<TResponse>> ValidatedApiResponse<TResponse, TRequest>(string url, HttpResponseMessage response, HttpClient httpClient)
+        private async Task<ValidatedApiResponse<TResponse>> ValidatedApiResponse<TResponse>(string url, HttpResponseMessage response, HttpClient httpClient)
         {
             HandleNullResponse(url, response, httpClient);
 
@@ -277,6 +309,12 @@ namespace CalculateFunding.Common.ApiClient
             return await StatusCodeRequest(url, request, HttpMethod.Post, cancellationToken);
         }
 
+        protected async Task<ApiResponse<TResponse>> PostAsync<TResponse>(string url,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await TypedRequest<TResponse>(url, HttpMethod.Post, cancellationToken);
+        }
+
         public async Task<ValidatedApiResponse<TResponse>> ValidatedPostAsync<TResponse, TRequest>(string url,
             TRequest request,
             CancellationToken cancellationToken = default(CancellationToken),
@@ -321,10 +359,14 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
-        public async Task<HttpStatusCode> PostAsync(string url, CancellationToken cancellationToken = default(CancellationToken))
+        protected async Task<HttpStatusCode> PostAsync(string url, 
+            CancellationToken cancellationToken = default(CancellationToken), 
+            string rawContent = null, 
+            params string[] customerHeaders)
         {
-            return await StatusCodeRequest(url, HttpMethod.Post, cancellationToken);
+            return await StatusCodeRequest(url, HttpMethod.Post, cancellationToken, rawContent, customerHeaders);
         }
+        
         #endregion
 
         #region "PUT"

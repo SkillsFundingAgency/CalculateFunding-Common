@@ -36,20 +36,27 @@ namespace CalculateFunding.Common.Testing
                 .BeEquivalentTo(expectedUris.Select(uri => $"{HttpStubUri}/{uri}"));
         }
 
+        protected void AndTheRequestContentsShouldHaveBeen(params string[] expectedRequestBodies)
+        {
+            _messageHandler.RequestContents
+                .Should()
+                .BeEquivalentTo(expectedRequestBodies);
+        }
+
         protected string NewRandomString()
         {
             return new RandomString();
         }
 
-        protected void GivenTheResponse<TResponse>(TResponse response)
+        protected void GivenTheResponse<TResponse>(string uri, TResponse response, HttpMethod method = null, params string[] customHeaders)
             where TResponse : class
         {
-            _messageHandler.SetupStringResponse(response.AsJson());
+            _messageHandler.SetupStringResponse(uri, response.AsJson(), method: method, customerHeaders: customHeaders);
         }
 
-        protected void GivenTheStatusCode(HttpStatusCode statusCode)
+        protected void GivenTheStatusCode(string uri, HttpStatusCode statusCode, HttpMethod method = null, params string[] customHeaders)
         {
-            _messageHandler.SetupStatusCodeResponse(statusCode);    
+            _messageHandler.SetupStatusCodeResponse(uri, statusCode, method, customHeaders);
         }
     }
 }

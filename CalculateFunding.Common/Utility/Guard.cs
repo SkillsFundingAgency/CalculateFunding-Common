@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Serilog;
 
 namespace CalculateFunding.Common.Utility
@@ -8,6 +10,16 @@ namespace CalculateFunding.Common.Utility
     /// </summary>
     public static class Guard
     {
+        public static void IsNotEmpty<TItem>(IEnumerable<TItem> collection, string parameterName)
+        {
+            if (collection?.Any() == true)
+            {
+                return;
+            }
+            
+            throw new ArgumentNullException(parameterName);
+        }
+        
         /// <summary>
         /// Checks argument value to ensure it isn't null
         /// </summary>
