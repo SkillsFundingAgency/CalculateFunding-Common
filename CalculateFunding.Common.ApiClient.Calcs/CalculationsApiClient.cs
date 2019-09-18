@@ -10,7 +10,7 @@ using CalculateFunding.Common.Utility;
 using Serilog;
 
 namespace CalculateFunding.Common.ApiClient.Calcs
-{
+{ 
     public class CalculationsApiClient : BaseApiClient, ICalculationsApiClient
     {
         private const string UrlRoot = "calcs";
@@ -88,9 +88,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.IsNullOrWhiteSpace(calculationName, nameof(calculationName));
 
-            const string validateCalculationNameUrl = "calcs/validate-calc-name/{0}/{1}/{2}";
-
-            string url = string.Format(validateCalculationNameUrl, specificationId, calculationName, existingCalculationId);
+            string url = $"{UrlRoot}/validate-calc-name/{specificationId}/{calculationName}/{existingCalculationId}";
 
             HttpStatusCode httpStatusCode = await GetAsync(url);
 
