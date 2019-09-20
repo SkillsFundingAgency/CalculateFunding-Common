@@ -7,5 +7,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling
     public interface IProfilingApiClient
     {
         Task<ValidatedApiResponse<ProviderProfilingResponseModel>> GetProviderProfilePeriods(ProviderProfilingRequestModel requestModel);
+
+        Task<NoValidatedContentApiResponse> SaveProfilingConfig(SetFundingStreamPeriodProfilePatternRequestModel requestModel);
     }
 }

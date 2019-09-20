@@ -26,5 +26,12 @@ namespace CalculateFunding.Common.ApiClient.Profiling
 
             return await ValidatedPostAsync<ProviderProfilingResponseModel, ProviderProfilingRequestModel>("profiling", requestModel);
         }
+
+        public async Task<NoValidatedContentApiResponse> SaveProfilingConfig(SetFundingStreamPeriodProfilePatternRequestModel requestModel)
+        {
+            Guard.ArgumentNotNull(requestModel, nameof(requestModel));
+
+            return await ValidatedPostAsync<SetFundingStreamPeriodProfilePatternRequestModel>("profiling", requestModel);
+        }
     }
 }
