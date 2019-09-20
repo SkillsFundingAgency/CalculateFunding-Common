@@ -29,12 +29,12 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Models
         /// </summary>
         [JsonProperty("fundingLineCode", NullValueHandling = NullValueHandling.Ignore)]
         public string FundingLineCode { get; set; }
-
+        
         /// <summary>
         /// The funding value in pence.
         /// </summary>
         [JsonProperty("value")]
-        public long Value { get; set; }
+        public decimal Value { get; set; }
 
         /// <summary>
         /// A unique ID (in terms of template, not data) for this funding line (e.g. 345).

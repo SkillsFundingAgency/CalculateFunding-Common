@@ -12,8 +12,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Models
         public string Name { get; set; }
 
         public string FundingLineCode { get; set; }
-
-        public long Value { get; set; }
+        
+        public decimal Value { get; set; }
 
         public uint TemplateLineId { get; set; }
 
