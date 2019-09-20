@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Interfaces;
+using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
@@ -60,6 +61,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await PostAsync($"specifications/{specificationId}/approve");
+        }
+
+        public async Task<ApiResponse<SearchResults<PublishedProviderIndex>>> SearchPublishedProvider(SearchModel searchModel)
+        {
+            Guard.ArgumentNotNull(searchModel, nameof(searchModel));
+            
+            string url = $"publishedprovider/publishedprovider-search";
+            
+            return await PostAsync<SearchResults<PublishedProviderIndex>, SearchModel>(url, searchModel);
+           
         }
     }
 }

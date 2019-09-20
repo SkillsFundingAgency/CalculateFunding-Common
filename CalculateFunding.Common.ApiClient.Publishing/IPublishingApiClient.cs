@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.Models.Search;
 
 namespace CalculateFunding.Common.ApiClient.Publishing
 {
@@ -19,5 +20,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<HttpStatusCode> RefreshFundingForSpecification(string specificationId);
 
         Task<HttpStatusCode> ApproveSpecification(string specificationId);
+
+        Task<ApiResponse<SearchResults<PublishedProviderIndex>>> SearchPublishedProvider(SearchModel searchModel);
     }
 }
