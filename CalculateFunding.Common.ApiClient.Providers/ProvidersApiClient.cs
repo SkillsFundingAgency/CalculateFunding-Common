@@ -1,4 +1,9 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Common.ApiClient.Providers.Models.Search;
 using CalculateFunding.Common.ApiClient.Providers.ViewModels;
@@ -6,11 +11,6 @@ using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.Providers
 {
@@ -48,7 +48,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
                     Facets = results.Content.Facets.Select(x => new SearchFacet
                     {
                         Name = x.Name,
-                        FacetValues = x.FacetValues.Select(v => new SearchFacetValue { Name = v.Name, Count = v.Count})
+                        FacetValues = x.FacetValues.Select(v => new SearchFacetValue { Name = v.Name, Count = v.Count })
                     }),
                 };
 
@@ -79,13 +79,22 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
         }
 
-        public async Task<ApiResponse<IEnumerable<ProviderVersionMetadata>>> GetProviderVersions(string fundingStreamId)
+        public async Task<ApiResponse<IEnumerable<ProviderVersionMetadata>>> GetProviderVersionsByFundingStream(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
             string url = $"providers/versions-by-fundingstream/{fundingStreamId}";
 
             return await GetAsync<IEnumerable<ProviderVersionMetadata>>(url);
+        }
+
+        public async Task<ApiResponse<ProviderVersionMetadata>> GetProviderVersionMetadata(string providerVersionId)
+        {
+            Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
+
+            string url = $"providers/versions/{providerVersionId}/metadata";
+
+            return await GetAsync<ProviderVersionMetadata>(url);
         }
 
         public async Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(string providerVersionId)

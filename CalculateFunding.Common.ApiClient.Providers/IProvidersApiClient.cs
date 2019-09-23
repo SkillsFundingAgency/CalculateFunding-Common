@@ -1,11 +1,11 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Common.ApiClient.Providers.Models.Search;
 using CalculateFunding.Common.ApiClient.Providers.ViewModels;
 using CalculateFunding.Common.Models.Search;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.Providers
 {
@@ -15,7 +15,8 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<ApiResponse<ProviderVersion>> GetAllMasterProviders();
         Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId);
         Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId);
-        Task<ApiResponse<IEnumerable<ProviderVersionMetadata>>> GetProviderVersions(string fundingStreamId);
+        Task<ApiResponse<IEnumerable<ProviderVersionMetadata>>> GetProviderVersionsByFundingStream(string fundingStreamId);
+        Task<ApiResponse<ProviderVersionMetadata>> GetProviderVersionMetadata(string providerVersionId);
         Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(int year, int month, int day);
         Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(string providerVersionId);
         Task<ApiResponse<ProviderVersionSearchResults>> SearchMasterProviders(SearchModel searchModel);
