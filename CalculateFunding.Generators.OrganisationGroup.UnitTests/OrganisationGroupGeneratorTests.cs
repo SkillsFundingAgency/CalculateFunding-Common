@@ -1338,7 +1338,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode1",
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1"
             });
 
             providers.Add(new Provider()
@@ -1369,7 +1371,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode1",
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1"
             });
 
             providers.Add(new Provider()
@@ -1400,7 +1404,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C2",
                 CountryName = "Country 2",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode2",
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName2"
             });
 
             providers.Add(new Provider()

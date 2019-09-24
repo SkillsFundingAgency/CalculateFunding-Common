@@ -88,5 +88,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("postcode")]
         public string Postcode { get; set; }
+
+        [JsonProperty("countryCode")]
+        public string CountryCode { get; set; }
+
+        [JsonProperty("countryName")]
+        public string CountryName { get; set; }
+
+        [JsonProperty("localGovernmentGroupTypeCode")]
+        public string LocalGovernmentGroupTypeCode { get; set; }
+
+        [JsonProperty("localGovernmentGroupTypeName")]
+        public string LocalGovernmentGroupTypeName { get; set; }
     }
 }
