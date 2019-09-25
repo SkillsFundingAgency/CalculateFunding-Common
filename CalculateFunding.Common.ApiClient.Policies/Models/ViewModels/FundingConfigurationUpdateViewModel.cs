@@ -5,5 +5,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
     public class FundingConfigurationUpdateViewModel
     {
         public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; }
+
+        public string DefaultTemplateVersion { get; set; }
     }
 }
