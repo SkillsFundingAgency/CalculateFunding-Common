@@ -8,8 +8,6 @@
 
         public string SpecificationId { get; set; }
 
-        public string FundingStreamId { get; set; }
-
         public CalculationValueType? ValueType { get; set; }
 
         public string SourceCode { get; set; }
