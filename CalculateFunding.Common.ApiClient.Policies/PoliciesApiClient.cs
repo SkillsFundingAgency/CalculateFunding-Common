@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
@@ -98,10 +99,13 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<FundingConfiguration, FundingConfigurationUpdateViewModel>(url, configuration);
         }
 
-        public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods()
+        public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods(FundingPeriodsModel fundingPeriodsModel,string fileName)
         {
+            Guard.ArgumentNotNull(fundingPeriodsModel, nameof(fundingPeriodsModel));
+            Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
+
             string url = "fundingperiods";
-            return await PostAsync<FundingPeriod, object>(url, null);
+            return await PostAsync<FundingPeriod, FundingPeriodsModel>(url, fundingPeriodsModel, CancellationToken.None,"json-file", fileName);           
         }
 
         public async Task<ApiResponse<string>> SaveFundingSchema(string schema)
@@ -112,10 +116,13 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<string, object>(url, null);
         }
 
-        public async Task<ApiResponse<FundingStream>> SaveFundingStream()
+        public async Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStream fundingStream, string fileName)
         {
+            Guard.ArgumentNotNull(fundingStream, nameof(fundingStream));
+            Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
+
             string url = "fundingstreams";
-            return await PostAsync<FundingStream, object>(url, null);
+            return await PostAsync<FundingStream, object>(url, fundingStream, CancellationToken.None, "json-file", fileName);
         }
 
         public async Task<ApiResponse<string>> SaveFundingTemplate(string templateJson)

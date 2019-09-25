@@ -190,6 +190,34 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
+        private async Task<ApiResponse<TResponse>> TypedApiRequest<TResponse, TRequest>(string url, TRequest request, HttpMethod httpMethod, 
+            CancellationToken cancellationToken, params string[] customerHeaders)
+        {
+            IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put });
+
+            var httpClient = await PrepareRequest(url,
+                $"ApiClient {httpMethod}: {{clientKey}}://{{url}} ({typeof(TRequest).Name} => {typeof(TResponse).Name})",
+                _clientKey,
+                url);
+
+            EnsureCustomHeadersSet(customerHeaders, httpClient);
+
+            if (cancellationToken == default(CancellationToken)) cancellationToken = CurrentCancellationToken();
+
+            using (HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url))
+            {
+                string json = JsonConvert.SerializeObject(request, _serializerSettings);
+                requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using (HttpResponseMessage response = await httpClient.SendAsync(requestMessage, cancellationToken))
+                {
+                    HandleNullResponse(url, response, httpClient);
+
+                    return await TypedApiResponse<TResponse>(url, response, httpClient);
+                }
+            }
+        }
+
         private async Task<ValidatedApiResponse<TResponse>> ValidatedRequest<TResponse, TRequest>(string url,
             TRequest request,
             HttpMethod httpMethod,
@@ -299,6 +327,14 @@ namespace CalculateFunding.Common.ApiClient
             CancellationToken cancellationToken = default(CancellationToken))
         {
             return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken);
+        }
+
+        public async Task<ApiResponse<TResponse>> PostAsync<TResponse, TRequest>(string url,
+            TRequest request,
+            CancellationToken cancellationToken = default(CancellationToken),
+            params string[] customerHeaders)
+        {
+            return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken,customerHeaders);
         }
 
         public async Task<HttpStatusCode> PostAsync<TRequest>(string url,

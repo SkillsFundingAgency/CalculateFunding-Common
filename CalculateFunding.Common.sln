@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.757
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
 EndProject
@@ -85,7 +85,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Datasets.UnitTests", "CalculateFunding.Common.ApiClient.Datasets.UnitTests\CalculateFunding.Common.ApiClient.Datasets.UnitTests.csproj", "{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.TestEngine", "CalculateFunding.Common.ApiClient.TestEngine\CalculateFunding.Common.ApiClient.TestEngine.csproj", "{8F4F6210-893A-49C2-B37E-45EB04420D61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.TestEngine", "CalculateFunding.Common.ApiClient.TestEngine\CalculateFunding.Common.ApiClient.TestEngine.csproj", "{8F4F6210-893A-49C2-B37E-45EB04420D61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
