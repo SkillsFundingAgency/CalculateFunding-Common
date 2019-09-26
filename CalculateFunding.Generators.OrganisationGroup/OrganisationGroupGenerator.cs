@@ -55,7 +55,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
                     TargetOrganisationGroup targetOrganisationGroup = null;
 
-                    OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters {
+                    OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+                    {
                         IdentifierValue = providerGrouping.Key,
                         OrganisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
                         ProviderVersionId = providerVersionId,
@@ -142,10 +143,12 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         return c => c.RscRegionCode;
                     case OrganisationGroupTypeIdentifier.CountryCode:
                         return c => c.CountryCode;
+                    case OrganisationGroupTypeIdentifier.LACode:
+                        return c => c.LACode;
                 }
             }
 
-            throw new Exception("Unknown type");
+            throw new Exception("Unknown OrganisationGroupTypeIdentifier for provider ID");
         }
 
         private IEnumerable<Provider> FilterProviders(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatchs)

@@ -1306,6 +1306,132 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C2"));
         }
 
+        [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByLACode_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.LACode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthority,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+            };
+
+            TargetOrganisationGroup c1 = new TargetOrganisationGroup()
+            {
+                Identifier = "101",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"))
+                .Returns(c1);
+
+            TargetOrganisationGroup c2 = new TargetOrganisationGroup()
+            {
+                Identifier = "102",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"))
+                .Returns(c2);
+
+            TargetOrganisationGroup c3 = new TargetOrganisationGroup()
+            {
+                Identifier = "103",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 3",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"))
+                .Returns(c3);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 1",
+                    SearchableName = "LocalAuthority1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "101",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "101" && p.ProviderType == "ProviderType")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 2",
+                    SearchableName = "LocalAuthority2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "102",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "102" && p.ProviderType == "ProviderType")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 3",
+                    SearchableName = "LocalAuthority3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "103",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "103" && p.ProviderType == "ProviderType")),
+                },
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"));
+
+            await _organisationGroupTargetProviderLookup
+               .Received(1)
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"));
+        }
+
         private IEnumerable<Provider> GenerateScopedProviders()
         {
             List<Provider> providers = new List<Provider>();

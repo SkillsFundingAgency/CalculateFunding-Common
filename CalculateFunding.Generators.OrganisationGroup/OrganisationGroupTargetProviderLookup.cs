@@ -125,7 +125,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
                     // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && (p.ProviderType == "Multi-academy trust" || p.ProviderType == "Single-academy trust"));
+                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && (p.ProviderType == "Academy Trust"));
 
                     if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
                     {
@@ -139,12 +139,12 @@ namespace CalculateFunding.Generators.OrganisationGroup
             }
             else
             {
-                throw new Exception("Unable to lookup target provider, given the OrganisationGroupTypeCode");
+                throw new Exception($"Unable to lookup target provider, unsupported OrganisationGroupTypeCode of '{organisationGroupTypeCode}'");
             }
 
             if (targetProvider == null)
             {
-                throw new Exception("Unable to find target provider, given the OrganisationGroupTypeCode");
+                throw new Exception($"Unable to find target provider, given the OrganisationGroupTypeCode. Identifier = '{identifierValue}'. OrganisationGroupTypeCode= '{organisationGroupTypeCode}'");
             }
 
             // Return the provider if found.

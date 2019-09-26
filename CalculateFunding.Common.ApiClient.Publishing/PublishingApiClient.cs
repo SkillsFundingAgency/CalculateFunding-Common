@@ -63,13 +63,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync($"specifications/{specificationId}/approve");
         }
 
-        public async Task<ApiResponse<SearchResults<PublishedProviderIndex>>> SearchPublishedProvider(SearchModel searchModel)
+        public async Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
             
             string url = $"publishedprovider/publishedprovider-search";
             
-            return await PostAsync<SearchResults<PublishedProviderIndex>, SearchModel>(url, searchModel);
+            return await PostAsync<SearchResults<PublishedProviderSearchItem>, SearchModel>(url, searchModel);
            
         }
     }

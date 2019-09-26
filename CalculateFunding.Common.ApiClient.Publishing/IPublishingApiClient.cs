@@ -21,6 +21,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<HttpStatusCode> ApproveSpecification(string specificationId);
 
-        Task<ApiResponse<SearchResults<PublishedProviderIndex>>> SearchPublishedProvider(SearchModel searchModel);
+        Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
     }
 }

@@ -1,4 +1,8 @@
-﻿using CalculateFunding.Common.ApiClient.Providers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Providers;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
@@ -6,11 +10,6 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Polly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 {
@@ -41,7 +40,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
 
-            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters {
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
                 IdentifierValue = "101",
                 OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.LocalAuthority,
                 ProviderVersionId = _providerVersionId
@@ -151,7 +151,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
                 new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() });
 
-            action.Should().Throw<Exception>().WithMessage("Unable to lookup target provider, given the OrganisationGroupTypeCode");
+            action.Should().Throw<Exception>().WithMessage("Unable to lookup target provider, unsupported OrganisationGroupTypeCode of 'District'");
         }
 
         [TestMethod]
@@ -170,7 +170,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
                 new List<Provider> { });
 
-            action.Should().Throw<Exception>().WithMessage("Unable to find target provider, given the OrganisationGroupTypeCode");
+            action.Should().Throw<Exception>().WithMessage("Unable to find target provider, given the OrganisationGroupTypeCode. Identifier = '1002'. OrganisationGroupTypeCode= 'AcademyTrust'");
         }
 
         [TestMethod]
@@ -696,7 +696,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
         private Common.ApiClient.Models.ApiResponse<ProviderVersion> GetProviderVersion()
         {
-            return new Common.ApiClient.Models.ApiResponse<ProviderVersion> ( System.Net.HttpStatusCode.OK,  new ProviderVersion { Providers = GenerateScopedProviders() } );
+            return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = GenerateScopedProviders() });
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()
@@ -711,7 +711,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 TrustName = "Academy Trust 1",
                 TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
                 UKPRN = "1001",
-                ProviderType = "Multi-academy trust",
+                ProviderType = "Academy Trust",
                 ProviderSubType = ""
             });
 
