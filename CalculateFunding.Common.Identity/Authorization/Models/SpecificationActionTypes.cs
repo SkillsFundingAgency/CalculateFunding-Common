@@ -4,6 +4,7 @@
     {
         CanEditSpecification,
         CanEditCalculations,
+        CanCreateCalculations,
         CanMapDatasets,
         CanChooseFunding,
         CanApproveFunding,
