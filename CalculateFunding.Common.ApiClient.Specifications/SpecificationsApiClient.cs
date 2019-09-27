@@ -83,5 +83,21 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return result;
         }
+
+        public async Task<ApiResponse<SpecificationPublishDateModel>> SetPublishDates(string specificationId, SpecificationPublishDateModel specificationPublishDateModel)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(specificationPublishDateModel, nameof(specificationPublishDateModel));
+
+            string url = $"{UrlRoot}/{specificationId}/publishdates";
+            return await PutAsync<SpecificationPublishDateModel,SpecificationPublishDateModel>(url, specificationPublishDateModel);
+        }
+
+        public async Task<ApiResponse<SpecificationPublishDateModel>> GetPublishDates(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            return await GetAsync<SpecificationPublishDateModel>(
+                 $"{UrlRoot}/{specificationId}/publishdates");
+        }
     }
 }
