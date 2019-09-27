@@ -1432,6 +1432,160 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"));
         }
 
+        [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByLACodeAndProvidersAreSuccessfullyExcluded_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.LACode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthority,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+            };
+
+            TargetOrganisationGroup c1 = new TargetOrganisationGroup()
+            {
+                Identifier = "101",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"))
+                .Returns(c1);
+
+            TargetOrganisationGroup c2 = new TargetOrganisationGroup()
+            {
+                Identifier = "102",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"))
+                .Returns(c2);
+
+            TargetOrganisationGroup c3 = new TargetOrganisationGroup()
+            {
+                Identifier = "103",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 3",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"))
+                .Returns(c3);
+
+            Provider excludedProvider = new Provider()
+            {
+                ProviderId = "providerExcluded",
+                Name = "Provider Excluded",
+                UKPRN = "10066",
+                LACode = "101",
+                Authority = "Local Authority 1",
+                TrustCode = "101",
+                TrustName = "Academy Trust 1",
+                ParliamentaryConstituencyCode = "BOS",
+                ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
+                MiddleSuperOutputAreaCode = "MSOA1",
+                MiddleSuperOutputAreaName = "Middle Super Output Area 1",
+                CensusWardCode = "CW1",
+                CensusWardName = "Census Ward 1",
+                DistrictCode = "D1",
+                DistrictName = "District 1",
+                GovernmentOfficeRegionCode = "GOR1",
+                GovernmentOfficeRegionName = "Government Office Region 1",
+                LowerSuperOutputAreaCode = "LSOA1",
+                LowerSuperOutputAreaName = "Lower Super Output Area 1",
+                WardCode = "W1",
+                WardName = "Ward 1",
+                RscRegionCode = "RSC1",
+                RscRegionName = "Rsc Region 1",
+                CountryCode = "C1",
+                CountryName = "Country 1",
+                ProviderType = "ProviderTypeExcluded",
+                ProviderSubType = "ProviderTypeExcluded",
+                LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode1",
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1",
+            };
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders()
+                .Concat(new[] { excludedProvider });
+
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                    .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 1",
+                    SearchableName = "LocalAuthority1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "101",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "101" && p.ProviderType == "ProviderType")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 2",
+                    SearchableName = "LocalAuthority2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "102",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "102" && p.ProviderType == "ProviderType")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 3",
+                    SearchableName = "LocalAuthority3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "103",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "103" && p.ProviderType == "ProviderType")),
+                },
+            };
+
+            result
+                .Should()
+                    .BeEquivalentTo(expectedResult);
+
+            OrganisationGroupResult laForExcludedProvider = result.Single(l => l.IdentifierValue == "101");
+            laForExcludedProvider
+                .Providers
+                .Should()
+                .NotContain(excludedProvider);
+        }
+
         private IEnumerable<Provider> GenerateScopedProviders()
         {
             List<Provider> providers = new List<Provider>();

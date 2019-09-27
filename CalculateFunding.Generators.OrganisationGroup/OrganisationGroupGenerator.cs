@@ -35,7 +35,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason);
 
                 // Filter providers based on provider type and subtypes
-                IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.SelectMany(_ => FilterProviders(_, grouping.ProviderTypeMatch));
+                IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
 
                 // Group providers by the fields and discard any providers with null values for that field
                 IEnumerable<IGrouping<string, Provider>> groupedProviders = providersForGroup.GroupBy(providerFilterAttribute);
@@ -151,17 +151,18 @@ namespace CalculateFunding.Generators.OrganisationGroup
             throw new Exception("Unknown OrganisationGroupTypeIdentifier for provider ID");
         }
 
-        private IEnumerable<Provider> FilterProviders(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatchs)
+        private bool ShouldIncludeProvider(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatches)
         {
-            // Todo - filter based on provider type and provider subtype against the provider matches. Include in list if it matches any provider type and subtype
-            foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatchs)
+            //// Todo - filter based on provider type and provider subtype against the provider matches. Include in list if it matches any provider type and subtype
+            foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatches)
             {
                 if (provider.ProviderType == providerTypeMatch.ProviderType || provider.ProviderSubType == providerTypeMatch.ProviderSubtype)
                 {
-                    yield return provider;
-                    break;
+                    return true;
                 }
             }
+
+            return false;
         }
     }
 }
