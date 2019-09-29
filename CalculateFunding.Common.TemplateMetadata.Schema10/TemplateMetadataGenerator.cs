@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema10.Models;
@@ -80,6 +81,17 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                 Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), source.Type.ToString()),
                 Calculations = source.Calculations?.Select(calculationMap => ToCalculation(calculationMap)),
                 FundingLines = source.FundingLines?.Select(x => ToFundingLine(x)),
+                DistributionPeriods = source.DistributionPeriods?.Select(_ => new TemplateMetadata.Models.DistributionPeriod { DistributionPeriodId = _.DistributionPeriodId,
+                    ProfilePeriods = _.ProfilePeriods.Select (pp => new TemplateMetadata.Models.ProfilePeriod {
+                        DistributionPeriodId = pp.DistributionPeriodId,
+                        Occurrence = pp.Occurrence,
+                        ProfiledValue = pp.ProfiledValue,
+                        Type = pp.Type.AsMatchingEnum<ProfilePeriodType>(),
+                        Year = pp.Year,
+                        TypeValue = pp.TypeValue
+                    }),
+                    Value = _.Value
+                }),
                 Value = source.Value
             };
         }
