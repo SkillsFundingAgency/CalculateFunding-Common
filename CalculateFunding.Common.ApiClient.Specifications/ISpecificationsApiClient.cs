@@ -10,8 +10,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
     {
         Task<ApiResponse<SpecificationSummary>> GetSpecificationSummaryById(string specificationId);
 
-        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFundingByPeriod(
-            string fundingPeriodId);
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFundingByPeriod(string fundingPeriodId);
 
         Task<HttpStatusCode> SetAssignedTemplateVersion(string specificationId, string templateVersion, string fundingStreamId);
 
@@ -22,5 +21,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFunding();
 
         Task<PagedResult<SpecificationSearchResultItem>> FindSpecifications(SearchFilterRequest filterOptions);
+
+        Task<ApiResponse<SpecificationPublishDateModel>> SetPublishDates(string specificationId, SpecificationPublishDateModel specificationPublishDateModel);
+
+        Task<ApiResponse<SpecificationPublishDateModel>> GetPublishDates(string specificationId);
     }
 }
