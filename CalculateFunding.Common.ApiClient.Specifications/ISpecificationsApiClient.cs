@@ -22,7 +22,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         Task<PagedResult<SpecificationSearchResultItem>> FindSpecifications(SearchFilterRequest filterOptions);
 
-        Task<ApiResponse<SpecificationPublishDateModel>> SetPublishDates(string specificationId, SpecificationPublishDateModel specificationPublishDateModel);
+        Task<HttpStatusCode> SetPublishDates(string specificationId, SpecificationPublishDateModel specificationPublishDateModel);
 
         Task<ApiResponse<SpecificationPublishDateModel>> GetPublishDates(string specificationId);
     }
