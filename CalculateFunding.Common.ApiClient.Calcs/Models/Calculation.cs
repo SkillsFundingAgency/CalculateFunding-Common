@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Common.Models;
+﻿using System;
+using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Calcs.Models
@@ -14,7 +15,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         [JsonProperty("fundingStreamId")]
         public string FundingStreamId { get; set; }
 
-        [JsonProperty("name")]
-        public new string Name => Current?.Name;
+        public CalculationSpecificationType CalculationType { get; set; }
+
+        public Reference AllocationLine { get; set; }
+
+        public string Description { get; set; }
+
+        public DateTime LastUpdated { get; set; }
     }
 }
