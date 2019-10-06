@@ -234,7 +234,7 @@ namespace CalculateFunding.Common.CosmosDb
                 PartitionKey = new PartitionKey(partitionKey),
             };
 
-            DocumentResponse<DocumentEntity<T>> response = await _documentClient.ReadDocumentAsync<DocumentEntity<T>>(documentUri);
+            DocumentResponse<DocumentEntity<T>> response = await _documentClient.ReadDocumentAsync<DocumentEntity<T>>(documentUri, requestOptions);
 
             return response.Document.Content;
         }
