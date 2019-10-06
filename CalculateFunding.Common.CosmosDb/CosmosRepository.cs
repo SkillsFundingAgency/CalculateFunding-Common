@@ -222,6 +222,23 @@ namespace CalculateFunding.Common.CosmosDb
             return response.Document.Content;
         }
 
+        public async Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
+
+            Uri documentUri = UriFactory.CreateDocumentUri(_databaseName, _collectionName, id);
+
+            RequestOptions requestOptions = new RequestOptions()
+            {
+                PartitionKey = new PartitionKey(partitionKey),
+            };
+
+            DocumentResponse<DocumentEntity<T>> response = await _documentClient.ReadDocumentAsync<DocumentEntity<T>>(documentUri);
+
+            return response.Document.Content;
+        }
+
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
         /// </summary>

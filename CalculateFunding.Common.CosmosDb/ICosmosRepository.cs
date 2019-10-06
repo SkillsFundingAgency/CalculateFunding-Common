@@ -140,5 +140,6 @@ namespace CalculateFunding.Common.CosmosDb
         Task<int> GetThroughput();
         Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable;
         Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable;
+        Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
     }
 }
