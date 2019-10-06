@@ -200,6 +200,28 @@ namespace CalculateFunding.Common.CosmosDb
             return documents.FirstOrDefault();
         }
 
+        public async Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+
+            Uri documentUri = UriFactory.CreateDocumentUri(_databaseName, _collectionName, id);
+
+            DocumentResponse<DocumentEntity<T>> response = await _documentClient.ReadDocumentAsync<DocumentEntity<T>>(documentUri);
+
+            return response.Document;
+        }
+
+        public async Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+
+            Uri documentUri = UriFactory.CreateDocumentUri(_databaseName, _collectionName, id);
+
+            DocumentResponse<DocumentEntity<T>> response = await _documentClient.ReadDocumentAsync<DocumentEntity<T>>(documentUri);
+
+            return response.Document.Content;
+        }
+
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
         /// </summary>
