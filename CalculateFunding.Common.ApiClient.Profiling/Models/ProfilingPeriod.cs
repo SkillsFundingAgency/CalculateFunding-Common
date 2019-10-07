@@ -4,16 +4,16 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 {
     public class ProfilingPeriod
     {
-        [JsonProperty("period")]
+        [JsonProperty("typeValue")]
         public string Period { get; set; }
 
         [JsonProperty("occurrence")]
         public int Occurrence { get; set; }
 
-        [JsonProperty("periodYear")]
+        [JsonProperty("year")]
         public int Year { get; set; }
 
-        [JsonProperty("periodType")]
+        [JsonProperty("type")]
         public string Type { get; set; }
 
         [JsonProperty("profileValue")]
