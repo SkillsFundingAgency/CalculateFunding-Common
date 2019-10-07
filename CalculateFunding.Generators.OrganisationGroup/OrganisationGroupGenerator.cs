@@ -153,10 +153,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
         private bool ShouldIncludeProvider(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatches)
         {
-            //// Todo - filter based on provider type and provider subtype against the provider matches. Include in list if it matches any provider type and subtype
             foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatches)
             {
-                if (provider.ProviderType == providerTypeMatch.ProviderType || provider.ProviderSubType == providerTypeMatch.ProviderSubtype)
+                if (string.Equals(provider.ProviderType, providerTypeMatch.ProviderType, StringComparison.InvariantCultureIgnoreCase) && string.Equals(provider.ProviderSubType, providerTypeMatch.ProviderSubtype, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true;
                 }
