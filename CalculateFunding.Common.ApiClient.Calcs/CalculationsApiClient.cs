@@ -10,7 +10,7 @@ using CalculateFunding.Common.Utility;
 using Serilog;
 
 namespace CalculateFunding.Common.ApiClient.Calcs
-{ 
+{
     public class CalculationsApiClient : BaseApiClient, ICalculationsApiClient
     {
         private const string UrlRoot = "calcs";
@@ -175,7 +175,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             string url = $"{UrlRoot}/status-counts";
 
-            return await PostAsync<IEnumerable<CalculationStatusCounts>, SpecificationIdsRequestModel>($"status-counts", request);
+            return await PostAsync<IEnumerable<CalculationStatusCounts>, SpecificationIdsRequestModel>(url, request);
         }
 
         public async Task<ApiResponse<SearchResults<CalculationSearchResult>>> FindCalculations(SearchFilterRequest filterOptions)
@@ -227,7 +227,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             string url = $"{UrlRoot}/specifications/{specificationId}/templates/{fundingStreamId}";
 
-            return await PutAsync<TemplateMapping,string>(url, templateVersion);
+            return await PutAsync<TemplateMapping, string>(url, templateVersion);
         }
     }
 }
