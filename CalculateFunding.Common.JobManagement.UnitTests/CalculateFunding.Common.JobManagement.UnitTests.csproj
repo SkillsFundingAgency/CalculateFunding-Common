@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.JobManagement\CalculateFunding.Common.JobManagement.csproj" />
+  </ItemGroup>
+
+</Project>

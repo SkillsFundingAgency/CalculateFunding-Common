@@ -1,12 +1,10 @@
-﻿using CalculateFunding.Common.TemplateMetadata;
+﻿using System;
+using CalculateFunding.Common.TemplateMetadata;
 using CalculateFunding.Common.TemplateMetadata.Schema10;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CalculateFunding.Common.UnitTests
 {
@@ -50,12 +48,12 @@ namespace CalculateFunding.Common.UnitTests
             templateMetadataResolver.Register("2.0", CreateTemplateGenerator(_schemaVersion));
 
             bool contains = templateMetadataResolver.Contains(_schemaVersion);
-            
+
             try
             {
                 ITemplateMetadataGenerator generator = templateMetadataResolver.GetService(_schemaVersion);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 exception = ex;
             }
@@ -116,7 +114,7 @@ namespace CalculateFunding.Common.UnitTests
 
         public ITemplateMetadataGenerator CreateTemplateGenerator(string specificationVersion, ILogger logger = null)
         {
-            switch(specificationVersion)
+            switch (specificationVersion)
             {
                 case _schemaVersion:
                     {

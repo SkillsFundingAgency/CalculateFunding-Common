@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29123.88
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
 EndProject
@@ -86,6 +86,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Datasets.UnitTests", "CalculateFunding.Common.ApiClient.Datasets.UnitTests\CalculateFunding.Common.ApiClient.Datasets.UnitTests.csproj", "{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.TestEngine", "CalculateFunding.Common.ApiClient.TestEngine\CalculateFunding.Common.ApiClient.TestEngine.csproj", "{8F4F6210-893A-49C2-B37E-45EB04420D61}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement", "CalculateFunding.Common.JobManagement\CalculateFunding.Common.JobManagement.csproj", "{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.JobManagement.UnitTests", "CalculateFunding.Common.JobManagement.UnitTests\CalculateFunding.Common.JobManagement.UnitTests.csproj", "{3904659A-09D5-40F5-94BA-48BE37EAAC01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -237,6 +241,14 @@ Global
 		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3904659A-09D5-40F5-94BA-48BE37EAAC01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3904659A-09D5-40F5-94BA-48BE37EAAC01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3904659A-09D5-40F5-94BA-48BE37EAAC01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3904659A-09D5-40F5-94BA-48BE37EAAC01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +287,7 @@ Global
 		{16DF9330-7E73-48A7-967B-AA13C5B5EAE7} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{8F4F6210-893A-49C2-B37E-45EB04420D61} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
+		{3904659A-09D5-40F5-94BA-48BE37EAAC01} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}
