@@ -117,5 +117,11 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         /// </summary>
         [EnumMember(Value = "CountryCode")]
         CountryCode,
+
+        /// <summary>
+        /// LocalAuthorityClassificationTypeCode
+        /// </summary>
+        [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]
+        LocalAuthorityClassificationTypeCode,
     }
 }

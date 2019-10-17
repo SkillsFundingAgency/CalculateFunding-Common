@@ -145,6 +145,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         return c => c.CountryCode;
                     case OrganisationGroupTypeIdentifier.LACode:
                         return c => c.LACode;
+                    case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:
+                        return c => c.LocalGovernmentGroupTypeName;
                 }
             }
 

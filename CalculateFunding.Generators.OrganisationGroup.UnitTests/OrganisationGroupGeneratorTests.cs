@@ -1307,6 +1307,103 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByLocalAuthorityClassification_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthority,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+            };
+
+            TargetOrganisationGroup lac1 = new TargetOrganisationGroup()
+            {
+                Identifier = "LAC1",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"))
+                .Returns(lac1);
+
+            TargetOrganisationGroup lac2 = new TargetOrganisationGroup()
+            {
+                Identifier = "LAC2",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"))
+                .Returns(lac2);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName1",
+                    SearchableName = "LocalGovernmentGroupTypeName1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "LAC1",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName2",
+                    SearchableName = "LocalGovernmentGroupTypeName2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "LAC2",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"));
+        }
+
+        [TestMethod]
         public async Task WhenCreatingInformationOrganisationGroupsByLACode_ThenOrganisationGroupsAreCreated()
         {
             // Arrange

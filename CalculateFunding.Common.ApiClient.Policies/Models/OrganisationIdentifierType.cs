@@ -117,5 +117,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// </summary>
         [EnumMember(Value = "CountryCode")]
         CountryCode,
+
+        /// <summary>
+        /// LocalAuthorityClassificationTypeCode
+        /// </summary>
+        [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]
+        LocalAuthorityClassificationTypeCode,
     }
 }

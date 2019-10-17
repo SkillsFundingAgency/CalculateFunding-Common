@@ -236,6 +236,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.RscRegionName;
                 case OrganisationGroupTypeIdentifier.CountryCode:
                     return provider.CountryName;
+                case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:
+                    return provider.LocalGovernmentGroupTypeName;
                 default:
                     throw new Exception("Unable to resolve field to identifier value");
             }
