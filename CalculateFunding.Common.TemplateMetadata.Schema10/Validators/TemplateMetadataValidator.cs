@@ -10,15 +10,16 @@ using System.Text;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 {
-    internal class TemplateMetadataValidator : AbstractValidator<FeedBaseModel>
+    public class TemplateMetadataValidator : AbstractValidator<FeedBaseModel>
     {
-        private readonly ConcurrentDictionary<uint, Calculation> calculationDictionary;
-        private readonly ConcurrentDictionary<uint, ReferenceData> referenceDataDictionary;
+        private readonly ConcurrentDictionary<uint, Calculation> _calculationDictionary;
+        private readonly ConcurrentDictionary<uint, ReferenceData> _referenceDataDictionary;
+        private readonly ConcurrentDictionary<string, ICollection<uint>> _calculationTemplateCalcIds = new ConcurrentDictionary<string, ICollection<uint>>();
 
-        internal TemplateMetadataValidator()
+        public TemplateMetadataValidator()
         {
-            calculationDictionary = new ConcurrentDictionary<uint, Calculation>();
-            referenceDataDictionary = new ConcurrentDictionary<uint, ReferenceData>();
+            _calculationDictionary = new ConcurrentDictionary<uint, Calculation>();
+            _referenceDataDictionary = new ConcurrentDictionary<uint, ReferenceData>();
 
             RuleFor(model => model.Funding.FundingValue)
                 .NotEmpty()
@@ -41,14 +42,23 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 
             fundingLine.FundingLines?.ToList().ForEach(x => ValidateFundingLine(context, x));
 
-            fundingLine.Calculations?.ToList().ForEach(x => ValidateCalulation(context, x));
+            fundingLine.Calculations?.ToList().ForEach(x => ValidateCalculation(context, x));
         }
 
-        private void ValidateCalulation(CustomContext context, Calculation calculation)
+        private void ValidateCalculation(CustomContext context, Calculation calculation)
         {
-            Calculation existingCalculation = calculationDictionary.GetOrAdd(calculation.TemplateCalculationId, calculation);
+            string calculationName = calculation.Name.Trim().ToLower();
+            ICollection<uint> existingTemplateCalculationIds = _calculationTemplateCalcIds.GetOrAdd(calculationName, _ => new HashSet<uint>());
+            existingTemplateCalculationIds.Add(calculation.TemplateCalculationId);
 
-            if (existingCalculation.Name != calculation.Name || existingCalculation.AggregationType != calculation.AggregationType || existingCalculation.Type != calculation.Type || existingCalculation.ValueFormat != calculation.ValueFormat || existingCalculation.FormulaText != calculation.FormulaText)
+            if (existingTemplateCalculationIds.Any(_ => _ != calculation.TemplateCalculationId))
+            {
+                context.AddFailure("Calculation", $"Calculation name: '{calculationName}' is present multiple times in the template but with a different templateCalculationIds.");   
+            }
+
+            Calculation existingCalculation = _calculationDictionary.GetOrAdd(calculation.TemplateCalculationId, calculation);
+            
+            if (existingCalculation.Name.Trim().ToLower() != calculationName || existingCalculation.AggregationType != calculation.AggregationType || existingCalculation.Type != calculation.Type || existingCalculation.ValueFormat != calculation.ValueFormat || existingCalculation.FormulaText != calculation.FormulaText)
             {
                 context.AddFailure("Calculation", $"Calculation : '{existingCalculation.Name}' and id : '{calculation.TemplateCalculationId}' has calculation items with the same templateCalculationId that have different configurations for 'name', 'valueFormat','type'.'formulaText','aggregationType'.");
             }
@@ -69,7 +79,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
                     }
                     else
                     {
-                        context.AddFailure("ReferenceData", $"Reference : '{existingCalculation.ReferenceData.First().Name}' doesn't exist on Calculation : {calculation.Name}.");
+                        context.AddFailure("ReferenceData", $"Reference : '{existingCalculation.ReferenceData.First().Name}' doesn't exist on Calculation : {calculationName}.");
                     }
                 }
                 else
@@ -81,7 +91,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
                 }
             }
 
-            calculation.Calculations?.ToList().ForEach(x => ValidateCalulation(context, x));
+            foreach (Calculation nestedCalculation in calculation.Calculations ?? new Calculation[0])
+            {
+                ValidateCalculation(context, nestedCalculation);
+            }
         }
 
         private void ValidateReferenceData(CustomContext context, ReferenceData referenceData, Calculation existingCalculation)
@@ -90,7 +103,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 
             if (currentReferenceData != null)
             {
-                ReferenceData existingReferenceData = referenceDataDictionary.GetOrAdd(currentReferenceData.TemplateReferenceId, currentReferenceData);
+                ReferenceData existingReferenceData = _referenceDataDictionary.GetOrAdd(currentReferenceData.TemplateReferenceId, currentReferenceData);
 
                 if (existingReferenceData.AggregationType != referenceData.AggregationType || existingReferenceData.Format != referenceData.Format || existingReferenceData.Name != referenceData.Name)
                 {

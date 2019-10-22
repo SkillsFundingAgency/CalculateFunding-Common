@@ -11,23 +11,26 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
 
-namespace CalculateFunding.Common.UnitTests
+namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
 {
     [TestClass]
     public class TemplateMetadataGeneratorTests
     {
+        private ILogger logger;
+        private TemplateMetadataGenerator templateMetaDataGenerator;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            logger = Substitute.For<ILogger>();
+            templateMetaDataGenerator = new TemplateMetadataGenerator(logger);
+        }
+
         [TestMethod]
         public void TemplateMetadataSchema10_GetInvalidMetaData_ReturnsEmptyContents()
         {
-            //Arrange
-            ILogger logger = CreateLogger();
+            TemplateMetadataContents contents = WhenTheMetadataContentsIsGenerated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.error.json");
 
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
-
-            //Act
-            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.error.json"));
-
-            //Assert
             logger
                 .Received(1)
                 .Error(Arg.Is<Exception>(x => x.GetType().Name == "JsonSerializationException"), Arg.Any<string>());
@@ -36,12 +39,7 @@ namespace CalculateFunding.Common.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema10_ValidMetaDataSupplied_ReturnsValid()
         {
-            //Arrange
-            ILogger logger = CreateLogger();
-
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
-
-            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json"));
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json");
 
             result.IsValid
                 .Should()
@@ -51,12 +49,7 @@ namespace CalculateFunding.Common.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema10_ValidMetaDataSuppliedPsg10_ReturnsValid()
         {
-            //Arrange
-            ILogger logger = CreateLogger();
-
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
-
-            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.psg1.0.json"));
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.psg1.0.json");
 
             result.IsValid
                 .Should()
@@ -66,12 +59,7 @@ namespace CalculateFunding.Common.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema10_InvalidMetaDataSupplied_ReturnsInvalid()
         {
-            //Arrange
-            ILogger logger = CreateLogger();
-
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator(logger);
-
-            ValidationResult result = templateMetaDataGenerator.Validate(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.invalid.json"));
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.invalid.json");
 
             result.IsValid
                 .Should()
@@ -81,17 +69,30 @@ namespace CalculateFunding.Common.UnitTests
                 .Should()
                 .Be("DistributionPeriods");
         }
+        
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema10_DuplicateCalcNameDifferentTemplateCalcId_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.duplicate.calc.name.json");
+
+            result.IsValid
+                .Should()
+                .Be(false);
+
+            result.Errors.First().PropertyName
+                .Should()
+                .Be("Calculation");
+            
+            result.Errors.First().ErrorMessage
+                .Should()
+                .StartWith("Calculation name: 'number of pupils' is present multiple times in the template but with a different templateCalculationIds.");
+        }
 
         [TestMethod]
         public void TemplateMetadataSchema10_GetValidMetaData_ReturnsValidContents()
         {
-            //Arrange
-            TemplateMetadataGenerator templateMetaDataGenerator = CreateTemplateGenerator();
+            TemplateMetadataContents contents = WhenTheMetadataContentsIsGenerated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json");
 
-            //Act
-            TemplateMetadataContents contents = templateMetaDataGenerator.GetMetadata(GetResourceString("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.json"));
-
-            //Assert
             contents.RootFundingLines.Count()
                 .Should()
                 .Be(2);
@@ -137,26 +138,30 @@ namespace CalculateFunding.Common.UnitTests
                 .Be("1.0");
         }
 
-        public TemplateMetadataGenerator CreateTemplateGenerator(ILogger logger = null)
+        private ValidationResult WhenTheTemplateIsValidated(string templateResourcePath)
         {
-            return new TemplateMetadataGenerator(logger ?? CreateLogger());
+            return templateMetaDataGenerator.Validate(GetResourceString(templateResourcePath));
         }
 
-        public ILogger CreateLogger()
+        private TemplateMetadataContents WhenTheMetadataContentsIsGenerated(string templateResourcePath)
         {
-            return Substitute.For<ILogger>();
+            return templateMetaDataGenerator.GetMetadata(GetResourceString(templateResourcePath));
         }
 
-        public string GetResourceString(string resourceName)
+        private string GetResourceString(string resourceName)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream manifestResourceStream = Assembly
+                .GetExecutingAssembly()
+                .GetManifestResourceStream(resourceName);
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            manifestResourceStream
+                .Should()
+                .NotBeNull($"Expected an embedded resource file at {resourceName}");
+            
+            using (Stream stream = manifestResourceStream)
+            using (StreamReader reader = new StreamReader(stream))
             {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
+                return reader.ReadToEnd();
             }
         }
     }

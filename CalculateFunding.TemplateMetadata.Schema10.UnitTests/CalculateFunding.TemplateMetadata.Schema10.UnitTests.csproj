@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\dsg1.0.duplicate.calc.name.json" />
     <EmbeddedResource Include="Resources\dsg1.0.error.json" />
     <EmbeddedResource Include="Resources\dsg1.0.invalid.json" />
     <EmbeddedResource Include="Resources\dsg1.0.json" />
