@@ -64,7 +64,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(5);
+                .Be(3);
 
             group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
                 .Should()
@@ -75,14 +75,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .Be(true);
 
             group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.DfeNumber)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.CountryCode)
                 .Should()
                 .Be(true);
         }
@@ -330,7 +322,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(5);
+                .Be(3);
 
             group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
                 .Should()
@@ -341,14 +333,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .Be(true);
 
             group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.DfeNumber)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.CountryCode)
                 .Should()
                 .Be(true);
         }
@@ -380,27 +364,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(5);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.RscRegionCode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.CountryCode)
-                .Should()
-                .Be(true);
+                .Be(0);
         }
 
 
@@ -550,7 +514,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .Should()
                 .Be(1);
 
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.CountryCode)
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode)
                 .Should()
                 .Be(true);
         }
@@ -711,7 +675,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 TrustName = "Academy Trust 1",
                 TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
                 UKPRN = "1001",
-                ProviderType = "Academy Trust",
+                ProviderType = "Multi-academy trust",
                 ProviderSubType = ""
             });
 

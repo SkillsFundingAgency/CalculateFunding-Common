@@ -21,6 +21,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
         private IDictionary<string, IEnumerable<Provider>> _providers = null;
 
+        private readonly IEnumerable<string> _academyTrustTypes = new string[] { "Multi-academy trust", "Single-academy trust" };
+
         public OrganisationGroupTargetProviderLookup(IProvidersApiClient providersApiClient, IOrganisationGroupResiliencePolicies resiliencePolicies)
         {
             Guard.ArgumentNotNull(providersApiClient, nameof(providersApiClient));
@@ -39,19 +41,18 @@ namespace CalculateFunding.Generators.OrganisationGroup
             Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>> paymentKeys = new Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>();
 
             paymentKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
-            paymentKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.CountryCode });
+            paymentKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber });
 
             additionalIdentifierKeys.Add(GroupingReason.Payment, paymentKeys);
 
             Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>> informationKeys = new Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>();
 
             informationKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
-            informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.CountryCode });
-            informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.CountryCode });
-            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.CountryCode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber });
+            informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode  });
             informationKeys.Add(OrganisationGroupTypeCode.Provider, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber });
-            informationKeys.Add(OrganisationGroupTypeCode.ParliamentaryConstituency, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.RscRegionCode, OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode, OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode, OrganisationGroupTypeIdentifier.CountryCode });
-
+            
             additionalIdentifierKeys.Add(GroupingReason.Information, informationKeys);
 
             return additionalIdentifierKeys;
@@ -125,7 +126,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
                     // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && (p.ProviderType == "Academy Trust"));
+                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && _academyTrustTypes.Any(_ => p.ProviderType.Equals(_, StringComparison.OrdinalIgnoreCase) || p.ProviderSubType.Equals(_, StringComparison.OrdinalIgnoreCase)) );
 
                     if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
                     {
@@ -228,6 +229,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.DistrictName;
                 case OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode:
                     return provider.GovernmentOfficeRegionName;
+                case OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode:
+                    return provider.LocalGovernmentGroupTypeName;
                 case OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode:
                     return provider.LowerSuperOutputAreaName;
                 case OrganisationGroupTypeIdentifier.WardCode:
