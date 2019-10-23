@@ -9,29 +9,73 @@ namespace CalculateFunding.Generators.Funding
     {
         public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines)
         {
-            FundingValue fundingValue = new FundingValue { TotalValue = fundingLines.Sum(_ =>
+            var fundingLinesList = fundingLines.ToList();
+
+            return new FundingValue
             {
-                ToFundingLineTotal(_);
-                return ToFundingTotal(_);
-            }),
-            FundingLines = fundingLines };
-
-            return fundingValue;
+                TotalValue = fundingLinesList.Sum(fundingLine =>
+                {
+                    GetFundingLinesTotalValueRecursive(fundingLine);
+                    return CalculateFundingTotal(fundingLine);
+                }),
+                FundingLines = fundingLinesList
+            };
         }
 
-        private decimal ToFundingTotal(FundingLine fundingLine)
+        private decimal? CalculateFundingTotal(FundingLine fundingLine)
         {
-            return (fundingLine.Type == FundingLineType.Payment ? fundingLine.Value : 0) + (fundingLine.Type != FundingLineType.Payment ? (fundingLine.FundingLines?.Sum(_ => ToFundingTotal(_)) ?? 0) : 0);
+            decimal? paymentFundingLineValue = fundingLine.Type == FundingLineType.Payment ? fundingLine.Value : 0;
+            decimal? subFundingLinesTotal = fundingLine.FundingLines?.Sum(CalculateFundingTotal);
+            decimal? nonPaymentFundingLineSubTotal = fundingLine.Type != FundingLineType.Payment ? (subFundingLinesTotal) : 0;
+
+            return paymentFundingLineValue + nonPaymentFundingLineSubTotal;
         }
 
-        private decimal ToFundingLineTotal(FundingLine fundingLine)
+        private static decimal? GetFundingLinesTotalValueRecursive(FundingLine fundingLine)
         {
-            return fundingLine.Value = (fundingLine.Calculations?.Where(_ => _.Type == Enums.CalculationType.Cash)?.Sum(_ => ToCalculationTotal(_)) ?? 0) + (fundingLine.FundingLines?.Sum(_ => ToFundingLineTotal(_)) ?? 0);
+            decimal? cashCalculationsSum = GetCashCalculationsSum(fundingLine);
+
+            decimal? subFundingLinesTotalValue = null;
+            if (fundingLine.FundingLines != null)
+            {
+                subFundingLinesTotalValue = fundingLine.FundingLines.Select(GetFundingLinesTotalValueRecursive)
+                    .Where(fundingLineTotal => fundingLineTotal != null)
+                    .Aggregate(
+                        subFundingLinesTotalValue, 
+                        (current, fundingLineTotal) => current.AddValueIfNotNull(fundingLineTotal));
+            }
+
+            if (cashCalculationsSum != null && subFundingLinesTotalValue == null)
+                fundingLine.Value = cashCalculationsSum;
+            else if (cashCalculationsSum == null && subFundingLinesTotalValue != null)
+                fundingLine.Value = subFundingLinesTotalValue;
+            else if (cashCalculationsSum != null)
+                fundingLine.Value = cashCalculationsSum + subFundingLinesTotalValue;
+
+            return fundingLine.Value;
         }
 
-        private decimal ToCalculationTotal(Calculation calculation)
+        private static decimal? GetCashCalculationsSum(FundingLine fundingLine)
         {
-            return calculation.Value + (calculation.Calculations?.Where(_ => _.Type == Enums.CalculationType.Cash)?.Sum(_ => ToCalculationTotal(_)) ?? 0);
+            List<Calculation> cashCalculations = fundingLine.Calculations?
+                .Where(calculation => calculation.Type == CalculationType.Cash).ToList();
+
+            decimal? cashCalculationsSum = null;
+
+            if (cashCalculations != null && cashCalculations.Any(c => c.Value != null))
+                cashCalculationsSum = cashCalculations.Sum(GetCalculationsTotalRecursive);
+
+            return cashCalculationsSum;
+        }
+
+        private static decimal? GetCalculationsTotalRecursive(Calculation calculation)
+        {
+            IEnumerable<Calculation> cashCalculations = calculation.Calculations?
+                .Where(subCalculation => subCalculation.Type == CalculationType.Cash);
+
+            decimal? calculationSum = cashCalculations?.Sum(GetCalculationsTotalRecursive);
+
+            return calculation.Value.AddValueIfNotNull(calculationSum);
         }
     }
 }

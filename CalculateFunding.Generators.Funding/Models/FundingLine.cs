@@ -34,7 +34,7 @@ namespace CalculateFunding.Generators.Funding.Models
         /// The funding value in pence.
         /// </summary>
         [JsonProperty("value")]
-        public decimal Value { get; set; }
+        public decimal? Value { get; set; }
 
         [EnumDataType(typeof(FundingLineType))]
         [JsonProperty("type")]

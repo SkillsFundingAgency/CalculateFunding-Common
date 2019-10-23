@@ -31,7 +31,7 @@ namespace CalculateFunding.Generators.Funding.Models
         /// <summary>
         /// The value the calculation is resulting in.
         /// </summary>[JsonProperty("value")]
-        public decimal Value { get; set; }
+        public decimal? Value { get; set; }
 
         /// <summary>
         /// The type of calculation.

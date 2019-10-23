@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <None Remove="Resources\ExampleFundingLines.json" />
+    <None Remove="Resources\exampleFundingLinesWithNullCalculation.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\exampleFundingLinesWithNullCalculation.json" />
     <EmbeddedResource Include="Resources\exampleFundingLines.json" />
   </ItemGroup>
 
