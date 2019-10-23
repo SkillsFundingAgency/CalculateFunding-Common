@@ -32,6 +32,20 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await GetAsync<ProviderResult>($"get-provider-results?providerId={providerId}&specificationId={specificationId}");
         }
 
+        public async Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeTemplate(string providerId, string specificationId)
+        {
+            EnsureProviderIdAndSpecificationIdSupplied(providerId, specificationId);
+
+            return await GetAsync<ProviderResult>($"specifications/{specificationId}/provider-result-by-calculationtype/{providerId}/template");
+        }
+
+        public async Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeAdditional(string providerId, string specificationId)
+        {
+            EnsureProviderIdAndSpecificationIdSupplied(providerId, specificationId);
+
+            return await GetAsync<ProviderResult>($"specifications/{specificationId}/provider-result-by-calculationtype/{providerId}/additional");
+        }
+
         public async Task<ApiResponse<IEnumerable<ProviderSourceDataset>>> GetProviderSourceDataSetsByProviderIdAndSpecificationId(string providerId, string specificationId)
         {
             EnsureProviderIdAndSpecificationIdSupplied(providerId, specificationId);

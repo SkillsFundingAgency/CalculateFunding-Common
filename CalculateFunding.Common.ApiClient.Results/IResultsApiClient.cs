@@ -11,6 +11,8 @@ namespace CalculateFunding.Common.ApiClient.Results
     {
         Task<ApiResponse<IEnumerable<string>>> GetProviderSpecifications(string providerId);
         Task<ApiResponse<ProviderResult>> GetProviderResults(string providerId, string specificationId);
+        Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeTemplate(string providerId, string specificationId);
+        Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeAdditional(string providerId, string specificationId);
         Task<ApiResponse<IEnumerable<ProviderSourceDataset>>> GetProviderSourceDataSetsByProviderIdAndSpecificationId(string providerId, string specificationId);
         Task<HttpStatusCode> ReIndexCalculationProviderResults();
         Task<ApiResponse<CalculationProviderResultSearchResults>> SearchCalculationProviderResults(SearchModel search);
