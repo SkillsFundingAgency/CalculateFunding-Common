@@ -81,11 +81,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync<SearchResults<DatasetDefinitionIndex>, SearchModel>(DataSetsUriFor("dataset-definitions-search"), searchModel);
         }
 
-        public async Task<ValidatedApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel)
+        public async Task<ValidatedApiResponse<DatasetValidationStatusModel>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel)
         {
             Guard.ArgumentNotNull(getDatasetBlobModel, nameof(getDatasetBlobModel));
 
-            return await ValidatedPostAsync<DatasetValidationStatus, GetDatasetBlobModel>(DataSetsUriFor("validate-dataset"), getDatasetBlobModel);
+            return await ValidatedPostAsync<DatasetValidationStatusModel, GetDatasetBlobModel>(DataSetsUriFor("validate-dataset"), getDatasetBlobModel);
         }
 
         public async Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(

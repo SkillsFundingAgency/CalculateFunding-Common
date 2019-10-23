@@ -18,7 +18,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<SearchResults<DatasetIndex>>> SearchDatasets(SearchModel searchModel);
         Task<ApiResponse<SearchResults<DatasetVersionIndex>>> SearchDatasetVersion(SearchModel searchModel);
         Task<ApiResponse<SearchResults<DatasetDefinitionIndex>>> SearchDatasetDefinitions(SearchModel searchModel);
-        Task<ValidatedApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel);
+        Task<ValidatedApiResponse<DatasetValidationStatusModel>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel);
 
         Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(
             CreateDefinitionSpecificationRelationshipModel createDefinitionSpecificationRelationshipModel);
