@@ -27,7 +27,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<IEnumerable<DefinitionSpecificationRelationship>>> GetRelationshipBySpecificationIdAndName(string specificationId, string name);
         Task<ApiResponse<IEnumerable<DatasetViewModel>>> GetDatasetsByDefinitionId(string definitionId);
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetCurrentRelationshipsBySpecificationId(string specificationId);
-        Task<ApiResponse<DefinitionSpecificationRelationship>> GetDataSourcesByRelationshipId(string relationshipId);
+        Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId);
         Task<HttpStatusCode> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel);
         Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null);
         Task<ApiResponse<string>> Reindex();
