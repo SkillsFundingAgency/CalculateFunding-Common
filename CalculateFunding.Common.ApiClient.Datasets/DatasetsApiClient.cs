@@ -46,18 +46,18 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync<IEnumerable<DatasetDefinition>, IEnumerable<string>>(DataSetsUriFor("get-dataset-definitions-by-ids"), definitionIds);
         }
 
-        public async Task<ApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel)
+        public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel)
         {
             Guard.ArgumentNotNull(createNewDatasetModel, nameof(createNewDatasetModel));
 
-            return await PostAsync<NewDatasetVersionResponseModel, CreateNewDatasetModel>(DataSetsUriFor("create-new-dataset"), createNewDatasetModel);
+            return await ValidatedPostAsync<NewDatasetVersionResponseModel, CreateNewDatasetModel>(DataSetsUriFor("create-new-dataset"), createNewDatasetModel);
         }
 
-        public async Task<ApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdate(DatasetVersionUpdateModel datasetVersionUpdateModel)
+        public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdate(DatasetVersionUpdateModel datasetVersionUpdateModel)
         {
             Guard.ArgumentNotNull(datasetVersionUpdateModel, nameof(datasetVersionUpdateModel));
             
-            return await PostAsync<NewDatasetVersionResponseModel, DatasetVersionUpdateModel>(DataSetsUriFor("dataset-version-update"), datasetVersionUpdateModel);
+            return await ValidatedPostAsync<NewDatasetVersionResponseModel, DatasetVersionUpdateModel>(DataSetsUriFor("dataset-version-update"), datasetVersionUpdateModel);
         }
 
         public async Task<ApiResponse<SearchResults<DatasetIndex>>> SearchDatasets(SearchModel searchModel)
@@ -81,11 +81,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync<SearchResults<DatasetDefinitionIndex>, SearchModel>(DataSetsUriFor("dataset-definitions-search"), searchModel);
         }
 
-        public async Task<ApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel)
+        public async Task<ValidatedApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel)
         {
             Guard.ArgumentNotNull(getDatasetBlobModel, nameof(getDatasetBlobModel));
 
-            return await PostAsync<DatasetValidationStatus, GetDatasetBlobModel>(DataSetsUriFor("validate-dataset"), getDatasetBlobModel);
+            return await ValidatedPostAsync<DatasetValidationStatus, GetDatasetBlobModel>(DataSetsUriFor("validate-dataset"), getDatasetBlobModel);
         }
 
         public async Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(

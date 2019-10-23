@@ -13,12 +13,12 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<IEnumerable<DatasetDefinition>>> GetDatasetDefinitions();
         Task<ApiResponse<DatasetDefinition>> GetDatasetDefinitionById(string datasetDefinitionId);
         Task<ApiResponse<IEnumerable<DatasetDefinition>>> GetDatasetDefinitionsByIds(params string[] definitionIds);
-        Task<ApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel);
-        Task<ApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdate(DatasetVersionUpdateModel datasetVersionUpdateModel);
+        Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel);
+        Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdate(DatasetVersionUpdateModel datasetVersionUpdateModel);
         Task<ApiResponse<SearchResults<DatasetIndex>>> SearchDatasets(SearchModel searchModel);
         Task<ApiResponse<SearchResults<DatasetVersionIndex>>> SearchDatasetVersion(SearchModel searchModel);
         Task<ApiResponse<SearchResults<DatasetDefinitionIndex>>> SearchDatasetDefinitions(SearchModel searchModel);
-        Task<ApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel);
+        Task<ValidatedApiResponse<DatasetValidationStatus>> ValidateDataset(GetDatasetBlobModel getDatasetBlobModel);
 
         Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(
             CreateDefinitionSpecificationRelationshipModel createDefinitionSpecificationRelationshipModel);
