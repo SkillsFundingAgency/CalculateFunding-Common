@@ -23,7 +23,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(
             CreateDefinitionSpecificationRelationshipModel createDefinitionSpecificationRelationshipModel);
 
-        Task<ApiResponse<IEnumerable<DefinitionSpecificationRelationship>>> GetRelationshipsBySpecificationId(string specificationId);
+        Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetRelationshipsBySpecificationId(string specificationId);
         Task<ApiResponse<IEnumerable<DefinitionSpecificationRelationship>>> GetRelationshipBySpecificationIdAndName(string specificationId, string name);
         Task<ApiResponse<IEnumerable<DatasetViewModel>>> GetDatasetsByDefinitionId(string definitionId);
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetCurrentRelationshipsBySpecificationId(string specificationId);
