@@ -14,6 +14,6 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         public string FundingLineCode { get; set; }
 
-        public decimal FundingValue { get; set; }
+        public decimal? FundingValue { get; set; }
     }
 }
