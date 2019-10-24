@@ -25,5 +25,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<HttpStatusCode> SetPublishDates(string specificationId, SpecificationPublishDateModel specificationPublishDateModel);
 
         Task<ApiResponse<SpecificationPublishDateModel>> GetPublishDates(string specificationId);
+
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries();
     }
 }

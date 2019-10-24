@@ -99,5 +99,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<SpecificationPublishDateModel>(
                  $"{UrlRoot}/{specificationId}/publishdates");
         }
+
+        public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries()
+        {
+            return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specification-summaries");
+        }
     }
 }
