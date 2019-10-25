@@ -71,7 +71,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             string url = $"{UrlRoot}/{specificationId}/compileAndSaveAssembly";
 
-            return await GetAsync<HttpStatusCode>(url);
+            HttpStatusCode httpStatusCode = await GetAsync(url);
+
+            return new ApiResponse<HttpStatusCode>(HttpStatusCode.OK, httpStatusCode);
         }
 
         public async Task<ApiResponse<Calculation>> GetCalculationById(string calculationId)
