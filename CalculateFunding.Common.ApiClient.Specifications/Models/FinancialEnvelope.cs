@@ -1,8 +1,10 @@
-﻿using CalculateFunding.Common.Models;
+﻿using System;
+using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class FinancialEnvelope
     {
         [JsonProperty("monthStart")]

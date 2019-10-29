@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class PublishedProviderProfile
     {
         [JsonProperty("name")]

@@ -29,6 +29,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
                 $"{UrlRoot}/specification-summary-by-id?specificationId={specificationId}");
         }
 
+        public async Task<ApiResponse<Specification>> GetSpecificationByName(string specificationName)
+        {
+            Guard.IsNullOrWhiteSpace(specificationName, nameof(specificationName));
+
+            return await GetAsync<Specification>($"{UrlRoot}/specification-by-name?specificationName={specificationName}");
+        }
+
         public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFundingByPeriod(
             string fundingPeriodId)
         {
@@ -103,6 +110,14 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries()
         {
             return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specification-summaries");
+        }
+
+        public async Task<ValidatedApiResponse<SpecificationSummary>> UpdateSpecification(string specificationId, EditSpecificationModel specification)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(specification, nameof(specification));
+
+            return await ValidatedPutAsync<SpecificationSummary, EditSpecificationModel>($"{UrlRoot}/specification-edit?specificationId={specificationId}", specification);
         }
     }
 }

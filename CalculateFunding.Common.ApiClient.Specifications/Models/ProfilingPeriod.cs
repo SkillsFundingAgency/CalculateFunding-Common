@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class ProfilingPeriod
     {
         [JsonProperty("period")]

@@ -27,5 +27,14 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<SpecificationPublishDateModel>> GetPublishDates(string specificationId);
 
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries();
+
+        Task<ValidatedApiResponse<SpecificationSummary>> UpdateSpecification(string specificationId, EditSpecificationModel specification);
+
+        /// <summary>
+        /// Get Specification By Name
+        /// </summary>
+        /// <param name="specificationName">Specification Name</param>
+        /// <returns>Specification when exists, null when it doesn't</returns>
+        Task<ApiResponse<Specification>> GetSpecificationByName(string specificationName);
     }
 }

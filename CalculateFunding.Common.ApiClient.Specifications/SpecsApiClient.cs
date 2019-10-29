@@ -15,6 +15,7 @@ using Serilog;
 
 namespace CalculateFunding.Common.ApiClient.Specifications
 {
+    [Obsolete("Move to the SpecificationsApiClient instead")]
     public class SpecsApiClient : BaseApiClient, ISpecsApiClient
     {
         private const string UrlRoot = "specs";
@@ -87,7 +88,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-			return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-by-fundingperiod-and-fundingstream?fundingPeriodId={fundingPeriodId}&fundingStreamId={fundingStreamId}");
+            return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-by-fundingperiod-and-fundingstream?fundingPeriodId={fundingPeriodId}&fundingStreamId={fundingStreamId}");
         }
 
         public async Task<ValidatedApiResponse<Specification>> CreateSpecification(CreateSpecificationModel specification)
@@ -121,7 +122,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await ValidatedPutAsync<Calculation, CalculationUpdateModel>($"{UrlRoot}/calculations?specificationId={specificationId}&calculationId={calculationId}", calculation);
         }
 
-		[Obsolete]
+        [Obsolete]
         public async Task<ApiResponse<IEnumerable<Reference>>> GetFundingPeriods()
         {
             return await GetAsync<IEnumerable<Reference>>($"{UrlRoot}/get-fundingperiods");
@@ -224,7 +225,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await PostAsync<SpecificationCalculationExecutionStatusModel, string>($"{UrlRoot}/refresh-published-results?specificationId={specificationId}", specificationId);
-		}
+        }
 
         public async Task<ApiResponse<SpecificationCalculationExecutionStatusModel>> CheckPublishResultStatus(string specificationId)
         {

@@ -3,6 +3,7 @@ using CalculateFunding.Common.ApiClient.Calcs.Models;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class SpecificationCalculationExecutionStatusModel
     {
         public string SpecificationId { get; set; }

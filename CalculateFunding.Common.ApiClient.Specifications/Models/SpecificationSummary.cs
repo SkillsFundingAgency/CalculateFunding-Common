@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Models;
@@ -26,12 +25,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("approvalStatus")]
         public PublishStatus ApprovalStatus { get; set; }
-
-        [JsonProperty("publishedResultsRefreshedAt")]
-        public DateTimeOffset? PublishedResultsRefreshedAt { get; set; }
-
-        [JsonProperty("lastCalculationUpdatedAt")]
-        public DateTimeOffset? LastCalculationUpdatedAt { get; set; }
 
         /// <summary>
         /// Assigned template versions for each funding stream in this specification.

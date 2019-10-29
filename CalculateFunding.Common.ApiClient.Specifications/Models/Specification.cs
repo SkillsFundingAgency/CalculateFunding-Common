@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Models;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class Specification : Reference, ISpecificationAuthorizationEntity
     {
         public Specification()

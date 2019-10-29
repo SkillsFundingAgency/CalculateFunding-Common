@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
@@ -7,9 +6,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
     {
         [JsonProperty("fundingPeriodId")]
         public string FundingPeriodId { get; set; }
-
-        [JsonProperty("fundingStreamIds")]
-        public IEnumerable<string> FundingStreamIds { get; set; }
 
         [JsonProperty("providerVersionId")]
         public string ProviderVersionId { get; set; }

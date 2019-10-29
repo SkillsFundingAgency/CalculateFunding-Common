@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
+    [Obsolete("This class is legacy")]
     public class SpecificationVersion : VersionedItem
     {
         [JsonProperty("id")]
@@ -35,9 +36,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("dataDefinitionRelationshipIds")]
         public IEnumerable<string> DataDefinitionRelationshipIds { get; set; }
 
-		[JsonProperty("variationDate")]
-		public DateTimeOffset? VariationDate { get; set; }
-        
+        [JsonProperty("variationDate")]
+        public DateTimeOffset? VariationDate { get; set; }
+
         [JsonProperty("templateId")]
         public string TemplateId { get; set; }
 

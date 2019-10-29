@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
@@ -9,6 +10,7 @@ using FundingStream = CalculateFunding.Common.ApiClient.Policies.Models.FundingS
 
 namespace CalculateFunding.Common.ApiClient.Specifications
 {
+    [Obsolete("Move to the ISpecificationsApiClient instead")]
     public interface ISpecsApiClient
     {
         Task<ApiResponse<Specification>> GetSpecification(string specificationId);
