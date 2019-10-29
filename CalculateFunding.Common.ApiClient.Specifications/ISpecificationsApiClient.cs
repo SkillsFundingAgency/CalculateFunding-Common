@@ -35,6 +35,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         /// </summary>
         /// <param name="specificationName">Specification Name</param>
         /// <returns>Specification when exists, null when it doesn't</returns>
-        Task<ApiResponse<Specification>> GetSpecificationByName(string specificationName);
+        Task<ApiResponse<SpecificationSummary>> GetSpecificationByName(string specificationName);
     }
 }

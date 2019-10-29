@@ -29,11 +29,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications
                 $"{UrlRoot}/specification-summary-by-id?specificationId={specificationId}");
         }
 
-        public async Task<ApiResponse<Specification>> GetSpecificationByName(string specificationName)
+        public async Task<ApiResponse<SpecificationSummary>> GetSpecificationByName(string specificationName)
         {
             Guard.IsNullOrWhiteSpace(specificationName, nameof(specificationName));
 
-            return await GetAsync<Specification>($"{UrlRoot}/specification-by-name?specificationName={specificationName}");
+            return await GetAsync<SpecificationSummary>($"{UrlRoot}/specification-by-name?specificationName={specificationName}");
         }
 
         public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFundingByPeriod(
