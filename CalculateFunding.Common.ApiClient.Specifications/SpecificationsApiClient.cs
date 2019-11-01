@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
@@ -118,6 +121,61 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.ArgumentNotNull(specification, nameof(specification));
 
             return await ValidatedPutAsync<SpecificationSummary, EditSpecificationModel>($"{UrlRoot}/specification-edit?specificationId={specificationId}", specification);
+        }
+
+        public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreamsForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<FundingStream>>($"{UrlRoot}/get-fundingstreams-for-specification?specificationId={specificationId}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<CalculationCurrentVersion>>> GetBaselineCalculationsBySpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<CalculationCurrentVersion>>($"{UrlRoot}/specifications/{specificationId}/baseline-calculations");
+        }
+
+        public async Task<ValidatedApiResponse<SpecificationVersion>> CreateSpecification(CreateSpecificationModel specification)
+        {
+            Guard.ArgumentNotNull(specification, nameof(specification));
+
+            return await ValidatedPostAsync<SpecificationVersion, CreateSpecificationModel>($"{UrlRoot}/specifications", specification);
+        }
+
+        public async Task<PagedResult<SpecificationDatasourceRelationshipSearchResultItem>> FindSpecificationAndRelationships(SearchFilterRequest filterOptions)
+        {
+            Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
+
+            SearchQueryRequest request = SearchQueryRequest.FromSearchFilterRequest(filterOptions);
+
+            ApiResponse<SearchResults<SpecificationDatasourceRelationshipSearchResultItem>> results = await PostAsync<SearchResults<SpecificationDatasourceRelationshipSearchResultItem>, SearchQueryRequest>($"{UrlRoot}/specifications-dataset-relationships-search", request);
+            if (results.StatusCode != HttpStatusCode.OK) return null;
+
+            PagedResult<SpecificationDatasourceRelationshipSearchResultItem> result = new SearchPagedResult<SpecificationDatasourceRelationshipSearchResultItem>(filterOptions, results.Content.TotalCount)
+            {
+                Items = results.Content.Results
+            };
+
+            return result;
+        }
+
+        public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecifications(string fundingPeriodId)
+        {
+            return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-by-year?fundingPeriodId={fundingPeriodId}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries(IEnumerable<string> specificationIds)
+        {
+            Guard.ArgumentNotNull(specificationIds, nameof(specificationIds));
+
+            if (!specificationIds.Any())
+            {
+                return new ApiResponse<IEnumerable<SpecificationSummary>>(HttpStatusCode.OK, Enumerable.Empty<SpecificationSummary>());
+            }
+
+            return await PostAsync<IEnumerable<SpecificationSummary>, IEnumerable<string>>($"{UrlRoot}/specification-summaries-by-ids", specificationIds);
         }
     }
 }
