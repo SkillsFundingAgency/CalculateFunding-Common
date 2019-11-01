@@ -39,7 +39,7 @@ namespace CalculateFunding.Common.ApiClient
             _clientKey = clientKey;
             Logger = logger;
 
-            HttpClient httpClient = _httpClientFactory.CreateClient();
+            HttpClient httpClient = _httpClientFactory.CreateClient(clientKey);
 
             Logger.Debug("AbstractApiClient created with Client Key: {clientkey} with base address: {baseAddress}", clientKey, httpClient.BaseAddress);
             _cancellationTokenProvider = cancellationTokenProvider;
@@ -92,9 +92,9 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
-        private async Task<HttpStatusCode> StatusCodeRequest(string url, 
-            HttpMethod httpMethod, 
-            CancellationToken cancellationToken, 
+        private async Task<HttpStatusCode> StatusCodeRequest(string url,
+            HttpMethod httpMethod,
+            CancellationToken cancellationToken,
             string rawContent = null,
             params string[] customerHeaders)
         {
@@ -113,7 +113,7 @@ namespace CalculateFunding.Common.ApiClient
             using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, url))
             {
                 EnsureRawBodyContentSet(rawContent, request);
-                
+
                 return await StatusCodeResponse(url,
                     httpClient,
                     async () => await httpClient.SendAsync(request, cancellationToken));
@@ -123,14 +123,14 @@ namespace CalculateFunding.Common.ApiClient
         private static void EnsureRawBodyContentSet(string rawBodyContent, HttpRequestMessage request)
         {
             if (rawBodyContent.IsNullOrEmpty()) return;
-            
+
             request.Content = new StringContent(rawBodyContent, Encoding.UTF8);
         }
 
         private static void EnsureCustomHeadersSet(string[] customerHeaders, HttpClient httpClient)
         {
             if (customerHeaders?.Any() != true) return;
-            
+
             if (customerHeaders.Length % 2 != 0)
             {
                 throw new InvalidOperationException("Customer headers must be supplied in name value pairs");
@@ -138,7 +138,7 @@ namespace CalculateFunding.Common.ApiClient
 
             for (int headerName = 0; headerName < customerHeaders.Length; headerName += 2)
             {
-                httpClient.DefaultRequestHeaders.Add(customerHeaders[headerName], new[] {customerHeaders[headerName + 1]});
+                httpClient.DefaultRequestHeaders.Add(customerHeaders[headerName], new[] { customerHeaders[headerName + 1] });
             }
         }
 
@@ -190,7 +190,7 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
-        private async Task<ApiResponse<TResponse>> TypedApiRequest<TResponse, TRequest>(string url, TRequest request, HttpMethod httpMethod, 
+        private async Task<ApiResponse<TResponse>> TypedApiRequest<TResponse, TRequest>(string url, TRequest request, HttpMethod httpMethod,
             CancellationToken cancellationToken, params string[] customerHeaders)
         {
             IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put });
@@ -334,7 +334,7 @@ namespace CalculateFunding.Common.ApiClient
             CancellationToken cancellationToken = default(CancellationToken),
             params string[] customerHeaders)
         {
-            return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken,customerHeaders);
+            return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken, customerHeaders);
         }
 
         public async Task<HttpStatusCode> PostAsync<TRequest>(string url,
@@ -394,14 +394,14 @@ namespace CalculateFunding.Common.ApiClient
             }
         }
 
-        protected async Task<HttpStatusCode> PostAsync(string url, 
-            CancellationToken cancellationToken = default(CancellationToken), 
-            string rawContent = null, 
+        protected async Task<HttpStatusCode> PostAsync(string url,
+            CancellationToken cancellationToken = default(CancellationToken),
+            string rawContent = null,
             params string[] customerHeaders)
         {
             return await StatusCodeRequest(url, HttpMethod.Post, cancellationToken, rawContent, customerHeaders);
         }
-        
+
         #endregion
 
         #region "PUT"

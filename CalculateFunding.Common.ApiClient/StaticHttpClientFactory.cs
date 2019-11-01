@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using CalculateFunding.Common.Utility;
 
 namespace CalculateFunding.Common.ApiClient
 {
@@ -12,6 +13,13 @@ namespace CalculateFunding.Common.ApiClient
 
         public HttpClient CreateClient(string name)
         {
+            Guard.IsNullOrWhiteSpace(name, nameof(name));
+
+            if (!_httpClients.ContainsKey(name))
+            {
+                throw new InvalidOperationException($"Unable to find registered client with name of '{name}'");
+            }
+
             HttpClient client = _httpClients[name].Invoke();
             _createdHttpClients.Add(client);
 
@@ -20,12 +28,14 @@ namespace CalculateFunding.Common.ApiClient
 
         public Func<HttpClient> AddClient(string name, Func<HttpClient> httpClient)
         {
+            Guard.IsNullOrWhiteSpace(name, nameof(name));
+            Guard.ArgumentNotNull(httpClient, nameof(httpClient));
+
             _httpClients.Add(name, httpClient);
 
             return httpClient;
         }
 
-        #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -61,6 +71,5 @@ namespace CalculateFunding.Common.ApiClient
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
-        #endregion
     }
 }
