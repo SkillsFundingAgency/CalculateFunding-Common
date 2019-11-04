@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -10,22 +9,16 @@ namespace CalculateFunding.Common.CosmosDb
     public static class CosmosDbConnectionString
     {
 
-        private static readonly ConnectionPolicy ConnectionPolicy = new ConnectionPolicy
+        private static readonly CosmosClientOptions ConnectionPolicy = new CosmosClientOptions
         {
             ConnectionMode = ConnectionMode.Direct,
-            ConnectionProtocol = Protocol.Tcp,
             RequestTimeout = new TimeSpan(1, 0, 0),
-            MaxConnectionLimit = 300,
-            //RetryOptions = new RetryOptions
-            //{
-            //    MaxRetryAttemptsOnThrottledRequests = 10,
-            //    MaxRetryWaitTimeInSeconds = 60
-            //}
+            MaxRequestsPerTcpConnection = 300,
         };
 
-        public static DocumentClient Parse(string connectionString)
+        public static CosmosClient Parse(string connectionString)
         {
-            if (String.IsNullOrWhiteSpace(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new ArgumentException("Connection string cannot be empty.");
             }
@@ -38,21 +31,21 @@ namespace CalculateFunding.Common.CosmosDb
             throw new ArgumentException($"Connection string was not able to be parsed into a document client.");
         }
 
-        public static bool TryParse(string connectionString, out DocumentClient documentClient)
+        public static bool TryParse(string connectionString, out CosmosClient cosmosClient)
         {
-            if (String.IsNullOrWhiteSpace(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                documentClient = null;
+                cosmosClient = null;
                 return false;
             }
 
             try
             {
-                return ParseImpl(connectionString, out documentClient, err => { });
+                return ParseImpl(connectionString, out cosmosClient, err => { });
             }
             catch (Exception)
             {
-                documentClient = null;
+                cosmosClient = null;
                 return false;
             }
         }
@@ -61,19 +54,19 @@ namespace CalculateFunding.Common.CosmosDb
         private const string AccountKeyKey = "AccountKey";
         private static readonly HashSet<string> RequireSettings = new HashSet<string>(new[] { AccountEndpointKey, AccountKeyKey }, StringComparer.OrdinalIgnoreCase);
 
-        internal static bool ParseImpl(string connectionString, out DocumentClient documentClient, Action<string> error)
+        internal static bool ParseImpl(string connectionString, out CosmosClient cosmosClient, Action<string> error)
         {
             IDictionary<string, string> settings = ParseStringIntoSettings(connectionString, error);
 
             if (settings == null)
             {
-                documentClient = null;
+                cosmosClient = null;
                 return false;
             }
 
             if (!RequireSettings.IsSubsetOf(settings.Keys))
             {
-                documentClient = null;
+                cosmosClient = null;
                 return false;
             }
 
@@ -83,7 +76,7 @@ namespace CalculateFunding.Common.CosmosDb
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            documentClient = new DocumentClient(new Uri(settings[AccountEndpointKey]), settings[AccountKeyKey], ConnectionPolicy);
+            cosmosClient = new CosmosClient(settings[AccountEndpointKey], settings[AccountKeyKey], ConnectionPolicy);
             return true;
         }
 
@@ -110,7 +103,7 @@ namespace CalculateFunding.Common.CosmosDb
 
                 if (settings.ContainsKey(splittedNameValue[0]))
                 {
-                    error(string.Format(CultureInfo.InvariantCulture, "Duplicate setting '{0}' found.", splittedNameValue[0]));
+                    error($"Duplicate setting '{splittedNameValue[0]}' found.");
                     return null;
                 }
 

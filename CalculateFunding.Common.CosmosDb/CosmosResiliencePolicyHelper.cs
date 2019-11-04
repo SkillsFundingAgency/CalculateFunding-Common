@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Azure.Documents;
+using Microsoft.Azure.Cosmos;
 using Polly;
 using Polly.Wrap;
 
@@ -16,16 +16,16 @@ namespace CalculateFunding.Common.CosmosDb
 
         public static Policy GenerateCosmosPolicy(IAsyncPolicy[] chainedPolicies = null)
         {
-            Policy documentClientExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode != 429)
+            Policy documentClientExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode != 429)
                 .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30) });
 
-            Policy requestRateTooLargeExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode == 429)
+            Policy requestRateTooLargeExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 429)
                 .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(120) });
 
-            Policy opertionInProgressExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode == 423)
-                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60)});
+            Policy opertionInProgressExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 423)
+                .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60) });
 
-            Policy circuitBreaker = Policy.Handle<DocumentClientException>().CircuitBreakerAsync(1000, TimeSpan.FromMinutes(1));
+            Policy circuitBreaker = Policy.Handle<CosmosException>().CircuitBreakerAsync(1000, TimeSpan.FromMinutes(1));
 
             List<IAsyncPolicy> policies = new List<IAsyncPolicy>(8)
             {
@@ -52,16 +52,16 @@ namespace CalculateFunding.Common.CosmosDb
 
         public static Policy GenerateNonAsyncCosmosPolicy(Policy[] chainedPolicies = null)
         {
-            Policy documentClientExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode != 429)
+            Policy documentClientExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode != 429)
                 .WaitAndRetry(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30) });
 
-            Policy requestRateTooLargeExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode == 429)
+            Policy requestRateTooLargeExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 429)
                 .WaitAndRetry(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(120) });
 
-            Policy opertionInProgressExceptionRetry = Policy.Handle<DocumentClientException>(e => (int)e.StatusCode == 423)
+            Policy opertionInProgressExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 423)
                 .WaitAndRetry(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60) });
 
-            Policy circuitBreaker = Policy.Handle<DocumentClientException>().CircuitBreaker(1000, TimeSpan.FromMinutes(1));
+            Policy circuitBreaker = Policy.Handle<CosmosException>().CircuitBreaker(1000, TimeSpan.FromMinutes(1));
 
             List<Policy> policies = new List<Policy>(8)
             {

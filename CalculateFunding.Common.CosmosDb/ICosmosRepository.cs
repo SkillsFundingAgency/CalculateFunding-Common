@@ -5,22 +5,27 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Models;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Cosmos;
 
 namespace CalculateFunding.Common.CosmosDb
 {
     public interface ICosmosRepository
     {
-        Task<(bool Ok, string Message)> IsHealthOk();
+        (bool Ok, string Message) IsHealthOk();
 
-        Task EnsureCollectionExists();
+        Task EnsureContainerExists();
 
-        Task SetThroughput(int requestUnits);
+        Task<ThroughputResponse> SetThroughput(int requestUnits);
+
+        Task<int?> GetThroughput();
 
         IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        Task<DocumentEntity<T>> ReadAsync<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        DocumentEntity<T> ReadDocumentById<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+
+        T ReadById<T>(string id) where T : IIdentifiable;
+
+        Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
@@ -30,86 +35,33 @@ namespace CalculateFunding.Common.CosmosDb
         /// <returns></returns>
         IQueryable<T> Query<T>(bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        /// <summary>
-        /// Query cosmos using IQueryable on a given entity.
-        /// NOTE: The directSql may not work, only linq queries
-        /// </summary>
-        /// <typeparam name="T">Type of document stored in cosmos</typeparam>
-        /// <param name="directSql">Direct SQL Query - may not work</param>
-        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
-        /// <returns></returns>
-        [Obsolete]
-        IQueryable<T> Query<T>(string directSql, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable;
 
-        /// <summary>
-        /// Query cosmos using IQueryable on a given entity.
-        /// NOTE: The directSql may not work, only linq queries
-        /// </summary>
-        /// <typeparam name="T">Type of document stored in cosmos</typeparam>
-        /// <param name="sqlQuerySpec">SQL Query Spec - may not work</param>
-        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
-        /// <returns></returns>
-        IQueryable<T> Query<T>(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
 
-        [Obsolete]
-        Task<IEnumerable<T>> QueryPartitionedEntity<T>(string directSql, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable;
+        Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, bool enableCrossPartitionQuery = false);
 
-        Task<IEnumerable<T>> QueryPartitionedEntity<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, string partitionEntityId = null) where T : IIdentifiable;
+        Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000);
 
-        [Obsolete]
-        IQueryable<dynamic> DynamicQuery<dynamic>(string sql, bool enableCrossPartitionQuery = false);
+        Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity<dynamic>(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null);
 
-        IQueryable<dynamic> DynamicQuery<dynamic>(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false);
-
-        [Obsolete]
-        IQueryable<dynamic> DynamicQueryPartionedEntity<dynamic>(string sql, string partitionEntityId = null);
-
-        IQueryable<dynamic> DynamicQueryPartionedEntity<dynamic>(SqlQuerySpec sqlQuerySpec, string partitionEntityId = null);
-
-        [Obsolete]
-        Task<IEnumerable<dynamic>> QueryDynamic(string sql, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000);
-
-        Task<IEnumerable<dynamic>> QueryDynamic(SqlQuerySpec sqlQuerySpec, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000);
-
-        [Obsolete]
-        IQueryable<T> RawQuery<T>(string directSql, int itemsPerPage = -1, bool enableCrossPartitionQuery = false);
-
-        IQueryable<T> RawQuery<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, bool enableCrossPartitionQuery = false);
-
-        [Obsolete]
-        Task<IEnumerable<T>> QuerySql<T>(string directSql, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
-
-        Task<IEnumerable<T>> QuerySql<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable;
+        Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, bool enableCrossPartitionQuery = false);
 
         Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null, bool enableCrossPartitionQuery = true) where T : IIdentifiable;
 
-        [Obsolete]
-        Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(string sql, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable;
-
-        Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable;
+        Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable;
 
         Task DocumentsBatchProcessingAsync<T>(Func<List<DocumentEntity<T>>, Task> persistBatchToIndex, int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable;
 
-        [Obsolete]
-        Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, string sql, int itemsPerPage = 1000) where T : IIdentifiable;
-
-        Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, SqlQuerySpec sqlQuerySpec, int itemsPerPage = 1000) where T : IIdentifiable;
+        Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable;
 
         IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable;
 
-        [Obsolete]
-        IQueryable<DocumentEntity<T>> QueryDocuments<T>(string directSql, int itemsPerPage = -1) where T : IIdentifiable;
-
-        IQueryable<DocumentEntity<T>> QueryDocuments<T>(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1) where T : IIdentifiable;
-
         IEnumerable<string> QueryAsJson(int itemsPerPage = -1);
 
-        [Obsolete]
-        IEnumerable<string> QueryAsJson(string directSql, int itemsPerPage = -1);
+        Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1);
 
-        IEnumerable<string> QueryAsJson(SqlQuerySpec sqlQuerySpec, int itemsPerPage = -1);
-
-        Task<HttpStatusCode> DeleteAsync<T>(string id, bool enableCrossPartitionQuery = false, bool hardDelete = false, string partitionKey = null) where T : IIdentifiable;
+        Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
@@ -119,15 +71,13 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<HttpStatusCode> CreateAsync<T>(KeyValuePair<string, T> entity) where T : IIdentifiable;
 
-        Task<ResourceResponse<Document>> CreateWithResponseAsync<T>(T entity) where T : IIdentifiable;
-
-        Task BulkDeleteAsync<T>(IEnumerable<T> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable;
-
-        Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable;
+        Task<ItemResponse<DocumentEntity<T>>> CreateWithResponseAsync<T>(T entity) where T : IIdentifiable;
 
         Task BulkCreateAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
 
         Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable;
+
+        Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable;
 
         Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable;
 
@@ -136,10 +86,5 @@ namespace CalculateFunding.Common.CosmosDb
         Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
-
-        Task<int> GetThroughput();
-        Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable;
-        Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable;
-        Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
     }
 }
