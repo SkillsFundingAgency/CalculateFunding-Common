@@ -3,9 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
@@ -121,20 +119,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.ArgumentNotNull(specification, nameof(specification));
 
             return await ValidatedPutAsync<SpecificationSummary, EditSpecificationModel>($"{UrlRoot}/specification-edit?specificationId={specificationId}", specification);
-        }
-
-        public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreamsForSpecification(string specificationId)
-        {
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await GetAsync<IEnumerable<FundingStream>>($"{UrlRoot}/get-fundingstreams-for-specification?specificationId={specificationId}");
-        }
-
-        public async Task<ApiResponse<IEnumerable<CalculationCurrentVersion>>> GetBaselineCalculationsBySpecificationId(string specificationId)
-        {
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await GetAsync<IEnumerable<CalculationCurrentVersion>>($"{UrlRoot}/specifications/{specificationId}/baseline-calculations");
         }
 
         public async Task<ValidatedApiResponse<SpecificationVersion>> CreateSpecification(CreateSpecificationModel specification)

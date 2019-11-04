@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Specifications microservice client</Description>
-    <Version>1.0.17</Version>
+    <Version>1.0.18</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,8 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Calcs\CalculateFunding.Common.ApiClient.Calcs.csproj" />
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Policies\CalculateFunding.Common.ApiClient.Policies.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Identity\CalculateFunding.Common.Identity.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj" />

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 
 namespace CalculateFunding.Common.ApiClient.Specifications
@@ -38,10 +36,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         /// <param name="specificationName">Specification Name</param>
         /// <returns>Specification when exists, null when it doesn't</returns>
         Task<ApiResponse<SpecificationSummary>> GetSpecificationByName(string specificationName);
-
-        Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreamsForSpecification(string specificationId);
-
-        Task<ApiResponse<IEnumerable<CalculationCurrentVersion>>> GetBaselineCalculationsBySpecificationId(string specificationId);
 
         Task<ValidatedApiResponse<SpecificationVersion>> CreateSpecification(CreateSpecificationModel specification);
 
