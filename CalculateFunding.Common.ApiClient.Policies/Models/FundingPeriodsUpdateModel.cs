@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CalculateFunding.Common.ApiClient.Policies.Models
 {
-    public class FundingPeriodsModel
+    public class FundingPeriodsUpdateModel
     {
         public FundingPeriod[] FundingPeriods { get; set; }
 

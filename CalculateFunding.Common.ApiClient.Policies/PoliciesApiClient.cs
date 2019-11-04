@@ -99,13 +99,12 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<FundingConfiguration, FundingConfigurationUpdateViewModel>(url, configuration);
         }
 
-        public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods(FundingPeriodsModel fundingPeriodsModel,string fileName)
+        public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods(FundingPeriodsUpdateModel fundingPeriodsUpdateModel)
         {
-            Guard.ArgumentNotNull(fundingPeriodsModel, nameof(fundingPeriodsModel));
-            Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
+            Guard.ArgumentNotNull(fundingPeriodsUpdateModel, nameof(fundingPeriodsUpdateModel));          
 
             string url = "fundingperiods";
-            return await PostAsync<FundingPeriod, FundingPeriodsModel>(url, fundingPeriodsModel, CancellationToken.None,"json-file", fileName);           
+            return await PostAsync<FundingPeriod, FundingPeriodsUpdateModel>(url, fundingPeriodsUpdateModel);           
         }
 
         public async Task<ApiResponse<string>> SaveFundingSchema(string schema)
