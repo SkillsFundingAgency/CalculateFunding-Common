@@ -95,11 +95,6 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await GetAsync<bool>($"hasCalculationResults/{calculationId}");
         }
 
-        public async Task<HttpStatusCode> ReIndexCalculationResults()
-        {
-            return await GetAsync("reindex/calculation-results");
-        }
-        
         public async Task<ApiResponse<IEnumerable<string>>> GetSpecificationIdsForProvider(string providerId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
@@ -110,7 +105,7 @@ namespace CalculateFunding.Common.ApiClient.Results
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));   
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
         }
     }
 }
