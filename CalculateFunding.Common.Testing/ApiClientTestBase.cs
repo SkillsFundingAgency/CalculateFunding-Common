@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using CalculateFunding.Common.ApiClient.Bearer;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -11,6 +12,8 @@ namespace CalculateFunding.Common.Testing
     public abstract class ApiClientTestBase
     {
         protected IHttpClientFactory ClientFactory;
+        protected IBearerTokenProvider BearerTokenProvider;
+        protected string BearerToken;
 
         private const string HttpStubUri = "http://stuburi";
         private HttpMessageHandlerStub _messageHandler;
@@ -27,6 +30,13 @@ namespace CalculateFunding.Common.Testing
                 {
                     BaseAddress = new Uri(HttpStubUri)
                 });
+            
+            BearerToken = NewRandomString();
+
+            BearerTokenProvider = Substitute.For<IBearerTokenProvider>();
+
+            BearerTokenProvider.GetToken()
+                .Returns(BearerToken);
         }
 
         protected void AndTheUrisShouldHaveBeenRequested(params string[] expectedUris)

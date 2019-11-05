@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Bearer\CalculateFunding.Common.ApiClient.Bearer.csproj" />
       <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
     </ItemGroup>
 
