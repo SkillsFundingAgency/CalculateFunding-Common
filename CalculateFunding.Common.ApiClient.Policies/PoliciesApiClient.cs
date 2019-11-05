@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -115,13 +117,11 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<string, object>(url, null);
         }
 
-        public async Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStream fundingStream, string fileName)
+        public async Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStreamUpdateModel fundingStream)
         {
-            Guard.ArgumentNotNull(fundingStream, nameof(fundingStream));
-            Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
+            Guard.ArgumentNotNull(fundingStream, nameof(fundingStream));            
 
-            string url = "fundingstreams";
-            return await PostAsync<FundingStream, object>(url, fundingStream, CancellationToken.None, "json-file", fileName);
+            return await PostAsync<FundingStream, FundingStreamUpdateModel>("fundingstreams", fundingStream);
         }
 
         public async Task<ApiResponse<string>> SaveFundingTemplate(string templateJson)

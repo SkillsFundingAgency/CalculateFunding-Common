@@ -17,7 +17,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
         Task<ApiResponse<FundingPeriod>> SaveFundingPeriods(FundingPeriodsUpdateModel fundingPeriodsModel);
         Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams();
         Task<ApiResponse<FundingStream>> GetFundingStreamById(string fundingStreamId);
-        Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStream fundingStream, string fileName);
+        Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStreamUpdateModel fundingStream);
         Task<ApiResponse<string>> GetFundingSchemaByVersion(string schemaVersion);
         Task<ApiResponse<string>> SaveFundingSchema(string schema);
         Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string templateVersion);
