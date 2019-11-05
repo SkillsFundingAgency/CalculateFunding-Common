@@ -22,14 +22,5 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         /// </summary>
         [JsonProperty("useLegacyCode")]
         public bool UseLegacyCode { get; set; }
-
-        /// <summary>
-        /// Generate the build with diagnostics.
-        /// This is ignored from configuration as it shouldn't permanently be set.
-        /// Enabling this option introduces the System.Diagnostics namespace and would allow users access to APIs which are a potential security risk
-        /// </summary>
-        [JsonIgnore]
-        [JsonProperty("useDiagnosticsMode")]
-        public bool UseDiagnosticsMode { get; set; }
     }
 }

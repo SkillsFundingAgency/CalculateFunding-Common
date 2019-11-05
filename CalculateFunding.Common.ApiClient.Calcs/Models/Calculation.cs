@@ -1,4 +1,5 @@
 ﻿using System;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
@@ -6,21 +7,28 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
     public class Calculation : Reference
     {
-        [JsonProperty("specificationId")]
         public string SpecificationId { get; set; }
 
-        [JsonProperty("current")]
-        public CalculationVersion Current { get; set; }
-
-        [JsonProperty("fundingStreamId")]
         public string FundingStreamId { get; set; }
 
-        public CalculationSpecificationType CalculationType { get; set; }
+        public string SourceCode { get; set; }
 
-        public Reference AllocationLine { get; set; }
+        public CalculationType CalculationType { get; set; }
 
-        public string Description { get; set; }
+        public string SourceCodeName { get; set; }
 
-        public DateTime LastUpdated { get; set; }
+        public CalculationNamespace Namespace { get; set; }
+
+        public bool WasTemplateCalculation { get; set; }
+
+        public CalculationValueType ValueType { get; set; }
+
+        public DateTimeOffset? LastUpdated { get; set; }
+
+        public Reference Author { get; set; }
+
+        public int Version { get; set; }
+
+        public PublishStatus PublishStatus { get; set; }
     }
 }

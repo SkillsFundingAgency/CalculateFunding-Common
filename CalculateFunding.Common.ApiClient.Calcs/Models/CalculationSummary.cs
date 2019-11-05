@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
-    public class CalculationSummaryModel : Reference
+    public class CalculationSummary : Reference
     {
         [JsonProperty("calculationType")]
         public CalculationType CalculationType { get; set; }

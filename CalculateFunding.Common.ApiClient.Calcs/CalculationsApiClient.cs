@@ -19,13 +19,13 @@ namespace CalculateFunding.Common.ApiClient.Calcs
          : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
         { }
 
-        public async Task<ApiResponse<IEnumerable<CalculationSummaryModel>>> GetCalculationSummariesForSpecification(string specificationId)
+        public async Task<ApiResponse<IEnumerable<CalculationSummary>>> GetCalculationSummariesForSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             string url = $"{UrlRoot}/calculation-summaries-for-specification?specificationId={specificationId}";
 
-            return await GetAsync<IEnumerable<CalculationSummaryModel>>(url);
+            return await GetAsync<IEnumerable<CalculationSummary>>(url);
         }
 
         public async Task<ApiResponse<BuildProject>> GetBuildProjectBySpecificationId(string specificationId)
@@ -56,13 +56,13 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             return await PostAsync<BuildProject, DatasetRelationshipSummary>(url, datasetRelationshipSummary);
         }
 
-        public async Task<ApiResponse<IEnumerable<CalculationCurrentVersion>>> GetCurrentCalculationsBySpecificationId(string specificationId)
+        public async Task<ApiResponse<IEnumerable<Calculation>>> GetCalculationsForSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             string url = $"{UrlRoot}/current-calculations-for-specification?specificationId={specificationId}";
 
-            return await GetAsync<IEnumerable<CalculationCurrentVersion>>(url);
+            return await GetAsync<IEnumerable<Calculation>>(url);
         }
 
         public async Task<ApiResponse<HttpStatusCode>> CompileAndSaveAssembly(string specificationId)
@@ -193,7 +193,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             return results;
         }
 
-        public async Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculations(string specificationId)
+        public async Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculationMetadataForSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 

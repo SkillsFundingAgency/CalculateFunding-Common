@@ -9,12 +9,15 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 {
     public interface ICalculationsApiClient
     {
-        Task<ApiResponse<IEnumerable<CalculationSummaryModel>>> GetCalculationSummariesForSpecification(string specificationId);
+        Task<ApiResponse<IEnumerable<CalculationSummary>>> GetCalculationSummariesForSpecification(string specificationId);
+
         Task<ApiResponse<BuildProject>> GetBuildProjectBySpecificationId(string specificationId);
+
         Task<ApiResponse<byte[]>> GetAssemblyBySpecificationId(string specificationId);
+
         Task<ApiResponse<BuildProject>> UpdateBuildProjectRelationships(string specificationId, DatasetRelationshipSummary datasetRelationshipSummary);
 
-        Task<ApiResponse<IEnumerable<CalculationCurrentVersion>>> GetCurrentCalculationsBySpecificationId(string specificationId);
+        Task<ApiResponse<IEnumerable<Calculation>>> GetCalculationsForSpecification(string specificationId);
 
         Task<ApiResponse<HttpStatusCode>> CompileAndSaveAssembly(string specificationId);
 
@@ -40,7 +43,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
         Task<ApiResponse<SearchResults<CalculationSearchResult>>> FindCalculations(SearchFilterRequest filterOptions);
 
-        Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculations(string specificationId);
+        Task<ApiResponse<IEnumerable<CalculationMetadata>>> GetCalculationMetadataForSpecification(string specificationId);
 
         Task<ApiResponse<TemplateMapping>> GetTemplateMapping(string specificationId, string fundingStreamId);
 
