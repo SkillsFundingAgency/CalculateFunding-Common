@@ -1,7 +1,6 @@
 ﻿using System;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Models;
-using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
@@ -30,5 +29,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public int Version { get; set; }
 
         public PublishStatus PublishStatus { get; set; }
+
+        public string Description { get; set; }
     }
 }

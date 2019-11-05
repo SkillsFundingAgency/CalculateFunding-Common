@@ -39,5 +39,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         [JsonProperty("publishStatus")]
         public PublishStatus PublishStatus { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
     }
 }
