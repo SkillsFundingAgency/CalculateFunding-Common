@@ -19,7 +19,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<int?> GetThroughput();
 
-        IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable;
+        Task<IEnumerable<DocumentEntity<T>>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable;
 
         Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable;
 
@@ -34,7 +34,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        IQueryable<T> Query<T>() where T : IIdentifiable;
+        Task<IEnumerable<T>> Query<T>() where T : IIdentifiable;
 
         Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable;
 
@@ -56,9 +56,9 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable;
 
-        IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable;
+        Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable;
 
-        IEnumerable<string> QueryAsJson(int itemsPerPage = -1);
+        Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1);
 
         Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1);
 

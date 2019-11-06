@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.Cosmos.Scripts;
 using Newtonsoft.Json;
 
@@ -247,13 +248,16 @@ namespace CalculateFunding.Common.CosmosDb
             return await _database.ReadThroughputAsync();
         }
 
-        public IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
+        public async Task<IEnumerable<DocumentEntity<T>>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            return _container
-                .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions)
-                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
+            FeedIterator<DocumentEntity<T>> feedIterator = _container
+                .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
+                .ToFeedIterator();
+
+            return await ResultsFromFeedIterator(feedIterator);
         }
 
         public async Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable
@@ -320,17 +324,15 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        public IQueryable<T> Query<T>() where T : IIdentifiable
+        public async Task<IEnumerable<T>> Query<T>() where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions();
 
-            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions);
+            FeedIterator<DocumentEntity<T>> feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
+                .ToFeedIterator();
 
-            IQueryable<DocumentEntity<T>> filtered = queryable.Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
-
-            IQueryable<T> selected = filtered.Select(x => x.Content);
-
-            return selected;
+            return (await ResultsFromFeedIterator(feedIterator)).Select(x => x.Content);
         }
 
         public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable
@@ -397,18 +399,24 @@ namespace CalculateFunding.Common.CosmosDb
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
+            FeedIterator<DocumentEntity<T>> feedIterator;
+
             if (query == null)
             {
-                return _container
+                feedIterator = _container
                     .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
-                    .Where(d => d.DocumentType == GetDocumentType<T>());
+                    .Where(d => d.DocumentType == GetDocumentType<T>())
+                    .ToFeedIterator();
             }
             else
             {
-                return _container
+                feedIterator = _container
                     .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
-                    .Where(query);
+                    .Where(query)
+                    .ToFeedIterator();
             }
+
+            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator);
         }
 
         public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable
@@ -430,7 +438,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             IQueryable<DocumentEntity<T>> allResults;
 
-            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions);
+            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions);
 
             if (query == null)
             {
@@ -451,24 +459,28 @@ namespace CalculateFunding.Common.CosmosDb
             await ResultsFromQueryAndOptions(cosmosDbQuery, persistBatchToIndex, queryRequestOptions);
         }
 
-        public IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable
+        public async Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            return _container
+            FeedIterator<DocumentEntity<T>> feedIterator = _container
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
-                .AsQueryable();
+                .ToFeedIterator();
+
+            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator);
         }
 
-        public IEnumerable<string> QueryAsJson(int itemsPerPage = -1)
+        public async Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1)
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            IQueryable<Document> documents = _container
+            FeedIterator<Document> feedIterator = _container
                 .GetItemLinqQueryable<Document>(requestOptions: queryRequestOptions)
-                .AsQueryable();
+                .ToFeedIterator();
 
-            foreach (string document in JsonFromDocuments(documents)) yield return document;
+            IEnumerable<Document> documents = await ResultsFromFeedIterator<Document>(feedIterator);
+
+            return JsonFromDocuments(documents);
         }
 
         public async Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1)
