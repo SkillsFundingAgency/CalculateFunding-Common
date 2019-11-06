@@ -161,5 +161,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await PostAsync<IEnumerable<SpecificationSummary>, IEnumerable<string>>($"{UrlRoot}/specification-summaries-by-ids", specificationIds);
         }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetFundingStreamIdsForSelectedFundingSpecification()
+        {
+            return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-ids-for-funding-specifications");
+        }
     }
 }

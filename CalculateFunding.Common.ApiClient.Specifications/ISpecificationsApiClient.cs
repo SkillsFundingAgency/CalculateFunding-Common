@@ -44,5 +44,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecifications(string fundingPeriodId);
 
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries(IEnumerable<string> specificationIds);
+
+        Task<ApiResponse<IEnumerable<string>>> GetFundingStreamIdsForSelectedFundingSpecification();
     }
 }
