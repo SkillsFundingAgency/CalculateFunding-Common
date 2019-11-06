@@ -11,7 +11,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
 
         public string Period { get; set; }
 
-        public FundingPeriodType Type { get; set; }
+        public FundingPeriodType? Type { get; set; }
 
         public int StartYear
         {

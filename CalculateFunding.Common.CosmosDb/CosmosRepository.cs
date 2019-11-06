@@ -38,25 +38,24 @@ namespace CalculateFunding.Common.CosmosDb
             _cosmosClient = CosmosDbConnectionString.Parse(settings.ConnectionString);
 
             _database = _cosmosClient.GetDatabase(_databaseName);
+
+            if (_database != null)
+            {
+                _container = _database.GetContainer(_containerName);
+            }
         }
 
-        private QueryRequestOptions GetQueryRequestOptions(int itemsPerPage, bool enableCrossPartitionQuery)
+        private QueryRequestOptions GetQueryRequestOptions(int itemsPerPage)
         {
             QueryRequestOptions queryRequestOptions = new QueryRequestOptions
             {
                 MaxItemCount = itemsPerPage
             };
 
-            if (enableCrossPartitionQuery)
-            {
-                queryRequestOptions.PartitionKey = PartitionKey.None;
-            }
-
             return queryRequestOptions;
         }
 
-        private QueryRequestOptions GetDefaultQueryRequestOptions(bool enableCrossPartitionQuery = false,
-            int? itemsPerPage = null,
+        private QueryRequestOptions GetDefaultQueryRequestOptions(int? itemsPerPage = null,
             int? maxBufferedItemCount = null,
             int? maxConcurrency = null)
         {
@@ -66,11 +65,6 @@ namespace CalculateFunding.Common.CosmosDb
                 MaxBufferedItemCount = maxBufferedItemCount ?? 100,
                 MaxConcurrency = maxConcurrency ?? 50
             };
-
-            if (enableCrossPartitionQuery)
-            {
-                queryRequestOptions.PartitionKey = PartitionKey.None;
-            }
 
             return queryRequestOptions;
         }
@@ -253,33 +247,52 @@ namespace CalculateFunding.Common.CosmosDb
             return await _database.ReadThroughputAsync();
         }
 
-        public IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public IQueryable<DocumentEntity<T>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             return _container
-                .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions)
                 .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
         }
 
-        public DocumentEntity<T> ReadDocumentById<T>(string id, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task<DocumentEntity<T>> ReadDocumentByIdAsync<T>(string id) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
 
-            DocumentEntity<T> document = _container
-                .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: GetDefaultQueryRequestOptions(enableCrossPartitionQuery: enableCrossPartitionQuery))
-                .Where(d => d.DocumentType == GetDocumentType<T>() && d.Content.Id == id)
-                .ToList()
-                .SingleOrDefault();
+            CosmosDbQuery cosmosDbQuery = new CosmosDbQuery
+            {
+                QueryText = @"SELECT *
+                            FROM    c 
+                            WHERE   c.documentType = @documentType 
+                                    AND c.id = @id",
+                Parameters = new[]
+                {
+                    new CosmosDbQueryParameter("@documentType", GetDocumentType<T>()),
+                    new CosmosDbQueryParameter("@id", id)
+                }
+            };
 
-            return document;
+            FeedIterator<DocumentEntity<T>> feedIterator = _container
+                .GetItemQueryIterator<DocumentEntity<T>>(cosmosDbQuery.CosmosQueryDefinition);
+
+            return (await ResultsFromFeedIterator(feedIterator)).SingleOrDefault();
         }
 
-        public T ReadById<T>(string id) where T : IIdentifiable
+        public async Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
 
-            return ReadDocumentById<T>(id).Content;
+            DocumentEntity<T> result = await ReadDocumentByIdAsync<T>(id);
+
+            if(result != null)
+            {
+                return result.Content;
+            }
+            else
+            {
+                return default(T);
+            }
         }
 
         public async Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
@@ -292,17 +305,26 @@ namespace CalculateFunding.Common.CosmosDb
             return response.Resource;
         }
 
+        public async Task<DocumentEntity<T>> ReadDocumentByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
+
+            ItemResponse<DocumentEntity<T>> response = await _container.ReadItemAsync<DocumentEntity<T>>(id: id, partitionKey: new PartitionKey(partitionKey));
+
+            return response.Resource;
+        }
+
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
-        /// <param name="enableCrossPartitionQuery">Enable cross partitioned query</param>
         /// <returns></returns>
-        public IQueryable<T> Query<T>(bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public IQueryable<T> Query<T>() where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(enableCrossPartitionQuery);
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions();
 
-            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions);
+            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions);
 
             IQueryable<DocumentEntity<T>> filtered = queryable.Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
 
@@ -318,33 +340,34 @@ namespace CalculateFunding.Common.CosmosDb
             QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
             queryRequestOptions.PartitionKey = new PartitionKey(partitionKey);
 
-            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryRequestOptions);
+            IEnumerable<DocumentEntity<T>> documentResults = await ResultsFromQueryAndOptions<DocumentEntity<T>>(cosmosDbQuery, queryRequestOptions);
+
+            return documentResults.Select(x => x.Content);
         }
 
-        public async Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, bool enableCrossPartitionQuery = false) where T : IIdentifiable
+        public async Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery);
+            QueryRequestOptions queryOptions = GetQueryRequestOptions(itemsPerPage);
 
             return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions);
         }
 
-        public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, bool enableCrossPartitionQuery = false)
+        public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(enableCrossPartitionQuery: enableCrossPartitionQuery);
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions();
 
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, bool enableCrossPartitionQuery = false, int itemsPerPage = 1000)
+        public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(enableCrossPartitionQuery: enableCrossPartitionQuery,
-                itemsPerPage: itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
 
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
@@ -359,21 +382,20 @@ namespace CalculateFunding.Common.CosmosDb
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, bool enableCrossPartitionQuery = false)
+        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
             QueryRequestOptions queryOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage,
-                enableCrossPartitionQuery: enableCrossPartitionQuery,
                 maxBufferedItemCount: 50,
                 maxConcurrency: 100);
 
             return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions);
         }
 
-        public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null, bool enableCrossPartitionQuery = true) where T : IIdentifiable
+        public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             if (query == null)
             {
@@ -389,11 +411,11 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000, bool enableCrossPartitionQuery = true) where T : IIdentifiable
+        public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             FeedIterator<DocumentEntity<T>> documents = _container
                 .GetItemQueryIterator<DocumentEntity<T>>(queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
@@ -404,7 +426,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task DocumentsBatchProcessingAsync<T>(Func<List<DocumentEntity<T>>, Task> persistBatchToIndex, int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery: true);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             IQueryable<DocumentEntity<T>> allResults;
 
@@ -424,14 +446,14 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery: true);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             await ResultsFromQueryAndOptions(cosmosDbQuery, persistBatchToIndex, queryRequestOptions);
         }
 
         public IQueryable<DocumentEntity<T>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery: true);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             return _container
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
@@ -440,7 +462,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public IEnumerable<string> QueryAsJson(int itemsPerPage = -1)
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery: true);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             IQueryable<Document> documents = _container
                 .GetItemLinqQueryable<Document>(requestOptions: queryRequestOptions)
@@ -453,19 +475,19 @@ namespace CalculateFunding.Common.CosmosDb
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage, enableCrossPartitionQuery: true);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
             IEnumerable<Document> documents = await ResultsFromQueryAndOptions<Document>(cosmosDbQuery, queryRequestOptions);
 
             return JsonFromDocuments(documents);
         }
 
-        public async Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool enableCrossPartitionQuery = false, bool hardDelete = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool hardDelete = false) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
             Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
 
-            DocumentEntity<T> doc = ReadDocumentById<T>(id, enableCrossPartitionQuery);
+            DocumentEntity<T> doc = await ReadDocumentByIdAsync<T>(id);
 
             return await DeleteAsync(doc, partitionKey, hardDelete);
         }
@@ -513,7 +535,7 @@ namespace CalculateFunding.Common.CosmosDb
             return response.Resource;
         }
 
-        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool enableCrossPartitionQuery = false, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable
+        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entity, nameof(entity));
 
@@ -525,7 +547,7 @@ namespace CalculateFunding.Common.CosmosDb
             {
                 //SingleOrDefault not supported on the current Cosmos driver
                 List<DocumentEntity<T>> documents = _container
-                    .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                    .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions)
                     .Where(d => d.Id == entity.Id)
                     .ToList();
 
@@ -582,7 +604,6 @@ namespace CalculateFunding.Common.CosmosDb
             return await _container.CreateItemAsync(doc);
         }
 
-        #region "Bulk operations"
         public async Task BulkCreateAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
@@ -643,17 +664,17 @@ namespace CalculateFunding.Common.CosmosDb
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
 
             await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
             {
-                Task.WaitAll(UpsertAsync(item, maintainCreatedDate: maintainCreatedDate, enableCrossPartitionQuery: enableCrossPartitionQuery, undelete: undelete));
+                Task.WaitAll(UpsertAsync(item, item.Id, maintainCreatedDate: maintainCreatedDate, undelete: undelete));
             }));
         }
 
-        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool enableCrossPartitionQuery = false, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
+        public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
 
@@ -667,7 +688,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, enableCrossPartitionQuery: enableCrossPartitionQuery, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
+                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
                         }
                         finally
                         {
@@ -685,7 +706,6 @@ namespace CalculateFunding.Common.CosmosDb
                 }
             }
         }
-        #endregion
 
         public async Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference
         {
