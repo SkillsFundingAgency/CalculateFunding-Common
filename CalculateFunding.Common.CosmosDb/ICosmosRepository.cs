@@ -34,7 +34,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        Task<IEnumerable<T>> Query<T>() where T : IIdentifiable;
+        Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1) where T : IIdentifiable;
 
         Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable;
 

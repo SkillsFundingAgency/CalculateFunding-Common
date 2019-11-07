@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
+using CalculateFunding.Common.Extensions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.Cosmos.Scripts;
@@ -324,13 +325,27 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> Query<T>() where T : IIdentifiable
+        public async Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions();
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
 
-            FeedIterator<DocumentEntity<T>> feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
-                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
-                .ToFeedIterator();
+            Expression<Func<DocumentEntity<T>, bool>> expression = x => x.DocumentType == GetDocumentType<T>() && !x.Deleted;
+
+            FeedIterator<DocumentEntity<T>> feedIterator;
+
+            if (query != null)
+            {
+                feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                    .Where(expression)
+                    .Where(query)
+                    .ToFeedIterator();
+            }
+            else
+            {
+                feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                    .Where(expression)
+                    .ToFeedIterator();
+            }
 
             return (await ResultsFromFeedIterator(feedIterator)).Select(x => x.Content);
         }
