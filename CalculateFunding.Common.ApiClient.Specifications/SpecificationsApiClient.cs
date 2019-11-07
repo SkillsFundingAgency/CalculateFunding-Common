@@ -121,11 +121,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await ValidatedPutAsync<SpecificationSummary, EditSpecificationModel>($"{UrlRoot}/specification-edit?specificationId={specificationId}", specification);
         }
 
-        public async Task<ValidatedApiResponse<SpecificationVersion>> CreateSpecification(CreateSpecificationModel specification)
+        public async Task<ValidatedApiResponse<SpecificationSummary>> CreateSpecification(CreateSpecificationModel specification)
         {
             Guard.ArgumentNotNull(specification, nameof(specification));
 
-            return await ValidatedPostAsync<SpecificationVersion, CreateSpecificationModel>($"{UrlRoot}/specifications", specification);
+            return await ValidatedPostAsync<SpecificationSummary, CreateSpecificationModel>($"{UrlRoot}/specifications", specification);
         }
 
         public async Task<PagedResult<SpecificationDatasourceRelationshipSearchResultItem>> FindSpecificationAndRelationships(SearchFilterRequest filterOptions)

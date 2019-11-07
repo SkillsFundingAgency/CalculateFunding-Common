@@ -37,7 +37,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         /// <returns>Specification when exists, null when it doesn't</returns>
         Task<ApiResponse<SpecificationSummary>> GetSpecificationByName(string specificationName);
 
-        Task<ValidatedApiResponse<SpecificationVersion>> CreateSpecification(CreateSpecificationModel specification);
+        Task<ValidatedApiResponse<SpecificationSummary>> CreateSpecification(CreateSpecificationModel specification);
 
         Task<PagedResult<SpecificationDatasourceRelationshipSearchResultItem>> FindSpecificationAndRelationships(SearchFilterRequest filterOptions);
 
