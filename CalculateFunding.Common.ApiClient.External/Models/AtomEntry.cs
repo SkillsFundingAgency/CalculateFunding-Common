@@ -22,7 +22,6 @@ namespace CalculateFunding.Common.ApiClient.External.Models
 
         public AtomLink Link { get; set; }
 
-        public AtomContent<object> Content { get; set; }
-
+        public T Content { get; set; }
     }
 }
