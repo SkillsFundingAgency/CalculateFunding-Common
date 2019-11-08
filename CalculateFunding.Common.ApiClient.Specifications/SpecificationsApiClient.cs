@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 using CalculateFunding.Common.Interfaces;
+using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
@@ -165,6 +166,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         public async Task<ApiResponse<IEnumerable<string>>> GetFundingStreamIdsForSelectedFundingSpecification()
         {
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-ids-for-funding-specifications");
+        }
+
+        public async Task<ApiResponse<IEnumerable<Reference>>> GetFundingPeriodsByFundingStreamIds(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<Reference>>($"{UrlRoot}/fundingperiods-by-fundingstream-id/{fundingStreamId}");
         }
     }
 }

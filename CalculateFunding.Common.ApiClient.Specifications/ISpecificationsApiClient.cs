@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
+using CalculateFunding.Common.Models;
 
 namespace CalculateFunding.Common.ApiClient.Specifications
 {
@@ -46,5 +47,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries(IEnumerable<string> specificationIds);
 
         Task<ApiResponse<IEnumerable<string>>> GetFundingStreamIdsForSelectedFundingSpecification();
+        Task<ApiResponse<IEnumerable<Reference>>> GetFundingPeriodsByFundingStreamIds(string fundingStreamId);
     }
 }
