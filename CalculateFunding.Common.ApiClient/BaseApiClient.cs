@@ -272,8 +272,14 @@ namespace CalculateFunding.Common.ApiClient
 
             if (response.IsSuccessStatusCode)
             {
-                string content = await response.Content.ReadAsStringAsync();
-                return new ValidatedApiResponse<TResponse>(response.StatusCode, JsonConvert.DeserializeObject<TResponse>(content, _serializerSettings));
+                TResponse responseContent = default(TResponse);
+                if (response.Content != null)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    responseContent = JsonConvert.DeserializeObject<TResponse>(content, _serializerSettings);
+                }
+
+                return new ValidatedApiResponse<TResponse>(response.StatusCode, responseContent);
             }
 
             ValidatedApiResponse<TResponse> apiResponse = new ValidatedApiResponse<TResponse>(response.StatusCode);

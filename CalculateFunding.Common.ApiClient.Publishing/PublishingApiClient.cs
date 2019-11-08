@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
@@ -49,28 +45,35 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<SpecificationCheckChooseForFundingResult>(url);
         }
 
-        public async Task<HttpStatusCode> RefreshFundingForSpecification(string specificationId)
-        {
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await PostAsync($"specifications/{specificationId}/refresh");
-        }
-
-        public async Task<HttpStatusCode> ApproveSpecification(string specificationId)
-        {
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await PostAsync($"specifications/{specificationId}/approve");
-        }
-
         public async Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
-            
+
             string url = $"publishedprovider/publishedprovider-search";
-            
+
             return await PostAsync<SearchResults<PublishedProviderSearchItem>, SearchModel>(url, searchModel);
-           
+
+        }
+
+        public async Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/refresh", specificationId);
+        }
+
+        public async Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/approve", specificationId);
+        }
+
+        public async Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/publish", specificationId);
         }
     }
 }

@@ -1,63 +1,55 @@
-﻿using CalculateFunding.Common.Extensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.TemplateMetadata.Schema10.Models;
 using FluentValidation;
 using FluentValidation.Validators;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 {
     public class TemplateMetadataValidator : AbstractValidator<FeedBaseModel>
     {
-        private readonly ConcurrentDictionary<uint, Calculation> _calculationDictionary;
-        private readonly ConcurrentDictionary<uint, ReferenceData> _referenceDataDictionary;
-        private readonly ConcurrentDictionary<string, ICollection<uint>> _calculationTemplateCalcIds = new ConcurrentDictionary<string, ICollection<uint>>();
-
         public TemplateMetadataValidator()
         {
-            _calculationDictionary = new ConcurrentDictionary<uint, Calculation>();
-            _referenceDataDictionary = new ConcurrentDictionary<uint, ReferenceData>();
-
             RuleFor(model => model.Funding.FundingValue)
                 .NotEmpty()
                 .WithMessage("No funding lines provided for TemplateMetadataValidator")
                 .Custom((fundingValue, context) =>
                 {
+                    TemplateMetadataValidatorContext templateMetadataValidatorContext = new TemplateMetadataValidatorContext();
+
                     if (!fundingValue.FundingLines.IsNullOrEmpty())
                     {
-                        fundingValue.FundingLines.ToList().ForEach(x => ValidateFundingLine(context, x));
+                        fundingValue.FundingLines.ToList().ForEach(x => ValidateFundingLine(context, x, templateMetadataValidatorContext));
                     }
                 });
         }
 
-        private void ValidateFundingLine(CustomContext context, FundingLine fundingLine)
+        private void ValidateFundingLine(CustomContext context, FundingLine fundingLine, TemplateMetadataValidatorContext validatorContext)
         {
-            if(!fundingLine.DistributionPeriods.IsNullOrEmpty())
+            if (!fundingLine.DistributionPeriods.IsNullOrEmpty())
             {
                 context.AddFailure("DistributionPeriods", $"Funding line : '{fundingLine.Name}' has values for the distribution periods");
             }
 
-            fundingLine.FundingLines?.ToList().ForEach(x => ValidateFundingLine(context, x));
+            fundingLine.FundingLines?.ToList().ForEach(x => ValidateFundingLine(context, x, validatorContext));
 
-            fundingLine.Calculations?.ToList().ForEach(x => ValidateCalculation(context, x));
+            fundingLine.Calculations?.ToList().ForEach(x => ValidateCalculation(context, x, validatorContext));
         }
 
-        private void ValidateCalculation(CustomContext context, Calculation calculation)
+        private void ValidateCalculation(CustomContext context, Calculation calculation, TemplateMetadataValidatorContext validatorContext)
         {
             string calculationName = calculation.Name.Trim().ToLower();
-            ICollection<uint> existingTemplateCalculationIds = _calculationTemplateCalcIds.GetOrAdd(calculationName, _ => new HashSet<uint>());
+            ICollection<uint> existingTemplateCalculationIds = validatorContext.CalculationTemplateCalcIds.GetOrAdd(calculationName, _ => new HashSet<uint>());
             existingTemplateCalculationIds.Add(calculation.TemplateCalculationId);
 
             if (existingTemplateCalculationIds.Any(_ => _ != calculation.TemplateCalculationId))
             {
-                context.AddFailure("Calculation", $"Calculation name: '{calculationName}' is present multiple times in the template but with a different templateCalculationIds.");   
+                context.AddFailure("Calculation", $"Calculation name: '{calculationName}' is present multiple times in the template but with a different templateCalculationIds.");
             }
 
-            Calculation existingCalculation = _calculationDictionary.GetOrAdd(calculation.TemplateCalculationId, calculation);
-            
+            Calculation existingCalculation = validatorContext.CalculationDictionary.GetOrAdd(calculation.TemplateCalculationId, calculation);
+
             if (existingCalculation.Name.Trim().ToLower() != calculationName || existingCalculation.AggregationType != calculation.AggregationType || existingCalculation.Type != calculation.Type || existingCalculation.ValueFormat != calculation.ValueFormat || existingCalculation.FormulaText != calculation.FormulaText)
             {
                 context.AddFailure("Calculation", $"Calculation : '{existingCalculation.Name}' and id : '{calculation.TemplateCalculationId}' has calculation items with the same templateCalculationId that have different configurations for 'name', 'valueFormat','type'.'formulaText','aggregationType'.");
@@ -74,7 +66,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
                         }
                         else
                         {
-                            calculation.ReferenceData?.ToList().ForEach(x => ValidateReferenceData(context, x, existingCalculation));
+                            calculation.ReferenceData?.ToList().ForEach(x => ValidateReferenceData(context, x, existingCalculation, validatorContext));
                         }
                     }
                     else
@@ -93,17 +85,17 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 
             foreach (Calculation nestedCalculation in calculation.Calculations ?? new Calculation[0])
             {
-                ValidateCalculation(context, nestedCalculation);
+                ValidateCalculation(context, nestedCalculation, validatorContext);
             }
         }
 
-        private void ValidateReferenceData(CustomContext context, ReferenceData referenceData, Calculation existingCalculation)
+        private void ValidateReferenceData(CustomContext context, ReferenceData referenceData, Calculation existingCalculation, TemplateMetadataValidatorContext validatorContext)
         {
             ReferenceData currentReferenceData = existingCalculation.ReferenceData.Where(x => x.TemplateReferenceId == referenceData.TemplateReferenceId).SingleOrDefault();
 
             if (currentReferenceData != null)
             {
-                ReferenceData existingReferenceData = _referenceDataDictionary.GetOrAdd(currentReferenceData.TemplateReferenceId, currentReferenceData);
+                ReferenceData existingReferenceData = validatorContext.ReferenceDataDictionary.GetOrAdd(currentReferenceData.TemplateReferenceId, currentReferenceData);
 
                 if (existingReferenceData.AggregationType != referenceData.AggregationType || existingReferenceData.Format != referenceData.Format || existingReferenceData.Name != referenceData.Name)
                 {

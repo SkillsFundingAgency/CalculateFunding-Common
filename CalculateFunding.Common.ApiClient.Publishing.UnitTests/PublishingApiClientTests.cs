@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,9 +34,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
             GivenTheStatusCode(expectedUri, expectedStatusCode, HttpMethod.Post);
 
-            HttpStatusCode actualStatusCode = await _client.RefreshFundingForSpecification(specificationId);
+            ValidatedApiResponse<JobCreationResponse> response = await _client.RefreshFundingForSpecification(specificationId);
 
-            actualStatusCode
+            response
+                .Should()
+                .NotBeNull();
+
+            response
+                .StatusCode
                 .Should()
                 .Be(expectedStatusCode);
 
@@ -52,9 +59,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
             GivenTheStatusCode(expectedUri, expectedStatusCode, HttpMethod.Post);
 
-            HttpStatusCode actualStatusCode = await _client.ApproveSpecification(specificationId);
+            ValidatedApiResponse<JobCreationResponse> response = await _client.ApproveFundingForSpecification(specificationId);
 
-            actualStatusCode
+            response
+                 .Should()
+                 .NotBeNull();
+
+            response
+                .StatusCode
                 .Should()
                 .Be(expectedStatusCode);
 

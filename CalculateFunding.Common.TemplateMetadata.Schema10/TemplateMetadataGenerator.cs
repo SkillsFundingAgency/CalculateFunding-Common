@@ -81,8 +81,11 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10
                 Type = (FundingLineType)Enum.Parse(typeof(FundingLineType), source.Type.ToString()),
                 Calculations = source.Calculations?.Select(calculationMap => ToCalculation(calculationMap)),
                 FundingLines = source.FundingLines?.Select(x => ToFundingLine(x)),
-                DistributionPeriods = source.DistributionPeriods?.Select(_ => new TemplateMetadata.Models.DistributionPeriod { DistributionPeriodId = _.DistributionPeriodId,
-                    ProfilePeriods = _.ProfilePeriods.Select (pp => new TemplateMetadata.Models.ProfilePeriod {
+                DistributionPeriods = source.DistributionPeriods?.Select(_ => new TemplateMetadata.Models.DistributionPeriod
+                {
+                    DistributionPeriodId = _.DistributionPeriodId,
+                    ProfilePeriods = _.ProfilePeriods.Select(pp => new TemplateMetadata.Models.ProfilePeriod
+                    {
                         DistributionPeriodId = pp.DistributionPeriodId,
                         Occurrence = pp.Occurrence,
                         ProfiledValue = pp.ProfiledValue,

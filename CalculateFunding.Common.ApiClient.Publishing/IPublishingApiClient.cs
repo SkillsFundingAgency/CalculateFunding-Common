@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Models.Search;
@@ -17,9 +13,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<SpecificationCheckChooseForFundingResult>> CanChooseForFunding(string specificationId);
 
-        Task<HttpStatusCode> RefreshFundingForSpecification(string specificationId);
+        Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId);
 
-        Task<HttpStatusCode> ApproveSpecification(string specificationId);
+        Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId);
+
+        Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
     }
