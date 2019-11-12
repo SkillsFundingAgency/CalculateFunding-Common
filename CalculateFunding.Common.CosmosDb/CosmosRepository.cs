@@ -106,11 +106,11 @@ namespace CalculateFunding.Common.CosmosDb
                 foreach (T t in await query.ReadNextAsync())
                 {
                     results.Add(t);
-                }
 
-                if(results.Count == maxItemCount)
-                {
-                    return results;
+                    if (results.Count == maxItemCount)
+                    {
+                        return results;
+                    }
                 }
             }
 
