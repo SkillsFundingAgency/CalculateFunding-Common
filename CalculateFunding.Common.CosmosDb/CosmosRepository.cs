@@ -240,12 +240,12 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task<ThroughputResponse> SetThroughput(int requestUnits)
         {
-            return await _database.ReplaceThroughputAsync(requestUnits);
+            return await _container.ReplaceThroughputAsync(requestUnits);
         }
 
         public async Task<int?> GetThroughput()
         {
-            return await _database.ReadThroughputAsync();
+            return await _container.ReadThroughputAsync();
         }
 
         public async Task<IEnumerable<DocumentEntity<T>>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
