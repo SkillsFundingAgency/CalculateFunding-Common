@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 
 namespace CalculateFunding.Common.Extensions
@@ -17,7 +14,18 @@ namespace CalculateFunding.Common.Extensions
         public static object PropertyMapping<T>(this Enum value, T instance)
         {
             Type genericType = instance.GetType();
-            PropertyInfo propertyInfo = genericType.GetProperty(value.ToString());
+            string enumValue = value?.ToString();
+            if (string.IsNullOrWhiteSpace(enumValue))
+            {
+                throw new InvalidOperationException("Null or empty string for field name");
+            }
+
+            PropertyInfo propertyInfo = genericType.GetProperty(enumValue);
+
+            if (propertyInfo == null)
+            {
+                throw new InvalidOperationException($"The field '{enumValue}' was not found on the type '{genericType.FullName}'");
+            }
 
             return propertyInfo.GetValue(instance);
         }

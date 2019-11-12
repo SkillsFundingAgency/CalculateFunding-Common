@@ -31,7 +31,7 @@ namespace CalculateFunding.Generators.Funding.Models
         public uint TemplateLineId { get; set; }
 
         /// <summary>
-        /// The funding value in pence.
+        /// The funding value in pounds.pence
         /// </summary>
         [JsonProperty("value")]
         public decimal? Value { get; set; }

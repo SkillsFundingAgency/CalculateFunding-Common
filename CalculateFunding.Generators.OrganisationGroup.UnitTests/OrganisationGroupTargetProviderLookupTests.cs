@@ -641,6 +641,36 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnLocalAuthorityClassificationTypeCodeInformation_ThenTargetOrganisationGroupReturned()
+        {
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
+                GroupTypeIdentifier = Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode,
+                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.LocalGovernmentGroup
+            };
+
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
+                Common.ApiClient.Policies.Models.GroupingReason.Information,
+                scopedProviders.Where(_ => _.TrustStatus != TrustStatus.SupportedByAMultiAcademyTrust));
+
+            group.Identifiers.Any();
+
+            group.Name
+                .Should()
+                .Be("Local Government Group Type Name 1");
+
+            group.Identifier
+                .Should()
+                .Be("LGGTC1");
+
+            group.Identifiers.Count()
+                .Should()
+                .Be(1);
+        }
+
+        [TestMethod]
         public void WhenLookingUpTargetOrganisationGroupBasedOnUnknownGroupTypeInformation_ThenExceptionThrown()
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
@@ -676,7 +706,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
                 UKPRN = "1001",
                 ProviderType = "Multi-academy trust",
-                ProviderSubType = ""
+                ProviderSubType = "",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             providers.Add(new Provider()
@@ -708,7 +740,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "Local Authority",
-                ProviderSubType = "Local Authority"
+                ProviderSubType = "Local Authority",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             providers.Add(new Provider()
@@ -739,7 +773,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             providers.Add(new Provider()
@@ -771,7 +807,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 CountryCode = "C2",
                 CountryName = "Country 2",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             providers.Add(new Provider()
@@ -786,7 +824,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 DistrictCode = "D2",
                 DistrictName = "District 2",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             providers.Add(new Provider()
@@ -801,7 +841,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 DistrictCode = "D2",
                 DistrictName = "District 2",
                 ProviderType = "ProviderType2",
-                ProviderSubType = "ProviderSubType2"
+                ProviderSubType = "ProviderSubType2",
+                LocalGovernmentGroupTypeCode = "LGGTC1",
+                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
             });
 
             return providers;

@@ -50,9 +50,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
             informationKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
             informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber });
             informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode });
-            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode  });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode });
             informationKeys.Add(OrganisationGroupTypeCode.Provider, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber });
-            
+
             additionalIdentifierKeys.Add(GroupingReason.Information, informationKeys);
 
             return additionalIdentifierKeys;
@@ -126,7 +126,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
                     // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && _academyTrustTypes.Any(_ => p.ProviderType.Equals(_, StringComparison.OrdinalIgnoreCase) || p.ProviderSubType.Equals(_, StringComparison.OrdinalIgnoreCase)) );
+                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && _academyTrustTypes.Any(_ => p.ProviderType.Equals(_, StringComparison.OrdinalIgnoreCase) || p.ProviderSubType.Equals(_, StringComparison.OrdinalIgnoreCase)));
 
                     if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
                     {
@@ -172,6 +172,10 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         {
                             typeIdentifier = Enums.OrganisationGroupTypeIdentifier.DfeNumber;
                         }
+                        else if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode)
+                        {
+                            typeIdentifier = Enums.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode;
+                        }
                         else
                         {
                             typeIdentifier = organisationGroupTypeIdentifier.AsMatchingEnum<Enums.OrganisationGroupTypeIdentifier>();
@@ -202,6 +206,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 case OrganisationGroupTypeIdentifier.UID:
                 case OrganisationGroupTypeIdentifier.GroupId:
                     return string.Empty;
+                case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:
+                    return provider.LocalGovernmentGroupTypeCode;
                 default:
                     return identifierType.PropertyMapping(provider)?.ToString();
             }
