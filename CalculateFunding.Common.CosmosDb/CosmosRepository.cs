@@ -117,6 +117,11 @@ namespace CalculateFunding.Common.CosmosDb
             return results;
         }
 
+        private int GetEffectivePageSize(int itemsPerPage, int? maxItemCount)
+        {
+            return itemsPerPage == -1 ? maxItemCount ?? itemsPerPage : Math.Min(maxItemCount ?? itemsPerPage, itemsPerPage);
+        }
+
         private async Task<IEnumerable<T>> ResultsFromFeedIterator<T>(FeedIterator<T> query, Func<List<T>, Task> batchAction, int itemsPerPage)
         {
             List<T> results = new List<T>();
@@ -331,7 +336,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// <returns></returns>
         public async Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             Expression<Func<DocumentEntity<T>, bool>> expression = x => x.DocumentType == GetDocumentType<T>() && !x.Deleted;
 
@@ -358,7 +363,7 @@ namespace CalculateFunding.Common.CosmosDb
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: GetEffectivePageSize(itemsPerPage, maxItemCount));
             queryRequestOptions.PartitionKey = new PartitionKey(partitionKey);
 
             IEnumerable<DocumentEntity<T>> documentResults = await ResultsFromQueryAndOptions<DocumentEntity<T>>(cosmosDbQuery, queryRequestOptions, maxItemCount);
@@ -370,7 +375,7 @@ namespace CalculateFunding.Common.CosmosDb
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryOptions = GetQueryRequestOptions(itemsPerPage);
+            QueryRequestOptions queryOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions, maxItemCount);
         }
@@ -480,7 +485,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             FeedIterator<DocumentEntity<T>> feedIterator = _container
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
@@ -491,7 +496,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1, int? maxItemCount = null)
         {
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             FeedIterator<Document> feedIterator = _container
                 .GetItemLinqQueryable<Document>(requestOptions: queryRequestOptions)
@@ -506,7 +511,7 @@ namespace CalculateFunding.Common.CosmosDb
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
-            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             IEnumerable<Document> documents = await ResultsFromQueryAndOptions<Document>(cosmosDbQuery, queryRequestOptions, maxItemCount);
 
