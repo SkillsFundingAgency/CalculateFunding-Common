@@ -34,11 +34,11 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1) where T : IIdentifiable;
+        Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
 
-        Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable;
+        Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null, string partitionKey = null) where T : IIdentifiable;
 
-        Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1) where T : IIdentifiable;
+        Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
 
         Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery);
 
@@ -46,7 +46,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity<dynamic>(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null);
 
-        Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1);
+        Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null);
 
         Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable;
 
@@ -56,11 +56,11 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task DocumentsBatchProcessingAsync<T>(Func<List<T>, Task> persistBatchToIndex, CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable;
 
-        Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable;
+        Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
 
-        Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1);
+        Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1, int? maxItemCount = null);
 
-        Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1);
+        Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null);
 
         Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool hardDelete = false) where T : IIdentifiable;
 

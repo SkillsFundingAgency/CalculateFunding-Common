@@ -61,8 +61,8 @@ namespace CalculateFunding.Common.CosmosDb
             int? maxConcurrency = null)
         {
             QueryRequestOptions queryRequestOptions = new QueryRequestOptions
-            {
-                MaxItemCount = itemsPerPage,
+            { 
+                MaxItemCount = itemsPerPage == -1 ? 1000 : itemsPerPage,
                 MaxBufferedItemCount = maxBufferedItemCount ?? 100,
                 MaxConcurrency = maxConcurrency ?? 50
             };
@@ -80,13 +80,13 @@ namespace CalculateFunding.Common.CosmosDb
             };
         }
 
-        private async Task<IEnumerable<T>> ResultsFromQueryAndOptions<T>(CosmosDbQuery cosmosDbQuery, QueryRequestOptions queryOptions)
+        private async Task<IEnumerable<T>> ResultsFromQueryAndOptions<T>(CosmosDbQuery cosmosDbQuery, QueryRequestOptions queryOptions, int? maxItemCount = null)
         {
             FeedIterator<T> query = _container.GetItemQueryIterator<T>(
                 queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
                 requestOptions: queryOptions);
 
-            return await ResultsFromFeedIterator(query);
+            return await ResultsFromFeedIterator(query, maxItemCount);
         }
 
         private async Task<IEnumerable<T>> ResultsFromQueryAndOptions<T>(CosmosDbQuery cosmosDbQuery, Func<List<T>, Task> batchAction, QueryRequestOptions queryOptions)
@@ -98,7 +98,7 @@ namespace CalculateFunding.Common.CosmosDb
             return await ResultsFromFeedIterator(query, batchAction, queryOptions.MaxItemCount ?? 0);
         }
 
-        private async Task<IEnumerable<T>> ResultsFromFeedIterator<T>(FeedIterator<T> query)
+        private async Task<IEnumerable<T>> ResultsFromFeedIterator<T>(FeedIterator<T> query, int? maxItemCount = null)
         {
             List<T> results = new List<T>();
             while (query.HasMoreResults)
@@ -106,6 +106,11 @@ namespace CalculateFunding.Common.CosmosDb
                 foreach (T t in await query.ReadNextAsync())
                 {
                     results.Add(t);
+                }
+
+                if(results.Count == maxItemCount)
+                {
+                    return results;
                 }
             }
 
@@ -324,7 +329,7 @@ namespace CalculateFunding.Common.CosmosDb
         /// </summary>
         /// <typeparam name="T">Type of document stored in cosmos</typeparam>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1) where T : IIdentifiable
+        public async Task<IEnumerable<T>> Query<T>(Expression<Func<DocumentEntity<T>, bool>> query = null, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
 
@@ -346,28 +351,28 @@ namespace CalculateFunding.Common.CosmosDb
                     .ToFeedIterator();
             }
 
-            return (await ResultsFromFeedIterator(feedIterator)).Select(x => x.Content);
+            return (await ResultsFromFeedIterator(feedIterator, maxItemCount)).Select(x => x.Content);
         }
 
-        public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, string partitionKey = null) where T : IIdentifiable
+        public async Task<IEnumerable<T>> QueryPartitionedEntity<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null, string partitionKey = null) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
             QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(itemsPerPage: itemsPerPage);
             queryRequestOptions.PartitionKey = new PartitionKey(partitionKey);
 
-            IEnumerable<DocumentEntity<T>> documentResults = await ResultsFromQueryAndOptions<DocumentEntity<T>>(cosmosDbQuery, queryRequestOptions);
+            IEnumerable<DocumentEntity<T>> documentResults = await ResultsFromQueryAndOptions<DocumentEntity<T>>(cosmosDbQuery, queryRequestOptions, maxItemCount);
 
             return documentResults.Select(x => x.Content);
         }
 
-        public async Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1) where T : IIdentifiable
+        public async Task<IEnumerable<T>> QuerySql<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
             QueryRequestOptions queryOptions = GetQueryRequestOptions(itemsPerPage);
 
-            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions);
+            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions, maxItemCount);
         }
 
         public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery)
@@ -398,7 +403,7 @@ namespace CalculateFunding.Common.CosmosDb
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1)
+        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount =  null)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
@@ -406,7 +411,7 @@ namespace CalculateFunding.Common.CosmosDb
                 maxBufferedItemCount: 50,
                 maxConcurrency: 100);
 
-            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions);
+            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions, maxItemCount);
         }
 
         public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(int itemsPerPage = 1000, Expression<Func<DocumentEntity<T>, bool>> query = null) where T : IIdentifiable
@@ -473,7 +478,7 @@ namespace CalculateFunding.Common.CosmosDb
             await ResultsFromQueryAndOptions(cosmosDbQuery, persistBatchToIndex, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1) where T : IIdentifiable
+        public async Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
@@ -481,10 +486,10 @@ namespace CalculateFunding.Common.CosmosDb
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                 .ToFeedIterator();
 
-            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator);
+            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator, maxItemCount);
         }
 
-        public async Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1)
+        public async Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1, int? maxItemCount = null)
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
@@ -492,18 +497,18 @@ namespace CalculateFunding.Common.CosmosDb
                 .GetItemLinqQueryable<Document>(requestOptions: queryRequestOptions)
                 .ToFeedIterator();
 
-            IEnumerable<Document> documents = await ResultsFromFeedIterator<Document>(feedIterator);
+            IEnumerable<Document> documents = await ResultsFromFeedIterator<Document>(feedIterator, maxItemCount);
 
             return JsonFromDocuments(documents);
         }
 
-        public async Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1)
+        public async Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            IEnumerable<Document> documents = await ResultsFromQueryAndOptions<Document>(cosmosDbQuery, queryRequestOptions);
+            IEnumerable<Document> documents = await ResultsFromQueryAndOptions<Document>(cosmosDbQuery, queryRequestOptions, maxItemCount);
 
             return JsonFromDocuments(documents);
         }
