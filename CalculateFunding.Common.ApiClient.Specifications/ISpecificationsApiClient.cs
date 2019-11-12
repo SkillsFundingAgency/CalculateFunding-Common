@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 using CalculateFunding.Common.Models;
+using CalculateFunding.Common.Models.Versioning;
 
 namespace CalculateFunding.Common.ApiClient.Specifications
 {
@@ -47,6 +48,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationSummaries(IEnumerable<string> specificationIds);
 
         Task<ApiResponse<IEnumerable<string>>> GetFundingStreamIdsForSelectedFundingSpecification();
+
         Task<ApiResponse<IEnumerable<Reference>>> GetFundingPeriodsByFundingStreamIds(string fundingStreamId);
+
+        Task<ApiResponse<PublishStatusResponseModel>> UpdateSpecificationStatus(string specificationId, PublishStatusRequestModel publishStatusRequestModel);
     }
 }

@@ -40,22 +40,22 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         Information,
 
         /// <summary>
-        /// 
+        /// Drilldown
         /// </summary>
         Drilldown,
 
         /// <summary>
-        /// 
+        /// Per Pupil Funding
         /// </summary>
         PerPupilFunding,
 
         /// <summary>
-        /// 
+        /// Lump Sum
         /// </summary>
         LumpSum,
 
         /// <summary>
-        /// 
+        /// Provider Led Funding
         /// </summary>
         ProviderLedFunding,
 

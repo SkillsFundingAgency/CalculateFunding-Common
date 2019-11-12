@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace CalculateFunding.Generators.Funding.Enums
 {
@@ -49,27 +48,33 @@ namespace CalculateFunding.Generators.Funding.Enums
         Information,
 
         /// <summary>
-        /// 
+        /// Drilldown
         /// </summary>
         [EnumMember(Value = "Drilldown")]
         Drilldown,
 
         /// <summary>
-        /// 
+        /// Per Puple Funding
         /// </summary>
         [EnumMember(Value = "Per Pupil Funding")]
         PerPupilFunding,
 
         /// <summary>
-        /// 
+        /// Lump Sum
         /// </summary>
         [EnumMember(Value = "Lump Sum")]
         LumpSum,
 
         /// <summary>
-        /// 
+        /// Provider Led Funding
         /// </summary>
         [EnumMember(Value = "Provider Led Funding")]
         ProviderLedFunding,
+
+        /// <summary>
+        /// Number
+        /// </summary>
+        [EnumMember(Value = "Number")]
+        Number,
     }
 }

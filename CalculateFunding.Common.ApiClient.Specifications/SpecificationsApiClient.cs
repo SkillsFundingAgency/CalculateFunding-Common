@@ -7,6 +7,7 @@ using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Specifications.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models;
+using CalculateFunding.Common.Models.Versioning;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
@@ -173,6 +174,14 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
             return await GetAsync<IEnumerable<Reference>>($"{UrlRoot}/fundingperiods-by-fundingstream-id/{fundingStreamId}");
+        }
+
+        public async Task<ApiResponse<PublishStatusResponseModel>> UpdateSpecificationStatus(string specificationId, PublishStatusRequestModel publishStatusRequestModel)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(publishStatusRequestModel, nameof(publishStatusRequestModel));
+
+            return await ValidatedPutAsync<PublishStatusResponseModel, PublishStatusRequestModel>($"{UrlRoot}/specification-edit-status?specificationId={specificationId}", publishStatusRequestModel);
         }
     }
 }

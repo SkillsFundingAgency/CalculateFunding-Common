@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
-using CalculateFunding.Common.Extensions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Azure.Cosmos.Scripts;
@@ -290,7 +289,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             DocumentEntity<T> result = await ReadDocumentByIdAsync<T>(id);
 
-            if(result != null)
+            if (result != null)
             {
                 return result.Content;
             }
@@ -453,7 +452,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             IQueryable<DocumentEntity<T>> allResults;
 
-            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions);
+            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions);
 
             if (query == null)
             {
@@ -574,7 +573,7 @@ namespace CalculateFunding.Common.CosmosDb
             {
                 //SingleOrDefault not supported on the current Cosmos driver
                 List<DocumentEntity<T>> documents = _container
-                    .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution:true, requestOptions: queryRequestOptions)
+                    .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions)
                     .Where(d => d.Id == entity.Id)
                     .ToList();
 
