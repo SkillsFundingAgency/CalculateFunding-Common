@@ -20,5 +20,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
+
+        Task<ApiResponse<ProviderFundingStreamStatusResponse>> GetProviderStatusCounts(string specificationId);
     }
 }

@@ -75,5 +75,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/publish", specificationId);
         }
+
+        public async Task<ApiResponse<ProviderFundingStreamStatusResponse>> GetProviderStatusCounts(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"specifications/{specificationId}/publishedproviders/publishingstatus";
+
+            return await GetAsync<ProviderFundingStreamStatusResponse>(url);
+        }
     }
 }
