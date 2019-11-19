@@ -70,12 +70,19 @@ namespace CalculateFunding.Generators.Funding
 
         private static decimal? GetCalculationsTotalRecursive(Calculation calculation)
         {
-            IEnumerable<Calculation> cashCalculations = calculation.Calculations?
+            if(calculation.Type == CalculationType.Cash)
+            {
+                return calculation.Value;
+            }
+            else
+            {
+                IEnumerable<Calculation> cashCalculations = calculation.Calculations?
                 .Where(subCalculation => subCalculation.Type == CalculationType.Cash);
 
-            decimal? calculationSum = cashCalculations?.Sum(GetCalculationsTotalRecursive);
+                decimal? calculationSum = cashCalculations.Sum(GetCalculationsTotalRecursive);
 
-            return calculation.Value.AddValueIfNotNull(calculationSum);
+                return calculation.Value.AddValueIfNotNull(calculationSum);
+            }
         }
     }
 }
