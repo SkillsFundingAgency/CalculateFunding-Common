@@ -117,5 +117,11 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// </summary>
         [EnumMember(Value = "CountryCode")]
         CountryCode,
+
+        /// <summary>
+        /// Local Authority Classification Type Code
+        /// </summary>
+        [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]
+        LocalAuthorityClassificationTypeCode,
     }
 }

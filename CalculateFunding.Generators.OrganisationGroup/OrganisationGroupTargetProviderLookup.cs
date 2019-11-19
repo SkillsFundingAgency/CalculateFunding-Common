@@ -50,7 +50,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             informationKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
             informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.DfeEstablishmentNumber });
             informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode });
-            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode });
             informationKeys.Add(OrganisationGroupTypeCode.Provider, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber });
 
             additionalIdentifierKeys.Add(GroupingReason.Information, informationKeys);
@@ -172,7 +172,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         {
                             typeIdentifier = Enums.OrganisationGroupTypeIdentifier.DfeNumber;
                         }
-                        else if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode)
+                        else if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode)
                         {
                             typeIdentifier = Enums.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode;
                         }
@@ -235,8 +235,6 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.DistrictName;
                 case OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode:
                     return provider.GovernmentOfficeRegionName;
-                case OrganisationGroupTypeIdentifier.LocalGovernmentGroupTypeCode:
-                    return provider.LocalGovernmentGroupTypeName;
                 case OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode:
                     return provider.LowerSuperOutputAreaName;
                 case OrganisationGroupTypeIdentifier.WardCode:

@@ -65,12 +65,6 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         GovernmentOfficeRegionCode,
 
         /// <summary>
-        /// LocalGovernmentGroupTypeCode
-        /// </summary>
-        [EnumMember(Value = "LocalGovernmentGroupTypeCode")]
-        LocalGovernmentGroupTypeCode,
-
-        /// <summary>
         /// DistrictCode
         /// </summary>
         [EnumMember(Value = "DistrictCode")]

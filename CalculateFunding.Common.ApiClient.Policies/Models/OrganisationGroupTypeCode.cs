@@ -75,7 +75,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         Country,
 
         /// <summary>
-        /// 
+        /// Local Government Group
         /// </summary>
         LocalGovernmentGroup,
     }
