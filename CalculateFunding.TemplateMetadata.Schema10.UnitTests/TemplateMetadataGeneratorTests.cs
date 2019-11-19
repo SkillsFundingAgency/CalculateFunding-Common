@@ -47,6 +47,20 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
         }
 
         [TestMethod]
+        public void TemplateMetadataValidatorSchema10_DifferentFundingLineContentsMetaDataSupplied_ReturnsInValid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.fundingline.invalid.json");
+
+            result.IsValid
+                .Should()
+                .Be(false);
+
+            result.Errors.Where(_ => _.PropertyName == "Calculation").Count()
+                .Should()
+                .Be(1);
+        }
+
+        [TestMethod]
         public void TemplateMetadataValidatorSchema10_ValidMetaDataSuppliedPsg10_ReturnsValid()
         {
             ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.psg1.0.json");
@@ -65,9 +79,9 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
                 .Should()
                 .Be(false);
 
-            result.Errors.First().PropertyName
+            result.Errors.Where(_ => _.PropertyName == "DistributionPeriods").Count()
                 .Should()
-                .Be("DistributionPeriods");
+                .Be(1);
         }
         
         [TestMethod]
@@ -79,11 +93,11 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
                 .Should()
                 .Be(false);
 
-            result.Errors.First().PropertyName
+            result.Errors.Where(_ => _.PropertyName == "Calculation").Count()
                 .Should()
-                .Be("Calculation");
+                .Be(1);
             
-            result.Errors.First().ErrorMessage
+            result.Errors.First(_ => _.PropertyName == "Calculation").ErrorMessage
                 .Should()
                 .StartWith("Calculation name: 'number of pupils' is present multiple times in the template but with a different templateCalculationIds.");
         }

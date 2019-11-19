@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Resources\dsg1.0.error.json" />
+    <None Remove="Resources\dsg1.0.fundingline.invalid.json" />
     <None Remove="Resources\dsg1.0.invalid.json" />
     <None Remove="Resources\dsg1.0.json" />
     <None Remove="Resources\psg1.0.json" />
@@ -16,6 +17,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\dsg1.0.duplicate.calc.name.json" />
     <EmbeddedResource Include="Resources\dsg1.0.error.json" />
+    <EmbeddedResource Include="Resources\dsg1.0.fundingline.invalid.json" />
     <EmbeddedResource Include="Resources\dsg1.0.invalid.json" />
     <EmbeddedResource Include="Resources\dsg1.0.json" />
     <EmbeddedResource Include="Resources\psg1.0.json" />
