@@ -18,5 +18,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("providerReleasedCount")]
         public int ProviderReleasedCount { get; set; }
+
+        [JsonProperty("totalFunding")]
+        public decimal? TotalFunding { get; set; }
     }
 }
