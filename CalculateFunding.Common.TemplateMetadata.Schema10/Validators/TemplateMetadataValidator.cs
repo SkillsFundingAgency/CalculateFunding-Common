@@ -38,7 +38,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 
             FundingLine existingFundingLine = validatorContext.FundingLineDictionary.GetOrAdd(fundingLine.TemplateLineId, fundingLine);
 
-            if(!existingFundingLine.FundingLines.IsNullOrEmpty() && !existingFundingLine.FundingLines.All(_ => fundingLine.FundingLines.Any(fl => fl.TemplateLineId == _.TemplateLineId)))
+            if (!existingFundingLine.FundingLines.IsNullOrEmpty() && !existingFundingLine.FundingLines.All(_ => fundingLine.FundingLines.Any(fl => fl.TemplateLineId == _.TemplateLineId)))
             {
                 context.AddFailure("FundingLine", $"FundingLine : '{existingFundingLine.Name}' and id : '{existingFundingLine.TemplateLineId}' has funding line children which don't match.");
             }
@@ -76,7 +76,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Validators
 
             Calculation existingCalculation = validatorContext.CalculationDictionary.GetOrAdd(calculation.TemplateCalculationId, calculation);
 
-            if (!existingCalculation.Calculations.IsNullOrEmpty() && !existingCalculation.Calculations.All(_ => calculation.Calculations.Any(fl => fl.TemplateCalculationId == _.TemplateCalculationId)))
+            if (!existingCalculation.Calculations.IsNullOrEmpty() && !existingCalculation.Calculations.All(_ => calculation.Calculations.AnyWithNullCheck() && calculation.Calculations.Any(fl => fl.TemplateCalculationId == _.TemplateCalculationId)))
             {
                 context.AddFailure("Calculation", $"Calculation : '{existingCalculation.Name}' and id : '{calculation.TemplateCalculationId}' has child calculations which don't match.");
             }

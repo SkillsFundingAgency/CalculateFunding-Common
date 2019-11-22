@@ -71,6 +71,30 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
         }
 
         [TestMethod]
+        public void TemplateMetadataValidatorSchema10_ValidMetaDataSuppliedDsgLap10_ReturnsValid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg-lap1.0.valid.json");
+
+            result.IsValid
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema10_CalculationExistButHaveNoCalculationInOtherBranchesWhenMetaDataSuppliedDsgLap10_ReturnsErrors()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg-lap1.0-missingcalculations.json");
+
+            result.IsValid
+                .Should()
+                .Be(false);
+
+            result
+                .Errors
+                .Should().HaveCount(4);
+        }
+
+        [TestMethod]
         public void TemplateMetadataValidatorSchema10_InvalidMetaDataSupplied_ReturnsInvalid()
         {
             ValidationResult result = WhenTheTemplateIsValidated("CalculateFunding.TemplateMetadata.Schema10.UnitTests.Resources.dsg1.0.invalid.json");
@@ -83,7 +107,7 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
                 .Should()
                 .Be(1);
         }
-        
+
         [TestMethod]
         public void TemplateMetadataValidatorSchema10_DuplicateCalcNameDifferentTemplateCalcId_ReturnsInvalid()
         {
@@ -96,7 +120,7 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
             result.Errors.Where(_ => _.PropertyName == "Calculation").Count()
                 .Should()
                 .Be(1);
-            
+
             result.Errors.First(_ => _.PropertyName == "Calculation").ErrorMessage
                 .Should()
                 .StartWith("Calculation name: 'number of pupils' is present multiple times in the template but with a different templateCalculationIds.");
@@ -171,7 +195,7 @@ namespace CalculateFunding.TemplateMetadata.Schema10.UnitTests
             manifestResourceStream
                 .Should()
                 .NotBeNull($"Expected an embedded resource file at {resourceName}");
-            
+
             using (Stream stream = manifestResourceStream)
             using (StreamReader reader = new StreamReader(stream))
             {

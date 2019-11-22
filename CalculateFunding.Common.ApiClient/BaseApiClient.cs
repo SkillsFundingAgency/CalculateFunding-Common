@@ -441,9 +441,7 @@ namespace CalculateFunding.Common.ApiClient
 
         private CancellationToken CurrentCancellationToken()
         {
-            if (_cancellationTokenProvider != null) return _cancellationTokenProvider.CurrentCancellationToken();
-
-            return default(CancellationToken);
+            return _cancellationTokenProvider != null ? _cancellationTokenProvider.CurrentCancellationToken() : (CancellationToken.None);
         }
     }
 }

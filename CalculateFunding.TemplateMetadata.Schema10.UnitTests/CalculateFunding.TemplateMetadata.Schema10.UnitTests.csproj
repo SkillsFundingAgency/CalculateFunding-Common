@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\dsg-lap1.0-missingcalculations.json" />
+    <None Remove="Resources\dsg-lap1.0.valid.json" />
     <None Remove="Resources\dsg1.0.error.json" />
     <None Remove="Resources\dsg1.0.fundingline.invalid.json" />
     <None Remove="Resources\dsg1.0.invalid.json" />
@@ -15,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\dsg-lap1.0.valid.json" />
+    <EmbeddedResource Include="Resources\dsg-lap1.0-missingcalculations.json" />
     <EmbeddedResource Include="Resources\dsg1.0.duplicate.calc.name.json" />
     <EmbeddedResource Include="Resources\dsg1.0.error.json" />
     <EmbeddedResource Include="Resources\dsg1.0.fundingline.invalid.json" />
