@@ -64,6 +64,14 @@ namespace CalculateFunding.Common.Caching
         Task<bool> SetHashExpiry(string cacheKey, DateTime? expiry);
 
         /// <summary>
+        /// Set absolute date of expiry
+        /// </summary>
+        /// <param name="cacheKey">Cache Key</param>
+        /// <param name="expiry">Expiry date, or null for no expiry</param>
+        /// <returns></returns>
+        Task<bool> SetExpiry<T>(string cacheKey, DateTime? expiry);
+
+        /// <summary>
         /// Does the hash set exist in case (whole hashset, not key within)
         /// </summary>
         /// <param name="cacheKey">Cache Key</param>

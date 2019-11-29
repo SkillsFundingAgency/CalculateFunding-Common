@@ -314,6 +314,17 @@ namespace CalculateFunding.Common.Caching
             return await database.KeyExpireAsync(cacheKey, expiry);
         }
 
+        public async Task<bool> SetExpiry<T>(string cacheKey, DateTime? expiry)
+        {
+            Guard.IsNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            string key = GenerateCacheKey<T>(cacheKey);            
+
+            IDatabase database = GetDatabase();
+
+            return await database.KeyExpireAsync(key, expiry);
+        }
+
         public async Task<bool> HashSetExists(string cacheKey)
         {
             Guard.IsNullOrWhiteSpace(cacheKey, nameof(cacheKey));
