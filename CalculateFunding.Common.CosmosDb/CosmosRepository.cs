@@ -61,7 +61,7 @@ namespace CalculateFunding.Common.CosmosDb
             int? maxConcurrency = null)
         {
             QueryRequestOptions queryRequestOptions = new QueryRequestOptions
-            { 
+            {
                 MaxItemCount = itemsPerPage == -1 ? 1000 : itemsPerPage,
                 MaxBufferedItemCount = maxBufferedItemCount ?? 100,
                 MaxConcurrency = maxConcurrency ?? 50
@@ -154,26 +154,28 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        private async Task<ItemResponse<T>> HardDeleteAsync<T>(DocumentEntity<T> entity, string partitionKey) where T : IIdentifiable
+        private async Task<ItemResponse<DocumentEntity<T>>> HardDeleteAsync<T>(T entity, string partitionKey) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
 
-            ItemResponse<T> response = await _container.DeleteItemAsync<T>(id: entity.Id, partitionKey: new PartitionKey(partitionKey));
-
-            return response;
+            return await _container.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: new PartitionKey(partitionKey));
         }
 
-        private async Task<ItemResponse<T>> SoftDeleteAsync<T>(DocumentEntity<T> entity) where T : IIdentifiable
-        {
-            entity.Deleted = true;
-            ItemResponse<T> response = await _container.ReplaceItemAsync(item: entity.Content, id: entity.Id);
 
-            return response;
+        private async Task<ItemResponse<DocumentEntity<T>>> SoftDeleteAsync<T>(T entity, PartitionKey partitionKey) where T : IIdentifiable
+        {
+            DocumentEntity<T> item = new DocumentEntity<T>(entity);
+            item.Deleted = true;
+            item.UpdatedAt = DateTime.UtcNow;
+            item.DocumentType = GetDocumentType<T>();
+
+
+            return await _container.ReplaceItemAsync(item: item, id: entity.Id, partitionKey);
         }
 
-        private async Task<HttpStatusCode> DeleteAsync<T>(DocumentEntity<T> entity, string partitionKey, bool hardDelete = false) where T : IIdentifiable
+        private async Task<HttpStatusCode> DeleteAsync<T>(T entity, string partitionKey, bool hardDelete = false) where T : IIdentifiable
         {
-            ItemResponse<T> response;
+            ItemResponse<DocumentEntity<T>> response;
 
             if (hardDelete)
             {
@@ -181,7 +183,14 @@ namespace CalculateFunding.Common.CosmosDb
             }
             else
             {
-                response = await SoftDeleteAsync(entity);
+                if (string.IsNullOrWhiteSpace(partitionKey))
+                {
+                    response = await SoftDeleteAsync(entity, PartitionKey.None);
+                }
+                else
+                {
+                    response = await SoftDeleteAsync(entity, new PartitionKey(partitionKey));
+                }
             }
 
             return response.StatusCode;
@@ -377,7 +386,9 @@ namespace CalculateFunding.Common.CosmosDb
 
             QueryRequestOptions queryOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
-            return await ResultsFromQueryAndOptions<T>(cosmosDbQuery, queryOptions, maxItemCount);
+            IEnumerable<DocumentEntity<T>> results = await ResultsFromQueryAndOptions<DocumentEntity<T>>(cosmosDbQuery, queryOptions, maxItemCount);
+
+            return results.Select(c => c.Content);
         }
 
         public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery)
@@ -408,7 +419,7 @@ namespace CalculateFunding.Common.CosmosDb
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount =  null)
+        public async Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
@@ -691,12 +702,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
             {
-                DocumentEntity<T> document = new DocumentEntity<T>(item.Value)
-                {
-                    UpdatedAt = DateTimeOffset.Now
-                };
-
-                Task.WaitAll(DeleteAsync(entity: document, hardDelete: hardDelete, partitionKey: item.Key));
+                Task.WaitAll(DeleteAsync(entity: item.Value, hardDelete: hardDelete, partitionKey: item.Key));
             }));
         }
 
