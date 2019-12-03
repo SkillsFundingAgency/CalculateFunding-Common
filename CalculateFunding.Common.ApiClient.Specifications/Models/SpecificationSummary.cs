@@ -33,6 +33,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("templateIds")]
         public IDictionary<string, string> TemplateIds { get; set; }
 
+        [JsonProperty("dataDefinitionRelationshipIds")]
+        public IEnumerable<string> DataDefinitionRelationshipIds { get; set; }
+
         public string GetSpecificationId()
         {
             return Id;
