@@ -6,6 +6,7 @@ using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Utility;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
@@ -80,7 +81,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         IdentifierValue = targetOrganisationGroup.Identifier,
                         Name = targetOrganisationGroup.Name,
                         Identifiers = targetOrganisationGroup.Identifiers,
-                        SearchableName = GenerateSearchableName(targetOrganisationGroup.Name),
+                        SearchableName = Sanitiser.SanitiseName(targetOrganisationGroup.Name),
                         Providers = providerGrouping,
                     };
 
@@ -89,16 +90,6 @@ namespace CalculateFunding.Generators.OrganisationGroup
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Move this to a common package somewhere and ask MyESF for the implementation
-        /// </summary>
-        /// <param name="name">Name</param>
-        /// <returns>Searchable name compatible with Azure Search</returns>
-        private string GenerateSearchableName(string name)
-        {
-            return name.Replace(" ", "");
         }
 
         private Func<Provider, string> GetProviderFieldForGrouping(OrganisationGroupTypeIdentifier identifierType, OrganisationGroupTypeCode organisationGroupTypeCode, GroupingReason groupingReason)

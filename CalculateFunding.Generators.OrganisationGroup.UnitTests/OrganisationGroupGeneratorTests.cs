@@ -99,7 +99,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 1",
-                    SearchableName = "LocalAuthority1",
+                    SearchableName = "Local_Authority_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -111,7 +111,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 2",
-                    SearchableName = "LocalAuthority2",
+                    SearchableName = "Local_Authority_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -123,7 +123,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 3",
-                    SearchableName = "LocalAuthority3",
+                    SearchableName = "Local_Authority_3",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -224,7 +224,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Academy Trust 1",
-                    SearchableName = "AcademyTrust1",
+                    SearchableName = "Academy_Trust_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
@@ -236,7 +236,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Academy Trust 2",
-                    SearchableName = "AcademyTrust2",
+                    SearchableName = "Academy_Trust_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
@@ -248,7 +248,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Academy Trust 3",
-                    SearchableName = "AcademyTrust3",
+                    SearchableName = "Academy_Trust_3",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
@@ -364,7 +364,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Provider 1",
-                    SearchableName = "Provider1",
+                    SearchableName = "Provider_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -376,7 +376,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Provider 2",
-                    SearchableName = "Provider2",
+                    SearchableName = "Provider_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -388,7 +388,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Provider 3",
-                    SearchableName = "Provider3",
+                    SearchableName = "Provider_3",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -400,7 +400,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Provider 4",
-                    SearchableName = "Provider4",
+                    SearchableName = "Provider_4",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
@@ -493,7 +493,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Bermondsey and Old Southwark",
-                    SearchableName = "BermondseyandOldSouthwark",
+                    SearchableName = "Bermondsey_and_Old_Southwark",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.ParliamentaryConstituency,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode,
@@ -590,7 +590,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Middle Super Output Area 1",
-                    SearchableName = "MiddleSuperOutputArea1",
+                    SearchableName = "Middle_Super_Output_Area_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.MiddleSuperOutputArea,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode,
@@ -602,7 +602,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Middle Super Output Area 2",
-                    SearchableName = "MiddleSuperOutputArea2",
+                    SearchableName = "Middle_Super_Output_Area_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.MiddleSuperOutputArea,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode,
@@ -688,7 +688,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Census Ward 1",
-                    SearchableName = "CensusWard1",
+                    SearchableName = "Census_Ward_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.CensusWard,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.CensusWardCode,
@@ -700,7 +700,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Census Ward 2",
-                    SearchableName = "CensusWard2",
+                    SearchableName = "Census_Ward_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.CensusWard,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.CensusWardCode,
@@ -785,7 +785,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "District 1",
-                    SearchableName = "District1",
+                    SearchableName = "District_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.District,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.DistrictCode,
@@ -797,7 +797,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "District 2",
-                    SearchableName = "District2",
+                    SearchableName = "District_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.District,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.DistrictCode,
@@ -882,7 +882,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Government Office Region 1",
-                    SearchableName = "GovernmentOfficeRegion1",
+                    SearchableName = "Government_Office_Region_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.GovernmentOfficeRegion,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode,
@@ -894,7 +894,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Government Office Region 2",
-                    SearchableName = "GovernmentOfficeRegion2",
+                    SearchableName = "Government_Office_Region_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.GovernmentOfficeRegion,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode,
@@ -979,7 +979,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Lower Super Output Area 1",
-                    SearchableName = "LowerSuperOutputArea1",
+                    SearchableName = "Lower_Super_Output_Area_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LowerSuperOutputArea,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode,
@@ -991,7 +991,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Lower Super Output Area 2",
-                    SearchableName = "LowerSuperOutputArea2",
+                    SearchableName = "Lower_Super_Output_Area_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LowerSuperOutputArea,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode,
@@ -1076,7 +1076,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Ward 1",
-                    SearchableName = "Ward1",
+                    SearchableName = "Ward_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Ward,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.WardCode,
@@ -1088,7 +1088,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Ward 2",
-                    SearchableName = "Ward2",
+                    SearchableName = "Ward_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Ward,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.WardCode,
@@ -1173,7 +1173,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Rsc Region 1",
-                    SearchableName = "RscRegion1",
+                    SearchableName = "Rsc_Region_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.RSCRegion,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.RscRegionCode,
@@ -1185,7 +1185,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Rsc Region 2",
-                    SearchableName = "RscRegion2",
+                    SearchableName = "Rsc_Region_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.RSCRegion,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.RscRegionCode,
@@ -1270,7 +1270,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Country 1",
-                    SearchableName = "Country1",
+                    SearchableName = "Country_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Country,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.CountryCode,
@@ -1282,7 +1282,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Country 2",
-                    SearchableName = "Country2",
+                    SearchableName = "Country_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Country,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.CountryCode,
@@ -1477,7 +1477,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 1",
-                    SearchableName = "LocalAuthority1",
+                    SearchableName = "Local_Authority_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
@@ -1489,7 +1489,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 2",
-                    SearchableName = "LocalAuthority2",
+                    SearchableName = "Local_Authority_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
@@ -1501,7 +1501,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 3",
-                    SearchableName = "LocalAuthority3",
+                    SearchableName = "Local_Authority_3",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
@@ -1637,7 +1637,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 1",
-                    SearchableName = "LocalAuthority1",
+                    SearchableName = "Local_Authority_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
@@ -1649,7 +1649,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 2",
-                    SearchableName = "LocalAuthority2",
+                    SearchableName = "Local_Authority_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
@@ -1661,7 +1661,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 new OrganisationGroupResult()
                 {
                     Name = "Local Authority 3",
-                    SearchableName = "LocalAuthority3",
+                    SearchableName = "Local_Authority_3",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LACode,
