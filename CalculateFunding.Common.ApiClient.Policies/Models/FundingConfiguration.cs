@@ -7,9 +7,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
     public class FundingConfiguration
     {
         [JsonProperty("organisationGroupings")]
-        public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; } 
+        public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; }
             = Enumerable.Empty<OrganisationGroupingConfiguration>();
-        
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -18,8 +18,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("fundingPeriodId")]
         public string FundingPeriodId { get; set; }
-        
+
         [JsonProperty("defaultTemplateVersion")]
         public string DefaultTemplateVersion { get; set; }
+
+        [JsonProperty("variationTasks")]
+        public IEnumerable<string> VariationTasks { get; set; }
     }
 }
