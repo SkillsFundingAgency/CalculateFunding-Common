@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
@@ -76,13 +77,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/publish", specificationId);
         }
 
-        public async Task<ApiResponse<ProviderFundingStreamStatusResponse>> GetProviderStatusCounts(string specificationId)
+        public async Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             string url = $"specifications/{specificationId}/publishedproviders/publishingstatus";
 
-            return await GetAsync<ProviderFundingStreamStatusResponse>(url);
+            return await GetAsync<IEnumerable<ProviderFundingStreamStatusResponse>>(url);
         }
     }
 }

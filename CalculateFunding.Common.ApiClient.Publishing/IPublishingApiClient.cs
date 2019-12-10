@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Models.Search;
@@ -21,6 +22,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
 
-        Task<ApiResponse<ProviderFundingStreamStatusResponse>> GetProviderStatusCounts(string specificationId);
+        Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId);
     }
 }
