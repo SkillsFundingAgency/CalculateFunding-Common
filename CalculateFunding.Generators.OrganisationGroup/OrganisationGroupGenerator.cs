@@ -137,7 +137,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     case OrganisationGroupTypeIdentifier.LACode:
                         return c => c.LACode;
                     case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:
-                        return c => c.LocalGovernmentGroupTypeName;
+                        return c => c.LocalGovernmentGroupTypeCode;
                 }
             }
 
