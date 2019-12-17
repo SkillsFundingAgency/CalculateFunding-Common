@@ -5,7 +5,7 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Description>Calculate Funding Service WebApi Common Functionality</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>

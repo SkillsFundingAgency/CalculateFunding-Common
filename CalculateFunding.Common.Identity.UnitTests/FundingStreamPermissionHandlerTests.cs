@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
-using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using FluentAssertions;
@@ -22,7 +21,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
     public class FundingStreamPermissionHandlerTests
     {
         private const string WellKnownFundingStreamId = "fs1";
-        private PermissionOptions actualOptions = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
+        private readonly PermissionOptions actualOptions = new PermissionOptions { AdminGroupId = Guid.NewGuid() };
 
         [TestMethod]
         public async Task WhenUserIsNotKnown_ShouldNotSucceed()
@@ -37,9 +36,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -62,9 +59,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -88,9 +83,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -117,9 +110,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -149,9 +140,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -181,9 +170,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -213,9 +200,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -245,9 +230,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -277,9 +260,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(true);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -289,6 +270,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
         }
 
         [TestMethod]
+        [Ignore]
         public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsNotKnown_ShouldSucceed()
         {
             // Arrange
@@ -301,59 +283,9 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = CreateFeatureToggle(false);
+//            IFeatureToggle features = CreateFeatureToggle(false);
 
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsNotKnownToTheSystem_ShouldSucceed()
-        {
-            // Arrange
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()) }));
-            List<string> fundingStreamIds = new List<string> { WellKnownFundingStreamId };
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, fundingStreamIds);
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            IFeatureToggle features = CreateFeatureToggle(false);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsKnown_AndHasNoPermissions_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            List<string> fundingStreamIds = new List<string> { WellKnownFundingStreamId };
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, fundingStreamIds);
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetFundingStreamPermissionsForUser(Arg.Is(userId)).Returns(new ApiResponse<IEnumerable<FundingStreamPermission>>(HttpStatusCode.OK, Enumerable.Empty<FundingStreamPermission>()));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            IFeatureToggle features = CreateFeatureToggle(false);
-
-            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options, features);
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -366,13 +298,6 @@ namespace CalculateFunding.Common.Identity.UnitTests
         {
             FundingStreamRequirement requirement = new FundingStreamRequirement(FundingStreamActionTypes.CanCreateSpecification);
             return new AuthorizationHandlerContext(new[] { requirement }, principal, resource);
-        }
-
-        private static IFeatureToggle CreateFeatureToggle(bool roleBasedAccessEnabled)
-        {
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(roleBasedAccessEnabled);
-            return features;
         }
     }
 }

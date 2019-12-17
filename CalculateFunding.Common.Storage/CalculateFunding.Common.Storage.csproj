@@ -6,9 +6,9 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Common repositories for Azure Storage access</Description>
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

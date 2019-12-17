@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
-using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Utility;
 using Microsoft.AspNetCore.Authorization;
@@ -16,27 +15,19 @@ namespace CalculateFunding.Common.Identity.Authorization
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly PermissionOptions _permissionOptions;
-        private readonly IFeatureToggle _features;
+//        private readonly IFeatureToggle _features;
 
-        public SpecificationPermissionHandler(IUsersApiClient usersApiClient, IOptions<PermissionOptions> permissionOptions, IFeatureToggle features)
+        public SpecificationPermissionHandler(IUsersApiClient usersApiClient, IOptions<PermissionOptions> permissionOptions)
         {
             Guard.ArgumentNotNull(usersApiClient, nameof(usersApiClient));
             Guard.ArgumentNotNull(permissionOptions, nameof(permissionOptions));
-            Guard.ArgumentNotNull(features, nameof(features));
 
             _usersApiClient = usersApiClient;
             _permissionOptions = permissionOptions.Value;
-            _features = features;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SpecificationRequirement requirement, ISpecificationAuthorizationEntity resource)
         {
-            if (!_features.IsRoleBasedAccessEnabled())
-            {
-                context.Succeed(requirement);
-                return;
-            }
-
             // If user belongs to the admin group then allow them access
             if (context.User.HasClaim(c => c.Type == Constants.GroupsClaimType && c.Value.ToLowerInvariant() == _permissionOptions.AdminGroupId.ToString().ToLowerInvariant()))
             {

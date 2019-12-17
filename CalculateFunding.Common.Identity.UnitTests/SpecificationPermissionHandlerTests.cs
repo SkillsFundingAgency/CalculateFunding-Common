@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
-using CalculateFunding.Common.FeatureToggles;
 using CalculateFunding.Common.Identity.Authorization;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using FluentAssertions;
@@ -36,10 +35,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -62,10 +58,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -90,10 +83,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -120,10 +110,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -153,10 +140,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -186,10 +170,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -219,10 +200,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -252,10 +230,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -285,10 +260,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -318,10 +290,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -351,10 +320,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -384,10 +350,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -417,10 +380,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -450,10 +410,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -483,87 +440,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
             options.Value.Returns(actualOptions);
 
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(true);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsNotKnown_ShouldSucceed()
-        {
-            // Arrange
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity());
-            ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(false);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsNotKnownToTheSystem_ShouldSucceed()
-        {
-            // Arrange
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, Guid.NewGuid().ToString()) }));
-            ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(false);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenRoleBasedFeatureIsNotEnabled_AndUserIsKnown_AndHasNoPermissions_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            ISpecificationAuthorizationEntity specification = Substitute.For<ISpecificationAuthorizationEntity>();
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), WellKnownSpecificationId).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, new EffectiveSpecificationPermission()));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(false);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options, features);
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
 
             // Act
             await authHandler.HandleAsync(authContext);
@@ -576,13 +453,6 @@ namespace CalculateFunding.Common.Identity.UnitTests
         {
             SpecificationRequirement requirement = new SpecificationRequirement(permissionRequired);
             return new AuthorizationHandlerContext(new[] { requirement }, principal, resource);
-        }
-
-        private static IFeatureToggle CreateFeatureToggle(bool roleBasedAccessEnabled)
-        {
-            IFeatureToggle features = Substitute.For<IFeatureToggle>();
-            features.IsRoleBasedAccessEnabled().Returns(roleBasedAccessEnabled);
-            return features;
         }
     }
 }
