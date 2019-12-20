@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
@@ -10,7 +12,7 @@ namespace CalculateFunding.Common.Storage
 {
     public class BlobClient : IBlobClient
     {
-        private Lazy<CloudBlobContainer> _container;
+        private readonly Lazy<CloudBlobContainer> _container;
         private readonly BlobStorageOptions _azureStorageSettings;
 
         public BlobClient(BlobStorageOptions blobStorageSettings)
@@ -20,22 +22,45 @@ namespace CalculateFunding.Common.Storage
             Guard.IsNullOrWhiteSpace(blobStorageSettings.ContainerName, nameof(blobStorageSettings.ContainerName));
 
             _azureStorageSettings = blobStorageSettings;
-
-            EnsureBlobClient();
+            
+            _container = new Lazy<CloudBlobContainer>(() => GetCloudBlobContainer());
         }
 
-        public void Initialize()
+        private CloudBlobContainer GetCloudBlobContainer(string containerName = null)
         {
-            _container = new Lazy<CloudBlobContainer>(() =>
+            CloudStorageAccount credentials = CloudStorageAccount.Parse(_azureStorageSettings.ConnectionString);
+            CloudBlobClient client = credentials.CreateCloudBlobClient();
+            CloudBlobContainer container = client.GetContainerReference(containerName?.ToLower() ?? _azureStorageSettings.ContainerName.ToLower());
+
+            container.CreateIfNotExists();
+
+            return container;
+        }
+
+        public async Task BatchProcessBlobs(Func<IEnumerable<IListBlobItem>, Task> batchProcessor, 
+            string containerName = null, 
+            int batchSize = 50)
+        {
+            BlobContinuationToken continuationToken = null;
+
+            CloudBlobContainer container = GetContainer(containerName);
+            
+            do
             {
-                CloudStorageAccount credentials = CloudStorageAccount.Parse(_azureStorageSettings.ConnectionString);
-                CloudBlobClient client = credentials.CreateCloudBlobClient();
-                CloudBlobContainer container = client.GetContainerReference(_azureStorageSettings.ContainerName.ToLower());
+                BlobResultSegment response = await container.ListBlobsSegmentedAsync(
+                    prefix: null,
+                    useFlatBlobListing: true,
+                    currentToken: continuationToken,
+                    maxResults: batchSize,
+                    options: null,
+                    operationContext: null,
+                    blobListingDetails: BlobListingDetails.None);
+                
+                continuationToken = response.ContinuationToken;
 
-                container.CreateIfNotExists();
+                await batchProcessor(response.Results);
 
-                return container;
-            });
+            } while (continuationToken != null);
         }
 
         public void VerifyFileName(string fileName)
@@ -62,8 +87,8 @@ namespace CalculateFunding.Common.Storage
         {
             try
             {
-                EnsureBlobClient();
-                CloudBlobContainer container = _container.Value;
+                GetContainer();
+                
                 return await Task.FromResult((true, string.Empty));
             }
             catch (Exception ex)
@@ -72,22 +97,20 @@ namespace CalculateFunding.Common.Storage
             }
         }
 
-        public async Task<bool> DoesBlobExistAsync(string blobName)
+        public async Task<bool> DoesBlobExistAsync(string blobName, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
-            EnsureBlobClient();
-
-            ICloudBlob blob = await _container.Value.GetBlobReferenceFromServerAsync(blobName);
+            ICloudBlob blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
 
             return await blob.ExistsAsync();
         }
 
         public string GetBlobSasUrl(string blobName,
             DateTimeOffset finish,
-            SharedAccessBlobPermissions permissions)
+            SharedAccessBlobPermissions permissions, string containerName = null)
         {
-            ICloudBlob blob = GetBlockBlobReference(blobName);
+            ICloudBlob blob = GetBlockBlobReference(blobName, containerName);
             
             SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy
             {
@@ -100,50 +123,42 @@ namespace CalculateFunding.Common.Storage
             return $"{blob.Uri}{sharedAccessSignature}";
         }
 
-        public async Task<T> DownloadAsync<T>(string blobName)
+        public async Task<T> DownloadAsync<T>(string blobName, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
-            EnsureBlobClient();
-
-            CloudBlockBlob blob = _container.Value.GetBlockBlobReference(blobName);
+            CloudBlockBlob blob = GetContainer(containerName).GetBlockBlobReference(blobName);
             string json = await blob.DownloadTextAsync();
 
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public async Task<string> UploadFileAsync<T>(string blobName, T contents)
+        public async Task<string> UploadFileAsync<T>(string blobName, T contents, string containerName = null)
         {
             Guard.ArgumentNotNull(contents, nameof(contents));
 
             string json = JsonConvert.SerializeObject(contents);
 
-            return await UploadFileAsync(blobName, json);
+            return await UploadFileAsync(blobName, json, containerName);
         }
 
-        public ICloudBlob GetBlockBlobReference(string blobName)
+        public ICloudBlob GetBlockBlobReference(string blobName, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
-
-            EnsureBlobClient();
             
-            return _container.Value.GetBlockBlobReference(blobName);
+            return GetContainer(containerName).GetBlockBlobReference(blobName);
         }
 
-        public Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName)
+        public Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
-            EnsureBlobClient();
-
-            return _container.Value.GetBlobReferenceFromServerAsync(blobName);
+            return GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
         }
 
         public async Task<Stream> DownloadToStreamAsync(ICloudBlob blob)
         {
             Guard.ArgumentNotNull(blob, nameof(blob));
-
-            EnsureBlobClient();
 
             MemoryStream stream = new MemoryStream();
             await blob.DownloadToStreamAsync(stream);
@@ -152,42 +167,36 @@ namespace CalculateFunding.Common.Storage
             return stream;
         }
 
-        public async Task<string> UploadFileAsync(string blobName, string fileContents)
+        public async Task<string> UploadFileAsync(string blobName, string fileContents, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
             VerifyFileName(blobName);
 
-            EnsureBlobClient();
-
-            CloudBlockBlob blob = _container.Value.GetBlockBlobReference(blobName);
+            CloudBlockBlob blob = GetContainer(containerName).GetBlockBlobReference(blobName);
 
             await blob.UploadTextAsync(fileContents);
 
             return blob.Uri.ToString();
         }
 
-        private void EnsureBlobClient()
+        public async Task<bool> BlobExistsAsync(string blobName, string containerName = null)
         {
-            if (_container == null)
-                Initialize();
-        }
-
-        public async Task<bool> BlobExistsAsync(string blobName)
-        {
-            EnsureBlobClient();
-            var blob = await _container.Value.GetBlobReferenceFromServerAsync(blobName);
+            var blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
 
             return await blob.ExistsAsync(null, null);
         }
 
-        public async Task<Stream> GetAsync(string blobName)
+        public async Task<Stream> GetAsync(string blobName, string containerName = null)
         {
-            EnsureBlobClient();
-
-            ICloudBlob blob = await _container.Value.GetBlobReferenceFromServerAsync(blobName);
+            ICloudBlob blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
 
             return await blob.OpenReadAsync(null, null, null);
+        }
+
+        private CloudBlobContainer GetContainer(string containerName = null)
+        {
+            return containerName.IsNullOrEmpty() ? _container.Value : GetCloudBlobContainer(containerName);
         }
     }
 }
