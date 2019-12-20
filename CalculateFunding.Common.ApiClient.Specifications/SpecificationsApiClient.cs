@@ -64,6 +64,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await PostAsync($"{UrlRoot}/select-for-funding?specificationId={specificationId}");
         }
+        
+        public async Task<HttpStatusCode> DeselectSpecificationForFunding(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync($"{UrlRoot}/deselect-for-funding/{specificationId}");
+        }
 
         public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetApprovedSpecifications(string fundingPeriodId, string fundingStreamId)
         {
