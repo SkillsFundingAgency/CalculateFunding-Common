@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common", "CalculateFunding.Common\CalculateFunding.Common.csproj", "{8FAC1C33-F3EE-470C-9B46-9C101E590474}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.UnitTests", "CalculateFunding.Common.UnitTests\CalculateFunding.Common.UnitTests.csproj", "{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.TemplateMetadata.Schema10.UnitTests", "CalculateFunding.Common.TemplateMetadata.Schema10.UnitTests\CalculateFunding.Common.TemplateMetadata.Schema10.UnitTests.csproj", "{097C0C0F-DA70-4214-A0AF-6D5DAEC0F407}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Identity", "CalculateFunding.Common.Identity\CalculateFunding.Common.Identity.csproj", "{4DE6DDEC-2BBD-4F69-BDF0-BDFECF913C3B}"
 EndProject
@@ -89,9 +89,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement", "CalculateFunding.Common.JobManagement\CalculateFunding.Common.JobManagement.csproj", "{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.JobManagement.UnitTests", "CalculateFunding.Common.JobManagement.UnitTests\CalculateFunding.Common.JobManagement.UnitTests.csproj", "{3904659A-09D5-40F5-94BA-48BE37EAAC01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement.UnitTests", "CalculateFunding.Common.JobManagement.UnitTests\CalculateFunding.Common.JobManagement.UnitTests.csproj", "{3904659A-09D5-40F5-94BA-48BE37EAAC01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.External.UnitTests", "CalculateFunding.Common.ApiClient.External.UnitTests\CalculateFunding.Common.ApiClient.External.UnitTests.csproj", "{56630C84-BB09-4D19-96EB-783FCA101C20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.External.UnitTests", "CalculateFunding.Common.ApiClient.External.UnitTests\CalculateFunding.Common.ApiClient.External.UnitTests.csproj", "{56630C84-BB09-4D19-96EB-783FCA101C20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
