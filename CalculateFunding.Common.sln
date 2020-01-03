@@ -92,6 +92,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement.UnitTests", "CalculateFunding.Common.JobManagement.UnitTests\CalculateFunding.Common.JobManagement.UnitTests.csproj", "{3904659A-09D5-40F5-94BA-48BE37EAAC01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.External.UnitTests", "CalculateFunding.Common.ApiClient.External.UnitTests\CalculateFunding.Common.ApiClient.External.UnitTests.csproj", "{56630C84-BB09-4D19-96EB-783FCA101C20}"
+
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Models.UnitTests", "CalculateFunding.Common.Models.UnitTests\CalculateFunding.Common.Models.UnitTests.csproj", "{F52F22F2-BCEE-40C8-9F8D-E756865017D1}"
+
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -255,6 +259,10 @@ Global
 		{56630C84-BB09-4D19-96EB-783FCA101C20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56630C84-BB09-4D19-96EB-783FCA101C20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56630C84-BB09-4D19-96EB-783FCA101C20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F52F22F2-BCEE-40C8-9F8D-E756865017D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52F22F2-BCEE-40C8-9F8D-E756865017D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52F22F2-BCEE-40C8-9F8D-E756865017D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52F22F2-BCEE-40C8-9F8D-E756865017D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -295,6 +303,7 @@ Global
 		{8F4F6210-893A-49C2-B37E-45EB04420D61} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{3904659A-09D5-40F5-94BA-48BE37EAAC01} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{56630C84-BB09-4D19-96EB-783FCA101C20} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
+		{F52F22F2-BCEE-40C8-9F8D-E756865017D1} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}
