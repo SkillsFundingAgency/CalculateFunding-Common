@@ -95,6 +95,27 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             AndTheUrisShouldHaveBeenRequested(expectedGetByIdUri);
         }
 
+        [TestMethod]
+        public async Task GetDistinctFundingStreamsForSpecifciations()
+        {           
+
+            GivenTheResponse($"specs/fundingstream-id-for-specifications", _fundingStreamIds, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<string>> apiResponse = await WhenGetDistinctFundingStreamsForSpecification();
+
+            apiResponse?.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            apiResponse?.Content
+                .Should()
+                .NotBeNull()
+                .And
+                .BeEquivalentTo(_fundingStreamIds);
+
+           
+        }
+
 
         [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
         [TestMethod]
@@ -129,6 +150,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.GetSpecificationsSelectedForFundingByPeriod(fundingPeriod);
         }
 
+        private async Task<ApiResponse<IEnumerable<string>>> WhenGetDistinctFundingStreamsForSpecification()
+        {
+            return await _client.GetDistinctFundingStreamsForSpecifications();
+        }
+
         private SpecificationSummary NewSpecificationSummary()
         {
             return new SummarySpecificationBuilder()
@@ -141,5 +167,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             yield return new[] {string.Empty};
             yield return new[] {(string) null};
         }
+
+        private IEnumerable<string> _fundingStreamIds = new List<string>() { "PSG", "DSG", "PSG1" };
     }
 }

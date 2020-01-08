@@ -53,5 +53,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         Task<ApiResponse<PublishStatusResponseModel>> UpdateSpecificationStatus(string specificationId, PublishStatusRequestModel publishStatusRequestModel);
         Task<HttpStatusCode> DeselectSpecificationForFunding(string specificationId);
+
+        Task<ApiResponse<IEnumerable<string>>> GetDistinctFundingStreamsForSpecifications();
     }
 }

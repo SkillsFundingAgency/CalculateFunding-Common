@@ -190,5 +190,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await ValidatedPutAsync<PublishStatusResponseModel, PublishStatusRequestModel>($"{UrlRoot}/specification-edit-status?specificationId={specificationId}", publishStatusRequestModel);
         }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetDistinctFundingStreamsForSpecifications()
+        {
+            return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-id-for-specifications");
+        }
     }
 }
