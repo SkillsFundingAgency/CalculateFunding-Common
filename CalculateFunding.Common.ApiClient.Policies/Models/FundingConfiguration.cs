@@ -22,7 +22,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("defaultTemplateVersion")]
         public string DefaultTemplateVersion { get; set; }
 
-        [JsonProperty("variationTasks")]
-        public IEnumerable<string> VariationTasks { get; set; }
+        [JsonProperty("variations")]
+        public IEnumerable<VariationType> Variations { get; set; }
     }
 }
