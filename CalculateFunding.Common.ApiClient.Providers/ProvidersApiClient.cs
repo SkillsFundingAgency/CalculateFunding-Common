@@ -220,5 +220,12 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             return await GetAsync<IEnumerable<string>>(url);
         }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetProviderNames()
+        {
+            string url = $"providers/name";
+
+            return await GetAsync<IEnumerable<string>>(url);
+        }
     }
 }
