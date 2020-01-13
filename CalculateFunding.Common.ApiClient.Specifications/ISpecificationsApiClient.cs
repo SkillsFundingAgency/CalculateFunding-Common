@@ -55,5 +55,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<HttpStatusCode> DeselectSpecificationForFunding(string specificationId);
 
         Task<ApiResponse<IEnumerable<string>>> GetDistinctFundingStreamsForSpecifications();
+
+        Task<ApiResponse<bool>> DeleteSpecificationById(string specificationName);
+
+        Task<ApiResponse<bool>> PermanentDeleteSpecificationById(string specificationName);
     }
 }

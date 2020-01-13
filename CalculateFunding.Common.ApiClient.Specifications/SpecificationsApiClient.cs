@@ -195,5 +195,21 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         {
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-id-for-specifications");
         }
+
+        public async Task<ApiResponse<bool>> DeleteSpecificationById(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<bool>(
+                $"{UrlRoot}?specificationId={specificationId}");
+        }
+
+        public async Task<ApiResponse<bool>> PermanentDeleteSpecificationById(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<bool>(
+                $"{UrlRoot}?specificationId={specificationId}/permanent");
+        }
     }
 }
