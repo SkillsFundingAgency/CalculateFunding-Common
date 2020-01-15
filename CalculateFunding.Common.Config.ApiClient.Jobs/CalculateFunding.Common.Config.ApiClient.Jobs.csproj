@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Authors>Calculate Funding Service</Authors>
+    <Product>Calculate Funding Service</Product>
+    <Company>Department for Education</Company>
+    <Description>Common API Client functionality</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.Config.ApiClient\CalculateFunding.Common.Config.ApiClient.csproj" />
+  </ItemGroup>
+
+</Project>

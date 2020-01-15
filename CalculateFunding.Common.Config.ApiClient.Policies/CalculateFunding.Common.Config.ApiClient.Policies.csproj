@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Policies\CalculateFunding.Common.ApiClient.Policies.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.Config.ApiClient\CalculateFunding.Common.Config.ApiClient.csproj" />
+  </ItemGroup>
+
+</Project>
