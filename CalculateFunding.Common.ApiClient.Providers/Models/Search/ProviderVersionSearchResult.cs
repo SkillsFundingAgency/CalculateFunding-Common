@@ -62,5 +62,17 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
         public string Town { get; set; }
 
         public string Postcode { get; set; }
+
+        public string RscRegionName { get; set; }
+
+        public string RscRegionCode { get; set; }
+
+        public string LocalGovernmentGroupTypeName { get; set; }
+
+        public string LocalGovernmentGroupTypeCode { get; set; }
+
+        public string CountryName { get; set; }
+
+        public string CountryCode { get; set; }
     }
 }
