@@ -211,5 +211,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<bool>(
                 $"{UrlRoot}?specificationId={specificationId}/permanent");
         }
+
+        public async Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> GetProfileVariationPointers(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<ProfileVariationPointer>>($"{UrlRoot}/{specificationId}/profilevariationpointers");
+        }
     }
 }

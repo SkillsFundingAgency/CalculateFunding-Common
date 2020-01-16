@@ -128,6 +128,44 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             await invocation.Should()
                 .ThrowExactlyAsync<ArgumentNullException>(specificationId);
         }
+        
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task GetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(
+            string specificationId)
+
+        {
+            Func<Task> invocation = () => WhenTheProfileVariationPointersAreQueriedById(specificationId);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task GetProfileVariationPointers()
+        {
+            ProfileVariationPointer[] expectedPointers = {
+                NewProfileVariationPointer(),
+                NewProfileVariationPointer(),
+                NewProfileVariationPointer(),
+            };
+
+            string specificationId = NewRandomString();
+            
+            GivenTheResponse($"specs/{specificationId}/profilevariationpointers", expectedPointers, HttpMethod.Get);
+            
+            ApiResponse<IEnumerable<ProfileVariationPointer>> apiResponse = await WhenTheProfileVariationPointersAreQueriedById(specificationId);
+
+            apiResponse?.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            apiResponse?.Content
+                .Should()
+                .NotBeNull()
+                .And
+                .BeEquivalentTo(expectedPointers);
+        }
 
         private static string GetSummaryByIdUriFor(string specificationId)
         {
@@ -142,6 +180,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
+        }
+        
+        private async Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> WhenTheProfileVariationPointersAreQueriedById(string specificationId)
+        {
+            return await _client.GetProfileVariationPointers(specificationId);
         }
 
         private async Task<ApiResponse<IEnumerable<SpecificationSummary>>> WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(
@@ -169,5 +212,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         private IEnumerable<string> _fundingStreamIds = new List<string>() { "PSG", "DSG", "PSG1" };
+
+        private ProfileVariationPointer NewProfileVariationPointer() => new ProfileVariationPointer();
     }
 }

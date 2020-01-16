@@ -44,6 +44,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("templateIds")]
         public Dictionary<string, string> TemplateIds { get; set; } = new Dictionary<string, string>();
+        
+        [JsonProperty("profileVariationPointers")]
+        public IEnumerable<ProfileVariationPointer> ProfileVariationPointers { get; set; }
 
         public void AddOrUpdateTemplateId(string fundingStreamId,
             string templateId)

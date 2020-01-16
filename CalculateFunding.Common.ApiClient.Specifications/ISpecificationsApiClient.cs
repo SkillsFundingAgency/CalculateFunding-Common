@@ -59,5 +59,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<bool>> DeleteSpecificationById(string specificationName);
 
         Task<ApiResponse<bool>> PermanentDeleteSpecificationById(string specificationName);
+
+        Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> GetProfileVariationPointers(string specificationId);
     }
 }

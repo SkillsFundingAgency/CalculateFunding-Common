@@ -95,7 +95,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Models.UnitTests", "CalculateFunding.Common.Models.UnitTests\CalculateFunding.Common.Models.UnitTests.csproj", "{F52F22F2-BCEE-40C8-9F8D-E756865017D1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiClients", "ApiClients", "{3C915407-BA45-48DC-B772-ACF460B7AD0A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{3C915407-BA45-48DC-B772-ACF460B7AD0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.Calcs", "CalculateFunding.Common.Config.ApiClient.Calcs\CalculateFunding.Common.Config.ApiClient.Calcs.csproj", "{0569B612-8130-4A51-BA6B-EFB6F8F8BE91}"
 EndProject
