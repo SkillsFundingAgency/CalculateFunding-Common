@@ -20,6 +20,8 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         Task<ApiResponse<IEnumerable<JobDefinition>>> GetJobDefinitions();
 
+        Task<ApiResponse<JobDefinition>> GetJobDefinition(string jobDefinitionId);
+
         Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
     }
 }

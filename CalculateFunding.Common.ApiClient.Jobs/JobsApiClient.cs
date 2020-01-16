@@ -41,7 +41,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
 
-            string api = $"latest?specificationId={specificationId}";
+            string api = $"jobs/latest?specificationId={specificationId}";
 
             if (jobTypes != null && jobTypes.Count() > 0)
             {
@@ -85,9 +85,18 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         public async Task<ApiResponse<IEnumerable<JobDefinition>>> GetJobDefinitions()
         {
-            string url = "jobdefinitions";
+            string url = "jobs/jobdefinitions";
 
             return await GetAsync<IEnumerable<JobDefinition>>(url);
+        }
+
+        public async Task<ApiResponse<JobDefinition>> GetJobDefinition(string jobDefinitionId)
+        {
+            Guard.IsNullOrWhiteSpace(jobDefinitionId, nameof(jobDefinitionId));
+
+            string url = $"jobs/jobdefinitions/{jobDefinitionId}";
+
+            return await GetAsync<JobDefinition>(url);
         }
 
         public async Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo)
