@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Calculate Funding Service</Authors>
+    <Product>Calculate Funding Service</Product>
+    <Company>Calculate Funding Service</Company>
+    <Description>Common API Client functionality</Description>
   </PropertyGroup>
 
   <ItemGroup>

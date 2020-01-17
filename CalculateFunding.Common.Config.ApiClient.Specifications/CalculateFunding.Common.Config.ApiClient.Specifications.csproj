@@ -7,6 +7,7 @@
     <Product>Calculate Funding Service</Product>
     <Company>Department for Education</Company>
     <Description>Common API Client functionality</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
