@@ -705,7 +705,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 TrustName = "Academy Trust 1",
                 TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
                 UKPRN = "1001",
-                ProviderType = "Multi-academy trust",
+                ProviderType = "Academy trust",
                 ProviderSubType = "",
                 LocalGovernmentGroupTypeCode = "LGGTC1",
                 LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",

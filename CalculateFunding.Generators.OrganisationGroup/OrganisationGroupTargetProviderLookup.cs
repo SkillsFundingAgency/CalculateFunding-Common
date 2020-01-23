@@ -21,7 +21,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
         private IDictionary<string, IEnumerable<Provider>> _providers = null;
 
-        private readonly IEnumerable<string> _academyTrustTypes = new string[] { "Multi-academy trust", "Single-academy trust" };
+        private readonly IEnumerable<string> _academyTrustTypes = new string[] { "Academy trust" };
 
         public OrganisationGroupTargetProviderLookup(IProvidersApiClient providersApiClient, IOrganisationGroupResiliencePolicies resiliencePolicies)
         {
