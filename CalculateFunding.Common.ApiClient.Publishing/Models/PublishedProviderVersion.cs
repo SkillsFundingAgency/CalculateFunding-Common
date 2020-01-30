@@ -115,6 +115,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// </summary>
         [JsonProperty("correlationId")]
         public string CorrelationId { get; set; }
+        
+        /// <summary>
+        /// Collection of any over payments keyed by funding line for the funding period
+        /// this published provider version is in
+        /// </summary>
+        [JsonProperty("fundingLineOverPayments")]
+        public IDictionary<string, decimal> FundingLineOverPayments { get; set; }
 
         public override VersionedItem Clone()
         {
