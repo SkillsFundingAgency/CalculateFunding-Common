@@ -322,19 +322,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(3);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.DfeNumber)
-                .Should()
-                .Be(true);
+                .Be(0);
         }
 
         [TestMethod]
