@@ -156,11 +156,17 @@ namespace CalculateFunding.Common.CosmosDb
 
         private async Task<ItemResponse<DocumentEntity<T>>> HardDeleteAsync<T>(T entity, string partitionKey) where T : IIdentifiable
         {
-            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
-
-            return await _container.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: new PartitionKey(partitionKey));
+            PartitionKey partitionKeyForCosmos;
+            if (string.IsNullOrWhiteSpace(partitionKey))
+            {
+                partitionKeyForCosmos = PartitionKey.None;
+            }
+            else
+            {
+                partitionKeyForCosmos = new PartitionKey(partitionKey);
+            }
+            return await _container.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos);
         }
-
 
         private async Task<ItemResponse<DocumentEntity<T>>> SoftDeleteAsync<T>(T entity, PartitionKey partitionKey) where T : IIdentifiable
         {
@@ -532,7 +538,6 @@ namespace CalculateFunding.Common.CosmosDb
         public async Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool hardDelete = false) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
-            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
 
             DocumentEntity<T> doc = await ReadDocumentByIdAsync<T>(id);
 
