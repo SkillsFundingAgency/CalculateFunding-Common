@@ -10,6 +10,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
     {
         Task<ApiResponse<PublishedProviderVersion>> GetPublishedProviderVersion(string fundingStreamId, string fundingPeriodId, string providerId, string version);
 
+        Task<ApiResponse<IEnumerable<PublishedProviderTransaction>>> GetPublishedProviderTransactions(string specificationId, string providerId);
+
         Task<ApiResponse<string>> GetPublishedProviderVersionBody(string publishedProviderVersionId);
 
         Task<ApiResponse<SpecificationCheckChooseForFundingResult>> CanChooseForFunding(string specificationId);
