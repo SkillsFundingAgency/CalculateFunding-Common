@@ -28,6 +28,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<PublishedProviderVersion>(url);
         }
 
+        public async Task<ApiResponse<IEnumerable<PublishedProviderTransaction>>> GetPublishedProviderTransactions(string specificationId, string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            string url = $"publishedprovidertransactions/{specificationId}/{providerId}";
+
+            return await GetAsync<IEnumerable<PublishedProviderTransaction>>(url);
+        }
+
         public async Task<ApiResponse<string>> GetPublishedProviderVersionBody(string publishedProviderVersionId)
         {
             Guard.IsNullOrWhiteSpace(publishedProviderVersionId, nameof(publishedProviderVersionId));
