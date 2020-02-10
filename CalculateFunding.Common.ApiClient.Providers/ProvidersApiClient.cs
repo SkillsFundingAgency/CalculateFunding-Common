@@ -227,5 +227,12 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             return await GetAsync<IEnumerable<string>>(url);
         }
+        
+        public async Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields()
+        {
+            string url = "provider-graphql-fields";
+
+            return await GetAsync<IEnumerable<ProviderGraphQlFieldInfo>>(url);
+        }
     }
 }
