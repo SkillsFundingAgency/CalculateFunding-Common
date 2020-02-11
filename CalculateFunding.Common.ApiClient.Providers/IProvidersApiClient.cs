@@ -31,5 +31,6 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId);
         Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId);
         Task<ApiResponse<IEnumerable<string>>> GetProviderNames();
+        Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields();
     }
 }
