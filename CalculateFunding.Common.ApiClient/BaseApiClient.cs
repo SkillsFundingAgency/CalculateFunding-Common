@@ -343,6 +343,12 @@ namespace CalculateFunding.Common.ApiClient
             return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken, customerHeaders);
         }
 
+        public async Task<HttpStatusCode> DeleteAsync(string url,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await StatusCodeRequest(url, HttpMethod.Delete, cancellationToken);
+        }
+
         public async Task<HttpStatusCode> PostAsync<TRequest>(string url,
             TRequest request,
             CancellationToken cancellationToken = default(CancellationToken))
