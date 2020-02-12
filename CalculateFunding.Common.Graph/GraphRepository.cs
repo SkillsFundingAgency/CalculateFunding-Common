@@ -15,17 +15,20 @@ namespace CalculateFunding.Common.Graph
     public class GraphRepository : IGraphRepository, IDisposable
     {
         private IDriver _driver;
+        private ICypherBuilder _cypherBuilder;
 
-        public GraphRepository(GraphDbSettings graphDbSettings)
+        public GraphRepository(GraphDbSettings graphDbSettings, ICypherBuilder cypherBuilder, IDriver driver = null)
         {
             Guard.ArgumentNotNull(graphDbSettings, nameof(graphDbSettings));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Url, nameof(graphDbSettings.Url));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Username, nameof(graphDbSettings.Username));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Password, nameof(graphDbSettings.Password));
+            Guard.ArgumentNotNull(cypherBuilder, nameof(cypherBuilder));
 
             IAuthToken authtoken = AuthTokens.Basic(graphDbSettings.Username, graphDbSettings.Password);
 
-            _driver = GraphDatabase.Driver(graphDbSettings.Url, authtoken);
+            _driver = driver ?? GraphDatabase.Driver(graphDbSettings.Url, authtoken);
+            _cypherBuilder = cypherBuilder;
         }
 
         public async Task AddNodes<T>(IList<T> nodes, IEnumerable<string> indices = null)
@@ -41,13 +44,15 @@ namespace CalculateFunding.Common.Graph
                 if (!indices.IsNullOrEmpty())
                 {
                     key = indices.Select(_ => $"{{{_}:{objectName}.{_}}}").FirstOrDefault();
-                    foreach (var query in indices.Select(_ => $"CREATE INDEX ON :{objectName}({_})"))
+                    foreach (var query in indices.Select(_ => $"INDEX ON :{objectName}({_})"))
                     {
-                        await session.RunAsync(query);
+                        _cypherBuilder.AddCreate(query);
+                        await session.RunAsync(_cypherBuilder.ToString());
                     }
                 }
 
-                await session.WriteTransactionAsync(tx => CreateNodes(tx, nodes, key));
+                string cypher = CreateNodesCypher<T>(key);
+                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher, new Dictionary<string, object>() { { "nodes", ParameterSerializer.ToDictionary(nodes) } }));
             }
             finally
             {
@@ -61,7 +66,8 @@ namespace CalculateFunding.Common.Graph
 
             try
             {
-                await session.WriteTransactionAsync(tx => RemoveNode<T>(tx, field, value));
+                string cypher = RemoveNodeCypher<T>(field, value);
+                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher));
             }
             finally
             {
@@ -69,30 +75,63 @@ namespace CalculateFunding.Common.Graph
             }
         }
 
-        private static async Task RemoveNode<T>(IAsyncTransaction tx, string field, string value)
+        public async Task CreateRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
         {
-            string objectName = typeof(T).Name.ToLowerInvariant();
-            string cypher = new StringBuilder()
-                .AppendLine($"MATCH ({objectName[0]}:{objectName}{{{field}:'{value}'}})")
-                .AppendLine($"DETACH DELETE {objectName[0]}")
-                .ToString();
+            IAsyncSession session = _driver.AsyncSession();
 
-            await tx.RunAsync(cypher);
+            try
+            {
+                string cypher = CreateRelationshipCypher<A, B>(relationShipName, left, right);
+                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher));
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
         }
 
-        private static async Task CreateNodes<T>(IAsyncTransaction tx, IList<T> nodes, string key)
+        private string RemoveNodeCypher<T>(string field, string value)
         {
             string objectName = typeof(T).Name.ToLowerInvariant();
-
-            string cypher = new StringBuilder()
-                .AppendLine($"UNWIND {{nodes}} AS {objectName}")
-                .AppendLine($"MERGE ({objectName[0]}:{objectName}{(key != null ? key : string.Empty)})")
-                .AppendLine($"SET {objectName[0]} = {objectName}")
+            return _cypherBuilder
+                .AddMatch($"({objectName[0]}:{objectName}{{{field}:'{value}'}})")
+                .AddDetachDelete($"{objectName[0]}")
                 .ToString();
-
-            await tx.RunAsync(cypher, new Dictionary<string, object>() { { "nodes", ParameterSerializer.ToDictionary(nodes) } });
         }
 
+        private string CreateNodesCypher<T>(string key)
+        {
+            string objectName = typeof(T).Name.ToLowerInvariant();
+            return _cypherBuilder
+                .AddUnwind($"{{nodes}} AS {objectName}")
+                .AddMerge($"{objectName[0]}:{objectName}{(key != null ? key : string.Empty)}")
+                .AddSet($"{objectName[0]} = { objectName}")
+                .ToString();
+        }
+
+        private string CreateRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        {
+            string objectAName = typeof(A).Name.ToLowerInvariant();
+            string objectBName = typeof(B).Name.ToLowerInvariant();
+
+            return _cypherBuilder
+                .AddMatch($"a: {objectAName}),(b: {objectBName}")
+                .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
+                .AddCreate($"(a) -[:{relationShipName}]->(b)")
+                .ToString();
+        }
+
+        private async Task RunCypher(IAsyncTransaction tx, string cypher, Dictionary<string, object> parameters = null)
+        {
+            if (parameters != null)
+            {
+                await tx.RunAsync(cypher, parameters);
+            }
+            else
+            {
+                await tx.RunAsync(cypher);
+            }
+        }
 
         public void Dispose()
         {
