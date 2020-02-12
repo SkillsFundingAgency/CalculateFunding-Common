@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
         private IGraphRepository _repository;
         private IDriver _driver;
         private IAsyncSession _session;
+        private ICypherBuilderHost _cypherBuilderHost;
         private ICypherBuilder _cypherBuilder;
 
         [TestInitialize]
@@ -22,8 +23,14 @@ namespace CalculateFunding.Common.Graph.UnitTests
         {
             _driver = Substitute.For<IDriver>();
             _session = Substitute.For<IAsyncSession>();
+            _cypherBuilderHost = Substitute.For<ICypherBuilderHost>();
             _cypherBuilder = Substitute.For<ICypherBuilder>();
-            _repository = new GraphRepository(new GraphDbSettingsBuilder().Build(), _cypherBuilder, _driver);
+
+            _cypherBuilderHost
+                .Current()
+                .Returns(_cypherBuilder);
+
+            _repository = new GraphRepository(new GraphDbSettingsBuilder().Build(), _cypherBuilderHost, _driver);
         }
 
         [TestMethod]

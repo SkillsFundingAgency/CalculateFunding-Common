@@ -15,20 +15,20 @@ namespace CalculateFunding.Common.Graph
     public class GraphRepository : IGraphRepository, IDisposable
     {
         private IDriver _driver;
-        private ICypherBuilder _cypherBuilder;
+        private ICypherBuilderHost _cypherBuilderHost;
 
-        public GraphRepository(GraphDbSettings graphDbSettings, ICypherBuilder cypherBuilder, IDriver driver = null)
+        public GraphRepository(GraphDbSettings graphDbSettings, ICypherBuilderHost cypherBuilderHost, IDriver driver = null)
         {
             Guard.ArgumentNotNull(graphDbSettings, nameof(graphDbSettings));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Url, nameof(graphDbSettings.Url));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Username, nameof(graphDbSettings.Username));
             Guard.IsNullOrWhiteSpace(graphDbSettings.Password, nameof(graphDbSettings.Password));
-            Guard.ArgumentNotNull(cypherBuilder, nameof(cypherBuilder));
+            Guard.ArgumentNotNull(cypherBuilderHost, nameof(cypherBuilderHost));
 
             IAuthToken authtoken = AuthTokens.Basic(graphDbSettings.Username, graphDbSettings.Password);
 
             _driver = driver ?? GraphDatabase.Driver(graphDbSettings.Url, authtoken);
-            _cypherBuilder = cypherBuilder;
+            _cypherBuilderHost = cypherBuilderHost;
         }
 
         public async Task AddNodes<T>(IList<T> nodes, IEnumerable<string> indices = null)
@@ -46,8 +46,8 @@ namespace CalculateFunding.Common.Graph
                     key = indices.Select(_ => $"{{{_}:{objectName}.{_}}}").FirstOrDefault();
                     foreach (var query in indices.Select(_ => $"INDEX ON :{objectName}({_})"))
                     {
-                        _cypherBuilder.AddCreate(query);
-                        await session.RunAsync(_cypherBuilder.ToString());
+                        ICypherBuilder cypherBuilder = _cypherBuilderHost.Current().AddCreate(query);
+                        await session.RunAsync(cypherBuilder.ToString());
                     }
                 }
 
@@ -93,7 +93,8 @@ namespace CalculateFunding.Common.Graph
         private string RemoveNodeCypher<T>(string field, string value)
         {
             string objectName = typeof(T).Name.ToLowerInvariant();
-            return _cypherBuilder
+            return _cypherBuilderHost
+                .Current()
                 .AddMatch($"({objectName[0]}:{objectName}{{{field}:'{value}'}})")
                 .AddDetachDelete($"{objectName[0]}")
                 .ToString();
@@ -102,7 +103,8 @@ namespace CalculateFunding.Common.Graph
         private string CreateNodesCypher<T>(string key)
         {
             string objectName = typeof(T).Name.ToLowerInvariant();
-            return _cypherBuilder
+            return _cypherBuilderHost
+                .Current()
                 .AddUnwind($"{{nodes}} AS {objectName}")
                 .AddMerge($"{objectName[0]}:{objectName}{(key != null ? key : string.Empty)}")
                 .AddSet($"{objectName[0]} = { objectName}")
@@ -114,7 +116,8 @@ namespace CalculateFunding.Common.Graph
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();
 
-            return _cypherBuilder
+            return _cypherBuilderHost
+                .Current()
                 .AddMatch($"a: {objectAName}),(b: {objectBName}")
                 .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
                 .AddCreate($"(a) -[:{relationShipName}]->(b)")
