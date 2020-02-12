@@ -58,6 +58,14 @@ namespace CalculateFunding.Common.Graph.UnitTests
             ThenCreateRelationshipCalled();
         }
 
+        [TestMethod]
+        public async Task DeleteRelationship_GivenValidRelationship_SuccessfullyDeleteRelationshipInGraph()
+        {
+            GivenSessionOpened();
+            await WhenDeleteRelationship();
+            ThenDeleteRelationshipCalled();
+        }
+
         private void ThenDeleteNodeCalled()
         {
             _cypherBuilder
@@ -96,9 +104,25 @@ namespace CalculateFunding.Common.Graph.UnitTests
                 .AddCreate($"(a) -[:noderelation]->(b)");
         }
 
+        private void ThenDeleteRelationshipCalled()
+        {
+            _cypherBuilder
+                .Received(1)
+                .AddMatch("a: object)-[r:noderelation]->(b: object")
+                .Received(1)
+                .AddWhere("a.nodeid = 'node1' and b.nodeid = 'node2'")
+                .Received(1)
+                .AddDelete($"r");
+        }
+
         private async Task WhenCreateRelationship()
         {
             await _repository.CreateRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
+        }
+
+        private async Task WhenDeleteRelationship()
+        {
+            await _repository.DeleteRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
         }
 
         private async Task WhenDeleteNode()

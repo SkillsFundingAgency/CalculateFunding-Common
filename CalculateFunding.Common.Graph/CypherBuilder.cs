@@ -19,6 +19,12 @@ namespace CalculateFunding.Common.Graph
             _stringBuilder.AppendLine($"DETACH DELETE {query}");
             return this;
         }
+
+        public ICypherBuilder AddDelete(string query)
+        {
+            _stringBuilder.AppendLine($"DELETE {query}");
+            return this;
+        }
         public ICypherBuilder AddUnwind(string query)
         {
             _stringBuilder.AppendLine($"UNWIND {query}");

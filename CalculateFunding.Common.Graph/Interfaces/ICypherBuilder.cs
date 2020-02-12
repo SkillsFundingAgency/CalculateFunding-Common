@@ -14,5 +14,6 @@ namespace CalculateFunding.Common.Graph
         ICypherBuilder AddWhere(string query);
         ICypherBuilder AddCreate(string query);
         ICypherBuilder AddSet(string query);
+        ICypherBuilder AddDelete(string query);
     }
 }

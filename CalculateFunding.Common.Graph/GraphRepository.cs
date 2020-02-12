@@ -90,6 +90,21 @@ namespace CalculateFunding.Common.Graph
             }
         }
 
+        public async Task DeleteRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        {
+            IAsyncSession session = _driver.AsyncSession();
+
+            try
+            {
+                string cypher = DeleteRelationshipCypher<A, B>(relationShipName, left, right);
+                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher));
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
         private string RemoveNodeCypher<T>(string field, string value)
         {
             string objectName = typeof(T).Name.ToLowerInvariant();
@@ -121,6 +136,19 @@ namespace CalculateFunding.Common.Graph
                 .AddMatch($"a: {objectAName}),(b: {objectBName}")
                 .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
                 .AddCreate($"(a) -[:{relationShipName}]->(b)")
+                .ToString();
+        }
+
+        private string DeleteRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        {
+            string objectAName = typeof(A).Name.ToLowerInvariant();
+            string objectBName = typeof(B).Name.ToLowerInvariant();
+
+            return _cypherBuilderHost
+                .Current()
+                .AddMatch($"a: {objectAName})-[r:{relationShipName}]->(b: {objectBName}")
+                .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
+                .AddDelete("r")
                 .ToString();
         }
 
