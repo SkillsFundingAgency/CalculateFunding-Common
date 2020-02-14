@@ -98,7 +98,7 @@ namespace CalculateFunding.Common.ApiClient
             string rawContent = null,
             params string[] customerHeaders)
         {
-            IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post });
+            IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete });
 
             HttpClient httpClient = await PrepareRequest(url,
                 TimeSpan.FromMinutes(5),
@@ -417,6 +417,12 @@ namespace CalculateFunding.Common.ApiClient
         #endregion
 
         #region "PUT"
+        public async Task<HttpStatusCode> PutAsync(string url,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await StatusCodeRequest(url, HttpMethod.Put, cancellationToken);
+        }
+
         public async Task<ApiResponse<TResponse>> PutAsync<TResponse, TRequest>(string url,
             TRequest request,
             CancellationToken cancellationToken = default(CancellationToken))

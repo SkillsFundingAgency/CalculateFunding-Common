@@ -4,6 +4,8 @@
     {
         public const string Calculations = "Calculations";
 
+        public const string Graph = "Graph";
+
         public const string Results = "Results";
 
         public const string Specifications = "Specifications";
