@@ -4,8 +4,8 @@ using System.Text;
 
 namespace CalculateFunding.Common.Graph.Interfaces
 {
-    public interface ICypherBuilderHost
+    public interface ICypherBuilderFactory
     {
-        ICypherBuilder Current();
+        ICypherBuilder NewCypherBuilder();
     }
 }

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace CalculateFunding.Common.Graph
 {
-    public class CypherBuilderHost : ICypherBuilderHost
+    public class CypherBuilderFactory : ICypherBuilderFactory
     {
-        public ICypherBuilder Current()
+        public ICypherBuilder NewCypherBuilder()
         {
             return new CypherBuilder();
         }

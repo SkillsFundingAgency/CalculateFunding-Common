@@ -12,5 +12,6 @@ namespace CalculateFunding.Common.Graph.Interfaces
         Task CreateRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right);
 
         Task DeleteRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right);
+        Task DeleteNodeAndChildNodes<T>(string field, string value);
     }
 }
