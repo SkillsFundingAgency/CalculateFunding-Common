@@ -7,19 +7,19 @@ namespace CalculateFunding.Common.ApiClient.Graph
 {
     public interface IGraphApiClient
     {
-        Task<HttpStatusCode> SaveCalculations(IList<Calculation> calculations);
+        Task<HttpStatusCode> UpsertCalculations(Calculation[] calculations);
 
-        Task<HttpStatusCode> SaveSpecifications(IList<Specification> specifications);
+        Task<HttpStatusCode> UpsertSpecifications(Specification[] specifications);
 
         Task<HttpStatusCode> DeleteCalculation(string calculationId);
 
         Task<HttpStatusCode> DeleteSpecification(string specificationId);
 
-        Task<HttpStatusCode> CreateCalculationCalculationsRelationships(string calculationId, string[] calculationIds);
+        Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds);
 
-        Task<HttpStatusCode> CreateCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
+        Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
 
-        Task<HttpStatusCode> CreateCalculationSpecificationRelationship(string calculationId, string specificationId);
+        Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId);
 
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
 

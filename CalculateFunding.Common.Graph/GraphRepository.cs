@@ -34,7 +34,7 @@ namespace CalculateFunding.Common.Graph
 
         private IAsyncSession AsyncSession() => _driver.AsyncSession();
 
-        public async Task AddNodes<T>(IList<T> nodes, IEnumerable<string> indices = null)
+        public async Task UpsertNodes<T>(IEnumerable<T> nodes, IEnumerable<string> indices = null)
         {
             IAsyncSession session = AsyncSession();
 
@@ -53,7 +53,7 @@ namespace CalculateFunding.Common.Graph
                     }
                 }
 
-                string cypher = CreateNodesCypher<T>(key);
+                string cypher = UpsertNodesCypher<T>(key);
                 await session.WriteTransactionAsync(tx => RunCypher(tx, cypher, new Dictionary<string, object>() { { "nodes", ParameterSerializer.ToDictionary(nodes) } }));
             }
             finally
@@ -76,9 +76,9 @@ namespace CalculateFunding.Common.Graph
             await ExecuteCypher(cypher);
         }
 
-        public async Task CreateRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        public async Task UpsertRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
         {
-            string cypher = CreateRelationshipCypher<A, B>(relationShipName, left, right);
+            string cypher = UpsertRelationshipCypher<A, B>(relationShipName, left, right);
             
             await ExecuteCypher(cypher);
         }
@@ -125,7 +125,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string CreateNodesCypher<T>(string key)
+        private string UpsertNodesCypher<T>(string key)
         {
             string objectName = typeof(T).Name.ToLowerInvariant();
             return _cypherBuilderFactory
@@ -136,7 +136,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string CreateRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        private string UpsertRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
         {
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();

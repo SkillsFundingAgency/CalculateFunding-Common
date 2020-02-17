@@ -166,7 +166,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
         
         private async Task WhenCreateRelationship()
         {
-            await _repository.CreateRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
+            await _repository.UpsertRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
         }
 
         private async Task WhenDeleteRelationship()
@@ -178,12 +178,11 @@ namespace CalculateFunding.Common.Graph.UnitTests
         {
             await _repository.DeleteNode<dynamic>("nodeid", "nodeid");
         }
-        
 
         private async Task WhenAddNodes()
         {
             List<dynamic> nodes = new List<dynamic> { new { nodeid = "nodeid" } };
-            await _repository.AddNodes(nodes, new string[] { "nodeid" });
+            await _repository.UpsertNodes(nodes, new string[] { "nodeid" });
         }
         
         private string NewRandomString() => new RandomString();

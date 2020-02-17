@@ -6,7 +6,7 @@ namespace CalculateFunding.Services.Graph.Serializer
 {
     public static class ParameterSerializer
     {
-        public static IList<Dictionary<string, object>> ToDictionary<TSourceType>(IList<TSourceType> source)
+        public static IEnumerable<Dictionary<string, object>> ToDictionary<TSourceType>(IEnumerable<TSourceType> source)
         {
             var settings = new JsonSerializerSettings
             {
@@ -15,7 +15,7 @@ namespace CalculateFunding.Services.Graph.Serializer
 
             string json = JsonConvert.SerializeObject(source, settings);
 
-            return JsonConvert.DeserializeObject<IList<Dictionary<string, object>>>(json, new CustomDictionaryConverter());
+            return JsonConvert.DeserializeObject<IEnumerable<Dictionary<string, object>>>(json, new CustomDictionaryConverter());
         }
     }
 }

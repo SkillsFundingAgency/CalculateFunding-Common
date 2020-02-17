@@ -17,7 +17,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
          : base(httpClientFactory, HttpClientKeys.Graph, logger, cancellationTokenProvider)
         { }
 
-        public async Task<HttpStatusCode> SaveCalculations(IList<Calculation> calculations)
+        public async Task<HttpStatusCode> UpsertCalculations(Calculation[] calculations)
         {
             Guard.ArgumentNotNull(calculations, nameof(calculations));
 
@@ -26,7 +26,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PostAsync(url, calculations);
         }
 
-        public async Task<HttpStatusCode> SaveSpecifications(IList<Specification> specifications)
+        public async Task<HttpStatusCode> UpsertSpecifications(Specification[] specifications)
         {
             Guard.ArgumentNotNull(specifications, nameof(specifications));
 
@@ -61,7 +61,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return HttpStatusCode.NotImplemented;
         }
 
-        public async Task<HttpStatusCode> CreateCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
+        public async Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.ArgumentNotNull(calculationIds, nameof(calculationIds));
@@ -71,7 +71,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PostAsync(url, calculationIds);
         }
 
-        public async Task<HttpStatusCode> CreateCalculationCalculationRelationship(string calculationIdA, string calculationIdB)
+        public async Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB)
         {
             Guard.IsNullOrWhiteSpace(calculationIdA, nameof(calculationIdA));
             Guard.IsNullOrWhiteSpace(calculationIdB, nameof(calculationIdB));
@@ -81,7 +81,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PutAsync(url);
         }
 
-        public async Task<HttpStatusCode> CreateCalculationSpecificationRelationship(string calculationId, string specificationId)
+        public async Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
