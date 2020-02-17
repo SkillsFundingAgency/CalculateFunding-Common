@@ -98,9 +98,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         public async Task<ApiResponse<IEnumerable<string>>> SearchPublishedProviderLocalAuthorities(string searchText, string fundingStreamId, string fundingPeriodId)
         {
-            string url = $"api/publishedproviders/{fundingStreamId}/{fundingPeriodId}/localauthorities";
+            string url = $"api/publishedproviders/{fundingStreamId}/{fundingPeriodId}/localauthorities?searchTest={searchText}";
 
-            return await PostAsync<IEnumerable<string>, string>(url, searchText);
+            return await GetAsync<IEnumerable<string>>(url);
         }
     }
 }
