@@ -1,9 +1,7 @@
 ﻿using CalculateFunding.Common.ApiClient.Graph.Models;
-using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -55,12 +53,20 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync(url);
         }
 
+        public async Task<HttpStatusCode> DeleteAllForSpecification(string specificationId)
+        {
+            //TODO; detach delete all calcs with specification id
+            //TODO; detach delete spec with id
+
+            return HttpStatusCode.NotImplemented;
+        }
+
         public async Task<HttpStatusCode> CreateCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.ArgumentNotNull(calculationIds, nameof(calculationIds));
 
-            string url = $"{UrlRoot}/calculation/calculations/{calculationId}";
+            string url = $"{UrlRoot}/calculation/{calculationId}/relationships/calculations";
 
             return await PostAsync(url, calculationIds);
         }
@@ -70,7 +76,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationIdA, nameof(calculationIdA));
             Guard.IsNullOrWhiteSpace(calculationIdB, nameof(calculationIdB));
 
-            string url = $"{UrlRoot}/calculation/calculation/{calculationIdA}/{calculationIdB}";
+            string url = $"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}";
 
             return await PutAsync(url);
         }
@@ -80,7 +86,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            string url = $"{UrlRoot}/calculation/specification/{calculationId}/{specificationId}";
+            string url = $"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}";
 
             return await PutAsync(url);
         }
@@ -90,7 +96,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationIdA, nameof(calculationIdA));
             Guard.IsNullOrWhiteSpace(calculationIdB, nameof(calculationIdB));
 
-            string url = $"{UrlRoot}/delete/calculation/calculation/{calculationIdA}/{calculationIdB}";
+            string url = $"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}";
 
             return await DeleteAsync(url);
         }
@@ -99,8 +105,8 @@ namespace CalculateFunding.Common.ApiClient.Graph
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            string url = $"{UrlRoot}/delete/calculation/specification/{calculationId}/{specificationId}";
+            
+            string url = $"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}";
 
             return await DeleteAsync(url);
         }

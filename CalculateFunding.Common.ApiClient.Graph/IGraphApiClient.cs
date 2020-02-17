@@ -24,5 +24,6 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
 
         Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId);
+        Task<HttpStatusCode> DeleteAllForSpecification(string specificationId);
     }
 }
