@@ -28,7 +28,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers);
         Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId);
         Task<ApiResponse<IEnumerable<ProviderSummary>>> FetchCoreProviderData(string specificationId);
-        Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId);
+        Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId,bool setCachedProviders = false);
         Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId);
         Task<ApiResponse<IEnumerable<string>>> GetProviderNames();
         Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields();

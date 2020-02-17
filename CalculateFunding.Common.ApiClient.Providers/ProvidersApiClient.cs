@@ -203,11 +203,11 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await GetAsync<IEnumerable<ProviderSummary>>(url);
         }
 
-        public async Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId)
+        public async Task<ApiResponse<int?>> PopulateProviderSummariesForSpecification(string specificationId,bool setCachedProviders = false)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
 
-            string url = $"scopedproviders/set-cached-providers/{specificationId}";
+            string url = $"scopedproviders/set-cached-providers/{specificationId}/{setCachedProviders}";
 
             return await GetAsync<int?>(url);
         }
