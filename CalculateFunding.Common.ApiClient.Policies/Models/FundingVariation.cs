@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
+namespace CalculateFunding.Common.ApiClient.Policies.Models
 {
     public class FundingVariation
     {
@@ -9,5 +10,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         
         [JsonProperty("order")]
         public int Order { get; set; }
+        
+        [JsonProperty("fundingLineCodes")]
+        public IEnumerable<string> FundingLineCodes { get; set; }
     }
 }
