@@ -57,6 +57,36 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         }
 
         [TestMethod]
+        public async Task GetProviderFundingsMakesGetCallWithTheSuppliedProviderFundingVersion()
+        {
+            string providerFundingVersion = NewRandomString();
+
+            IEnumerable<dynamic> expectedFundings = (new[] { new { fundingId = NewRandomString() }, 
+                new { fundingId = NewRandomString() } }).AsJson().AsPoco<IEnumerable<dynamic>>();
+
+            GivenTheResponse($"v3/funding/provider/{providerFundingVersion}/fundings", expectedFundings, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<dynamic>> actualFundings =
+                await WhenTheProviderFundingsIsQueriedByIdWithTheSuppliedProviderFundingVersion(providerFundingVersion);
+
+            ThenTheResponseContentIs(actualFundings, expectedFundings);
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void GetProviderFundingsThrowsExceptionIfNoSuppliedProviderFundingVersion(string providerFundingVersion)
+        {
+            Func<Task<ApiResponse<IEnumerable<dynamic>>>> invocation =
+                () => WhenTheProviderFundingsIsQueriedByIdWithTheSuppliedProviderFundingVersion(providerFundingVersion);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
         public async Task GetFundingByIdMakesGetCallWithSuppliedFundingId()
         {
             string fundingId = NewRandomString();
@@ -187,6 +217,11 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             setUp?.Invoke(atomFeedBuilder);
 
             return atomFeedBuilder.Build();
+        }
+
+        private async Task<ApiResponse<IEnumerable<dynamic>>> WhenTheProviderFundingsIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)
+        {
+            return await _client.GetFundings(providerFundingVersion);
         }
     }
 }

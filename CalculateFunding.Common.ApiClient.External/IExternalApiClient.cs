@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.External.Models;
 using CalculateFunding.Common.ApiClient.Models;
 
@@ -14,5 +15,6 @@ namespace CalculateFunding.Common.ApiClient.External
 
         Task<ApiResponse<string>> GetFundingById(string id);
         Task<ApiResponse<AtomFeed<object>>> GetProviderFundingVersion(string providerFundingVersion);
+        Task<ApiResponse<IEnumerable<dynamic>>> GetFundings(string publishedProviderVersion);
     }
 }

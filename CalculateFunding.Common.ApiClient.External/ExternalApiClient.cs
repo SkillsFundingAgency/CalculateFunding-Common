@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Bearer;
 using CalculateFunding.Common.ApiClient.External.Models;
@@ -30,6 +31,13 @@ namespace CalculateFunding.Common.ApiClient.External
             Guard.IsNullOrWhiteSpace(providerFundingVersion, nameof(providerFundingVersion));
 
             return await GetAsync<AtomFeed<object>>($"{Version}/{BaseUri}/provider/{providerFundingVersion}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<dynamic>>> GetFundings(string publishedProviderVersion)
+        {
+            Guard.IsNullOrWhiteSpace(publishedProviderVersion, nameof(publishedProviderVersion));
+
+            return await GetAsync<IEnumerable<dynamic>>($"{Version}/{BaseUri}/provider/{publishedProviderVersion}/fundings");
         }
 
         public async Task<ApiResponse<string>> GetFundingById(string id)
