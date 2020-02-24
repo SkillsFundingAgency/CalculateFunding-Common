@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -21,6 +23,33 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         {
             _client = new PublishingApiClient(ClientFactory,
                 Substitute.For<ILogger>());
+        }
+
+        [TestMethod]
+        public async Task GetLatestProfileTotalsGetsProfileTotals()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string providerId = NewRandomString();
+            
+            string expectedUri = $"publishedproviders/{fundingStreamId}/{fundingPeriodId}/{providerId}/profileTotals";
+            
+            IEnumerable<ProfileTotal> expectedTotals = new[]
+            {
+                new ProfileTotal(),
+            };
+            
+            GivenTheResponse(expectedUri, expectedTotals, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<ProfileTotal>> response = await _client.GetLatestProfileTotals(fundingStreamId,
+                fundingPeriodId,
+                providerId);
+
+            response?.Content
+                .Should()
+                .BeEquivalentTo(expectedTotals);
+            
+            AndTheUrisShouldHaveBeenRequested(expectedUri);
         }
 
         [TestMethod]
