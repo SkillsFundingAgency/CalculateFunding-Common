@@ -55,10 +55,9 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
         public async Task<HttpStatusCode> DeleteAllForSpecification(string specificationId)
         {
-            //TODO; detach delete all calcs with specification id
-            //TODO; detach delete spec with id
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return HttpStatusCode.NotImplemented;
+            return await DeleteAsync($"{UrlRoot}/specification/{specificationId}/all");
         }
 
         public async Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
