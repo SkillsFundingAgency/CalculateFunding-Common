@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -49,6 +50,41 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 .Should()
                 .BeEquivalentTo(expectedTotals);
             
+            AndTheUrisShouldHaveBeenRequested(expectedUri);
+        }
+
+        [TestMethod]
+        public async Task GetAllReleasedProfileTotalsGetsAllReleasedProfileTotals()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string providerId = NewRandomString();
+
+            string expectedUri = $"publishedproviders/{fundingStreamId}/{fundingPeriodId}/{providerId}/allProfileTotals";
+
+            PublishedProviderVersion publishedProviderVersion = new PublishedProviderVersion { Version = 1, Date = DateTimeOffset.MinValue };
+
+            IEnumerable<ProfileTotal> expectedTotals = new[]
+            {
+                new ProfileTotal(),
+            };
+
+            IDictionary<int, ProfilingVersion> expectedProfiling = new Dictionary<int, ProfilingVersion>(new[] { new KeyValuePair<int, 
+                ProfilingVersion>(publishedProviderVersion.Version, 
+                new ProfilingVersion { Date = publishedProviderVersion.Date, 
+                    Version = publishedProviderVersion.Version, 
+                    ProfileTotals = expectedTotals }) });
+
+            GivenTheResponse(expectedUri, expectedProfiling, HttpMethod.Get);
+
+            ApiResponse<IDictionary<int, ProfilingVersion>> response = await _client.GetAllReleasedProfileTotals(fundingStreamId,
+                fundingPeriodId,
+                providerId);
+
+            response?.Content
+                .Should()
+                .BeEquivalentTo(expectedProfiling);
+
             AndTheUrisShouldHaveBeenRequested(expectedUri);
         }
 
