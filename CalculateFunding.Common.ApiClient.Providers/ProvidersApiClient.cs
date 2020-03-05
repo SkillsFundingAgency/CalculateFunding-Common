@@ -24,8 +24,6 @@ namespace CalculateFunding.Common.ApiClient.Providers
         {
             Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
 
-            SearchQueryRequest request = SearchQueryRequest.FromSearchFilterRequest(filterOptions);
-
             SearchModel searchModel = new SearchModel
             {
                 PageNumber = filterOptions.Page,
@@ -123,7 +121,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             string url = $"providers/versions/{providerVersionId}";
 
-            return await ValidatedPostAsync<ProviderVersionViewModel>(url, providers);
+            return await ValidatedPostAsync(url, providers);
         }
 
         public async Task<HttpStatusCode> SetProviderDateProviderVersion(int year, int month, int day, string providerVersionId)

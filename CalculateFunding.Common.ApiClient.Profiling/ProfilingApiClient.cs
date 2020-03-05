@@ -31,7 +31,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling
         {
             Guard.ArgumentNotNull(requestModel, nameof(requestModel));
 
-            return await ValidatedPostAsync<SetFundingStreamPeriodProfilePatternRequestModel>("profiling", requestModel);
+            return await ValidatedPostAsync("profiling", requestModel);
         }
     }
 }

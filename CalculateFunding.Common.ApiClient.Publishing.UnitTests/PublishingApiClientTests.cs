@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
+// ReSharper disable HeapView.CanAvoidClosure
 
 namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 {
@@ -49,8 +52,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             response?.Content
                 .Should()
                 .BeEquivalentTo(expectedTotals);
-            
-            AndTheUrisShouldHaveBeenRequested(expectedUri);
         }
 
         [TestMethod]
@@ -109,8 +110,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 .StatusCode
                 .Should()
                 .Be(expectedStatusCode);
-
-            AndTheUrisShouldHaveBeenRequested(expectedUri);
         }
 
         [TestMethod]
@@ -134,8 +133,124 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 .StatusCode
                 .Should()
                 .Be(expectedStatusCode);
+        }
 
-            AndTheUrisShouldHaveBeenRequested(expectedUri);
+        [TestMethod]
+        public async Task GetPublishedProviderVersion()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string providerId = NewRandomString();
+            string version = NewRandomString();
+
+            await AssertGetRequest($"publishedproviderversions/{fundingStreamId}/{fundingPeriodId}/{providerId}/{version}",
+                new PublishedProviderVersion(),
+                () => _client.GetPublishedProviderVersion(fundingStreamId, fundingPeriodId, providerId, version));
+        }
+
+        [TestMethod]
+        public async Task GetPublishedProviderTransactions()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"publishedprovidertransactions/{specificationId}/{providerId}",
+                Enumerable.Empty<PublishedProviderTransaction>(),
+                () => _client.GetPublishedProviderTransactions(specificationId, providerId));
+        }
+
+        [TestMethod]
+        public async Task GetPublishedProviderVersionBody()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"publishedproviderversion/{id}/body",
+                id,
+                NewRandomString(),
+                _client.GetPublishedProviderVersionBody);
+        }
+
+        [TestMethod]
+        public async Task CanChooseForFunding()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"specifications/{id}/funding/canChoose",
+                id,
+                new SpecificationCheckChooseForFundingResult(),
+                _client.CanChooseForFunding);    
+        }
+
+        [TestMethod]
+        public async Task SearchPublishedProvider()
+        {
+            await AssertPostRequest("publishedprovider/publishedprovider-search",
+                new SearchModel(),
+                new SearchResults<PublishedProviderSearchItem>(),
+                _client.SearchPublishedProvider);
+        }
+
+        [TestMethod]
+        public async Task RefreshFundingForSpecification()
+        {
+            string id = NewRandomString();
+
+            await AssertPostRequest($"specifications/{id}/refresh",
+                id,
+                new JobCreationResponse(),
+                _client.RefreshFundingForSpecification);        
+        }
+     
+        [TestMethod]
+        public async Task ApproveFundingForSpecification()
+        {
+            string id = NewRandomString();
+
+            await AssertPostRequest($"specifications/{id}/approve",
+                id,
+                new JobCreationResponse(),
+                _client.ApproveFundingForSpecification);        
+        }
+        
+        [TestMethod]
+        public async Task PublishFundingForSpecification()
+        {
+            string id = NewRandomString();
+
+            await AssertPostRequest($"specifications/{id}/publish",
+                id,
+                new JobCreationResponse(),
+                _client.PublishFundingForSpecification);        
+        }
+
+        [TestMethod]
+        public async Task GetProviderStatusCounts()
+        {
+            string specificationId = NewRandomString();
+            string providerType = NewRandomString();
+            string localAuthority = NewRandomString();
+            string status = NewRandomString();
+
+            await AssertGetRequest(
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}",
+                Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
+                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status));
+        }
+
+        [TestMethod]
+        public async Task SearchPublishedProviderLocalAuthorities()
+        {
+            string searchText = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+
+            await AssertGetRequest($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/localauthorities?searchText={searchText}",
+                new[]
+                {
+                    NewRandomString(),
+                    NewRandomString()
+                }.AsEnumerable(),
+                () => _client.SearchPublishedProviderLocalAuthorities(searchText, fundingStreamId, fundingPeriodId));
         }
     }
 }

@@ -55,7 +55,7 @@ namespace CalculateFunding.Common.ApiClient.TestEngine
 
         public async Task<ApiResponse<string>> Reindex()
         {
-            return new ApiResponse<string>(await GetAsync($"{UrlRoot}/testscenario-reindex"));
+            return await GetAsync<string>($"{UrlRoot}/testscenario-reindex");
         }
 
         public async Task<ApiResponse<ConcurrentBag<SpecificationTestScenarioResultCounts>>> TestScenarioCountsForSpecifications(string specificationsListModelJson)

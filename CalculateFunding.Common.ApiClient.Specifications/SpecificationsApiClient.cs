@@ -196,6 +196,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-id-for-specifications");
         }
 
+        //TODO; these are currently wrong - FIX in subsequent PR
         public async Task<ApiResponse<bool>> DeleteSpecificationById(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -204,6 +205,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
                 $"{UrlRoot}?specificationId={specificationId}");
         }
 
+        //TODO; these are currently wrong - FIX in subsequent PR
         public async Task<ApiResponse<bool>> PermanentDeleteSpecificationById(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));

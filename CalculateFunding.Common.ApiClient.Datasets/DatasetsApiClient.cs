@@ -153,14 +153,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<DatasetDownloadModel>(uri);
         }
 
-        public async Task<HttpStatusCode> UploadDatasetFile(string filename, DatasetMetadataViewModel datasetMetadataViewModel)
-        {
-            Guard.IsNullOrWhiteSpace(filename, nameof(filename));
-            Guard.ArgumentNotNull(datasetMetadataViewModel, nameof(datasetMetadataViewModel));
-
-            return await PostAsync<DatasetMetadataViewModel>($"upload-dataset-file/{filename}", datasetMetadataViewModel);
-        }
-
         public async Task<ApiResponse<string>> Reindex()
         {
             return await GetAsync<string>(DataSetsUriFor("reindex"));
@@ -224,6 +216,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             Guard.IsNullOrWhiteSpace(datasetDefinitionId, nameof(datasetDefinitionId));
 
             return await GetAsync<IEnumerable<DatasetSpecificationRelationshipViewModel>>(DataSetsUriFor($"{specificationId}/{datasetDefinitionId}/relationships"));
+        }
+        
+        public async Task<HttpStatusCode> UploadDatasetFile(string filename, DatasetMetadataViewModel datasetMetadataViewModel)
+        {
+            Guard.IsNullOrWhiteSpace(filename, nameof(filename));
+            Guard.ArgumentNotNull(datasetMetadataViewModel, nameof(datasetMetadataViewModel));
+
+            return await PostAsync($"upload-dataset-file/{filename}", datasetMetadataViewModel);
         }
 
         private string DataSetsUriFor(string relativeUri)
