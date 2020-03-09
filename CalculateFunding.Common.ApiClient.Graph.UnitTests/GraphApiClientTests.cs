@@ -127,7 +127,155 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 () => _client.DeleteCalculationSpecificationRelationship(calculationId, specificationId));    
         }
+
+        [TestMethod]
+        public async Task UpsertDataset()
+        {
+            await AssertPostRequest("datasets",
+                new Dataset(),
+                HttpStatusCode.OK,
+                _client.UpsertDataset);
+        } 
         
+        [TestMethod]
+        public async Task DeleteDataset()
+        {
+            string id = NewRandomString();
+            
+            await AssertDeleteRequest($"datasets/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteDataset);
+        } 
+        
+        [TestMethod]
+        public async Task UpsertDatasetDefinition()
+        {
+            await AssertPostRequest("datasetdefinitions",
+                new DatasetDefinition(), 
+                HttpStatusCode.OK,
+                _client.UpsertDatasetDefinition);
+        } 
+        
+        [TestMethod]
+        public async Task DeleteDatasetDefinition()
+        {
+            string id = NewRandomString();
+            
+            await AssertDeleteRequest($"datasetdefinitions/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteDatasetDefinition);
+        } 
+        
+        [TestMethod]
+        public async Task UpsertDatasetField()
+        {
+            await AssertPostRequest("datafields",
+                new DataField(), 
+                HttpStatusCode.OK,
+                _client.UpsertDataFields);
+        } 
+        
+        [TestMethod]
+        public async Task DeleteDatasetField()
+        {
+            string id = NewRandomString();
+            
+            await AssertDeleteRequest($"datafields/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteDataField);
+        }
+
+        [TestMethod]
+        public async Task UpsertDataDefinitionDatasetRelationship()
+        {
+            string definitionId = NewRandomString();
+            string datasetId = NewRandomString();
+
+            await AssertPutRequest($"datasetdefinitions/{definitionId}/relationships/datasets/{datasetId}",
+                HttpStatusCode.OK,
+                () => _client.UpsertDataDefinitionDatasetRelationship(definitionId, datasetId));
+        }
+        
+        [TestMethod]
+        public async Task DeleteDataDefinitionDatasetRelationship()
+        {
+            string definitionId = NewRandomString();
+            string datasetId = NewRandomString();
+
+            await AssertDeleteRequest($"datasetdefinitions/{definitionId}/relationships/datasets/{datasetId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteDataDefinitionDatasetRelationship(definitionId, datasetId));
+        }
+        
+        [TestMethod]
+        public async Task UpsertDatasetDataFieldRelationship()
+        {
+            string datasetId = NewRandomString();
+            string fieldId = NewRandomString();
+
+            await AssertPutRequest($"datasets/{datasetId}/relationships/datafields/{fieldId}",
+                HttpStatusCode.OK,
+                () => _client.UpsertDatasetDataFieldRelationship(datasetId, fieldId));
+        }
+        
+        [TestMethod]
+        public async Task DeleteDatasetDataFieldRelationship()
+        {
+            string datasetId = NewRandomString();
+            string fieldId = NewRandomString();
+
+            await AssertDeleteRequest($"datasets/{datasetId}/relationships/datafields/{fieldId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteDatasetDataFieldRelationship(datasetId, fieldId));
+        }
+        
+        [TestMethod]
+        public async Task CreateSpecificationDatasetRelationship()
+        {
+            string specificationId = NewRandomString();
+            string datasetId = NewRandomString();
+
+            await AssertPutRequest($"specifications/{specificationId}/relationships/datasets/{datasetId}",
+                HttpStatusCode.OK,
+                () => _client.CreateSpecificationDatasetRelationship(specificationId, datasetId));
+        }
+        
+        [TestMethod]
+        public async Task DeleteSpecificationDatasetRelationship()
+        {
+            string specificationId = NewRandomString();
+            string datasetId = NewRandomString();
+
+            await AssertDeleteRequest($"specifications/{specificationId}/relationships/datasets/{datasetId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteSpecificationDatasetRelationship(specificationId, datasetId));
+        }
+        
+        [TestMethod]
+        public async Task CreateCalculationDataFieldRelationship()
+        {
+            string calculationId = NewRandomString();
+            string fieldId = NewRandomString();
+
+            await AssertPutRequest($"calculations/{calculationId}/relationships/datafields/{fieldId}",
+                HttpStatusCode.OK,
+                () => _client.CreateCalculationDataFieldRelationship(calculationId, fieldId));
+        }
+        
+        [TestMethod]
+        public async Task DeleteCalculationDataFieldRelationship()
+        {
+            string calculationId = NewRandomString();
+            string fieldId = NewRandomString();
+
+            await AssertDeleteRequest($"calculations/{calculationId}/relationships/datafields/{fieldId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteCalculationDataFieldRelationship(calculationId, fieldId));
+        }
+
         private Calculation NewCalculation() => new Calculation();
         
         private Specification NewSpecification() => new Specification();

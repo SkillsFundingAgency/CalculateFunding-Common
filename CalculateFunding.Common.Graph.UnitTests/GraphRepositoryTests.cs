@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using Neo4j.Driver;
 using CalculateFunding.Common.Graph.Interfaces;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Services.Graph.Serializer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo4j.Driver;
+using NSubstitute;
 
 namespace CalculateFunding.Common.Graph.UnitTests
 {
@@ -18,67 +18,93 @@ namespace CalculateFunding.Common.Graph.UnitTests
         private IDriver _driver;
         private IAsyncSession _session;
         private IAsyncTransaction _transaction;
-        private ICypherBuilderFactory _cypherBuilderFactory;
-        private ICypherBuilder _cypherBuilder;
 
         [TestInitialize]
         public void SetUp()
         {
             _driver = Substitute.For<IDriver>();
             _session = Substitute.For<IAsyncSession>();
-            _cypherBuilderFactory = Substitute.For<ICypherBuilderFactory>();
-            _cypherBuilder = Substitute.For<ICypherBuilder>();
             _transaction = Substitute.For<IAsyncTransaction>();
 
-            _cypherBuilderFactory
-                .NewCypherBuilder()
-                .Returns(_cypherBuilder);
+            _repository = new GraphRepository(new GraphDbSettingsBuilder()
+                    .Build(),
+                new CypherBuilderFactory(),
+                _driver);
 
-            _repository = new GraphRepository(new GraphDbSettingsBuilder().Build(), _cypherBuilderFactory, _driver);
-            
             _driver
                 .AsyncSession()
                 .Returns(_session);
-            
+
             _session
                 .When(_ => _.WriteTransactionAsync(Arg.Any<Func<IAsyncTransaction, Task>>()))
                 .Do(_ => _.ArgAt<Func<IAsyncTransaction, Task>>(0).Invoke(_transaction));
         }
-        
+
         [TestMethod]
         public async Task AddNodes_GivenValidNodes_SuccessfullyAddsNodesToGraph()
         {
-            await WhenAddNodes();
-            ThenIndicesCreationIsCalled();
-            ThenAddNodesCalled();
+            string nodeId = NewRandomString();
+            string index = NewRandomString();
+            dynamic[] expectedNodes = { new { nodeId } };
+            
+            await WhenTheNodesAreAdded(expectedNodes, index);
+
+            await ThenCypherWasExecutedInTheSession($"CREATE INDEX ON :object({index})\r\n");
+            await AndTheCypherWasExecutedWithParameters("UNWIND {nodes} AS object\r\n" +
+                                                                            $"MERGE(o:object{{{index}:object.{index}}})\r\n" +
+                                                                            "SET o = object\r\n",
+                ("nodes", expectedNodes));
+            await AndTheSessionWasClosed();
         }
 
         [TestMethod]
-        public async Task DeleteNode_GivemExistingNode_SuccessfullyDeletesNodeFromGraph()
+        public async Task DeleteNode_GivenExistingNode_SuccessfullyDeletesNodeFromGraph()
         {
-            await WhenDeleteNode();
-            ThenDeleteNodeCalled();
+            string field = NewRandomString();
+            string value = NewRandomString();
+
+            await WhenTheNodeIsDeleted(field, value);
+
+            await ThenTheCypherWasExecuted($"MATCH((o:object{{{field}:'{value}'}}))\r\nDETACH DELETE o\r\n");
+            await AndTheSessionWasClosed();
         }
 
         [TestMethod]
         public async Task CreateRelationship_GivenValidRelationship_SuccessfullyCreatesRelationshipInGraph()
         {
-            await WhenCreateRelationship();
-            ThenCreateRelationshipCalled();
+            string relationShipName = NewRandomString();
+            string field = NewRandomString();
+            string valueA = NewRandomString();
+            string valueB = NewRandomString();
+
+            await WhenTheRelationshipIsCreated(relationShipName, field, valueA, valueB);
+
+            await ThenTheCypherWasExecuted("MATCH(a: object),(b: object)\r\n" + "" +
+                                           $"WHERE a.{field} = '{valueA}' and b.{field} = '{valueB}'\r\n" +
+                                           $"CREATE (a) -[:{relationShipName}]->(b)\r\n");
+
+            await AndTheSessionWasClosed();
         }
 
         [TestMethod]
         public async Task DeleteRelationship_GivenValidRelationship_SuccessfullyDeleteRelationshipInGraph()
         {
-            await WhenDeleteRelationship();
-            ThenDeleteRelationshipCalled();
+            string relationShipName = NewRandomString();
+            string field = NewRandomString();
+            string valueA = NewRandomString();
+            string valueB = NewRandomString();
+
+            await WhenTheRelationshipIsDeleted(relationShipName, field, valueA, valueB);
+
+            await ThenTheCypherWasExecuted($"MATCH(a: object)-[r:{relationShipName}]->(b: object)\r\n" + "" +
+                                           $"WHERE a.{field} = '{valueA}' and b.{field} = '{valueB}'\r\n" +
+                                           "DELETE r\r\n");
+            await AndTheSessionWasClosed();
         }
 
         [TestMethod]
         public async Task DeleteNodeAndChildNodesDetachDeletesRootAndImmediateChildrenInGraphFromRootWithSuppliedFieldValue()
         {
-            GivenAConcreteCypherBuilder();
-            
             string field = NewRandomString();
             string value = NewRandomString();
 
@@ -88,12 +114,73 @@ namespace CalculateFunding.Common.Graph.UnitTests
             await AndTheSessionWasClosed();
         }
 
-        private void GivenAConcreteCypherBuilder()
+        private async Task ThenCypherWasExecutedInTheSession(string expectedCypher)
         {
-            _repository = new GraphRepository(new GraphDbSettingsBuilder()
-                .Build(), 
-                new CypherBuilderFactory(), 
-                _driver);    
+            await _session
+                .Received(1)
+                .RunAsync(expectedCypher);
+        }
+
+        private async Task AndTheCypherWasExecutedWithParameters(string expectedQueryText, 
+            params (string, object)[] expectedParameters)
+        {
+            await _transaction
+                .Received(1)
+                .RunAsync(expectedQueryText, Arg.Is<Dictionary<string, object>>(_ => 
+                    ParametersMatch(_, expectedParameters)));
+        }
+
+        private bool ParametersMatch(Dictionary<string, object> actualParameters, (string, object)[] expectedParameters)
+        {
+            Dictionary<string, IEnumerable<Dictionary<string, object>>> expectedParameterDictionaries =
+                expectedParameters.ToDictionary(_ => _.Item1, _ => ParameterSerializer.ToDictionary((IEnumerable<dynamic>) _.Item2));
+
+            foreach (KeyValuePair<string,object> actualParameter in actualParameters)
+            {
+                if (!expectedParameterDictionaries.TryGetValue(actualParameter.Key, out IEnumerable<Dictionary<string, object>> expectedValues))
+                {
+                    return false;
+                }
+
+                IEnumerable<Dictionary<string, object>> actualValues = actualParameter.Value as IEnumerable<Dictionary<string, object>>;
+
+                if (actualValues?.Count() != expectedValues.Count())
+                {
+                    return false;
+                }
+
+                if (actualValues.Any(actualValue => 
+                    !expectedValues.Contains(actualValue, new ParameterDictionaryComparer())))
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        private class ParameterDictionaryComparer : IEqualityComparer<Dictionary<string, object>>
+        {
+            public bool Equals(Dictionary<string, object> x, Dictionary<string, object> y)
+            {
+                return GetHashCode(x ?? new Dictionary<string, object>()) ==
+                       GetHashCode(y ?? new Dictionary<string, object>());
+            }
+
+            public int GetHashCode(Dictionary<string, object> obj)
+            {
+                unchecked
+                {
+                    int hashCode = 0;
+
+                    foreach (KeyValuePair<string,object> pair in obj)
+                    {
+                        hashCode = HashCode.Combine(hashCode, pair.Key.GetHashCode(), pair.Value?.GetHashCode());
+                    }
+
+                    return hashCode;
+                }
+            }
         }
 
         private async Task ThenTheCypherWasExecuted(string expectedCypher)
@@ -109,82 +196,36 @@ namespace CalculateFunding.Common.Graph.UnitTests
                 .Received(1)
                 .CloseAsync();
         }
-        
-        private void ThenDeleteNodeCalled()
-        {
-            _cypherBuilder
-                .Received(1)
-                .AddMatch("(o:object{nodeid:'nodeid'})")
-                .Received(1)
-                .AddDetachDelete("o");
-        }
-
-        private void ThenAddNodesCalled()
-        {
-            _cypherBuilder
-                .Received(1)
-                .AddUnwind("{nodes} AS object")
-                .Received(1)
-                .AddMerge("o:object{nodeid:object.nodeid}")
-                .Received(1)
-                .AddSet("o = object");
-        }
-
-        private void ThenIndicesCreationIsCalled()
-        {
-            _cypherBuilder
-                .Received(1)
-                .AddCreate("INDEX ON :object(nodeid)");
-        }
-
-        private void ThenCreateRelationshipCalled()
-        {
-            _cypherBuilder
-                .Received(1)
-                .AddMatch("a: object),(b: object")
-                .Received(1)
-                .AddWhere("a.nodeid = 'node1' and b.nodeid = 'node2'")
-                .Received(1)
-                .AddCreate($"(a) -[:noderelation]->(b)");
-        }
-
-        private void ThenDeleteRelationshipCalled()
-        {
-            _cypherBuilder
-                .Received(1)
-                .AddMatch("a: object)-[r:noderelation]->(b: object")
-                .Received(1)
-                .AddWhere("a.nodeid = 'node1' and b.nodeid = 'node2'")
-                .Received(1)
-                .AddDelete($"r");
-        }
 
         private async Task WhenTheNodeAndChildrenAreDeleted(string field, string value)
         {
             await _repository.DeleteNodeAndChildNodes<dynamic>(field, value);
         }
-        
-        private async Task WhenCreateRelationship()
+
+        private async Task WhenTheRelationshipIsCreated(string relationShipName, string field, string valueA, string valueB)
         {
-            await _repository.UpsertRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
+            await _repository.UpsertRelationship<dynamic, dynamic>(relationShipName,
+                (field, valueA),
+                (field, valueB));
         }
 
-        private async Task WhenDeleteRelationship()
+        private async Task WhenTheRelationshipIsDeleted(string relationShipName, string field, string valueA, string valueB)
         {
-            await _repository.DeleteRelationship<dynamic, dynamic>("noderelation", ("nodeid", "node1"), ("nodeid", "node2"));
+            await _repository.DeleteRelationship<dynamic, dynamic>(relationShipName,
+                (field, valueA),
+                (field, valueB));
         }
 
-        private async Task WhenDeleteNode()
+        private async Task WhenTheNodeIsDeleted(string field, string value)
         {
-            await _repository.DeleteNode<dynamic>("nodeid", "nodeid");
+            await _repository.DeleteNode<dynamic>(field, value);
         }
 
-        private async Task WhenAddNodes()
+        private async Task WhenTheNodesAreAdded(IEnumerable<dynamic> nodes, params string[] indices)
         {
-            List<dynamic> nodes = new List<dynamic> { new { nodeid = "nodeid" } };
-            await _repository.UpsertNodes(nodes, new string[] { "nodeid" });
+            await _repository.UpsertNodes(nodes, indices);
         }
-        
-        private string NewRandomString() => new RandomString();
+
+        private string NewRandomString() =>  new RandomString();
     }
 }

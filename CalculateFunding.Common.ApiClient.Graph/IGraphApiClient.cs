@@ -25,5 +25,17 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
         Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId);
         Task<HttpStatusCode> DeleteAllForSpecification(string specificationId);
+        Task<HttpStatusCode> UpsertDataset(Dataset dataset);
+        Task<HttpStatusCode> DeleteDataset(string datasetId);
+        Task<HttpStatusCode> UpsertDatasetDefinition(DatasetDefinition definition);
+        Task<HttpStatusCode> DeleteDatasetDefinition(string definitionId);
+        Task<HttpStatusCode> UpsertDataFields(DataField field);
+        Task<HttpStatusCode> UpsertDataDefinitionDatasetRelationship(string definitionId, string datasetId);
+        Task<HttpStatusCode> DeleteDataDefinitionDatasetRelationship(string definitionId, string datasetId);
+        Task<HttpStatusCode> DeleteDatasetDataFieldRelationship(string datasetId, string fieldId);
+        Task<HttpStatusCode> CreateSpecificationDatasetRelationship(string specificationId, string datasetId);
+        Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
+        Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
+        Task<HttpStatusCode> CreateCalculationDataFieldRelationship(string calculationId, string fieldId);
     }
 }

@@ -3,12 +3,9 @@ using CalculateFunding.Common.Utility;
 using CalculateFunding.Services.Graph.Serializer;
 using CalculateFunding.Common.Extensions;
 using Neo4j.Driver;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.Graph
@@ -26,9 +23,9 @@ namespace CalculateFunding.Common.Graph
             Guard.IsNullOrWhiteSpace(graphDbSettings.Password, nameof(graphDbSettings.Password));
             Guard.ArgumentNotNull(cypherBuilderFactory, nameof(cypherBuilderFactory));
 
-            IAuthToken authtoken = AuthTokens.Basic(graphDbSettings.Username, graphDbSettings.Password);
+            IAuthToken authToken = AuthTokens.Basic(graphDbSettings.Username, graphDbSettings.Password);
 
-            _driver = driver ?? GraphDatabase.Driver(graphDbSettings.Url, authtoken);
+            _driver = driver ?? GraphDatabase.Driver(graphDbSettings.Url, authToken);
             _cypherBuilderFactory = cypherBuilderFactory;
         }
 
