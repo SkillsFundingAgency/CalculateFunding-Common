@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CalculateFunding.Common.Models
 {
@@ -15,5 +12,8 @@ namespace CalculateFunding.Common.Models
 
         [JsonProperty("service")]
         public string Service { get; set; }
+        
+        [JsonProperty("buildNumber")]
+        public string BuildNumber { get; set; }
     }
 }
