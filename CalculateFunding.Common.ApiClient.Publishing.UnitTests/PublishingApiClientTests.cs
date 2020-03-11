@@ -30,6 +30,38 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task SavePaymentDates()
+        {
+            string csv = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+            
+            GivenTheStatusCode($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates",
+                expectedStatusCode, HttpMethod.Post);
+
+            HttpStatusCode actualStatusCode = await _client.SavePaymentDates(csv, fundingStreamId, fundingPeriodId);
+
+            actualStatusCode
+                .Should()
+                .Be(expectedStatusCode);
+            
+            AndTheRequestContentsShouldHaveBeen(csv);
+        }
+
+        [TestMethod]
+        public async Task GetPaymentDates()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+
+            await AssertGetRequest($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates",
+                new FundingStreamPaymentDates(),
+                () => _client.GetPaymentDates(fundingStreamId, fundingPeriodId));
+        }
+
+        [TestMethod]
         public async Task GetLatestProfileTotalsGetsProfileTotals()
         {
             string fundingStreamId = NewRandomString();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -16,6 +17,25 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         : base(httpClientFactory, HttpClientKeys.Publishing, logger, cancellationTokenProvider)
         { }
 
+        public async Task<HttpStatusCode> SavePaymentDates(string paymentDatesCsv, string fundingStreamId, string fundingPeriodId)
+        {
+            Guard.IsNullOrWhiteSpace(paymentDatesCsv, nameof(paymentDatesCsv));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            
+            return await PostAsync($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates", 
+                default, 
+                paymentDatesCsv);
+        }
+        
+        public async Task<ApiResponse<FundingStreamPaymentDates>> GetPaymentDates(string fundingStreamId, string fundingPeriodId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            
+            return await GetAsync<FundingStreamPaymentDates>($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates");
+        }
+        
         public async Task<ApiResponse<IEnumerable<ProfileTotal>>> GetLatestProfileTotals(string fundingStreamId, string fundingPeriodId, string providerId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
