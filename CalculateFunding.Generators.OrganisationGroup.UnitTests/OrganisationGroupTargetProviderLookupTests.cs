@@ -322,7 +322,17 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(0);
+                .Be(1);
+
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
+               .Should()
+               .Be(true);
+
+            group.Identifiers.Should().ContainEquivalentOf(new OrganisationIdentifier()
+            {
+                Type = Enums.OrganisationGroupTypeIdentifier.LACode,
+                Value = "101"
+            });
         }
 
         [TestMethod]
