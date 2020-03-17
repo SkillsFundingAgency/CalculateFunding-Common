@@ -196,22 +196,20 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/fundingstream-id-for-specifications");
         }
 
-        //TODO; these are currently wrong - FIX in subsequent PR
         public async Task<ApiResponse<bool>> DeleteSpecificationById(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await GetAsync<bool>(
-                $"{UrlRoot}?specificationId={specificationId}");
+                $"{UrlRoot}/{specificationId}");
         }
 
-        //TODO; these are currently wrong - FIX in subsequent PR
         public async Task<ApiResponse<bool>> PermanentDeleteSpecificationById(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await GetAsync<bool>(
-                $"{UrlRoot}?specificationId={specificationId}/permanent");
+                $"{UrlRoot}/{specificationId}/permanent");
         }
 
         public async Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> GetProfileVariationPointers(string specificationId)

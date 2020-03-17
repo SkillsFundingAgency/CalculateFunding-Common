@@ -413,7 +413,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         {
             string id = NewRandomString();
             
-            GivenThePrimitiveResponse($"?specificationId={id}", expectedResponse, HttpMethod.Get);
+            GivenThePrimitiveResponse($"{id}", expectedResponse, HttpMethod.Get);
 
             ApiResponse<bool> apiResponse = await _client.DeleteSpecificationById(id);
 
@@ -429,7 +429,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         {
             string id = NewRandomString();
             
-            GivenThePrimitiveResponse($"?specificationId={id}/permanent", expectedResponse, HttpMethod.Get);
+            GivenThePrimitiveResponse($"{id}/permanent", expectedResponse, HttpMethod.Get);
 
             ApiResponse<bool> apiResponse = await _client.PermanentDeleteSpecificationById(id);
 
