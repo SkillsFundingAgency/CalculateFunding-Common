@@ -18,6 +18,31 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
          : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
         { }
+        
+        public async Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
+            CalculationType calculationType,
+            string searchTerm = null,
+            int? page = null)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            
+            string url = $"specifications/{specificationId}/calculations/calculationType/{calculationType}";
+            bool hasQueryString = false;
+            
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                hasQueryString = true;
+                
+                url = $"{url}?searchTerm={ WebUtility.UrlEncode(searchTerm)}";
+            }
+
+            if (page.HasValue)
+            {
+                url = hasQueryString ? $"{url}&page={page}" : $"{url}?page={page}";
+            }
+            
+            return await GetAsync<SearchResults<CalculationSearchResult>>(url);
+        }	
 
         public async Task<ApiResponse<IEnumerable<CalculationSummary>>> GetCalculationSummariesForSpecification(string specificationId)
         {

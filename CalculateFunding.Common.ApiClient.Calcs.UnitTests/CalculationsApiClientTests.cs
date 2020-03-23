@@ -25,6 +25,29 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             _client = new CalculationsApiClient(ClientFactory,
                 Logger.None);
         }
+        
+        [TestMethod]
+        [DataRow("spec1", CalculationType.Additional, null, 10, 
+            "specifications/spec1/calculations/calculationType/Additional?page=10")]
+        [DataRow("spec2", CalculationType.Template, "find me", null, 
+            "specifications/spec2/calculations/calculationType/Template?searchTerm=find+me")]
+        [DataRow("spec3", CalculationType.Additional, "and find me", 20,
+            "specifications/spec3/calculations/calculationType/Additional?searchTerm=and+find+me&page=20")]
+        [DataRow("spec4", CalculationType.Template, null, null, 
+            "specifications/spec4/calculations/calculationType/Template")]
+        public async Task SearchCalculationsForSpecification(string specificationId,
+            CalculationType calculationType,
+            string searchTerm,
+            int? page,
+            string expectedUri)
+        {
+            await AssertGetRequest(expectedUri,
+                new SearchResults<CalculationSearchResult>(),
+                () => _client.SearchCalculationsForSpecification(specificationId,
+                    calculationType,
+                    searchTerm,
+                    page));
+        }
 
         [TestMethod]
         public async Task GetCalculationSummariesForSpecification()
