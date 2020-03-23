@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Calcs.Models.Code;
-using CalculateFunding.Common.ApiClient.Models;
+using  CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Serilog;
@@ -21,6 +21,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         
         public async Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
             CalculationType calculationType,
+            PublishStatus? status,
             string searchTerm = null,
             int? page = null)
         {
@@ -39,6 +40,13 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             if (page.HasValue)
             {
                 url = hasQueryString ? $"{url}&page={page}" : $"{url}?page={page}";
+                
+                hasQueryString = true;
+            }
+
+            if (status.HasValue)
+            {
+                url = hasQueryString ? $"{url}&status={status}" : $"{url}?status={status}";
             }
             
             return await GetAsync<SearchResults<CalculationSearchResult>>(url);

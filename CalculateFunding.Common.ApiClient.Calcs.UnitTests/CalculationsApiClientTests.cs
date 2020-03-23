@@ -27,16 +27,19 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         }
         
         [TestMethod]
-        [DataRow("spec1", CalculationType.Additional, null, 10, 
+        [DataRow("spec1", CalculationType.Additional, null, null, 10, 
             "specifications/spec1/calculations/calculationType/Additional?page=10")]
-        [DataRow("spec2", CalculationType.Template, "find me", null, 
+        [DataRow("spec2", CalculationType.Template, null, "find me", null, 
             "specifications/spec2/calculations/calculationType/Template?searchTerm=find+me")]
-        [DataRow("spec3", CalculationType.Additional, "and find me", 20,
+        [DataRow("spec3", CalculationType.Additional, null, "and find me", 20,
             "specifications/spec3/calculations/calculationType/Additional?searchTerm=and+find+me&page=20")]
-        [DataRow("spec4", CalculationType.Template, null, null, 
-            "specifications/spec4/calculations/calculationType/Template")]
+        [DataRow("spec3", CalculationType.Additional, PublishStatus.Updated, "and find me", 20,
+            "specifications/spec3/calculations/calculationType/Additional?searchTerm=and+find+me&page=20&status=Updated")]
+        [DataRow("spec4", CalculationType.Template, PublishStatus.Approved, null, null,
+            "specifications/spec4/calculations/calculationType/Template?status=Approved")]
         public async Task SearchCalculationsForSpecification(string specificationId,
             CalculationType calculationType,
+            PublishStatus? status,
             string searchTerm,
             int? page,
             string expectedUri)
@@ -44,7 +47,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             await AssertGetRequest(expectedUri,
                 new SearchResults<CalculationSearchResult>(),
                 () => _client.SearchCalculationsForSpecification(specificationId,
-                    calculationType,
+                    calculationType, 
+                    status,
                     searchTerm,
                     page));
         }

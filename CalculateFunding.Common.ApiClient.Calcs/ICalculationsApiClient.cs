@@ -53,6 +53,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
         Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
             CalculationType calculationType,
+            PublishStatus? status,
             string searchTerm = null,
             int? page = null);
     }
