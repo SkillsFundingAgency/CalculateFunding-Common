@@ -8,6 +8,7 @@ using CalculateFunding.Common.ApiClient.Providers.Models.Search;
 using CalculateFunding.Common.ApiClient.Providers.ViewModels;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;

@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using CalculateFunding.Common.Graph.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace CalculateFunding.Common.Graph
 {
@@ -26,11 +29,29 @@ namespace CalculateFunding.Common.Graph
             return this;
         }
 
-        public ICypherBuilder AddMatch(string query)
+        public ICypherBuilder AddMatch(params IMatch[] matchess)
         {
-            AppendLine($"MATCH({query})");
+            AppendLine($"MATCH {string.Join(",", Matches(matchess))}");
             
             return this;
+        }
+
+        private IEnumerable<string> Matches(IMatch[] matches)
+        {
+            return matches.Select(x =>
+            {
+                Match match = x as Match;
+                if (match != null)
+                {
+                    return $"{match.Pattern}";
+                }
+                else
+                {
+                    MatchWithAlias alias = x as MatchWithAlias;
+
+                    return $"{alias.Alias}={alias.Pattern}";
+                }
+            });
         }
 
         public ICypherBuilder AddMerge(string query)
@@ -51,6 +72,20 @@ namespace CalculateFunding.Common.Graph
         {
             AppendLine($"CREATE {query}");
             
+            return this;
+        }
+
+        public ICypherBuilder AddReturn(string[] returns)
+        {
+            AppendLine($"RETURN {string.Join(",", returns)}");
+
+            return this;
+        }
+
+        public ICypherBuilder AddAnd(string query)
+        {
+            AppendLine($"AND {query}");
+
             return this;
         }
 

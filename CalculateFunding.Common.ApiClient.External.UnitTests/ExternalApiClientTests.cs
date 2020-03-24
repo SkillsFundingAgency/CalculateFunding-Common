@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.External.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

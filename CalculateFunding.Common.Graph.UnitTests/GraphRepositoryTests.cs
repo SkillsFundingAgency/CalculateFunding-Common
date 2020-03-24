@@ -38,6 +38,10 @@ namespace CalculateFunding.Common.Graph.UnitTests
             _session
                 .When(_ => _.WriteTransactionAsync(Arg.Any<Func<IAsyncTransaction, Task>>()))
                 .Do(_ => _.ArgAt<Func<IAsyncTransaction, Task>>(0).Invoke(_transaction));
+
+            _session
+                .When(_ => _.ReadTransactionAsync(Arg.Any<Func<IAsyncTransaction, Task<List<IRecord>>>>()))
+                .Do(_ => _.ArgAt<Func<IAsyncTransaction, Task<List<IRecord>>>>(0).Invoke(_transaction));
         }
 
         [TestMethod]
@@ -65,7 +69,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
             await WhenTheNodeIsDeleted(field, value);
 
-            await ThenTheCypherWasExecuted($"MATCH((o:object{{{field}:'{value}'}}))\r\nDETACH DELETE o\r\n");
+            await ThenTheCypherWasExecuted($"MATCH (o:object{{{field}:'{value}'}})\r\nDETACH DELETE o\r\n");
             await AndTheSessionWasClosed();
         }
 
@@ -79,7 +83,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
             await WhenTheRelationshipIsCreated(relationShipName, field, valueA, valueB);
 
-            await ThenTheCypherWasExecuted("MATCH(a: object),(b: object)\r\n" + "" +
+            await ThenTheCypherWasExecuted("MATCH (a: object),(b: object)\r\n" + "" +
                                            $"WHERE a.{field} = '{valueA}' and b.{field} = '{valueB}'\r\n" +
                                            $"CREATE (a) -[:{relationShipName}]->(b)\r\n");
 
@@ -96,7 +100,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
             await WhenTheRelationshipIsDeleted(relationShipName, field, valueA, valueB);
 
-            await ThenTheCypherWasExecuted($"MATCH(a: object)-[r:{relationShipName}]->(b: object)\r\n" + "" +
+            await ThenTheCypherWasExecuted($"MATCH (a: object)-[r:{relationShipName}]->(b: object)\r\n" + "" +
                                            $"WHERE a.{field} = '{valueA}' and b.{field} = '{valueB}'\r\n" +
                                            "DELETE r\r\n");
             await AndTheSessionWasClosed();
@@ -110,7 +114,25 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
             await WhenTheNodeAndChildrenAreDeleted(field, value);
 
-            await ThenTheCypherWasExecuted($"MATCH((o:object{{{field}:'{value}'}})-[*0..]->(x))\r\nDETACH DELETE x\r\n");
+            await ThenTheCypherWasExecuted($"MATCH ((o:object{{{field}:'{value}'}})-[*0..]->(x))\r\nDETACH DELETE x\r\n");
+            await AndTheSessionWasClosed();
+        }
+
+        [TestMethod]
+        public async Task GetCircularDependencies()
+        {
+            string field = NewRandomString();
+            string value = NewRandomString();
+
+            string query = "MATCH (e)\r\nWHERE SIZE((e)<-[:relatedto] - ()) <> 0\r\n"
+                                        + "AND SIZE(()<-[:relatedto] - (e)) <> 0\r\n"
+                                        + $"AND e.{field} = '{value}'\r\n"
+                                        + "MATCH path=(e) <-[:relatedto *]-(e)\r\n"
+                                        + "RETURN e,path\r\n";
+
+            await WhenCircularDependenciesCalled(field, value);
+            await ThenTheCypherWasExecuted(query);
+
             await AndTheSessionWasClosed();
         }
 
@@ -197,28 +219,33 @@ namespace CalculateFunding.Common.Graph.UnitTests
                 .CloseAsync();
         }
 
+        private async Task WhenCircularDependenciesCalled(string field, string value)
+        {
+            await _repository.GetCircularDependencies<dynamic, dynamic>("relatedto", new Field { Name = field, Value = value });
+        }
+
         private async Task WhenTheNodeAndChildrenAreDeleted(string field, string value)
         {
-            await _repository.DeleteNodeAndChildNodes<dynamic>(field, value);
+            await _repository.DeleteNodeAndChildNodes<dynamic>(new Field { Name = field, Value = value });
         }
 
         private async Task WhenTheRelationshipIsCreated(string relationShipName, string field, string valueA, string valueB)
         {
             await _repository.UpsertRelationship<dynamic, dynamic>(relationShipName,
-                (field, valueA),
-                (field, valueB));
+                (new Field { Name = field, Value = valueA }),
+                (new Field { Name = field, Value = valueB }));
         }
 
         private async Task WhenTheRelationshipIsDeleted(string relationShipName, string field, string valueA, string valueB)
         {
             await _repository.DeleteRelationship<dynamic, dynamic>(relationShipName,
-                (field, valueA),
-                (field, valueB));
+                (new Field { Name = field, Value = valueA }),
+                (new Field { Name = field, Value = valueB }));
         }
 
         private async Task WhenTheNodeIsDeleted(string field, string value)
         {
-            await _repository.DeleteNode<dynamic>(field, value);
+            await _repository.DeleteNode<dynamic>(new Field { Name = field, Value = value });
         }
 
         private async Task WhenTheNodesAreAdded(IEnumerable<dynamic> nodes, params string[] indices)

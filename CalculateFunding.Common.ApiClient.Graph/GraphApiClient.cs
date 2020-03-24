@@ -1,6 +1,8 @@
 ﻿using CalculateFunding.Common.ApiClient.Graph.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Collections.Generic;
 using System.Net;
@@ -176,6 +178,14 @@ namespace CalculateFunding.Common.ApiClient.Graph
             string url = $"{UrlRoot}/calculation/{calculationId}/relationships/calculations";
 
             return await PostAsync(url, calculationIds);
+        }
+
+        public async Task<ApiResponse<IEnumerable<Entity<Calculation, JObject>>>> GetCircularDependencies(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            string url = $"{UrlRoot}/calculations/circulardependencies/{specificationId}";
+
+            return await GetAsync<IEnumerable<Entity<Calculation, JObject>>>(url);
         }
 
         public async Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB)

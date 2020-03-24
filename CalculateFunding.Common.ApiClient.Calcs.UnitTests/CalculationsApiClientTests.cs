@@ -7,6 +7,7 @@ using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Calcs.Models.Code;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;

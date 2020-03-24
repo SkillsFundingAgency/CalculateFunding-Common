@@ -31,6 +31,27 @@ namespace CalculateFunding.Common.Graph
 
         private IAsyncSession AsyncSession() => _driver.AsyncSession();
 
+        public async Task<IEnumerable<Entity<TNode, TRelationship>>> GetCircularDependencies<TNode, TRelationship>(string relationShip, IField field) 
+            where TNode : class 
+            where TRelationship : class
+        { 
+            IAsyncSession session = AsyncSession();
+
+            try
+            {
+                string cypher = GetCircularDependencyCypher(relationShip, field);
+                List<IRecord> records = await session.ReadTransactionAsync(tx => RunCypherWithResults(tx, cypher));
+                return records?.Select(_ => new Entity<TNode, TRelationship> { 
+                    Node = _[0].As<INode>().Properties.AsJson().AsPoco<TNode>(), 
+                    Relationship = _[1].AsJson().AsPoco<TRelationship>()
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
         public async Task UpsertNodes<T>(IEnumerable<T> nodes, IEnumerable<string> indices = null)
         {
             IAsyncSession session = AsyncSession();
@@ -59,28 +80,28 @@ namespace CalculateFunding.Common.Graph
             }
         }
 
-        public async Task DeleteNodeAndChildNodes<T>(string field, string value)
+        public async Task DeleteNodeAndChildNodes<T>(IField field)
         {
-            string cypher = RemoveNodeAndChildrenCypher<T>(field, value);
+            string cypher = RemoveNodeAndChildrenCypher<T>(field);
 
             await ExecuteCypher(cypher);
         }
 
-        public async Task DeleteNode<T>(string field, string value)
+        public async Task DeleteNode<T>(IField field)
         {
-            string cypher = RemoveNodeCypher<T>(field, value);
+            string cypher = RemoveNodeCypher<T>(field.Name, field.Value);
 
             await ExecuteCypher(cypher);
         }
 
-        public async Task UpsertRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        public async Task UpsertRelationship<A, B>(string relationShipName, IField left, IField right)
         {
             string cypher = UpsertRelationshipCypher<A, B>(relationShipName, left, right);
             
             await ExecuteCypher(cypher);
         }
 
-        public async Task DeleteRelationship<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        public async Task DeleteRelationship<A, B>(string relationShipName, IField left, IField right)
         {
             string cypher = DeleteRelationshipCypher<A, B>(relationShipName, left, right);
 
@@ -101,14 +122,27 @@ namespace CalculateFunding.Common.Graph
             }    
         }
 
-        private string RemoveNodeAndChildrenCypher<T>(string field, string value)
+        private string RemoveNodeAndChildrenCypher<T>(IField field)
         {
             string nodeName = typeof(T).Name.ToLowerInvariant();
 
             return _cypherBuilderFactory
                 .NewCypherBuilder()
-                .AddMatch($"({nodeName[0]}:{nodeName}{{{field}:'{value}'}})-[*0..]->(x)")
+                .AddMatch(new[] { new Match { Pattern = $"(({nodeName[0]}:{nodeName}{{{field.Name}:'{field.Value}'}})-[*0..]->(x))" } })
                 .AddDetachDelete("x")
+                .ToString();
+        }
+
+        private string GetCircularDependencyCypher(string relationShip, IField field)
+        {
+            return _cypherBuilderFactory
+                .NewCypherBuilder()
+                .AddMatch(new[] { new Match { Pattern = "(e)" } })
+                .AddWhere($"SIZE((e)<-[:{relationShip}] - ()) <> 0")
+                .AddAnd($"SIZE(()<-[:{relationShip}] - (e)) <> 0")
+                .AddAnd($"e.{field.Name} = '{field.Value}'")
+                .AddMatch(new[] { new MatchWithAlias { Alias = "path", Pattern = $"(e) <-[:{relationShip} *]-(e)" } })
+                .AddReturn(new[] { "e", "path" })
                 .ToString();
         }
 
@@ -117,7 +151,7 @@ namespace CalculateFunding.Common.Graph
             string objectName = typeof(T).Name.ToLowerInvariant();
             return _cypherBuilderFactory
                 .NewCypherBuilder()
-                .AddMatch($"({objectName[0]}:{objectName}{{{field}:'{value}'}})")
+                .AddMatch(new[] { new Match { Pattern = $"({objectName[0]}:{objectName}{{{field}:'{value}'}})" } })
                 .AddDetachDelete($"{objectName[0]}")
                 .ToString();
         }
@@ -133,28 +167,28 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string UpsertRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        private string UpsertRelationshipCypher<A, B>(string relationShipName, IField left, IField right)
         {
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();
 
             return _cypherBuilderFactory
                 .NewCypherBuilder()
-                .AddMatch($"a: {objectAName}),(b: {objectBName}")
-                .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
+                .AddMatch(new[] { new Match { Pattern = $"(a: {objectAName}),(b: {objectBName})" } })
+                .AddWhere($"a.{left.Name} = '{left.Value}' and b.{right.Name} = '{right.Value}'")
                 .AddCreate($"(a) -[:{relationShipName}]->(b)")
                 .ToString();
         }
 
-        private string DeleteRelationshipCypher<A, B>(string relationShipName, (string field, string value) left, (string field, string value) right)
+        private string DeleteRelationshipCypher<A, B>(string relationShipName, IField left, IField right)
         {
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();
 
             return _cypherBuilderFactory
                 .NewCypherBuilder()
-                .AddMatch($"a: {objectAName})-[r:{relationShipName}]->(b: {objectBName}")
-                .AddWhere($"a.{left.field} = '{left.value}' and b.{right.field} = '{right.value}'")
+                .AddMatch(new[] { new Match { Pattern = $"(a: {objectAName})-[r:{relationShipName}]->(b: {objectBName})" } })
+                .AddWhere($"a.{left.Name} = '{left.Value}' and b.{right.Name} = '{right.Value}'")
                 .AddDelete("r")
                 .ToString();
         }
@@ -169,6 +203,22 @@ namespace CalculateFunding.Common.Graph
             {
                 await tx.RunAsync(cypher);
             }
+        }
+
+        private async Task<List<IRecord>> RunCypherWithResults(IAsyncTransaction tx, string cypher, Dictionary<string, object> parameters = null)
+        {
+            IResultCursor result;
+
+            if (parameters != null)
+            {
+                result = await tx.RunAsync(cypher, parameters);
+            }
+            else
+            {
+                result = await tx.RunAsync(cypher);
+            }
+
+            return await result?.ToListAsync();
         }
 
         public void Dispose()

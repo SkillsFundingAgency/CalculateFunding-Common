@@ -6,8 +6,8 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Neo4js Graph Client</Description>
-    <Version>1.0.5</Version>
-    <PackageVersion>1.0.5</PackageVersion>
+    <Version>1.0.6</Version>
+    <PackageVersion>1.0.6</PackageVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 

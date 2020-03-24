@@ -1,0 +1,5 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <FrameworkUtilisationTypeForMSTest>UseDynamicAnalysis</FrameworkUtilisationTypeForMSTest>
+  </Settings>
+</ProjectConfiguration>

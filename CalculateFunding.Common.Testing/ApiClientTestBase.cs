@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Bearer;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Models.Search;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

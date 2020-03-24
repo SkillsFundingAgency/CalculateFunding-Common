@@ -10,6 +10,7 @@ using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Models.Versioning;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

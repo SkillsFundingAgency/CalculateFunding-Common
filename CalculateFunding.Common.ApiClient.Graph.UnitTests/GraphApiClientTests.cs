@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Graph.Models;
 using CalculateFunding.Common.Testing;
+using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;

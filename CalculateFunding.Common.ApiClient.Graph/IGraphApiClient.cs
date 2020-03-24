@@ -1,4 +1,6 @@
 ﻿using CalculateFunding.Common.ApiClient.Graph.Models;
+using CalculateFunding.Common.ApiClient.Models;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -37,5 +39,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> CreateCalculationDataFieldRelationship(string calculationId, string fieldId);
+
+        Task<ApiResponse<IEnumerable<Entity<Calculation, JObject>>>> GetCircularDependencies(string specificationId);
     }
 }
