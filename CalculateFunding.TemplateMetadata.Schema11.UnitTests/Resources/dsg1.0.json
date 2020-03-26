@@ -1,0 +1,78 @@
+{
+  "$schema": "https://fundingschemas.blob.core.windows.net/schemas/logicalmodel-1.1.json#schema",
+  "schemaVersion": "1.1",
+  "fundingStreamTemplate": {
+    "templateStatus": "Draft",
+    "templateStatusChangedDate": "2020-03-25T10:00:06.6338431Z",
+    "templateVersion": "1.0",
+    "fundingStream": {
+      "code": "DSG",
+      "name": "Dedicated Schools Grant"
+    },
+    "fundingLines": [
+      {
+        "name": "Funding Line 1",
+        "fundingLineCode": "DSG-001",
+        "templateLineId": 1,
+        "type": "Information",
+        "aggregationType": "Sum",
+        "valueType": "String",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "name": "New Calc 11111",
+            "type": "PupilNumber",
+            "aggregationType": "Average",
+            "templateCalculationId": 2,
+            "valueType": "Decimal",
+            "valueFormat": "Percentage",
+            "calculations": [
+              {
+                "name": "Child Calculation 33333",
+                "type": "Rate",
+                "aggregationType": "None",
+                "formulaText": null,
+                "templateCalculationId": 4,
+                "valueType": "String",
+                "valueFormat": "Number",
+                "calculations": [
+                  {
+                    "name": "New Calc 44444",
+                    "type": "PupilNumber",
+                    "aggregationType": "Sum",
+                    "formulaText": null,
+                    "templateCalculationId": 5,
+                    "valueType": "Percentage",
+                    "valueFormat": "Currency",
+                    "calculations": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Funding Line 2",
+        "fundingLineCode": "DSG-002",
+        "templateLineId": 6,
+        "type": "Payment",
+        "aggregationType": "Average",
+        "valueType": "Decimal",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "name": "New Calc 77777",
+            "type": "Weighting",
+            "aggregationType": "Sum",
+            "formulaText": "1 + 1 = 7",
+            "templateCalculationId": 7,
+            "valueType": "Date",
+            "valueFormat": "Percentage",
+            "calculations": []
+          }
+        ]
+      }
+    ]
+  }
+}
