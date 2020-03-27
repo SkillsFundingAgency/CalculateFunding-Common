@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema11.UnitTests\CalculateFunding.Common.TemplateMetadata.Schema11.UnitTests.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema11\CalculateFunding.Common.TemplateMetadata.Schema11.csproj" />
   </ItemGroup>
 
 </Project>

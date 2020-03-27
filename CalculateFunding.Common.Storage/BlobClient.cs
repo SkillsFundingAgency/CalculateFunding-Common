@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
-using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Newtonsoft.Json;
 
@@ -14,27 +13,19 @@ namespace CalculateFunding.Common.Storage
     {
         private readonly Lazy<CloudBlobContainer> _container;
         private readonly BlobStorageOptions _azureStorageSettings;
+        private readonly IBlobContainerRepository _blobContainerRepository;
 
-        public BlobClient(BlobStorageOptions blobStorageSettings)
+        public BlobClient(BlobStorageOptions blobStorageSettings, IBlobContainerRepository blobContainerRepository)
         {
             Guard.ArgumentNotNull(blobStorageSettings, nameof(blobStorageSettings));
             Guard.IsNullOrWhiteSpace(blobStorageSettings.ConnectionString, nameof(blobStorageSettings.ConnectionString));
             Guard.IsNullOrWhiteSpace(blobStorageSettings.ContainerName, nameof(blobStorageSettings.ContainerName));
+            Guard.ArgumentNotNull(blobContainerRepository, nameof(blobContainerRepository));
 
             _azureStorageSettings = blobStorageSettings;
-            
-            _container = new Lazy<CloudBlobContainer>(() => GetCloudBlobContainer());
-        }
+            _blobContainerRepository = blobContainerRepository;
 
-        private CloudBlobContainer GetCloudBlobContainer(string containerName = null)
-        {
-            CloudStorageAccount credentials = CloudStorageAccount.Parse(_azureStorageSettings.ConnectionString);
-            CloudBlobClient client = credentials.CreateCloudBlobClient();
-            CloudBlobContainer container = client.GetContainerReference(containerName?.ToLower() ?? _azureStorageSettings.ContainerName.ToLower());
-
-            container.CreateIfNotExists();
-
-            return container;
+            _container = new Lazy<CloudBlobContainer>(() => _blobContainerRepository.GetCloudBlobContainer(_azureStorageSettings));
         }
 
         public async Task BatchProcessBlobs(Func<IEnumerable<IListBlobItem>, Task> batchProcessor, 
@@ -196,7 +187,16 @@ namespace CalculateFunding.Common.Storage
 
         private CloudBlobContainer GetContainer(string containerName = null)
         {
-            return containerName.IsNullOrEmpty() ? _container.Value : GetCloudBlobContainer(containerName);
+            return containerName.IsNullOrEmpty() ? 
+                _container.Value : 
+                _blobContainerRepository.GetCloudBlobContainer(_azureStorageSettings, containerName);
+        }
+
+        public IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None)
+        {
+            CloudBlobContainer container = GetContainer(containerName);
+
+            return container.ListBlobs(prefix, useFlatBlobListing, blobListingDetails);
         }
     }
 }

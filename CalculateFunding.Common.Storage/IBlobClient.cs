@@ -37,5 +37,7 @@ namespace CalculateFunding.Common.Storage
         Task BatchProcessBlobs(Func<IEnumerable<IListBlobItem>, Task> batchProcessor, 
             string containerName = null, 
             int batchSize = 50);
+
+        IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None);
     }
 }

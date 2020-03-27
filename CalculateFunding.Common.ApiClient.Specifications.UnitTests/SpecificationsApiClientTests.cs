@@ -438,7 +438,72 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 .Should()
                 .Be(expectedResponse); 
         }
-        
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task GetReportMetadataForSpecificationsAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(
+        string specificationId)
+
+        {
+            Func<Task> invocation = () => WhenTheReportMetadataRetrievedBySpecificationId(specificationId);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task GetReportMetadataForSpecifications()
+        {
+            string specificationId = NewRandomString();
+
+            IEnumerable<ReportMetadata> reportMetadata = new List<ReportMetadata> { };
+
+            GivenTheResponse(GetReportMetadataBySpecificationId(specificationId), reportMetadata, HttpMethod.Get);
+
+            await AssertGetRequest(GetReportMetadataBySpecificationId(specificationId),
+                reportMetadata,
+                () => _client.GetReportMetadataForSpecifications(specificationId));
+        }
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task DownloadSpecificationReportAsyncThrowsExceptionIfSuppliedFileNameMissing(
+            string fileName)
+
+        {
+            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(fileName, NewRandomString());
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(fileName);
+        }
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task DownloadSpecificationReportAsyncThrowsExceptionIfTypeMissing(
+            string type)
+
+        {
+            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(NewRandomString(), type);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(type);
+        }
+
+        [TestMethod]
+        public async Task DownloadSpecificationReport()
+        {
+            string fileName = NewRandomString();
+            string type = NewRandomString();
+
+            SpecificationsDownloadModel specificationsDownloadModel = new SpecificationsDownloadModel { };
+
+            GivenTheResponse(GetDownloadReportByFileNameAndType(fileName, type), specificationsDownloadModel, HttpMethod.Get);
+
+            await AssertGetRequest(GetDownloadReportByFileNameAndType(fileName, type),
+                specificationsDownloadModel,
+                () => _client.DownloadSpecificationReport(fileName, type));
+        }
+
         private static string GetSummaryByIdUriFor(string specificationId)
         {
             return $"specs/specification-summary-by-id?specificationId={specificationId}";
@@ -449,6 +514,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return $"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}";
         }
 
+        private static string GetDownloadReportByFileNameAndType(string fileName, string type)
+        {
+            return $"download-report/{fileName}/{type}";
+        }
+
+        private static string GetReportMetadataBySpecificationId(string specificationId)
+        {
+            return $"{specificationId}/report-metadata";
+        }
+
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
@@ -457,6 +532,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         private async Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> WhenTheProfileVariationPointersAreQueriedById(string specificationId)
         {
             return await _client.GetProfileVariationPointers(specificationId);
+        }
+
+        private async Task<ApiResponse<IEnumerable<ReportMetadata>>> WhenTheReportMetadataRetrievedBySpecificationId(string specificationId)
+        {
+            return await _client.GetReportMetadataForSpecifications(specificationId);
+        }
+
+        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string fileName, string type)
+        {
+            return await _client.DownloadSpecificationReport(fileName, type);
         }
 
         private async Task<ApiResponse<IEnumerable<SpecificationSummary>>> WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(
