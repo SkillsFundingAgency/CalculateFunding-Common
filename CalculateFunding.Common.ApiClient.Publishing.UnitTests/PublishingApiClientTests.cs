@@ -30,6 +30,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GetProfileHistory()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/providers/{providerId}/profilinghistory",
+                Enumerable.Empty<ProfileTotal>(),
+                () => _client.GetProfileHistory(fundingStreamId, fundingPeriodId, providerId));
+        }
+
+        [TestMethod]
         public async Task SavePaymentDates()
         {
             string csv = NewRandomString();

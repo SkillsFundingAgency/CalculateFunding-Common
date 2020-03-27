@@ -17,6 +17,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         : base(httpClientFactory, HttpClientKeys.Publishing, logger, cancellationTokenProvider)
         { }
 
+        public async Task<ApiResponse<IEnumerable<ProfileTotal>>> GetProfileHistory(string fundingStreamId,
+            string fundingPeriodId,
+            string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            return await GetAsync<IEnumerable<ProfileTotal>>(
+                $"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/providers/{providerId}/profilinghistory");
+        }
+
         public async Task<HttpStatusCode> SavePaymentDates(string paymentDatesCsv, string fundingStreamId, string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(paymentDatesCsv, nameof(paymentDatesCsv));

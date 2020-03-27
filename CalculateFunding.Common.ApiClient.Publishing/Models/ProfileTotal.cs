@@ -15,5 +15,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("value")]
         public decimal Value { get; set; }
+        
+        [JsonProperty("isPaid")]
+        public bool IsPaid { get; set; }
     }
 }
