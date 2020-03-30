@@ -111,8 +111,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.TemplateMetadata.Schema11", "CalculateFunding.Common.TemplateMetadata.Schema11\CalculateFunding.Common.TemplateMetadata.Schema11.csproj", "{28DA59E1-9744-4DBE-86D0-50A36646F163}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.TemplateMetadata.Schema11", "CalculateFunding.Common.TemplateMetadata.Schema11\CalculateFunding.Common.TemplateMetadata.Schema11.csproj", "{28DA59E1-9744-4DBE-86D0-50A36646F163}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.TemplateMetadata.Schema11.UnitTests", "CalculateFunding.TemplateMetadata.Schema11.UnitTests\CalculateFunding.TemplateMetadata.Schema11.UnitTests.csproj", "{768A8C5A-F5A9-4B12-8AE6-C65C24FF66B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Graph", "CalculateFunding.Common.Graph\CalculateFunding.Common.Graph.csproj", "{CF17F839-EDA5-4084-99D2-BC20C08AA9F0}"
