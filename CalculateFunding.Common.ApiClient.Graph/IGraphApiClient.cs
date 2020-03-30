@@ -39,7 +39,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> CreateCalculationDataFieldRelationship(string calculationId, string fieldId);
-
-        Task<ApiResponse<IEnumerable<Entity<Calculation, JObject>>>> GetCircularDependencies(string specificationId);
+        Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId);
+        Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntities(string specificationId);
     }
 }

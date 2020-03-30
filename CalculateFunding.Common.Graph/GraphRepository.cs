@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphInterfaces = CalculateFunding.Common.Graph.Interfaces;
 
 namespace CalculateFunding.Common.Graph
 {
@@ -31,25 +32,45 @@ namespace CalculateFunding.Common.Graph
 
         private IAsyncSession AsyncSession() => _driver.AsyncSession();
 
-        public async Task<IEnumerable<Entity<TNode, TRelationship>>> GetCircularDependencies<TNode, TRelationship>(string relationShip, IField field) 
-            where TNode : class 
-            where TRelationship : class
-        { 
+        public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, IField field)
+            where TNode : class
+        {
             IAsyncSession session = AsyncSession();
 
             try
             {
-                string cypher = GetCircularDependencyCypher(relationShip, field);
+                string cypher = GetCircularDependencyCypher<TNode>(relationship, field);
                 List<IRecord> records = await session.ReadTransactionAsync(tx => RunCypherWithResults(tx, cypher));
-                return records?.Select(_ => new Entity<TNode, TRelationship> { 
-                    Node = _[0].As<INode>().Properties.AsJson().AsPoco<TNode>(), 
-                    Relationship = _[1].AsJson().AsPoco<TRelationship>()
-                });
+                return records?.Select(_ => new Entity<TNode> { Node = _[0].As<INode>().Properties.AsJson().AsPoco<TNode>(), Relationships = Transform(_[1].As<IPath>()) });
             }
             finally
             {
                 await session.CloseAsync();
             }
+        }
+
+        public async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field, IEnumerable<string> relationships)
+            where TNode:class
+        {
+            IAsyncSession session = AsyncSession();
+
+            try
+            {
+                string cypher = GetAllCypher<TNode>(field, relationships);
+                List<IRecord> records = await session.ReadTransactionAsync(tx => RunCypherWithResults(tx, cypher));
+                return records?.Select(_ => new Entity<TNode> { Node = _[0].As<INode>().Properties.AsJson().AsPoco<TNode>(), Relationships = Transform(_[1].As<IPath>()) });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        private IEnumerable<GraphInterfaces.IRelationship> Transform(IPath path)
+        {
+            IDictionary<long, INode> nodes = path.Nodes.Distinct().ToDictionary(_ => _.Id);
+
+            return path.Relationships.Select(_ => new Relationship { One = nodes[_.StartNodeId].Properties, Two = nodes[_.EndNodeId].Properties, Type = _.Type });
         }
 
         public async Task UpsertNodes<T>(IEnumerable<T> nodes, IEnumerable<string> indices = null)
@@ -133,16 +154,30 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string GetCircularDependencyCypher(string relationShip, IField field)
+        private string GetCircularDependencyCypher<TNode>(string relationShip, IField field)
         {
+            string nodeName = typeof(TNode).Name.ToLowerInvariant();
+
             return _cypherBuilderFactory
                 .NewCypherBuilder()
-                .AddMatch(new[] { new Match { Pattern = "(e)" } })
+                .AddMatch(new[] { new Match { Pattern = $"(e:{nodeName})" } })
                 .AddWhere($"SIZE((e)<-[:{relationShip}] - ()) <> 0")
                 .AddAnd($"SIZE(()<-[:{relationShip}] - (e)) <> 0")
                 .AddAnd($"e.{field.Name} = '{field.Value}'")
                 .AddMatch(new[] { new MatchWithAlias { Alias = "path", Pattern = $"(e) <-[:{relationShip} *]-(e)" } })
-                .AddReturn(new[] { "e", "path" })
+                .AddReturn(new[] { "e, path" })
+                .ToString();
+        }
+
+        private string GetAllCypher<TNode>(IField field, IEnumerable<string> relationships)
+            where TNode:class
+        {
+            string node = typeof(TNode).Name.ToLowerInvariant();
+            return _cypherBuilderFactory.NewCypherBuilder()
+                .AddMatch(new[] { new Match { Pattern = $"(e:{node})" } })
+                .AddWhere($"e.{field.Name} = '{field.Value}'")
+                .AddMatch(new[] { new MatchWithAlias { Alias = "path", Pattern = $"(e) <-[{string.Join('|',relationships.Select(_ => $":{_}"))} *]-()" } })
+                .AddReturn(new[] { "e, path" })
                 .ToString();
         }
 
@@ -176,7 +211,7 @@ namespace CalculateFunding.Common.Graph
                 .NewCypherBuilder()
                 .AddMatch(new[] { new Match { Pattern = $"(a: {objectAName}),(b: {objectBName})" } })
                 .AddWhere($"a.{left.Name} = '{left.Value}' and b.{right.Name} = '{right.Value}'")
-                .AddCreate($"(a) -[:{relationShipName}]->(b)")
+                .AddMerge($"(a) -[:{relationShipName}]->(b)")
                 .ToString();
         }
 

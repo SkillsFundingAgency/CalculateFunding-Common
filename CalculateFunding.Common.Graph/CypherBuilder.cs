@@ -31,7 +31,7 @@ namespace CalculateFunding.Common.Graph
 
         public ICypherBuilder AddMatch(params IMatch[] matchess)
         {
-            AppendLine($"MATCH {string.Join(",", Matches(matchess))}");
+            AppendLine($"MATCH {string.Join("-", Matches(matchess))}");
             
             return this;
         }

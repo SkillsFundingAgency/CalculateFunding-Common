@@ -85,7 +85,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
             await ThenTheCypherWasExecuted("MATCH (a: object),(b: object)\r\n" + "" +
                                            $"WHERE a.{field} = '{valueA}' and b.{field} = '{valueB}'\r\n" +
-                                           $"CREATE (a) -[:{relationShipName}]->(b)\r\n");
+                                           $"MERGE((a) -[:{relationShipName}]->(b))\r\n");
 
             await AndTheSessionWasClosed();
         }
@@ -124,13 +124,30 @@ namespace CalculateFunding.Common.Graph.UnitTests
             string field = NewRandomString();
             string value = NewRandomString();
 
-            string query = "MATCH (e)\r\nWHERE SIZE((e)<-[:relatedto] - ()) <> 0\r\n"
+            string query = "MATCH (e:object)\r\nWHERE SIZE((e)<-[:relatedto] - ()) <> 0\r\n"
                                         + "AND SIZE(()<-[:relatedto] - (e)) <> 0\r\n"
                                         + $"AND e.{field} = '{value}'\r\n"
                                         + "MATCH path=(e) <-[:relatedto *]-(e)\r\n"
-                                        + "RETURN e,path\r\n";
+                                        + "RETURN e, path\r\n";
 
             await WhenCircularDependenciesCalled(field, value);
+            await ThenTheCypherWasExecuted(query);
+
+            await AndTheSessionWasClosed();
+        }
+
+        [TestMethod]
+        public async Task GetAllEntities()
+        {
+            string field = NewRandomString();
+            string value = NewRandomString();
+
+            string query = "MATCH (e:object)\r\n" +
+                $"WHERE e.{field} = '{value}'\r\n" +
+                "MATCH path=(e) <-[:connectto|:connectfrom *]-()\r\n" +
+                "RETURN e, path\r\n";
+
+            await WhenGetAllEntitiesCalled(field, value, new[] { "connectto", "connectfrom" });
             await ThenTheCypherWasExecuted(query);
 
             await AndTheSessionWasClosed();
@@ -221,7 +238,12 @@ namespace CalculateFunding.Common.Graph.UnitTests
 
         private async Task WhenCircularDependenciesCalled(string field, string value)
         {
-            await _repository.GetCircularDependencies<dynamic, dynamic>("relatedto", new Field { Name = field, Value = value });
+            await _repository.GetCircularDependencies<dynamic>("relatedto", new Field { Name = field, Value = value });
+        }
+
+        private async Task WhenGetAllEntitiesCalled(string field, string value, IEnumerable<string> relationships)
+        {
+            await _repository.GetAllEntities<dynamic>(new Field { Name = field, Value = value }, relationships);
         }
 
         private async Task WhenTheNodeAndChildrenAreDeleted(string field, string value)

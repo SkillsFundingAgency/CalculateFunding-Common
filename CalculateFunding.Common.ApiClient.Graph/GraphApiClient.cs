@@ -180,12 +180,20 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PostAsync(url, calculationIds);
         }
 
-        public async Task<ApiResponse<IEnumerable<Entity<Calculation, JObject>>>> GetCircularDependencies(string specificationId)
+        public async Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            string url = $"{UrlRoot}/calculations/circulardependencies/{specificationId}";
+            string url = $"{UrlRoot}/calculation/circulardependencies/{specificationId}";
 
-            return await GetAsync<IEnumerable<Entity<Calculation, JObject>>>(url);
+            return await GetAsync<IEnumerable<Entity<Calculation>>>(url);
+        }
+
+        public async Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntities(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            string url = $"{UrlRoot}/specification/getallentities/{specificationId}";
+
+            return await GetAsync<IEnumerable<Entity<Specification>>>(url);
         }
 
         public async Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB)
