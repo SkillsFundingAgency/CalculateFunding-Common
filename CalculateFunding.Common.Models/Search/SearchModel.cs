@@ -7,10 +7,10 @@ namespace CalculateFunding.Common.Models.Search
     {
         public SearchModel()
         {
-            OrderBy = Enumerable.Empty<string>();
+            OrderBy = new List<string>();
             Filters = new Dictionary<string, string[]>();
-            SearchFields = Enumerable.Empty<string>();
-            OverrideFacetFields = Enumerable.Empty<string>();
+            SearchFields = new List<string>();
+            OverrideFacetFields = new List<string>();
         }
 
         public int PageNumber { get; set; }

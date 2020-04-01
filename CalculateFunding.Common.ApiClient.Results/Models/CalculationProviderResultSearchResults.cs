@@ -8,8 +8,8 @@ namespace CalculateFunding.Common.ApiClient.Results.Models
     {
         public CalculationProviderResultSearchResults()
         {
-            Results = Enumerable.Empty<CalculationProviderResultSearchResult>();
-            Facets = Enumerable.Empty<Facet>();
+            Results = new List<CalculationProviderResultSearchResult>();
+            Facets = new List<Facet>();
         }
 
         public int TotalCount { get; set; }

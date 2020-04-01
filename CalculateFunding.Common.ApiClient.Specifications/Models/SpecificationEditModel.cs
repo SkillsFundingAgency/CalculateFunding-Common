@@ -8,7 +8,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
     {
         public SpecificationEditModel()
         {
-            FundingStreamIds = Enumerable.Empty<string>();
+            FundingStreamIds = new List<string>();
         }
         /// <summary>
         /// Used to pass from the service to the validator for duplicate name lookup

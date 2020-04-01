@@ -31,6 +31,7 @@ namespace CalculateFunding.Common.Utility
             {
                 throw new ArgumentNullException(parameterName);
             }
+
         }
 
         /// <summary>

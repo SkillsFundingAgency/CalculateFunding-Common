@@ -8,7 +8,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
     {
         public DatasetVersions()
         {
-            Versions = Enumerable.Empty<int>();
+            Versions = new List<int>();
         }
 
         public int? SelectedVersion { get; set; }

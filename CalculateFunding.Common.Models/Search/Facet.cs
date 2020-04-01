@@ -7,7 +7,7 @@ namespace CalculateFunding.Common.Models.Search
     {
         public Facet()
         {
-            FacetValues = Enumerable.Empty<FacetValue>();
+            FacetValues = new List<FacetValue>();
         }
 
         public string Name { get; set; }

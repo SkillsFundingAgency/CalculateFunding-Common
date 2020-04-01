@@ -150,7 +150,7 @@ namespace CalculateFunding.Common.CosmosDb
             foreach (Document document in documents)
             {
                 dynamic json = document;
-                yield return JsonConvert.SerializeObject((object)json.Content); // haven't tried this yet!
+                yield return JsonConvert.SerializeObject((object)document); // haven't tried this yet!
             }
         }
 

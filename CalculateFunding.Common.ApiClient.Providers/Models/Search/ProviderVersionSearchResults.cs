@@ -9,8 +9,8 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
     {
         public ProviderVersionSearchResults()
         {
-            Results = Enumerable.Empty<ProviderVersionSearchResult>();
-            Facets = Enumerable.Empty<Facet>();
+            Results = new List<ProviderVersionSearchResult>();
+            Facets = new List<Facet>();
         }
 
         [JsonProperty("totalCount")]

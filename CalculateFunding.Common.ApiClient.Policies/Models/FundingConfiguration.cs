@@ -8,7 +8,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
     {
         [JsonProperty("organisationGroupings")]
         public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; }
-            = Enumerable.Empty<OrganisationGroupingConfiguration>();
+            = new List<OrganisationGroupingConfiguration>();
 
         [JsonProperty("id")]
         public string Id { get; set; }

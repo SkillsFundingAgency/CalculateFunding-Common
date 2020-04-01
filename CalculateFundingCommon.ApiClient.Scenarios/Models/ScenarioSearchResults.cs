@@ -7,7 +7,7 @@ namespace CalculateFundingCommon.ApiClient.Scenarios.Models
     {
         public ScenarioSearchResults()
         {
-            Results = Enumerable.Empty<ScenarioSearchResult>();
+            Results = new List<ScenarioSearchResult>();
         }
 
         public IEnumerable<ScenarioSearchResult> Results { get; set; }
