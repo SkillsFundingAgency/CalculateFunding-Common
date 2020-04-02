@@ -6,13 +6,13 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Azure CosmosDB Client</Description>
-    <Version>3.0.0</Version>
-    <PackageVersion>3.0.0</PackageVersion>   
+    <Version>3.0.1</Version>
+    <PackageVersion>3.0.1</PackageVersion>   
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.4.0" />
-    <PackageReference Include="Polly" Version="6.1.2" />
+    <PackageReference Include="Polly" Version="7.1.0" />
     <PackageReference Include="System.Reflection.Metadata" Version="1.8.0" />
   </ItemGroup>
 

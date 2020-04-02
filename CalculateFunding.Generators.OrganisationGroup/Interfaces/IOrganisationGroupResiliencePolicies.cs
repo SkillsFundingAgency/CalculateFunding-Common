@@ -4,6 +4,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
 {
     public interface IOrganisationGroupResiliencePolicies
     {
-        Policy ProvidersApiClient { get; set; }
+        AsyncPolicy ProvidersApiClient { get; set; }
     }
 }

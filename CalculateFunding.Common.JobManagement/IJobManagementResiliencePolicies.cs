@@ -4,6 +4,6 @@ namespace CalculateFunding.Common.JobManagement
 {
     public interface IJobManagementResiliencePolicies
     {
-        Policy JobsApiClient { get; set; }
+        AsyncPolicy JobsApiClient { get; set; }
     }
 }

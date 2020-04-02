@@ -9,23 +9,23 @@ namespace CalculateFunding.Common.CosmosDb
 {
     public static class CosmosResiliencePolicyHelper
     {
-        public static Policy GenerateCosmosPolicy(IAsyncPolicy chainedPolicy)
+        public static AsyncPolicy GenerateCosmosPolicy(IAsyncPolicy chainedPolicy)
         {
             return GenerateCosmosPolicy(new[] { chainedPolicy });
         }
 
-        public static Policy GenerateCosmosPolicy(IAsyncPolicy[] chainedPolicies = null)
+        public static AsyncPolicy GenerateCosmosPolicy(IAsyncPolicy[] chainedPolicies = null)
         {
-            Policy documentClientExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode != 429)
+            AsyncPolicy documentClientExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode != 429)
                 .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30) });
 
-            Policy requestRateTooLargeExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 429)
+            AsyncPolicy requestRateTooLargeExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 429)
                 .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(120) });
 
-            Policy opertionInProgressExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 423)
+            AsyncPolicy opertionInProgressExceptionRetry = Policy.Handle<CosmosException>(e => (int)e.StatusCode == 423)
                 .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(60) });
 
-            Policy circuitBreaker = Policy.Handle<CosmosException>().CircuitBreakerAsync(1000, TimeSpan.FromMinutes(1));
+            AsyncPolicy circuitBreaker = Policy.Handle<CosmosException>().CircuitBreakerAsync(1000, TimeSpan.FromMinutes(1));
 
             List<IAsyncPolicy> policies = new List<IAsyncPolicy>(8)
             {
@@ -40,7 +40,7 @@ namespace CalculateFunding.Common.CosmosDb
                 policies.AddRange(chainedPolicies);
             }
 
-            PolicyWrap policyWrap = Policy.WrapAsync(policies.ToArray());
+            AsyncPolicyWrap policyWrap = Policy.WrapAsync(policies.ToArray());
 
             return policyWrap;
         }

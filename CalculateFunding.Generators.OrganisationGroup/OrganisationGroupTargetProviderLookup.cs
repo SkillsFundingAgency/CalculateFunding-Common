@@ -16,7 +16,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
     public class OrganisationGroupTargetProviderLookup : IOrganisationGroupTargetProviderLookup
     {
         private readonly IProvidersApiClient _providersApiClient;
-        private readonly Policy _providersApiClientPolicy;
+        private readonly AsyncPolicy _providersApiClientPolicy;
         private readonly IDictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> _additionalIdentifierKeys;
 
         private IDictionary<string, IEnumerable<Provider>> _providers = null;

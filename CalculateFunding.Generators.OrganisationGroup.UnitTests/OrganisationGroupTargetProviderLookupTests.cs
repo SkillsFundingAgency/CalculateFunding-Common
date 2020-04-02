@@ -19,7 +19,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         private IProvidersApiClient _providersApiClient;
         private IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
         private string _providerVersionId;
-        public Policy MockCacheProviderPolicy { get; set; } = Policy.NoOpAsync();
+        public AsyncPolicy MockCacheProviderPolicy { get; set; } = Policy.NoOpAsync();
 
         [TestInitialize]
         public void Setup()

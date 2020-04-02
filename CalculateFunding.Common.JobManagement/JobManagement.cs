@@ -13,7 +13,7 @@ namespace CalculateFunding.Common.JobManagement
     public class JobManagement : IJobManagement
     {
         private readonly IJobsApiClient _jobsApiClient;
-        private readonly Policy _jobsApiClientPolicy;
+        private readonly AsyncPolicy _jobsApiClientPolicy;
         private readonly ILogger _logger;
         
         public JobManagement(IJobsApiClient jobsApiClient,
