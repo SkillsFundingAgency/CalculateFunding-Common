@@ -504,6 +504,75 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 () => _client.DownloadSpecificationReport(fileName, type));
         }
 
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task SetProfileVariationPointerAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(string specificationId)
+
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointerSet(specificationId, null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task SetProfileVariationPointerAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointerMissing()
+
+        {
+            ProfileVariationPointer profileVariationPointer = null;
+
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointerSet(NewRandomString(), profileVariationPointer);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public async Task SetProfileVariationPointer()
+        {
+            string specificationId = NewRandomString();
+            ProfileVariationPointer model = new ProfileVariationPointer();
+
+            await AssertPutRequest(SetProfileVariationPointer(specificationId),
+                HttpStatusCode.OK,
+                () => _client.SetProfileVariationPointer(specificationId, model));
+        }
+
+        [TestMethod]
+        public async Task SetProfileVariationPointers()
+        {
+            string specificationId = NewRandomString();
+            IEnumerable<ProfileVariationPointer> model = new List<ProfileVariationPointer>();
+
+            await AssertPutRequest(SetProfileVariationPointers(specificationId),
+                HttpStatusCode.OK,
+                () => _client.SetProfileVariationPointers(specificationId, model));
+        }
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task SetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(string specificationId)
+
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersSet(specificationId, null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task SetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointersMissing()
+
+        {
+            IEnumerable<ProfileVariationPointer> profileVariationPointers = null;
+
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersSet(NewRandomString(), profileVariationPointers);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>();
+        }
+
+
         private static string GetSummaryByIdUriFor(string specificationId)
         {
             return $"specs/specification-summary-by-id?specificationId={specificationId}";
@@ -524,6 +593,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return $"{specificationId}/report-metadata";
         }
 
+        private static string SetProfileVariationPointer(string specificationId)
+        {
+            return $"{specificationId}/profilevariationpointer";
+        }
+
+        private static string SetProfileVariationPointers(string specificationId)
+        {
+            return $"{specificationId}/profilevariationpointers";
+        }
+
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
@@ -542,6 +621,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string fileName, string type)
         {
             return await _client.DownloadSpecificationReport(fileName, type);
+        }
+
+        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)
+        {
+            return await _client.SetProfileVariationPointer(specificationId, profileVariationPointer);
+        }
+
+        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersSet(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        {
+            return await _client.SetProfileVariationPointers(specificationId, profileVariationPointers);
         }
 
         private async Task<ApiResponse<IEnumerable<SpecificationSummary>>> WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(

@@ -62,6 +62,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         Task<ApiResponse<IEnumerable<ProfileVariationPointer>>> GetProfileVariationPointers(string specificationId);
 
+        Task<HttpStatusCode> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer);
+
+        Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointer);
+
         Task<ApiResponse<IEnumerable<ReportMetadata>>> GetReportMetadataForSpecifications(string specificationId);
         
         Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport( string fileName, string type);

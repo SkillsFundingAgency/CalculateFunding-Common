@@ -233,5 +233,21 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await GetAsync<SpecificationsDownloadModel>($"{UrlRoot}/download-report/{fileName}/{type}");
         }
+
+        public async Task<HttpStatusCode> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
+
+            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointer");
+        }
+
+        public async Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointer)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
+
+            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers");
+        }
     }
 }
