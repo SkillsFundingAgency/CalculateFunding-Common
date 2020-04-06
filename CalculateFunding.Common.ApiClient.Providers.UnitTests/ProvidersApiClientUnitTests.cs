@@ -251,12 +251,12 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
         {
             string id = NewRandomString();
 
-            int expectedResponse = NewRandomInt();
+            bool expectedResponse = false;
             
             GivenThePrimitiveResponse($"scopedproviders/set-cached-providers/{id}/{setCachedProviders}",
-                (int?)expectedResponse, HttpMethod.Get);
+                expectedResponse, HttpMethod.Get);
 
-            ApiResponse<int?> apiResponse = await _client.PopulateProviderSummariesForSpecification(id, setCachedProviders);
+            ApiResponse<bool> apiResponse = await _client.RegenerateProviderSummariesForSpecification(id, setCachedProviders);
 
             apiResponse
                 ?.Content

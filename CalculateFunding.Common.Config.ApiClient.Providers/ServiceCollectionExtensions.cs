@@ -2,9 +2,10 @@
 using CalculateFunding.Common.ApiClient.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Polly;
 using System;
-
+using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Providers
 {

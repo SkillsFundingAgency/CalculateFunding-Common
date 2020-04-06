@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs;
@@ -81,6 +82,104 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                     LogEventLevel.Information
                 };
             }
+        }
+
+        [TestMethod]
+        public async Task WaitForJobsToCompleteWithAllJobsSucceeded_ReturnsTrue()
+        {
+            var jobsApiClient = Substitute.For<IJobsApiClient>();
+            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            var logger = Substitute.For<ILogger>();
+
+            var jobManagement = new JobManagement(jobsApiClient, logger, policies);
+
+            var jobId = "3456";
+
+            jobsApiClient
+                .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Succeeded, JobId = jobId }));
+
+            //Act
+            bool jobsComplete = await jobManagement.WaitForJobsToComplete(new[] { "PopulateScopedProviders"}, "specificationId");
+
+            //Assert
+            await jobsApiClient
+                .Received(2)
+                .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"));
+
+            jobsComplete
+                .Should()
+                .BeTrue();
+        }
+
+        [TestMethod]
+        public async Task WaitForJobsToCompleteWithNoJobsSucceeded_ReturnsFalse()
+        {
+            var jobsApiClient = Substitute.For<IJobsApiClient>();
+            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            var logger = Substitute.For<ILogger>();
+
+            var jobManagement = new JobManagement(jobsApiClient, logger, policies);
+
+            var jobId = "3456";
+
+            jobsApiClient
+                .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.InProgress, JobId = jobId }));
+
+            //Act
+            bool jobsComplete = await jobManagement.WaitForJobsToComplete(new[] { "PopulateScopedProviders" }, "specificationId", 1000, 100);
+
+            //Assert
+            jobsComplete
+                .Should()
+                .BeFalse();
+        }
+
+        [TestMethod]
+        public async Task WaitForJobsToCompleteWithNoJobsRunning_ReturnsTrue()
+        {
+            var jobsApiClient = Substitute.For<IJobsApiClient>();
+            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            var logger = Substitute.For<ILogger>();
+
+            var jobManagement = new JobManagement(jobsApiClient, logger, policies);
+
+            jobsApiClient
+                .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, null));
+
+            //Act
+            bool jobsComplete = await jobManagement.WaitForJobsToComplete(new[] { "PopulateScopedProviders" }, "specificationId");
+
+            //Assert
+            jobsComplete
+                .Should()
+                .BeTrue();
+        }
+
+        [TestMethod]
+        public async Task WaitForJobsToCompleteWithJobsFailed_ReturnsFalse()
+        {
+            var jobsApiClient = Substitute.For<IJobsApiClient>();
+            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            var logger = Substitute.For<ILogger>();
+
+            var jobManagement = new JobManagement(jobsApiClient, logger, policies);
+
+            var jobId = "3456";
+
+            jobsApiClient
+                .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Failed, JobId = jobId }));
+
+            //Act
+            bool jobsComplete = await jobManagement.WaitForJobsToComplete(new[] { "PopulateScopedProviders" }, "specificationId");
+
+            //Assert
+            jobsComplete
+                .Should()
+                .BeFalse();
         }
 
         [TestMethod]
