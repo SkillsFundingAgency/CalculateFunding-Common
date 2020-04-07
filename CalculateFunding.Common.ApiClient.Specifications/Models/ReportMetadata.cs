@@ -18,5 +18,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         public DateTimeOffset? LastModified { get; set; }
         
         public string Format { get; set; }
+
+        public string Size { get; set; }
     }
 }
