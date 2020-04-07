@@ -226,12 +226,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<ReportMetadata>>($"{UrlRoot}/{specificationId}/report-metadata");
         }
 
-        public async Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string fileName, string type)
+        public async Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string fileName, ReportType type)
         {
             Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
-            Guard.IsNullOrWhiteSpace(type, nameof(type));
 
-            return await GetAsync<SpecificationsDownloadModel>($"{UrlRoot}/download-report/{fileName}/{type}");
+            return await GetAsync<SpecificationsDownloadModel>($"{UrlRoot}/download-report/{fileName}/{type.ToString()}");
         }
 
         public async Task<HttpStatusCode> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer)

@@ -42,9 +42,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 NewSpecificationSummary()
             };
 
-            string expectedGetByIdUri = GetSummariesByFundingPeriodIdUriFor(fundingPeriodId);
+            string expectedGetByIdUri = $"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}";
 
-            GivenTheResponse($"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}", expectedSummarySpecification, HttpMethod.Get);
+            GivenTheResponse(expectedGetByIdUri, expectedSummarySpecification, HttpMethod.Get);
 
             ApiResponse<IEnumerable<SpecificationSummary>> apiResponse =
                 await WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(fundingPeriodId);
@@ -81,9 +81,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         {
             string specificationId = NewRandomString();
             SpecificationSummary expectedSummarySpecification = NewSpecificationSummary();
-            string expectedGetByIdUri = GetSummaryByIdUriFor(specificationId);
+            string expectedGetByIdUri = $"specs/specification-summary-by-id?specificationId={specificationId}";
 
-            GivenTheResponse($"specs/specification-summary-by-id?specificationId={specificationId}", expectedSummarySpecification, HttpMethod.Get);
+            GivenTheResponse(expectedGetByIdUri, expectedSummarySpecification, HttpMethod.Get);
 
             ApiResponse<SpecificationSummary> apiResponse = await WhenTheSpecificationSummaryIsQueriedById(specificationId);
 
@@ -102,9 +102,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 
         [TestMethod]
         public async Task GetDistinctFundingStreamsForSpecifciations()
-        {           
-
-            GivenTheResponse($"specs/fundingstream-id-for-specifications", _fundingStreamIds, HttpMethod.Get);
+        {
+            IEnumerable<string> fundingStreamIds = new List<string>() { "PSG", "DSG", "PSG1" };
+            
+            GivenTheResponse($"specs/fundingstream-id-for-specifications", fundingStreamIds, HttpMethod.Get);
 
             ApiResponse<IEnumerable<string>> apiResponse = await WhenGetDistinctFundingStreamsForSpecification();
 
@@ -116,9 +117,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 .Should()
                 .NotBeNull()
                 .And
-                .BeEquivalentTo(_fundingStreamIds);
-
-           
+                .BeEquivalentTo(fundingStreamIds);
         }
 
 
@@ -458,9 +457,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 
             IEnumerable<ReportMetadata> reportMetadata = new List<ReportMetadata> { };
 
-            GivenTheResponse(GetReportMetadataBySpecificationId(specificationId), reportMetadata, HttpMethod.Get);
+            string expectedUri = $"{specificationId}/report-metadata";
+            
+            GivenTheResponse(expectedUri, reportMetadata, HttpMethod.Get);
 
-            await AssertGetRequest(GetReportMetadataBySpecificationId(specificationId),
+            await AssertGetRequest(expectedUri,
                 reportMetadata,
                 () => _client.GetReportMetadataForSpecifications(specificationId));
         }
@@ -469,37 +470,26 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         [TestMethod]
         public async Task DownloadSpecificationReportAsyncThrowsExceptionIfSuppliedFileNameMissing(
             string fileName)
-
         {
-            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(fileName, NewRandomString());
+            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(fileName, ReportType.Released);
 
             await invocation.Should()
                 .ThrowExactlyAsync<ArgumentNullException>(fileName);
-        }
-
-        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
-        [TestMethod]
-        public async Task DownloadSpecificationReportAsyncThrowsExceptionIfTypeMissing(
-            string type)
-
-        {
-            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(NewRandomString(), type);
-
-            await invocation.Should()
-                .ThrowExactlyAsync<ArgumentNullException>(type);
         }
 
         [TestMethod]
         public async Task DownloadSpecificationReport()
         {
             string fileName = NewRandomString();
-            string type = NewRandomString();
+            ReportType type = ReportType.CurrentState;
 
             SpecificationsDownloadModel specificationsDownloadModel = new SpecificationsDownloadModel { };
 
-            GivenTheResponse(GetDownloadReportByFileNameAndType(fileName, type), specificationsDownloadModel, HttpMethod.Get);
+            string expectedUri = $"download-report/{fileName}/{type.ToString()}";
+            
+            GivenTheResponse(expectedUri, specificationsDownloadModel, HttpMethod.Get);
 
-            await AssertGetRequest(GetDownloadReportByFileNameAndType(fileName, type),
+            await AssertGetRequest(expectedUri,
                 specificationsDownloadModel,
                 () => _client.DownloadSpecificationReport(fileName, type));
         }
@@ -517,11 +507,8 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 
         [TestMethod]
         public async Task SetProfileVariationPointerAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointerMissing()
-
         {
-            ProfileVariationPointer profileVariationPointer = null;
-
-            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointerSet(NewRandomString(), profileVariationPointer);
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointerSet(NewRandomString(), null);
 
             await invocation.Should()
                 .ThrowExactlyAsync<ArgumentNullException>();
@@ -533,7 +520,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string specificationId = NewRandomString();
             ProfileVariationPointer model = new ProfileVariationPointer();
 
-            await AssertPutRequest(SetProfileVariationPointer(specificationId),
+            await AssertPutRequest($"{specificationId}/profilevariationpointer",
                 HttpStatusCode.OK,
                 () => _client.SetProfileVariationPointer(specificationId, model));
         }
@@ -544,7 +531,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string specificationId = NewRandomString();
             IEnumerable<ProfileVariationPointer> model = new List<ProfileVariationPointer>();
 
-            await AssertPutRequest(SetProfileVariationPointers(specificationId),
+            await AssertPutRequest($"{specificationId}/profilevariationpointers",
                 HttpStatusCode.OK,
                 () => _client.SetProfileVariationPointers(specificationId, model));
         }
@@ -562,46 +549,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
 
         [TestMethod]
         public async Task SetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointersMissing()
-
         {
-            IEnumerable<ProfileVariationPointer> profileVariationPointers = null;
-
-            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersSet(NewRandomString(), profileVariationPointers);
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersSet(NewRandomString(), null);
 
             await invocation.Should()
                 .ThrowExactlyAsync<ArgumentNullException>();
         }
 
-
-        private static string GetSummaryByIdUriFor(string specificationId)
-        {
-            return $"specs/specification-summary-by-id?specificationId={specificationId}";
-        }
-
-        private static string GetSummariesByFundingPeriodIdUriFor(string fundingPeriodId)
-        {
-            return $"specs/specifications-selected-for-funding-by-period?fundingPeriodId={fundingPeriodId}";
-        }
-
-        private static string GetDownloadReportByFileNameAndType(string fileName, string type)
-        {
-            return $"download-report/{fileName}/{type}";
-        }
-
-        private static string GetReportMetadataBySpecificationId(string specificationId)
-        {
-            return $"{specificationId}/report-metadata";
-        }
-
-        private static string SetProfileVariationPointer(string specificationId)
-        {
-            return $"{specificationId}/profilevariationpointer";
-        }
-
-        private static string SetProfileVariationPointers(string specificationId)
-        {
-            return $"{specificationId}/profilevariationpointers";
-        }
 
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
@@ -618,7 +572,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.GetReportMetadataForSpecifications(specificationId);
         }
 
-        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string fileName, string type)
+        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string fileName, ReportType type)
         {
             return await _client.DownloadSpecificationReport(fileName, type);
         }
@@ -656,8 +610,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             yield return new[] {string.Empty};
             yield return new[] {(string) null};
         }
-
-        private IEnumerable<string> _fundingStreamIds = new List<string>() { "PSG", "DSG", "PSG1" };
 
         private ProfileVariationPointer NewProfileVariationPointer() => new ProfileVariationPointer();
     }
