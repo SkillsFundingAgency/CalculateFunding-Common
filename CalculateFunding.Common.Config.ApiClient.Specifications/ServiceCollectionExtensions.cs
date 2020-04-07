@@ -8,7 +8,9 @@ using System;
 namespace CalculateFunding.Common.Config.ApiClient.Specifications
 {
     public static class ServiceCollectionExtensions
-    {      
+    {
+        private const string ClientName = "specificationsClient";
+
         public static IServiceCollection AddSpecificationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
             TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
         {
@@ -27,9 +29,9 @@ namespace CalculateFunding.Common.Config.ApiClient.Specifications
                     {
                         ApiOptions apiOptions = new ApiOptions();
 
-                        config.Bind("specificationsClient", apiOptions);
+                        config.Bind(ClientName, apiOptions);
 
-                        ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder);
+                        ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder, ClientName);
                     })
                 .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                 .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))

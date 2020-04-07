@@ -1,6 +1,7 @@
 ﻿using CalculateFunding.Common.ApiClient;
 using CalculateFunding.Common.Utility;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,7 +12,7 @@ namespace CalculateFunding.Common.Config.ApiClient
 {
     public static class ApiClientConfigurationOptions
     {
-        public static void SetDefaultApiClientConfigurationOptions(HttpClient httpClient, ApiOptions options, IServiceCollection services)
+        public static void SetDefaultApiClientConfigurationOptions(HttpClient httpClient, ApiOptions options, IServiceCollection services, string clientName)
         {
             Guard.ArgumentNotNull(httpClient, nameof(httpClient));
             Guard.ArgumentNotNull(options, nameof(options));
@@ -28,7 +29,12 @@ namespace CalculateFunding.Common.Config.ApiClient
                 baseAddress = $"{baseAddress}/";
             }
 
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
+            services.Configure<HttpClientFactoryOptions>(clientName, options =>
+            {
+                options.SuppressHandlerScope = true;
+            });
+
+            services.BuildServiceProvider();
 
             httpClient.BaseAddress = new Uri(baseAddress, UriKind.Absolute);
             httpClient.DefaultRequestHeaders?.Add(ApiClientHeaders.ApiKey, options.ApiKey);

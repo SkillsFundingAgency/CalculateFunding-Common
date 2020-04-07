@@ -9,6 +9,8 @@ namespace CalculateFunding.Common.Config.ApiClient.Graph
 {
     public static class ServiceCollectionExtensions
     {
+        private const string ClientName = "graphClient";
+
         public static IServiceCollection AddGraphInterServiceClient(this IServiceCollection builder, IConfiguration config,
             TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
         {
@@ -27,9 +29,9 @@ namespace CalculateFunding.Common.Config.ApiClient.Graph
                {
                    ApiOptions apiOptions = new ApiOptions();
 
-                   config.Bind("graphClient", apiOptions);
+                   config.Bind(ClientName, apiOptions);
 
-                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder);
+                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder, ClientName);
                })
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))

@@ -14,6 +14,8 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
 {
     public static class ServiceCollectionExtensions
     {      
+        private const string ClientName = "calcsClient";
+
         public static IServiceCollection AddCalculationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
             TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
         {
@@ -32,9 +34,9 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
                {
                    ApiOptions apiOptions = new ApiOptions();
 
-                   config.Bind("calcsClient", apiOptions);
+                   config.Bind(ClientName, apiOptions);
 
-                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder);
+                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder, ClientName);
                })
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
