@@ -1,0 +1,41 @@
+using System;
+using CalculateFunding.Common.Models;
+using Newtonsoft.Json;
+
+namespace CalculateFunding.Common.ApiClient.Profiling.Models
+{
+    public class FundingStreamPeriodProfilePattern : IIdentifiable
+    {
+        [JsonProperty("fundingPeriodId")]
+        public string FundingPeriodId { get; set; }
+
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
+
+        [JsonProperty("fundingLineId")]
+        public string FundingLineId { get; set; }
+        
+        [JsonProperty("profilePatternKey")]
+        public string ProfilePatternKey { get; set; }
+
+        [JsonProperty("fundingStreamPeriodStartDate")]
+        public DateTime FundingStreamPeriodStartDate { get; set; }
+
+        [JsonProperty("fundingStreamPeriodEndDate")]
+        public DateTime FundingStreamPeriodEndDate { get; set; }
+
+        [JsonProperty("reProfilePastPeriods")]
+        public bool ReProfilePastPeriods { get; set; }
+
+        [JsonProperty("calculateBalancingPayment")]
+        public bool CalculateBalancingPayment { get; set; }
+
+        [JsonProperty("profilePattern")]
+        public ProfilePeriodPattern[] ProfilePattern { get; set; }
+
+        [JsonProperty("id")]
+        public string Id => $"{FundingPeriodId}-{FundingStreamId}-{FundingLineId}{ProfilePatternKeyString}";
+
+        private string ProfilePatternKeyString => string.IsNullOrWhiteSpace(ProfilePatternKey) ? null : $"-{ProfilePatternKey}";
+    }
+}

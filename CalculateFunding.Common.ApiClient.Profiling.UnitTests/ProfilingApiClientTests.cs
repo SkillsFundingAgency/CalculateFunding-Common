@@ -1,26 +1,24 @@
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Profiling.Models;
 using CalculateFunding.Common.Testing;
-using CalculateFunding.Common.Extensions;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;
 
-// ReSharper disable once CheckNamespace
-namespace CalculateFunding.Common.ApiClient.Profiling.UnitTests
+// ReSharper disable HeapView.CanAvoidClosure
+
+namespace CalculateFunding.Common.ApiClient.ProfilingApiClient.UnitTests
 {
     [TestClass]
     public class ProfilingApiClientTests : ApiClientTestBase
     {
-        private ProfilingApiClient _client;
+        private Profiling.ProfilingApiClient _client;
 
         [TestInitialize]
         public void SetUp()
         {
-            _client = new ProfilingApiClient(ClientFactory,
+            _client = new Profiling.ProfilingApiClient(ClientFactory,
                 HttpClientKeys.Profiling,
                 Logger.None,
                 BearerTokenProvider);
@@ -36,20 +34,54 @@ namespace CalculateFunding.Common.ApiClient.Profiling.UnitTests
         }
 
         [TestMethod]
-        public async Task SaveProfilingConfig()
+        public async Task CreateProfilePattern()
         {
-            SetFundingStreamPeriodProfilePatternRequestModel model = new SetFundingStreamPeriodProfilePatternRequestModel();
+            await AssertPostRequest("profiling/patterns", 
+                new CreateProfilePatternRequest(), 
+                HttpStatusCode.OK,
+                _client.CreateProfilePattern);
+        }
+        
+        [TestMethod]
+        public async Task EditProfilePattern()
+        {
+            EditProfilePatternRequest request = new EditProfilePatternRequest();
             
-            GivenTheStatusCode("profiling", HttpStatusCode.OK, HttpMethod.Post);
+            await AssertPutRequest("profiling/patterns", 
+                request, 
+                HttpStatusCode.OK,
+                () => _client.EditProfilePattern(request));
+        }
 
-            NoValidatedContentApiResponse apiResponse = await _client.SaveProfilingConfig(model);
+        [TestMethod]
+        public async Task DeleteProfilePattern()
+        {
+            string id = NewRandomString();
 
-            apiResponse?
-                .StatusCode
-                .Should()
-                .Be(HttpStatusCode.OK);
-            
-            AndTheRequestContentsShouldHaveBeen(model.AsJson());
+            await AssertDeleteRequest($"profiling/patterns/{id}", 
+                HttpStatusCode.OK, 
+                () => _client.DeleteProfilePattern(id));
+        }
+
+        [TestMethod]
+        public async Task GetProfilePattern()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"profiling/patterns/{id}", 
+                new FundingStreamPeriodProfilePattern(),
+                () => _client.GetProfilePattern(id));
+        }
+        
+        [TestMethod]
+        public async Task GetProfilePatternsForFundingStreamAndFundingPeriod()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+
+            await AssertGetRequest($"profiling/patterns/fundingStreams/{fundingStreamId}/fundingPeriods/{fundingPeriodId}", 
+                Enumerable.Empty<FundingStreamPeriodProfilePattern>(),
+                () => _client.GetProfilePatternsForFundingStreamAndFundingPeriod(fundingStreamId, fundingPeriodId));
         }
     }
 }

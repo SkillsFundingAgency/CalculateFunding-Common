@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Bearer;
 using CalculateFunding.Common.ApiClient.Models;
@@ -27,11 +29,41 @@ namespace CalculateFunding.Common.ApiClient.Profiling
             return await ValidatedPostAsync<ProviderProfilingResponseModel, ProviderProfilingRequestModel>("profiling", requestModel);
         }
 
-        public async Task<NoValidatedContentApiResponse> SaveProfilingConfig(SetFundingStreamPeriodProfilePatternRequestModel requestModel)
+        public async Task<HttpStatusCode> CreateProfilePattern(CreateProfilePatternRequest request)
         {
-            Guard.ArgumentNotNull(requestModel, nameof(requestModel));
+            Guard.ArgumentNotNull(request, nameof(request));
 
-            return await ValidatedPostAsync("profiling", requestModel);
+            return await PostAsync("profiling/patterns", request);
+        } 
+        
+        public async Task<HttpStatusCode> EditProfilePattern(EditProfilePatternRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PutAsync("profiling/patterns", request);
+        }
+
+        public async Task<HttpStatusCode> DeleteProfilePattern(string id)
+        {
+            Guard.ArgumentNotNull(id, nameof(id));
+
+            return await DeleteAsync($"profiling/patterns/{id}");
+        }
+
+        public async Task<ApiResponse<FundingStreamPeriodProfilePattern>> GetProfilePattern(string id)
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+
+            return await GetAsync<FundingStreamPeriodProfilePattern>($"profiling/patterns/{id}");
+        }
+        
+        public async Task<ApiResponse<IEnumerable<FundingStreamPeriodProfilePattern>>> GetProfilePatternsForFundingStreamAndFundingPeriod(string fundingStreamId,
+            string fundingPeriodId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+
+            return await GetAsync<IEnumerable<FundingStreamPeriodProfilePattern>>($"profiling/patterns/fundingStreams/{fundingStreamId}/fundingPeriods/{fundingPeriodId}");
         }
     }
 }
