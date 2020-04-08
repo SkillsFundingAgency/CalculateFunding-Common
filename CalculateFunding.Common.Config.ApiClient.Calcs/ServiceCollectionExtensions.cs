@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Calcs
 {
@@ -17,19 +18,19 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
         private const string ClientName = "calcsClient";
 
         public static IServiceCollection AddCalculationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
         {
             if (retryTimeSpans == null)
             {
                 retryTimeSpans = new[] { TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5) };
             }
 
-            if (circuitBreakerFailurePeriod == default(TimeSpan))
+            if (circuitBreakerFailurePeriod == default)
             {
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            builder.AddHttpClient(HttpClientKeys.Calculations,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Calculations,
                c =>
                {
                    ApiOptions apiOptions = new ApiOptions();
@@ -41,6 +42,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
                .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod));
+            
+            // if a life time for the handler has been set then set it on the client builder
+            if(handlerLifetime != default)
+            {
+                httpBuilder.SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+            }
 
             builder
                 .AddSingleton<ICalculationsApiClient, CalculationsApiClient>();

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;
+using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Specifications
 {
@@ -12,7 +13,7 @@ namespace CalculateFunding.Common.Config.ApiClient.Specifications
         private const string ClientName = "specificationsClient";
 
         public static IServiceCollection AddSpecificationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
         {
             if (retryTimeSpans == null)
             {
@@ -24,7 +25,7 @@ namespace CalculateFunding.Common.Config.ApiClient.Specifications
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            builder.AddHttpClient(HttpClientKeys.Specifications,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Specifications,
                     c =>
                     {
                         ApiOptions apiOptions = new ApiOptions();
@@ -36,6 +37,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Specifications
                 .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                 .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
                 .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod));
+
+            // if a life time for the handler has been set then set it on the client builder
+            if (handlerLifetime != default)
+            {
+                httpBuilder.SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+            }
 
             builder
                 .AddSingleton<ISpecificationsApiClient, SpecificationsApiClient>();

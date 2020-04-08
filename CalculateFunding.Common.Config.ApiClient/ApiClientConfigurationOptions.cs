@@ -29,11 +29,6 @@ namespace CalculateFunding.Common.Config.ApiClient
                 baseAddress = $"{baseAddress}/";
             }
 
-            services.Configure<HttpClientFactoryOptions>(clientName, options =>
-            {
-                options.SuppressHandlerScope = true;
-            });
-
             services.BuildServiceProvider();
 
             httpClient.BaseAddress = new Uri(baseAddress, UriKind.Absolute);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;
+using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Policies
 {
@@ -12,7 +13,7 @@ namespace CalculateFunding.Common.Config.ApiClient.Policies
         private const string ClientName = "policiesClient";
 
         public static IServiceCollection AddPoliciesInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default(TimeSpan))
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
         {
             if (retryTimeSpans == null)
             {
@@ -25,7 +26,7 @@ namespace CalculateFunding.Common.Config.ApiClient.Policies
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            builder.AddHttpClient(HttpClientKeys.Policies,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Policies,
                c =>
                {
                    ApiOptions apiOptions = new ApiOptions();
@@ -37,6 +38,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Policies
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
                .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod));
+
+            // if a life time for the handler has been set then set it on the client builder
+            if (handlerLifetime != default)
+            {
+                httpBuilder.SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+            }
 
             builder
                 .AddSingleton<IPoliciesApiClient, PoliciesApiClient>();
