@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CalculateFunding.Common.ApiClient.Models;
 using Newtonsoft.Json;
 
@@ -109,6 +110,26 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// </summary>
         [JsonProperty("errors")]
         public ICollection<PublishedProviderError> Errors { get; set; }
+        
+        /// <summary>
+        /// The none default profiling patterns used for this provider
+        /// in this period and funding stream keyed by funding line
+        /// </summary>
+        [JsonProperty("profilePatternKeys")]
+        public ICollection<ProfilePatternKey> ProfilePatternKeys { get; set; }
+        
+        /// <summary>
+        /// The custom profile periods used for this provider
+        /// in this period and funding stream keyed by funding line
+        /// </summary>
+        [JsonProperty("customProfiles")]
+        public ICollection<FundingLineProfileOverrides> CustomProfiles { get; set; }
+        
+        /// <summary>
+        /// Flag indicating whether this provider has any custom profiles 
+        /// </summary>
+        [JsonProperty("hasCustomProfiles")]
+        public bool HasCustomProfiles => CustomProfiles?.Any() == true;
 
         /// <summary>
         /// Job ID this PublishedProvider was updated or created on
