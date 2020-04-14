@@ -102,6 +102,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// </summary>
         [JsonProperty("variationReasons")]
         public IEnumerable<VariationReason> VariationReasons { get; set; }
+        
+        /// <summary>
+        /// Errors blocking the release of this funding encountered
+        /// during the publishing cycle (approved, refresh, publish) that created this version
+        /// </summary>
+        [JsonProperty("errors")]
+        public ICollection<PublishedProviderError> Errors { get; set; }
 
         /// <summary>
         /// Job ID this PublishedProvider was updated or created on
