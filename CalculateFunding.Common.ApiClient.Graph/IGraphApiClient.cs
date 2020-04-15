@@ -23,6 +23,10 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
         Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId);
 
+        Task<HttpStatusCode> UpsertCalculationDatasetFieldsRelationships(string calculationId, string[] datasetFieldIds);
+
+        Task<HttpStatusCode> UpsertCalculationDatasetFieldRelationship(string calculationId, string datasetFieldId);
+        Task<HttpStatusCode> DeleteCalculationDatasetFieldRelationship(string calculationId, string datasetFieldId);
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
 
         Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId);
@@ -32,6 +36,8 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> UpsertDatasetDefinition(DatasetDefinition definition);
         Task<HttpStatusCode> DeleteDatasetDefinition(string definitionId);
         Task<HttpStatusCode> UpsertDataFields(DataField field);
+        Task<HttpStatusCode> UpsertDatasetFields(DatasetField[] field);
+        Task<HttpStatusCode> DeleteDatasetField(string datasetFieldId);
         Task<HttpStatusCode> UpsertDataDefinitionDatasetRelationship(string definitionId, string datasetId);
         Task<HttpStatusCode> DeleteDataDefinitionDatasetRelationship(string definitionId, string datasetId);
         Task<HttpStatusCode> DeleteDatasetDataFieldRelationship(string datasetId, string fieldId);

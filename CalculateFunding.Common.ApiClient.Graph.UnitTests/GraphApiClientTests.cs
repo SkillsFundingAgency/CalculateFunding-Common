@@ -176,10 +176,52 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 new DataField(), 
                 HttpStatusCode.OK,
                 _client.UpsertDataFields);
-        } 
-        
+        }
+
+        [TestMethod]
+        public async Task UpsertCalculationDatasetFieldsRelationships()
+        {
+            string id = NewRandomString();
+            string[] ids = Strings(NewRandomString(), NewRandomString());
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            GivenTheStatusCode($"calculation/{id}/relationships/datasetfields",
+                expectedStatusCode,
+                HttpMethod.Post);
+
+            HttpStatusCode apiResponse = await _client.UpsertCalculationDatasetFieldsRelationships(id, ids);
+
+            apiResponse
+                .Should()
+                .Be(expectedStatusCode);
+
+            AndTheRequestContentsShouldHaveBeen(ids.AsJson());
+        }
+
+        [TestMethod]
+        public async Task UpsertCalculationDatasetFieldRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"calculation/{idOne}/relationships/datasetfield/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.UpsertCalculationDatasetFieldRelationship(idOne, idTwo));
+        }
         [TestMethod]
         public async Task DeleteDatasetField()
+        {
+            string id = NewRandomString();
+
+            await AssertDeleteRequest($"datasetfield/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteDatasetField);
+        }
+
+        [TestMethod]
+        public async Task DeleteDataField()
         {
             string id = NewRandomString();
             
@@ -277,6 +319,15 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 () => _client.DeleteCalculationDataFieldRelationship(calculationId, fieldId));
         }
 
+        [TestMethod]
+        public async Task UpsertDatasetFields()
+        {
+            await AssertPostRequest("datasetfields",
+                DatasetFields(NewDatasetField(), NewDatasetField()),
+                HttpStatusCode.OK,
+                _client.UpsertDatasetFields);
+        }
+
         private Calculation NewCalculation() => new Calculation();
         
         private Specification NewSpecification() => new Specification();
@@ -286,5 +337,8 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         private Specification[] Specifications(params Specification[] specifications) => specifications;
 
         private string[] Strings(params string[] ids) => ids;
+
+        private DatasetField NewDatasetField() => new DatasetField();
+        private DatasetField[] DatasetFields(params DatasetField[] datasetFields) => datasetFields;
     }
 }
