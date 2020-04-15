@@ -296,5 +296,27 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 }.AsEnumerable(),
                 () => _client.SearchPublishedProviderLocalAuthorities(searchText, fundingStreamId, fundingPeriodId));
         }
+
+        [TestMethod]
+        public async Task AssignProfilePatternKeyToPublishedProvider()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string providerId = NewRandomString();
+            ProfilePatternKey profilePatternKey = new ProfilePatternKey { FundingLineCode = NewRandomString(), Key = NewRandomString() };
+            string expectedUri = $"publishedprovider/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}/provider/{providerId}";
+
+            GivenTheStatusCode(expectedUri, HttpStatusCode.OK, HttpMethod.Post);
+
+            HttpStatusCode response = await _client.AssignProfilePatternKeyToPublishedProvider(fundingStreamId, fundingPeriodId, providerId, profilePatternKey);
+
+            response
+                .Should()
+                .NotBeNull();
+
+            response
+                .Should()
+                .Be(HttpStatusCode.OK);
+        }
     }
 }

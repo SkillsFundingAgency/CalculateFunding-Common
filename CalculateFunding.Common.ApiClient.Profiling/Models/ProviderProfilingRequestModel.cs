@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace CalculateFunding.Common.ApiClient.Profiling.Models
+﻿namespace CalculateFunding.Common.ApiClient.Profiling.Models
 {
     public class ProviderProfilingRequestModel
     {
@@ -15,5 +12,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public string FundingLineCode { get; set; }
 
         public decimal? FundingValue { get; set; }
+
+        public string ProfilePatternKey { get; set; }
     }
 }

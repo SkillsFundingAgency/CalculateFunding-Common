@@ -125,21 +125,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Providers.UnitTests", "CalculateFunding.Common.ApiClient.Providers.UnitTests\CalculateFunding.Common.ApiClient.Providers.UnitTests.csproj", "{38F368BB-69B1-45A6-BA23-B0F41088C0D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Profiling.UnitTests", "CalculateFunding.Common.ApiClient.Profiling.UnitTests\CalculateFunding.Common.ApiClient.Profiling.UnitTests.csproj", "{81E0CA7B-D8E0-49D8-975D-1AAF3182E574}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Profiling.UnitTests", "CalculateFunding.Common.ApiClient.Profiling.UnitTests\CalculateFunding.Common.ApiClient.Profiling.UnitTests.csproj", "{81E0CA7B-D8E0-49D8-975D-1AAF3182E574}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Scenarios.UnitTests", "CalculateFunding.Common.ApiClient.Scenarios.UnitTests\CalculateFunding.Common.ApiClient.Scenarios.UnitTests.csproj", "{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Scenarios.UnitTests", "CalculateFunding.Common.ApiClient.Scenarios.UnitTests\CalculateFunding.Common.ApiClient.Scenarios.UnitTests.csproj", "{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.TestEngine.UnitTests", "CalculateFunding.Common.ApiClient.TestEngine.UnitTests\CalculateFunding.Common.ApiClient.TestEngine.UnitTests.csproj", "{C403A1AA-B264-43CB-8405-D05883F2B22F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.TestEngine.UnitTests", "CalculateFunding.Common.ApiClient.TestEngine.UnitTests\CalculateFunding.Common.ApiClient.TestEngine.UnitTests.csproj", "{C403A1AA-B264-43CB-8405-D05883F2B22F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Results.UnitTests", "CalculateFunding.Common.ApiClient.Results.UnitTests\CalculateFunding.Common.ApiClient.Results.UnitTests.csproj", "{5A2510EA-E01D-417B-819C-5C61DBDF21A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Results.UnitTests", "CalculateFunding.Common.ApiClient.Results.UnitTests\CalculateFunding.Common.ApiClient.Results.UnitTests.csproj", "{5A2510EA-E01D-417B-819C-5C61DBDF21A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Calcs.UnitTests", "CalculateFunding.Common.ApiClient.Calcs.UnitTests\CalculateFunding.Common.ApiClient.Calcs.UnitTests.csproj", "{ACE78391-8852-4794-B9B1-0F149BC30751}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Calcs.UnitTests", "CalculateFunding.Common.ApiClient.Calcs.UnitTests\CalculateFunding.Common.ApiClient.Calcs.UnitTests.csproj", "{ACE78391-8852-4794-B9B1-0F149BC30751}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Jobs.UnitTests", "CalculateFunding.Common.ApiClient.Jobs.UnitTests\CalculateFunding.Common.ApiClient.Jobs.UnitTests.csproj", "{05B787F6-FAA3-404D-812E-F682F5E8B4D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Jobs.UnitTests", "CalculateFunding.Common.ApiClient.Jobs.UnitTests\CalculateFunding.Common.ApiClient.Jobs.UnitTests.csproj", "{05B787F6-FAA3-404D-812E-F682F5E8B4D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Policies.UnitTests", "CalculateFunding.Common.ApiClient.Policies.UnitTests\CalculateFunding.Common.ApiClient.Policies.UnitTests.csproj", "{312A12F6-9A07-4E5C-B41C-834CC525F559}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Policies.UnitTests", "CalculateFunding.Common.ApiClient.Policies.UnitTests\CalculateFunding.Common.ApiClient.Policies.UnitTests.csproj", "{312A12F6-9A07-4E5C-B41C-834CC525F559}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.User.UnitTests", "CalculateFunding.Common.ApiClient.User.UnitTests\CalculateFunding.Common.ApiClient.User.UnitTests.csproj", "{5D92EE25-09C7-4974-BA2F-7E1904990C5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.User.UnitTests", "CalculateFunding.Common.ApiClient.User.UnitTests\CalculateFunding.Common.ApiClient.User.UnitTests.csproj", "{5D92EE25-09C7-4974-BA2F-7E1904990C5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.Profiling", "CalculateFunding.Common.Config.ApiClient.Profiling\CalculateFunding.Common.Config.ApiClient.Profiling.csproj", "{BC66E961-9099-4F0A-A5CE-430BAD52E343}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -395,6 +397,10 @@ Global
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -458,6 +464,7 @@ Global
 		{05B787F6-FAA3-404D-812E-F682F5E8B4D9} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{312A12F6-9A07-4E5C-B41C-834CC525F559} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
+		{BC66E961-9099-4F0A-A5CE-430BAD52E343} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}

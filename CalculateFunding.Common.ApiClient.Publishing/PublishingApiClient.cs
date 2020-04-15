@@ -156,5 +156,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await GetAsync<IEnumerable<string>>(url);
         }
+
+        public async Task<HttpStatusCode> AssignProfilePatternKeyToPublishedProvider(string fundingStreamId, string fundingPeriodId, string providerId, ProfilePatternKey profilePatternKey)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            string url = $"publishedprovider/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}/provider/{providerId}";
+
+            return await PostAsync(url, profilePatternKey);
+        }
     }
 }

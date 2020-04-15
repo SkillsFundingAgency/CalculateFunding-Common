@@ -38,5 +38,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<ProfileTotal>>> GetProfileHistory(string fundingStreamId,
             string fundingPeriodId,
             string providerId);
+
+        Task<HttpStatusCode> AssignProfilePatternKeyToPublishedProvider(string fundingStreamId,
+            string fundingPeriodId,
+            string providerId,
+            ProfilePatternKey profilePatternKey);
     }
 }
