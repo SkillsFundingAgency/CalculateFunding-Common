@@ -4,6 +4,21 @@ using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
+    public class ApplyCustomProfileRequest
+    {
+        public string FundingStreamId { get; set; }
+
+        public string FundingPeriodId { get; set; }
+        
+        public string ProviderId { get; set; }
+        
+        public string CustomProfileName { get; set; }
+
+        public string PublishedProviderId => $"publishedprovider-{ProviderId}-{FundingPeriodId}-{FundingStreamId}";
+        
+        public IEnumerable<FundingLineProfileOverrides> ProfileOverrides {get; set;}
+    }
+    
     /// <summary>
     /// A funding line.
     /// </summary>

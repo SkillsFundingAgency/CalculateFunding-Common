@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
@@ -166,6 +167,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string url = $"publishedprovider/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}/provider/{providerId}";
 
             return await PostAsync(url, profilePatternKey);
+        }
+
+        public async Task<ValidatedApiResponse<HttpStatusCode>> ApplyCustomProfilePattern(ApplyCustomProfileRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await ValidatedPostAsync<HttpStatusCode, ApplyCustomProfileRequest>($"publishedproviders/customprofiles", request);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
@@ -289,11 +290,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string fundingPeriodId = NewRandomString();
 
             await AssertGetRequest($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/localauthorities?searchText={searchText}",
-                new[]
-                {
-                    NewRandomString(),
-                    NewRandomString()
-                }.AsEnumerable(),
+                Enumerable.Repeat(NewRandomString(), 5),
                 () => _client.SearchPublishedProviderLocalAuthorities(searchText, fundingStreamId, fundingPeriodId));
         }
 
@@ -317,6 +314,36 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             response
                 .Should()
                 .Be(HttpStatusCode.OK);
+        }
+
+        [TestMethod]
+        [DataRow(HttpStatusCode.OK)]
+        [DataRow(HttpStatusCode.BadGateway)]
+        [DataRow(HttpStatusCode.InternalServerError)]
+        public async Task ApplyCustomProfilePattern(HttpStatusCode expectedStatusCode)
+        {
+            GivenTheStatusCode("publishedproviders/customprofiles", expectedStatusCode, HttpMethod.Post);
+
+            ApplyCustomProfileRequest request = new ApplyCustomProfileRequest
+            {
+                ProviderId = NewRandomString(),
+                CustomProfileName = NewRandomString(),
+                FundingPeriodId = NewRandomString(),
+                FundingStreamId = NewRandomString()
+            };
+            
+            ValidatedApiResponse<HttpStatusCode> response = await _client.ApplyCustomProfilePattern(request);
+
+            response
+                .Should()
+                .NotBeNull();
+
+            response
+                .StatusCode
+                .Should()
+                .Be(expectedStatusCode);    
+            
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
         }
     }
 }

@@ -43,5 +43,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string fundingPeriodId,
             string providerId,
             ProfilePatternKey profilePatternKey);
+
+        Task<ValidatedApiResponse<HttpStatusCode>> ApplyCustomProfilePattern(ApplyCustomProfileRequest request);
     }
 }
