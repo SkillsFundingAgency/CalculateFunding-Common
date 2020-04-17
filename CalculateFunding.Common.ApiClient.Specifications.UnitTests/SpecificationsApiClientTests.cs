@@ -455,7 +455,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         {
             string specificationId = NewRandomString();
 
-            IEnumerable<ReportMetadata> reportMetadata = new List<ReportMetadata> { };
+            IEnumerable<SpecificationReport> reportMetadata = new List<SpecificationReport> { };
 
             string expectedUri = $"{specificationId}/report-metadata";
             
@@ -466,32 +466,31 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 () => _client.GetReportMetadataForSpecifications(specificationId));
         }
 
-        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
         [TestMethod]
-        public async Task DownloadSpecificationReportAsyncThrowsExceptionIfSuppliedFileNameMissing(
-            string fileName)
+        public async Task DownloadSpecificationReportAsyncThrowsExceptionIfSuppliedIdMissing()
         {
-            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(fileName, ReportType.Released);
+            SpecificationReportIdentifier specificationReportIdentifier = null;
+            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(specificationReportIdentifier);
 
             await invocation.Should()
-                .ThrowExactlyAsync<ArgumentNullException>(fileName);
+                .ThrowExactlyAsync<ArgumentNullException>(nameof(specificationReportIdentifier));
         }
 
         [TestMethod]
         public async Task DownloadSpecificationReport()
         {
-            string fileName = NewRandomString();
-            ReportType type = ReportType.CurrentState;
+            SpecificationReportIdentifier specificationReportIdentifier = new SpecificationReportIdentifier();
 
-            SpecificationsDownloadModel specificationsDownloadModel = new SpecificationsDownloadModel { };
+            SpecificationsDownloadModel specificationsDownloadModel = new SpecificationsDownloadModel();
 
-            string expectedUri = $"download-report/{fileName}/{type.ToString()}";
+            string expectedUri = $"download-report";
             
-            GivenTheResponse(expectedUri, specificationsDownloadModel, HttpMethod.Get);
+            GivenTheResponse(expectedUri, specificationsDownloadModel, HttpMethod.Post);
 
-            await AssertGetRequest(expectedUri,
+            await AssertPostRequest(expectedUri,
+                specificationReportIdentifier,
                 specificationsDownloadModel,
-                () => _client.DownloadSpecificationReport(fileName, type));
+                () => _client.DownloadSpecificationReport(specificationReportIdentifier));
         }
 
         [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
@@ -567,14 +566,14 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.GetProfileVariationPointers(specificationId);
         }
 
-        private async Task<ApiResponse<IEnumerable<ReportMetadata>>> WhenTheReportMetadataRetrievedBySpecificationId(string specificationId)
+        private async Task<ApiResponse<IEnumerable<SpecificationReport>>> WhenTheReportMetadataRetrievedBySpecificationId(string specificationId)
         {
             return await _client.GetReportMetadataForSpecifications(specificationId);
         }
 
-        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string fileName, ReportType type)
+        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(SpecificationReportIdentifier specificationReportIdentifier)
         {
-            return await _client.DownloadSpecificationReport(fileName, type);
+            return await _client.DownloadSpecificationReport(specificationReportIdentifier);
         }
 
         private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)

@@ -219,18 +219,18 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<ProfileVariationPointer>>($"{UrlRoot}/{specificationId}/profilevariationpointers");
         }
 
-        public async Task<ApiResponse<IEnumerable<ReportMetadata>>> GetReportMetadataForSpecifications(string specificationId)
+        public async Task<ApiResponse<IEnumerable<SpecificationReport>>> GetReportMetadataForSpecifications(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<IEnumerable<ReportMetadata>>($"{UrlRoot}/{specificationId}/report-metadata");
+            return await GetAsync<IEnumerable<SpecificationReport>>($"{UrlRoot}/{specificationId}/report-metadata");
         }
 
-        public async Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string fileName, ReportType type)
+        public async Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(SpecificationReportIdentifier specificationReportIdentifier)
         {
-            Guard.IsNullOrWhiteSpace(fileName, nameof(fileName));
+            Guard.ArgumentNotNull(specificationReportIdentifier, nameof(specificationReportIdentifier));
 
-            return await GetAsync<SpecificationsDownloadModel>($"{UrlRoot}/download-report/{fileName}/{type.ToString()}");
+            return await PostAsync<SpecificationsDownloadModel, SpecificationReportIdentifier>($"{UrlRoot}/download-report", specificationReportIdentifier);
         }
 
         public async Task<HttpStatusCode> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer)
@@ -238,7 +238,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointer");
+            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointer", profileVariationPointer);
         }
 
         public async Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointer)
@@ -246,7 +246,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers");
+            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointer);
         }
     }
 }
