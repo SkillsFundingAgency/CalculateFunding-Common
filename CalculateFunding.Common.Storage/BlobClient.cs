@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
@@ -197,6 +198,31 @@ namespace CalculateFunding.Common.Storage
             CloudBlobContainer container = GetContainer(containerName);
 
             return container.ListBlobs(prefix, useFlatBlobListing, blobListingDetails);
+        }
+
+        public async Task UploadFileAsync(ICloudBlob blob, Stream data)
+        {
+            //reset to start to handle resilience policy retrying on a single stream instance
+            data.Position = 0;
+
+            await blob.UploadFromStreamAsync(data);
+        }
+
+        public async Task AddMetadataAsync(ICloudBlob blob, IDictionary<string, string> metadata)
+        {
+            foreach (KeyValuePair<string, string> metadataItem in metadata.Where(_ => !string.IsNullOrEmpty(_.Value)))
+            {
+                blob.Metadata.Add(
+                    ReplaceInvalidMetadataKeyCharacters(metadataItem.Key),
+                    metadataItem.Value);
+            }
+
+            await blob.SetMetadataAsync();
+        }
+
+        private string ReplaceInvalidMetadataKeyCharacters(string metadataKey)
+        {
+            return metadataKey.Replace('-', '_');
         }
     }
 }

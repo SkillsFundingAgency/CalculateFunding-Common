@@ -39,5 +39,9 @@ namespace CalculateFunding.Common.Storage
             int batchSize = 50);
 
         IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None);
+
+        Task UploadFileAsync(ICloudBlob blob, Stream data);
+        
+        Task AddMetadataAsync(ICloudBlob blob, IDictionary<string, string> metadata);
     }
 }
