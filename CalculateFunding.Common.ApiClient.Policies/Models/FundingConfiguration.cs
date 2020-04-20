@@ -24,5 +24,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("variations")]
         public IEnumerable<FundingVariation> Variations { get; set; }
+        
+        [JsonProperty("approvalMode")]
+        public ApprovalMode ApprovalMode { get; set; }
     }
 }
