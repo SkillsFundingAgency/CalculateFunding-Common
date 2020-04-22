@@ -79,7 +79,7 @@ namespace CalculateFunding.Common.ApiClient.ProfilingApiClient.UnitTests
             string fundingStreamId = NewRandomString();
             string fundingPeriodId = NewRandomString();
 
-            await AssertGetRequest($"profiling/patterns/fundingStreams/{fundingStreamId}/fundingPeriods/{fundingPeriodId}", 
+            await AssertGetRequest($"profiling/patterns/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}", 
                 Enumerable.Empty<FundingStreamPeriodProfilePattern>(),
                 () => _client.GetProfilePatternsForFundingStreamAndFundingPeriod(fundingStreamId, fundingPeriodId));
         }

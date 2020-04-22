@@ -63,7 +63,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            return await GetAsync<IEnumerable<FundingStreamPeriodProfilePattern>>($"profiling/patterns/fundingStreams/{fundingStreamId}/fundingPeriods/{fundingPeriodId}");
+            return await GetAsync<IEnumerable<FundingStreamPeriodProfilePattern>>($"profiling/patterns/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}");
         }
     }
 }
