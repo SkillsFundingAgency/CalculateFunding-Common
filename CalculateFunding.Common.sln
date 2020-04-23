@@ -143,6 +143,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.Profiling", "CalculateFunding.Common.Config.ApiClient.Profiling\CalculateFunding.Common.Config.ApiClient.Profiling.csproj", "{BC66E961-9099-4F0A-A5CE-430BAD52E343}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.Scenarios", "CalculateFundingCommon.ApiClient.Scenarios\CalculateFunding.Common.ApiClient.Scenarios.csproj", "{D172889C-F621-4AA4-93E0-3A80E27E6152}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -397,6 +399,10 @@ Global
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D172889C-F621-4AA4-93E0-3A80E27E6152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D172889C-F621-4AA4-93E0-3A80E27E6152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D172889C-F621-4AA4-93E0-3A80E27E6152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D172889C-F621-4AA4-93E0-3A80E27E6152}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC66E961-9099-4F0A-A5CE-430BAD52E343}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -464,6 +470,7 @@ Global
 		{05B787F6-FAA3-404D-812E-F682F5E8B4D9} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{312A12F6-9A07-4E5C-B41C-834CC525F559} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{5D92EE25-09C7-4974-BA2F-7E1904990C5D} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
+		{D172889C-F621-4AA4-93E0-3A80E27E6152} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{BC66E961-9099-4F0A-A5CE-430BAD52E343} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

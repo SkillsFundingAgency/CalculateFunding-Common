@@ -3,6 +3,10 @@
     public enum FundingStreamActionTypes
     {
         CanCreateSpecification,
-        CanChooseFunding
+        CanChooseFunding,
+        CanCreateTemplates,
+        CanEditTemplates,
+        CanDeleteTemplates,
+        CanApproveTemplates
     }
 }
