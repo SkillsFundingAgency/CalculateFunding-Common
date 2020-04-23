@@ -415,7 +415,7 @@ namespace CalculateFunding.Common.CosmosDb
             return await ResultsFromQueryAndOptions<dynamic>(cosmosDbQuery, queryRequestOptions);
         }
 
-        public async Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity<dynamic>(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null)
+        public async Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null)
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
 
