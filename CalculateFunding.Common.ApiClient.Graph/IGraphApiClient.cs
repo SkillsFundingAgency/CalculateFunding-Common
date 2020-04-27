@@ -10,42 +10,35 @@ namespace CalculateFunding.Common.ApiClient.Graph
     public interface IGraphApiClient
     {
         Task<HttpStatusCode> UpsertCalculations(Calculation[] calculations);
-
         Task<HttpStatusCode> UpsertSpecifications(Specification[] specifications);
-
         Task<HttpStatusCode> DeleteCalculation(string calculationId);
-
         Task<HttpStatusCode> DeleteSpecification(string specificationId);
-
         Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds);
-
         Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
-
         Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId);
-
-        Task<HttpStatusCode> UpsertCalculationDatasetFieldsRelationships(string calculationId, string[] datasetFieldIds);
-
-        Task<HttpStatusCode> UpsertCalculationDatasetFieldRelationship(string calculationId, string datasetFieldId);
-        Task<HttpStatusCode> DeleteCalculationDatasetFieldRelationship(string calculationId, string datasetFieldId);
+        Task<HttpStatusCode> UpsertCalculationDataFieldsRelationships(string calculationId, string[] dataFieldIds);
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
-
         Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId);
         Task<HttpStatusCode> DeleteAllForSpecification(string specificationId);
         Task<HttpStatusCode> UpsertDataset(Dataset dataset);
+        Task<HttpStatusCode> UpsertDatasets(Dataset[] datasets);
         Task<HttpStatusCode> DeleteDataset(string datasetId);
         Task<HttpStatusCode> UpsertDatasetDefinition(DatasetDefinition definition);
+        Task<HttpStatusCode> UpsertDatasetDefinitions(DatasetDefinition[] definitions);
+        Task<HttpStatusCode> UpsertDataField(DataField dataField);
+        Task<HttpStatusCode> UpsertDataFields(DataField[] dataFields);
         Task<HttpStatusCode> DeleteDatasetDefinition(string definitionId);
-        Task<HttpStatusCode> UpsertDataFields(DataField field);
-        Task<HttpStatusCode> UpsertDatasetFields(DatasetField[] field);
-        Task<HttpStatusCode> DeleteDatasetField(string datasetFieldId);
+        Task<HttpStatusCode> DeleteDataField(string dataFieldId);
         Task<HttpStatusCode> UpsertDataDefinitionDatasetRelationship(string definitionId, string datasetId);
         Task<HttpStatusCode> DeleteDataDefinitionDatasetRelationship(string definitionId, string datasetId);
         Task<HttpStatusCode> DeleteDatasetDataFieldRelationship(string datasetId, string fieldId);
-        Task<HttpStatusCode> CreateSpecificationDatasetRelationship(string specificationId, string datasetId);
+        Task<HttpStatusCode> UpsertDatasetDataFieldRelationship(string datasetId, string fieldId);
+        Task<HttpStatusCode> UpsertSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
-        Task<HttpStatusCode> CreateCalculationDataFieldRelationship(string calculationId, string fieldId);
+        Task<HttpStatusCode> UpsertCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId);
-        Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntities(string specificationId);
+        Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntitiesRelatedToSpecification(string specificationId);
+        Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculation(string calculationId);
     }
 }
