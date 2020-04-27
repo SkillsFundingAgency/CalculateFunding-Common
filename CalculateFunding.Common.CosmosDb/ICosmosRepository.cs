@@ -44,7 +44,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000);
 
-        Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null);
+        Task<IEnumerable<dynamic>> DynamicQueryPartitionedEntity<dynamic>(CosmosDbQuery cosmosDbQuery, string partitionEntityId = null);
 
         Task<IEnumerable<T>> RawQuery<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null);
 
