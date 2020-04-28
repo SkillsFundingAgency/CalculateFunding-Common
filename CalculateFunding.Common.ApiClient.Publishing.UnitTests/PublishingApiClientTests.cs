@@ -256,7 +256,19 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new JobCreationResponse(),
                 _client.ApproveFundingForSpecification);        
         }
-        
+
+        [TestMethod]
+        public async Task ApproveFundingForBatchProviders()
+        {
+            string id = NewRandomString();
+            ApproveProvidersRequest approveProvidersRequest = new ApproveProvidersRequest();
+
+            await AssertPostRequest($"specifications/{id}/approve-providers",
+                approveProvidersRequest,
+                new JobCreationResponse(),
+                () => _client.ApproveFundingForBatchProviders(id, approveProvidersRequest));
+        }
+
         [TestMethod]
         public async Task PublishFundingForSpecification()
         {
@@ -266,6 +278,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 id,
                 new JobCreationResponse(),
                 _client.PublishFundingForSpecification);        
+        }
+
+        [TestMethod]
+        public async Task PublishFundingForBatchProviders()
+        {
+            string id = NewRandomString();
+            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+
+            await AssertPostRequest($"specifications/{id}/publish-providers",
+                publishProvidersRequest,
+                new JobCreationResponse(),
+                () =>_client.PublishFundingForBatchProviders(id, publishProvidersRequest));
         }
 
         [TestMethod]

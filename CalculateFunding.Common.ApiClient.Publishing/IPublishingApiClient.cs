@@ -20,8 +20,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId);
 
         Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId);
+        
+        Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, ApproveProvidersRequest approveProvidersRequest);
 
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId);
+        
+        Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishProvidersRequest publishProvidersRequest);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
 
