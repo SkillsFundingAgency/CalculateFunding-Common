@@ -343,12 +343,6 @@ namespace CalculateFunding.Common.ApiClient
             return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Post, cancellationToken, customerHeaders);
         }
 
-        public async Task<HttpStatusCode> DeleteAsync(string url,
-            CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return await StatusCodeRequest(url, HttpMethod.Delete, cancellationToken);
-        }
-
         public async Task<HttpStatusCode> PostAsync<TRequest>(string url,
             TRequest request,
             CancellationToken cancellationToken = default(CancellationToken))
@@ -440,6 +434,35 @@ namespace CalculateFunding.Common.ApiClient
             return await ValidatedRequest<TResponse, TRequest>(url, request, HttpMethod.Put, cancellationToken);
         }
         #endregion "PUT"
+
+        #region PATCH
+        
+        public async Task<ApiResponse<TResponse>> PatchAsync<TResponse, TRequest>(string url,
+            TRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Patch, cancellationToken);
+        }
+
+        public async Task<ValidatedApiResponse<TResponse>> ValidatedPatchAsync<TResponse, TRequest>(
+            string url,
+            TRequest request,
+            CancellationToken cancellationToken = default,
+            TimeSpan? timeout = null)
+        {
+            return await ValidatedRequest<TResponse, TRequest>(url, request, HttpMethod.Patch, cancellationToken, timeout);
+        }
+
+        #endregion
+
+        #region DELETE
+
+        public async Task<HttpStatusCode> DeleteAsync(string url, CancellationToken cancellationToken = default)
+        {
+            return await StatusCodeRequest(url, HttpMethod.Delete, cancellationToken);
+        }
+
+        #endregion
 
         protected HttpClient CreateHttpClient()
         {
