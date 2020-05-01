@@ -469,28 +469,27 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         [TestMethod]
         public async Task DownloadSpecificationReportAsyncThrowsExceptionIfSuppliedIdMissing()
         {
-            SpecificationReportIdentifier specificationReportIdentifier = null;
-            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(specificationReportIdentifier);
+            string reportId = null;
+            Func<Task> invocation = () => WhenTheSpecificationReportDownloaded(reportId);
 
             await invocation.Should()
-                .ThrowExactlyAsync<ArgumentNullException>(nameof(specificationReportIdentifier));
+                .ThrowExactlyAsync<ArgumentNullException>(nameof(reportId));
         }
 
         [TestMethod]
         public async Task DownloadSpecificationReport()
         {
-            SpecificationReportIdentifier specificationReportIdentifier = new SpecificationReportIdentifier();
+            string reportId = NewRandomString();
 
             SpecificationsDownloadModel specificationsDownloadModel = new SpecificationsDownloadModel();
 
-            string expectedUri = $"download-report";
+            string expectedUri = $"download-report/{reportId}";
             
-            GivenTheResponse(expectedUri, specificationsDownloadModel, HttpMethod.Post);
+            GivenTheResponse(expectedUri, specificationsDownloadModel, HttpMethod.Get);
 
-            await AssertPostRequest(expectedUri,
-                specificationReportIdentifier,
+            await AssertGetRequest(expectedUri,
                 specificationsDownloadModel,
-                () => _client.DownloadSpecificationReport(specificationReportIdentifier));
+                () => _client.DownloadSpecificationReport(reportId));
         }
 
         [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
@@ -571,9 +570,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.GetReportMetadataForSpecifications(specificationId);
         }
 
-        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(SpecificationReportIdentifier specificationReportIdentifier)
+        private async Task<ApiResponse<SpecificationsDownloadModel>> WhenTheSpecificationReportDownloaded(string reportId)
         {
-            return await _client.DownloadSpecificationReport(specificationReportIdentifier);
+            return await _client.DownloadSpecificationReport(reportId);
         }
 
         private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)
@@ -611,5 +610,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         private ProfileVariationPointer NewProfileVariationPointer() => new ProfileVariationPointer();
+        private string NewRandomString() => new RandomString();
+
     }
 }
