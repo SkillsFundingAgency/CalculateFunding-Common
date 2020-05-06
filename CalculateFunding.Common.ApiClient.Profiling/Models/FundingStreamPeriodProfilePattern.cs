@@ -30,6 +30,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("calculateBalancingPayment")]
         public bool CalculateBalancingPayment { get; set; }
 
+        [JsonProperty("allowUserToEditProfilePattern")]
+        public bool AllowUserToEditProfilePattern { get; set; }
+
         [JsonProperty("profilePattern")]
         public ProfilePeriodPattern[] ProfilePattern { get; set; }
 
