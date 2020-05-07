@@ -396,6 +396,17 @@ namespace CalculateFunding.Common.CosmosDb
 
             return results.Select(c => c.Content);
         }
+        
+        public ICosmosDbFeedIterator<T> GetFeedIterator<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
+        {
+            Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
+            
+            QueryRequestOptions queryOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
+
+            return new CosmosDbFeedIterator<T>(_container.GetItemQueryIterator<DocumentEntity<T>>(
+                queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
+                requestOptions: queryOptions));
+        }
 
         public async Task<IEnumerable<dynamic>> DynamicQuery(CosmosDbQuery cosmosDbQuery)
         {

@@ -87,5 +87,6 @@ namespace CalculateFunding.Common.CosmosDb
         Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
+        ICosmosDbFeedIterator<T> GetFeedIterator<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
     }
 }
