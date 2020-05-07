@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>   
     <ApplicationIcon />
     <StartupObject />
-    <Version>2.0.2</Version>
+    <Version>2.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.ServiceBus\CalculateFunding.Common.ServiceBus.csproj" />
   </ItemGroup>
 
 </Project>

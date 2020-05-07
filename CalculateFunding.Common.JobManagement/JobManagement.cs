@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs;
 using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ServiceBus.Interfaces;
 using CalculateFunding.Common.Utility;
 using Polly;
 using Serilog;
@@ -19,52 +20,99 @@ namespace CalculateFunding.Common.JobManagement
         private readonly IJobsApiClient _jobsApiClient;
         private readonly AsyncPolicy _jobsApiClientPolicy;
         private readonly ILogger _logger;
+        private readonly IMessengerService _messengerService;
 
+        private bool IsServiceBusService => _messengerService.GetType().GetInterfaces().Contains(typeof(IServiceBusService));
 
         public JobManagement(IJobsApiClient jobsApiClient,
             ILogger logger,
-            IJobManagementResiliencePolicies jobManagementResiliencePolicies)
+            IJobManagementResiliencePolicies jobManagementResiliencePolicies,
+            IMessengerService messengerService)
         {
             Guard.ArgumentNotNull(jobsApiClient, nameof(jobsApiClient));
             Guard.ArgumentNotNull(logger, nameof(logger));
             Guard.ArgumentNotNull(jobManagementResiliencePolicies, nameof(jobManagementResiliencePolicies));
+            Guard.ArgumentNotNull(messengerService, nameof(messengerService));
 
             _jobsApiClient = jobsApiClient;
             _logger = logger;
             _jobsApiClientPolicy = jobManagementResiliencePolicies.JobsApiClient;
+            _messengerService = messengerService;
         }
 
-        public async Task<bool> WaitForJobsToComplete(IEnumerable<string> jobTypes, string specificationId, double pollTimeout = 600000, double pollInterval = 120000)
+        public async Task<bool> QueueJobAndWait(Func<Task<bool>> queueJob ,string jobType, string specificationId, string correlationId, string jobNotificationTopic, double pollTimeout = 600000, double pollInterval = 120000)
         {
-            bool pollResult =  await Poll(async () => await CheckAllJobs(jobTypes, specificationId, _ => _ != null && (_.RunningStatus == RunningStatus.InProgress || _.RunningStatus == RunningStatus.Queued)),
-                jobTypes,
-                TimeSpan.FromMilliseconds(pollTimeout),
-                TimeSpan.FromMilliseconds(pollInterval));
+            if (IsServiceBusService)
+            {
+                await ((IServiceBusService)_messengerService).CreateSubscription(jobNotificationTopic, correlationId);
+            }
 
-            if(!pollResult)
+            bool jobQueued = await queueJob();
+
+            if (jobQueued)
+            {
+                try
+                {
+                    if (IsServiceBusService)
+                    {
+                        JobNotification scopedJob = await _messengerService.ReceiveMessage<JobNotification>($"{jobNotificationTopic}/Subscriptions/{correlationId}", _ =>
+                        {
+                            return _?.JobType == jobType &&
+                            _.SpecificationId == specificationId &&
+                            (_.CompletionStatus == CompletionStatus.Succeeded || _.CompletionStatus == CompletionStatus.Failed);
+                        },
+                        TimeSpan.FromMilliseconds(pollTimeout));
+
+                        return scopedJob?.CompletionStatus == CompletionStatus.Succeeded;
+                    }
+                    else
+                    {
+                        return await WaitForJobToComplete(jobType, specificationId, pollTimeout, pollInterval);
+                    }
+                }
+                finally
+                {
+                    if (IsServiceBusService)
+                    {
+                        await ((IServiceBusService)_messengerService).DeleteSubscription(jobNotificationTopic, correlationId);
+                    }
+                }
+            }
+            else
+            {
+                // if job not queued then return true
+                return true;
+            }
+        }
+
+        private async Task<bool> WaitForJobToComplete(string jobType, string specificationId, double pollTimeout, double pollInterval)
+        {
+            bool pollResult = await Poll(async () => await CheckAllJobs(jobType, specificationId, _ => _ != null && (_.RunningStatus == RunningStatus.InProgress || _.RunningStatus == RunningStatus.Queued)),
+                    jobType,
+                    TimeSpan.FromMilliseconds(pollTimeout),
+                    TimeSpan.FromMilliseconds(pollInterval));
+
+            if (!pollResult)
             {
                 return false;
             }
             else
             {
-                return await CheckAllJobs(jobTypes, specificationId, _ => _ == null || (_ != null && _.CompletionStatus != CompletionStatus.Failed));
+                return await CheckAllJobs(jobType, specificationId, _ => _ == null || (_ != null && _.CompletionStatus != CompletionStatus.Failed));
             }
         }
 
-        private async Task<bool> CheckAllJobs(IEnumerable<string> jobTypes, string specificationId, Predicate<JobSummary> predicate)
+        private async Task<bool> CheckAllJobs(string jobType, string specificationId, Predicate<JobSummary> predicate)
         {
-            IEnumerable<Task<ApiResponse<JobSummary>>> jobResponses = jobTypes
-                .Select(async _ => await _jobsApiClientPolicy.ExecuteAsync(() => {
-                    return _jobsApiClient.GetLatestJobForSpecification(specificationId, new string[] { _ });
-                }));
+            ApiResponse<JobSummary> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() => {
+                    return _jobsApiClient.GetLatestJobForSpecification(specificationId, new string[] { jobType });
+                });
 
-            IEnumerable<ApiResponse<JobSummary>> jobResponseSummaries = await Task.WhenAll(jobResponses.ToArray());
-
-            if (jobResponseSummaries.All(_ => ((int?)_?.StatusCode >= 200) && ((int?)_?.StatusCode <= 299)))
+            if ((int?)jobResponse?.StatusCode >= 200 && (int?)jobResponse?.StatusCode <= 299)
             {
-                IEnumerable<JobSummary> summaries = jobResponseSummaries.Select(_ => _.Content);
+                JobSummary summary = jobResponse.Content;
 
-                return summaries.All(_ => predicate(_));
+                return predicate(summary);
             }
             else
             {
@@ -73,7 +121,7 @@ namespace CalculateFunding.Common.JobManagement
             }
         }
 
-        private async Task<bool> Poll(Func<Task<bool>> condition, IEnumerable<string> jobTypes, TimeSpan timeout, TimeSpan delay)
+        private async Task<bool> Poll(Func<Task<bool>> condition, string jobType, TimeSpan timeout, TimeSpan delay)
         {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationTokenSource pollCancellationTokenSource = new CancellationTokenSource();
@@ -84,7 +132,7 @@ namespace CalculateFunding.Common.JobManagement
                 {
                     if (!pollCancellationTokenSource.Token.WaitHandle.WaitOne(timeout))
                     {
-                        _logger.Error($"Poll timeout waiting for the following job types : {jobTypes?.Aggregate((partialLog, log) => $"{partialLog}, {log}")} to complete.");
+                        _logger.Error($"Poll timeout waiting for the following job type : {jobType} to complete.");
                         cancellationTokenSource.Cancel();
                     }
                 });
