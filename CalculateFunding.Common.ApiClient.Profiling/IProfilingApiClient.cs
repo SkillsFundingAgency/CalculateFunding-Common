@@ -13,8 +13,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling
         Task<HttpStatusCode> EditProfilePattern(EditProfilePatternRequest request);
         Task<HttpStatusCode> DeleteProfilePattern(string id);
         Task<ApiResponse<FundingStreamPeriodProfilePattern>> GetProfilePattern(string id);
-
         Task<ApiResponse<IEnumerable<FundingStreamPeriodProfilePattern>>> GetProfilePatternsForFundingStreamAndFundingPeriod(string fundingStreamId,
             string fundingPeriodId);
+        Task<(bool Ok, string Message)> IsHealthOk();
     }
 }

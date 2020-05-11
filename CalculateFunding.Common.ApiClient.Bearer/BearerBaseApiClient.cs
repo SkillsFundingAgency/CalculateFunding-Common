@@ -12,7 +12,6 @@ namespace CalculateFunding.Common.ApiClient.Bearer
         private readonly IBearerTokenProvider _bearerTokenProvider;
         private readonly ILogger _logger;
 
-
         public BearerBaseApiClient(
             IHttpClientFactory httpClientFactory,
             string clientKey,
@@ -39,6 +38,11 @@ namespace CalculateFunding.Common.ApiClient.Bearer
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             return httpClient;
+        }
+
+        public async Task<(bool Ok, string Message)> IsHealthOk()
+        {
+            return await _bearerTokenProvider.IsHealthOk();
         }
     }
 }

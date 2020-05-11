@@ -44,5 +44,10 @@ namespace CalculateFunding.Common.ApiClient.Bearer
 
             return token.AccessToken;
         }
+
+        public async Task<(bool Ok, string Message)> IsHealthOk()
+        {
+            return await _cacheProvider.IsHealthOk();
+        }
     }
 }
