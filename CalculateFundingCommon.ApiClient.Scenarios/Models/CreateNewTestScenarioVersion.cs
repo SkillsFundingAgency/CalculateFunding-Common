@@ -1,4 +1,4 @@
-namespace CalculateFundingCommon.ApiClient.Scenarios.Models
+namespace CalculateFunding.Common.ApiClient.Scenarios.Models
 {
     public class CreateNewTestScenarioVersion
     {

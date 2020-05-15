@@ -7,10 +7,10 @@ using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
-using CalculateFundingCommon.ApiClient.Scenarios.Models;
+using CalculateFunding.Common.ApiClient.Scenarios.Models;
 using Serilog;
 
-namespace CalculateFundingCommon.ApiClient.Scenarios
+namespace CalculateFunding.Common.ApiClient.Scenarios
 {
     public class ScenariosApiClient : BaseApiClient, IScenariosApiClient
     {

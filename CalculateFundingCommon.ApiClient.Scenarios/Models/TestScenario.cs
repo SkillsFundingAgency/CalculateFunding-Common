@@ -1,7 +1,7 @@
 using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
-namespace CalculateFundingCommon.ApiClient.Scenarios.Models
+namespace CalculateFunding.Common.ApiClient.Scenarios.Models
 {
     public class TestScenario : Reference
     {

@@ -226,6 +226,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync($"upload-dataset-file/{filename}", datasetMetadataViewModel);
         }
 
+        public async Task<ApiResponse<IEnumerable<DatasetSchemaRelationshipModel>>> GetDatasetSchemaRelationshipModelsForSpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<DatasetSchemaRelationshipModel>>(DataSetsUriFor($"{specificationId}/schemaRelationshipFields"));
+        }
+
         private string DataSetsUriFor(string relativeUri)
         {
             return $"datasets/{relativeUri}";

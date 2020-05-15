@@ -329,6 +329,17 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
             
             AndTheRequestContentsShouldHaveBeen(model.AsJson());
         }
-        
+
+        [TestMethod]
+        public async Task GetDatasetSchemaRelationshipModelsForSpecificationId()
+        {
+            string specificationId = NewRandomString();
+            
+
+            await AssertGetRequest($"{specificationId}/schemaRelationshipFields",
+                Enumerable.Empty<DatasetSchemaRelationshipModel>(),
+                () => _client.GetDatasetSchemaRelationshipModelsForSpecificationId(specificationId));
+        }
+
     }
 }

@@ -3,9 +3,9 @@ using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Models.Search;
-using CalculateFundingCommon.ApiClient.Scenarios.Models;
+using CalculateFunding.Common.ApiClient.Scenarios.Models;
 
-namespace CalculateFundingCommon.ApiClient.Scenarios
+namespace CalculateFunding.Common.ApiClient.Scenarios
 {
     public interface IScenariosApiClient
     {

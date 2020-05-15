@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.Models;
 using Newtonsoft.Json;
 
-namespace CalculateFundingCommon.ApiClient.Scenarios.Models
+namespace CalculateFunding.Common.ApiClient.Scenarios.Models
 {
     public class TestScenarioVersion : VersionedItem
     {

@@ -2,7 +2,7 @@ using System;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Models;
 
-namespace CalculateFundingCommon.ApiClient.Scenarios.Models
+namespace CalculateFunding.Common.ApiClient.Scenarios.Models
 {
     public class CurrentTestScenario : Reference
     {
