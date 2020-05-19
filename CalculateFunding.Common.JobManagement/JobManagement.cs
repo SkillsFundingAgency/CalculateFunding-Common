@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +37,11 @@ namespace CalculateFunding.Common.JobManagement
             _logger = logger;
             _jobsApiClientPolicy = jobManagementResiliencePolicies.JobsApiClient;
             _messengerService = messengerService;
+        }
+
+        public async Task<(bool Ok, string Message)> IsHealthOk(string queueName)
+        {
+            return await _messengerService.IsHealthOk(queueName);
         }
 
         public async Task<bool> QueueJobAndWait(Func<Task<bool>> queueJob ,string jobType, string specificationId, string correlationId, string jobNotificationTopic, double pollTimeout = 600000, double pollInterval = 120000)
@@ -162,17 +166,17 @@ namespace CalculateFunding.Common.JobManagement
                 string error = $"Could not find the job with id: '{jobId}'";
 
                 _logger.Write(LogEventLevel.Error, error);
-                throw new Exception(error);
+                throw new JobNotFoundException(error, jobId);
             }
 
             JobViewModel job = response.Content;
 
             if (job.CompletionStatus.HasValue)
             {
-                string error = $"Received job with id: '{jobId}' is already in a completed state with status {job.CompletionStatus.ToString()}";
+                string error = $"Received job with id: '{jobId}' is already in a completed state with status {job.CompletionStatus}";
 
                 _logger.Write(LogEventLevel.Information, error);
-                throw new Exception(error);
+                throw new JobAlreadyCompletedException(error, job);
             }
 
             return job;
@@ -212,6 +216,47 @@ namespace CalculateFunding.Common.JobManagement
             {
                 _logger.Write(LogEventLevel.Error, $"Failed to add a job log for job id '{jobId}'");
             }
+        }
+
+        public async Task<Job> QueueJob(JobCreateModel jobCreateModel)
+        {
+            return await _jobsApiClientPolicy.ExecuteAsync(() => {
+                return _jobsApiClient.CreateJob(jobCreateModel);
+            });
+        }
+
+        public async Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels)
+        {
+            return await _jobsApiClientPolicy.ExecuteAsync(() => {
+                return _jobsApiClient.CreateJobs(jobCreateModels);
+            });
+        }
+
+        public async Task<JobSummary> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes)
+        {
+            ApiResponse<JobSummary> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobForSpecification(specificationId, jobTypes));
+
+            JobSummary jobSummary = jobSummaryResponse?.Content;
+
+            return jobSummary;
+        }
+
+        public async Task<JobLog> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel)
+        {
+            ApiResponse<JobLog> jobLogResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.AddJobLog(jobId, jobLogUpdateModel));
+
+            JobLog jobLog = jobLogResponse?.Content;
+
+            return jobLog;
+        }
+
+        public async Task<IEnumerable<JobSummary>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo)
+        {
+            ApiResponse<IEnumerable<JobSummary>> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetNonCompletedJobsWithinTimeFrame(dateTimeFrom, dateTimeTo));
+
+            IEnumerable<JobSummary> jobSummaries = jobSummaryResponse?.Content;
+
+            return jobSummaries;
         }
     }
 }
