@@ -7,8 +7,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
     {
         public string TemplateStatus { get; set; }
         public DateTime TemplateStatusChangedDate { get; set; }
-        public string TemplateVersion { get; set; }
+        public string FundingTemplateVersion { get; set; }
         public SchemaJsonFundingStream FundingStream { get; set; }
+        public SchemaJsonFundingPeriod FundingPeriod { get; set; }
         public IEnumerable<SchemaJsonFundingLine> FundingLines { get; set; }
     }
 }

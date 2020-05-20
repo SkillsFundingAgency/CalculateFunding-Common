@@ -69,7 +69,7 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
 
             contents.RootFundingLines.First().Type
                 .Should()
-                .Be(FundingLineType.Information);
+                .Be(FundingLineType.Payment);
 
             contents.RootFundingLines.Last().Name
                 .Should()

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
@@ -9,16 +10,24 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
         
         public string Name { get; set; }
         
-        public string Type { get; set; }
+        [EnumDataType(typeof(FundingCalculationType))]
+        public FundingCalculationType Type { get; set; }
         
-        public string AggregationType { get; set; }
+        [EnumDataType(typeof(AggregationType))]
+        public AggregationType AggregationType { get; set; }
         
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string FormulaText { get; set; }
         
-        public string ValueType { get; set; }
+        [EnumDataType(typeof(ValueFormatType))]
+        public ValueFormatType ValueFormat { get; set; }
         
-        public string ValueFormat { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IEnumerable<string> AllowedEnumTypeValues { get; set; }
+        
+        public SchemaJsonGroupRate GroupRate { get; set; }
+        
+        public SchemaJsonPercentageChangeBetweenAandB PercentageChangeBetweenAandB { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<SchemaJsonCalculation> Calculations { get; set; }

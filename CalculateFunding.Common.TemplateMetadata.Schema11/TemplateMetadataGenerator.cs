@@ -60,7 +60,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11
             {
                 TemplateMetadataContents contents = new TemplateMetadataContents
                 {
-                    RootFundingLines = feedBaseModel.FundingStreamTemplate.FundingLines?.Select(x => x.ToFundingLine()),
+                    RootFundingLines = feedBaseModel.FundingTemplate.FundingLines?.Select(x => x.ToFundingLine()),
                     SchemaVersion = feedBaseModel.SchemaVersion
                 };
 

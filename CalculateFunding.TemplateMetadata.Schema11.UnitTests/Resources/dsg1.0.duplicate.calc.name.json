@@ -1,22 +1,26 @@
 {
   "$schema": "https://fundingschemas.blob.core.windows.net/schemas/logicalmodel-1.1.json#schema",
   "schemaVersion": "1.1",
-  "fundingStreamTemplate": {
-    "templateStatus": "Draft",
-    "templateStatusChangedDate": "2020-03-25T10:00:06.6338431Z",
-    "templateVersion": "1.0",
+  "fundingTemplate": {
+    "fundingTemplateVersion": "1.0",
     "fundingStream": {
       "code": "DSG",
       "name": "Dedicated Schools Grant"
+    },
+    "fundingPeriod": {
+      "id": "AY-1920",
+      "period": "1920",
+      "name": "Academic year 2019-20",
+      "type": "AY",
+      "startDate": "2019-09-01T01:00:00+01:00",
+      "endDate": "2020-08-31T01:00:00+01:00"
     },
     "fundingLines": [
       {
         "name": "Funding Line 1",
         "fundingLineCode": "DSG-001",
         "templateLineId": 1,
-        "type": "Information",
-        "aggregationType": "Sum",
-        "valueType": "String",
+        "type": "Payment",
         "fundingLines": [],
         "calculations": [
           {
@@ -24,25 +28,23 @@
             "type": "PupilNumber",
             "aggregationType": "Average",
             "templateCalculationId": 2,
-            "valueType": "Decimal",
+            "formulaText": "1 + 1",
             "valueFormat": "Percentage",
             "calculations": [
               {
-                "name": "Calc 11111",
+                "name": "Child Calculation 33333",
                 "type": "Rate",
                 "aggregationType": "None",
-                "formulaText": null,
+                "formulaText": "1 + 1",
                 "templateCalculationId": 4,
-                "valueType": "String",
                 "valueFormat": "Number",
                 "calculations": [
                   {
-                    "name": "New Calc 44444",
+                    "name": "Calc 11111",
                     "type": "PupilNumber",
                     "aggregationType": "Sum",
-                    "formulaText": null,
+                    "formulaText": "1 + 1",
                     "templateCalculationId": 5,
-                    "valueType": "Percentage",
                     "valueFormat": "Currency",
                     "calculations": []
                   }
@@ -57,17 +59,14 @@
         "fundingLineCode": "DSG-002",
         "templateLineId": 6,
         "type": "Payment",
-        "aggregationType": "Average",
-        "valueType": "Decimal",
         "fundingLines": [],
         "calculations": [
           {
-            "name": "New Calc 77777",
+            "name": "New Calc 33333",
             "type": "Weighting",
             "aggregationType": "Sum",
             "formulaText": "1 + 1 = 7",
             "templateCalculationId": 7,
-            "valueType": "Date",
             "valueFormat": "Percentage",
             "calculations": []
           }

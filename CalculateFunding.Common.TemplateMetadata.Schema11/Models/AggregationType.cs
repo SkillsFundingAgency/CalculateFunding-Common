@@ -1,4 +1,4 @@
-﻿namespace CalculateFunding.Common.TemplateMetadata.Enums
+﻿namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
 {
     public enum AggregationType
     {

@@ -13,12 +13,12 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Mapping
             return new Calculation
             {
                 Name = source.Name,
-                ValueFormat = (CalculationValueFormat) Enum.Parse(typeof(CalculationValueFormat), source.ValueFormat),
-                AggregationType = (AggregationType) Enum.Parse(typeof(AggregationType), source.AggregationType),
-                Type = (CalculationType) Enum.Parse(typeof(CalculationType), source.Type),
+                ValueFormat = (CalculationValueFormat) Enum.Parse(typeof(CalculationValueFormat), source.ValueFormat.ToString()),
+                AggregationType = (Enums.AggregationType) Enum.Parse(typeof(Enums.AggregationType), source.AggregationType.ToString()),
+                Type = (CalculationType) Enum.Parse(typeof(CalculationType), source.Type.ToString()),
                 TemplateCalculationId = source.TemplateCalculationId,
                 FormulaText = source.FormulaText,
-                Calculations = source.Calculations?.Select(x => ToCalculation(x))
+                Calculations = source.Calculations?.Select(ToCalculation)
             };
         }
         
@@ -29,9 +29,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Mapping
                 Name = source.Name,
                 TemplateLineId = source.TemplateLineId,
                 FundingLineCode = source.FundingLineCode,
-                Type = (FundingLineType) Enum.Parse(typeof(FundingLineType), source.Type),
-                Calculations = source.Calculations?.Select(calculationMap => ToCalculation(calculationMap)),
-                FundingLines = source.FundingLines?.Select(x => ToFundingLine(x))
+                Type = (Enums.FundingLineType) Enum.Parse(typeof(Enums.FundingLineType), source.Type.ToString()),
+                Calculations = source.Calculations?.Select(ToCalculation),
+                FundingLines = source.FundingLines?.Select(ToFundingLine)
             };
         }
     }

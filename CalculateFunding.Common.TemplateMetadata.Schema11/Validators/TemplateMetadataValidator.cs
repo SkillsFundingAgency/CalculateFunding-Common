@@ -13,10 +13,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
     {
         public TemplateMetadataValidator()
         {
-            RuleFor(model => model.FundingStreamTemplate)
+            RuleFor(model => model.FundingTemplate)
                 .NotNull()
                 .WithMessage("No funding stream provided for TemplateMetadataValidator");
-            RuleFor(model => model.FundingStreamTemplate.FundingLines)
+            RuleFor(model => model.FundingTemplate.FundingLines)
                 .NotEmpty()
                 .WithMessage("No funding lines provided for TemplateMetadataValidator")
                 .Custom((fundingLines, context) =>
