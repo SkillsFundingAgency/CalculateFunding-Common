@@ -135,6 +135,28 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ThenTheResponseContentIs(actualFeed, expectedFeed);
         }
 
+        [TestMethod]
+        public async Task GetFundingStreamsMakesGetCall()
+        {
+            string _id = NewRandomString();
+            string _name = NewRandomString();
+
+            IEnumerable<FundingStream> expectedFunding = new List<FundingStream>
+            {
+                new FundingStream
+                {
+                    Id = _id,
+                    Name = _name
+                }
+            };
+
+            GivenTheResponse("v3/funding-streams", expectedFunding, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<FundingStream>> actualFundingStreams = await WhenGetFundingStreams();
+
+            ThenTheResponseContentIs(actualFundingStreams, expectedFunding);
+        }
+
         public static IEnumerable<object[]> NotificationsExamples()
         {
             yield return new object []
@@ -204,6 +226,11 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         private async Task<ApiResponse<string>> WhenTheFundingIsQueriedByIdWithTheSuppliedId(string fundingId)
         {
             return await _client.GetFundingById(fundingId);
+        }
+
+        private async Task<ApiResponse<IEnumerable<FundingStream>>> WhenGetFundingStreams()
+        {
+            return await _client.GetFundingStreams();
         }
 
         private async Task<ApiResponse<AtomFeed<object>>> WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)

@@ -14,8 +14,8 @@ namespace CalculateFunding.Common.ApiClient.External
     public class ExternalApiClient : BearerBaseApiClient, IExternalApiClient
     {
         private const string Version = "v3";
-        private const string BaseUri = "funding";
-        
+        private const string FundingBaseUri = "funding";
+
         public ExternalApiClient(
             IHttpClientFactory httpClientFactory,
             string clientKey,
@@ -30,21 +30,21 @@ namespace CalculateFunding.Common.ApiClient.External
         {
             Guard.IsNullOrWhiteSpace(providerFundingVersion, nameof(providerFundingVersion));
 
-            return await GetAsync<AtomFeed<object>>($"{Version}/{BaseUri}/provider/{providerFundingVersion}");
+            return await GetAsync<AtomFeed<object>>($"{Version}/{FundingBaseUri}/provider/{providerFundingVersion}");
         }
 
         public async Task<ApiResponse<IEnumerable<dynamic>>> GetFundings(string publishedProviderVersion)
         {
             Guard.IsNullOrWhiteSpace(publishedProviderVersion, nameof(publishedProviderVersion));
 
-            return await GetAsync<IEnumerable<dynamic>>($"{Version}/{BaseUri}/provider/{publishedProviderVersion}/fundings");
+            return await GetAsync<IEnumerable<dynamic>>($"{Version}/{FundingBaseUri}/provider/{publishedProviderVersion}/fundings");
         }
 
         public async Task<ApiResponse<string>> GetFundingById(string id)
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
 
-            return await GetAsync<string>($"{Version}/{BaseUri}/byId/{id}");
+            return await GetAsync<string>($"{Version}/{FundingBaseUri}/byId/{id}");
         }
         
         public async Task<ApiResponse<AtomFeed<object>>> GetFundingNotifications(string[] fundingStreamIds = null,
@@ -53,7 +53,7 @@ namespace CalculateFunding.Common.ApiClient.External
             int? pageSize = null,
             int? pageRef = null)
         {
-            string uri = $"{Version}/{BaseUri}/notifications";
+            string uri = $"{Version}/{FundingBaseUri}/notifications";
             
             uri = pageRef.HasValue ? $"{uri}/{pageRef}" : uri;
 
@@ -82,6 +82,11 @@ namespace CalculateFunding.Common.ApiClient.External
             string queryStringParameter = $"{parameterName}={queryStringParameters}";
             
             return queryString.Length == 0 ? queryStringParameter : $"{queryString}&{queryStringParameter}";
+        }
+
+        public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams()
+        {
+            return await GetAsync<IEnumerable<FundingStream>>($"{Version}/funding-streams");
         }
     }
 }
