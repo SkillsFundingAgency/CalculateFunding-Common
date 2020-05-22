@@ -19,5 +19,7 @@ namespace CalculateFunding.Common.ApiClient.External
         Task<(bool Ok, string Message)> IsHealthOk();
 
         Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams();
+        Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods(string fundingStreamId);
+
     }
 }

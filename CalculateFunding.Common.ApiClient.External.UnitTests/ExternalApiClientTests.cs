@@ -143,11 +143,7 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
 
             IEnumerable<FundingStream> expectedFunding = new List<FundingStream>
             {
-                new FundingStream
-                {
-                    Id = _id,
-                    Name = _name
-                }
+                NewFundingStream(_ => _.WithId(_id).WithName(_name))
             };
 
             GivenTheResponse("v3/funding-streams", expectedFunding, HttpMethod.Get);
@@ -155,6 +151,40 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ApiResponse<IEnumerable<FundingStream>> actualFundingStreams = await WhenGetFundingStreams();
 
             ThenTheResponseContentIs(actualFundingStreams, expectedFunding);
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void GetFundingPeriodsMakesThrowsExceptionIfNoSuppliedId(string fundingStreamId)
+        {
+            Func<Task<ApiResponse<IEnumerable<FundingPeriod>>>> invocation = () =>
+                WhenTheFundingPeriodIsQueriedByFundingStreamIdWithTheSuppliedId(fundingStreamId);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public async Task GetFundingPeriodsMakesGetCallWithSuppliedFundingStreamId()
+        {
+            string fundingStreamId = NewRandomString();
+            string _id = NewRandomString();
+            string _name = NewRandomString();
+
+            IEnumerable<FundingPeriod> expectedFunding = new List<FundingPeriod>
+            {
+                NewFundingPeriod(_ => _.WithId(_id).WithName(_name))
+            };
+
+            GivenTheResponse($"v3/funding-streams/{fundingStreamId}/funding-periods", expectedFunding, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<FundingPeriod>> actualFundingPeriods =
+                await WhenTheFundingPeriodIsQueriedByFundingStreamIdWithTheSuppliedId(fundingStreamId);
+
+            ThenTheResponseContentIs(actualFundingPeriods, expectedFunding);
         }
 
         public static IEnumerable<object[]> NotificationsExamples()
@@ -233,6 +263,12 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             return await _client.GetFundingStreams();
         }
 
+        private async Task<ApiResponse<IEnumerable<FundingPeriod>>> WhenTheFundingPeriodIsQueriedByFundingStreamIdWithTheSuppliedId(
+            string fundingStreamId)
+        {
+            return await _client.GetFundingPeriods(fundingStreamId);
+        }
+
         private async Task<ApiResponse<AtomFeed<object>>> WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)
         {
             return await _client.GetProviderFundingVersion(providerFundingVersion);
@@ -245,6 +281,24 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             setUp?.Invoke(atomFeedBuilder);
 
             return atomFeedBuilder.Build();
+        }
+
+        private FundingStream NewFundingStream(Action<FundingStreamBuilder> setUp = null)
+        {
+            FundingStreamBuilder fundingStreamBuilder = new FundingStreamBuilder();
+
+            setUp?.Invoke(fundingStreamBuilder);
+
+            return fundingStreamBuilder.Build();
+        }
+
+        private FundingPeriod NewFundingPeriod(Action<FundingPeriodBuilder> setUp = null)
+        {
+            FundingPeriodBuilder fundingPeriodBuilder = new FundingPeriodBuilder();
+
+            setUp?.Invoke(fundingPeriodBuilder);
+
+            return fundingPeriodBuilder.Build();
         }
 
         private async Task<ApiResponse<IEnumerable<dynamic>>> WhenTheProviderFundingsIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)

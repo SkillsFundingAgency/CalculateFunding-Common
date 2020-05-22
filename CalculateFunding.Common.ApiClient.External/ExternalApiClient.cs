@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.ApiClient.External
     {
         private const string Version = "v3";
         private const string FundingBaseUri = "funding";
+        private const string FundingStreamsBaseUri = "funding-streams";
 
         public ExternalApiClient(
             IHttpClientFactory httpClientFactory,
@@ -86,7 +87,15 @@ namespace CalculateFunding.Common.ApiClient.External
 
         public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams()
         {
-            return await GetAsync<IEnumerable<FundingStream>>($"{Version}/funding-streams");
+            return await GetAsync<IEnumerable<FundingStream>>($"{Version}/{FundingStreamsBaseUri}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<FundingPeriod>>(
+                $"{Version}/{FundingStreamsBaseUri}/{fundingStreamId}/funding-periods");
         }
     }
 }
