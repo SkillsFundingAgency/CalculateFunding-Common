@@ -1,6 +1,8 @@
 ﻿using CalculateFunding.Common.ApiClient;
+using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using System;
 using System.Collections.Generic;
@@ -12,12 +14,11 @@ namespace CalculateFunding.Common.Config.ApiClient
 {
     public static class ApiClientConfigurationOptions
     {
-        public static void SetDefaultApiClientConfigurationOptions(HttpClient httpClient, ApiOptions options, IServiceCollection services, string clientName)
+        public static void SetDefaultApiClientConfigurationOptions(HttpClient httpClient, ApiOptions options)
         {
             Guard.ArgumentNotNull(httpClient, nameof(httpClient));
             Guard.ArgumentNotNull(options, nameof(options));
-            Guard.ArgumentNotNull(services, nameof(services));
-
+            
             if (string.IsNullOrWhiteSpace(options.ApiEndpoint))
             {
                 throw new InvalidOperationException("options EndPoint is null or empty string");
@@ -29,14 +30,30 @@ namespace CalculateFunding.Common.Config.ApiClient
                 baseAddress = $"{baseAddress}/";
             }
 
-            services.BuildServiceProvider();
-
             httpClient.BaseAddress = new Uri(baseAddress, UriKind.Absolute);
-            httpClient.DefaultRequestHeaders?.Add(ApiClientHeaders.ApiKey, options.ApiKey);
+            if (httpClient.DefaultRequestHeaders != null)
+            {
+                httpClient.DefaultRequestHeaders.Add(ApiClientHeaders.ApiKey, options.ApiKey);
+                
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                httpClient.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            }
+        }
 
-            httpClient.DefaultRequestHeaders?.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.DefaultRequestHeaders?.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            httpClient.DefaultRequestHeaders?.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+        public static IHttpClientBuilder AddUserProfilerHeaderPropagation(this IHttpClientBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            builder.AddHttpMessageHandler(services =>
+            {
+                return new UserProfilerPropagationMessageHandler(services.GetRequiredService<IUserProfileProvider>());
+            });
+
+            return builder;
         }
     }
 }

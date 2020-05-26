@@ -2,18 +2,26 @@
 {
 	using System.Security.Claims;
 	using System.Threading.Tasks;
-	using Microsoft.AspNetCore.Http;
+    using CalculateFunding.Common.Models;
+    using CalculateFunding.Common.Utility;
+    using Microsoft.AspNetCore.Http;
 
 	public class LoggedInUserMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IUserProfileProvider _userProfileProvider;
 
-        public LoggedInUserMiddleware(RequestDelegate next)
+        public LoggedInUserMiddleware(RequestDelegate next, IUserProfileProvider userProfileProvider)
         {
+            Guard.ArgumentNotNull(next, nameof(next));
+            Guard.ArgumentNotNull(userProfileProvider, nameof(userProfileProvider));
+
             _next = next;
+            _userProfileProvider = userProfileProvider;
+            
         }
 
-        public Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             string userId = "unknown";
             string username = "unknown";
@@ -29,8 +37,10 @@
                 new ClaimsIdentity(new []{ new Claim(ClaimTypes.Sid, userId), new Claim(ClaimTypes.Name, username) })
             });
 
+            _userProfileProvider.UserProfile = new UserProfile(userId, username);
+
             // Call the next delegate/middleware in the pipeline
-            return this._next(context);
+            await this._next(context);
         }
     }
 }

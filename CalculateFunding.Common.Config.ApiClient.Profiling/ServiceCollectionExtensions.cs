@@ -30,17 +30,18 @@ namespace CalculateFunding.Common.Config.ApiClient.Profiling
             }
 
             builder.AddHttpClient(HttpClientKeys.Profiling,
-               c =>
+               (httpClient) =>
                {
                    ApiOptions apiOptions = new ApiOptions();
 
                    config.Bind(ClientName, apiOptions);
 
-                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder, ClientName);
+                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(httpClient, apiOptions);
                })
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
-               .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod));
+               .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod))
+               .AddUserProfilerHeaderPropagation();
 
             builder.AddSingleton<ICancellationTokenProvider, InactiveCancellationTokenProvider>();
 

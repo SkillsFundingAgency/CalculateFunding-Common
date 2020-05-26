@@ -19,7 +19,6 @@ namespace CalculateFunding.Common.ApiClient
     public abstract class BaseApiClient
     {
         private readonly string _clientKey;
-
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
@@ -38,7 +37,6 @@ namespace CalculateFunding.Common.ApiClient
 
             _clientKey = clientKey;
             Logger = logger;
-
             HttpClient httpClient = _httpClientFactory.CreateClient(clientKey);
 
             Logger.Debug("AbstractApiClient created with Client Key: {clientkey} with base address: {baseAddress}", clientKey, httpClient.BaseAddress);
@@ -436,7 +434,7 @@ namespace CalculateFunding.Common.ApiClient
         #endregion "PUT"
 
         #region PATCH
-        
+
         public async Task<ApiResponse<TResponse>> PatchAsync<TResponse, TRequest>(string url,
             TRequest request,
             CancellationToken cancellationToken = default)
@@ -471,7 +469,7 @@ namespace CalculateFunding.Common.ApiClient
 
         public virtual async Task<HttpClient> GetHttpClient()
         {
-            return await Task.FromResult(_httpClientFactory.CreateClient(_clientKey));
+            return await Task.FromResult(CreateHttpClient());
         }
 
         private CancellationToken CurrentCancellationToken()

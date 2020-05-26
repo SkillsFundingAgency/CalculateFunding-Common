@@ -26,17 +26,18 @@ namespace CalculateFunding.Common.Config.ApiClient.Graph
             }
 
             IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Graph,
-               c =>
+               (httpClient) =>
                {
                    ApiOptions apiOptions = new ApiOptions();
 
                    config.Bind(ClientName, apiOptions);
 
-                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(c, apiOptions, builder, ClientName);
+                   ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(httpClient, apiOptions);
                })
                .ConfigurePrimaryHttpMessageHandler(() => new ApiClientHandler())
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
-               .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod));
+               .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod))
+               .AddUserProfilerHeaderPropagation();
                
             // if a life time for the handler has been set then set it on the client builder
             if (handlerLifetime != default)
