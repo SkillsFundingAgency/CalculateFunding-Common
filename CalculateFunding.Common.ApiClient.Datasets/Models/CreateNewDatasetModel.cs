@@ -11,5 +11,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public string FundingStreamId { get; set; }
     }
 }

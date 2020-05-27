@@ -34,5 +34,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("blobName")]
         public string BlobName { get; set; }
+
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
+
+        [JsonProperty("fundingStreamName")]
+        public string FundingStreamName { get; set; }
     }
 }

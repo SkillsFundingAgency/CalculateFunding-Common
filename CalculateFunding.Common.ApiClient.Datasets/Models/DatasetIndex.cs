@@ -49,5 +49,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("specificationNames")]
         public string[] SpecificationNames { get; set; }
+
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
+
+        [JsonProperty("fundingStreamName")]
+        public string FundingStreamName { get; set; }
     }
 }

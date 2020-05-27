@@ -25,5 +25,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public int CurrentDataSourceRows { get; set; }
 
         public int PreviousDataSourceRows { get; set; }
+
+        public Reference FundingStream { get; set; }
     }
 }
