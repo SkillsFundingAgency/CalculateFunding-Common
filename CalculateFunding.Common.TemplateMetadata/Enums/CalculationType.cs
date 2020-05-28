@@ -59,5 +59,9 @@
         /// Number
         /// </summary>
         Number,
+        
+        Boolean,
+        
+        Enum
     }
 }

@@ -79,17 +79,17 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
                 .Should()
                 .Be("DSG-002");
 
-            contents.RootFundingLines.Last().Calculations.First().ValueFormat
+            contents.RootFundingLines.First().Calculations.First().ValueFormat
                 .Should()
-                .Be(CalculationValueFormat.Percentage);
+                .Be(CalculationValueFormat.Number);
 
-            contents.RootFundingLines.Last().Calculations.First().AggregationType
+            contents.RootFundingLines.First().Calculations.First().AggregationType
                 .Should()
                 .Be(AggregationType.Sum);
 
-            contents.RootFundingLines.Last().Calculations.First().Type
+            contents.RootFundingLines.First().Calculations.First().Type
                 .Should()
-                .Be(CalculationType.Weighting);
+                .Be(CalculationType.Enum);
 
             contents.SchemaVersion.Should().Be("1.1");
         }
