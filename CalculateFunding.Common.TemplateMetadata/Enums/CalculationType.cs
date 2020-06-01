@@ -1,8 +1,12 @@
-﻿namespace CalculateFunding.Common.TemplateMetadata.Enums
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace CalculateFunding.Common.TemplateMetadata.Enums
 {
     /// <summary>
     /// Valid list of calculation types.
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum CalculationType
     {
         /// <summary>

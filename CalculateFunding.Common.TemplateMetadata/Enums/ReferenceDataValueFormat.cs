@@ -3,6 +3,7 @@
     /// <summary>
     /// Valid list of the ways a number show be displayed
     /// </summary>
+    /// 
     public enum ReferenceDataValueFormat
     {
         /// <summary>
