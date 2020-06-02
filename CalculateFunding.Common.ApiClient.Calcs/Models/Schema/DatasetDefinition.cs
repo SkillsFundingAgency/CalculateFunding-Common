@@ -9,6 +9,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Schema
         [JsonProperty("description")]
         public string Description { get; set; }
 
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
+
         [JsonProperty("tableDefinitions")]
         public List<TableDefinition> TableDefinitions { get; set; }
     }
