@@ -15,5 +15,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string RelationshipDescription { get; set; }
 
         public bool IsProviderData { get; set; }
+        public bool IsLatestVersion { get; set; }
     }
 }
