@@ -298,5 +298,51 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 Enumerable.Empty<ProviderGraphQlFieldInfo>(),
                 _client.GetProviderGraphQlFields);
         }
+
+        [TestMethod]
+        public async Task SetCurrentProviderVersion()
+        {
+            string fundingStreamId = NewRandomString();
+            string providerVersionId = NewRandomString();
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
+
+            await AssertPutRequest($"providers/fundingstreams/{fundingStreamId}/current/{providerVersionId}",
+                expectedStatusCode,
+                () => _client.SetCurrentProviderVersion(fundingStreamId, providerVersionId));
+        }
+
+        [TestMethod]
+        public async Task GetCurrentProvidersForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"providers/fundingstreams/{fundingStreamId}/current",
+                new ProviderVersion(),
+                () => _client.GetCurrentProvidersForFundingStream(fundingStreamId));
+        }
+        
+        [TestMethod]
+        public async Task GetCurrentProviderForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"providers/{providerId}/fundingstreams/{fundingStreamId}/current",
+                new ProviderVersionSearchResult(), 
+                () => _client.GetCurrentProviderForFundingStream(fundingStreamId, providerId));
+        }
+
+        [TestMethod]
+        public async Task SearchCurrentProviderVersionForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+            SearchModel search = NewRandomSearch();
+            
+            await AssertPostRequest($"providers/fundingstreams/{fundingStreamId}/current/search",
+                search,
+                new ProviderVersionSearchResults(),
+                () => _client.SearchCurrentProviderVersionForFundingStream(fundingStreamId, search));
+        }
     }
 }

@@ -32,5 +32,16 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId);
         Task<ApiResponse<IEnumerable<string>>> GetProviderNames();
         Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields();
+
+        Task<HttpStatusCode> SetCurrentProviderVersion(string fundingStreamId,
+            string providerVersionId);
+
+        Task<ApiResponse<ProviderVersion>> GetCurrentProvidersForFundingStream(string fundingStreamId);
+
+        Task<ApiResponse<ProviderVersionSearchResult>> GetCurrentProviderForFundingStream(string fundingStreamId,
+            string providerId);
+
+        Task<ApiResponse<ProviderVersionSearchResults>> SearchCurrentProviderVersionForFundingStream(string fundingStreamId,
+            SearchModel search);
     }
 }

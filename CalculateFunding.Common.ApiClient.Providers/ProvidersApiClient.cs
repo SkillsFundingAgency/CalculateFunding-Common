@@ -11,6 +11,7 @@ using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
+using SearchMode = CalculateFunding.Common.Models.Search.SearchMode;
 
 namespace CalculateFunding.Common.ApiClient.Providers
 {
@@ -62,9 +63,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
 
-            string url = "providers/versions-search";
-
-            return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>("providers/versions-search", searchModel);
         }
 
         public async Task<ApiResponse<ProviderVersionSearchResults>> SearchProvidersInProviderVersion(string providerVersionId, SearchModel searchModel)
@@ -72,36 +71,28 @@ namespace CalculateFunding.Common.ApiClient.Providers
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
 
-            string url = $"providers/versions-search/{providerVersionId}";
-
-            return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>($"providers/versions-search/{providerVersionId}", searchModel);
         }
 
         public async Task<ApiResponse<IEnumerable<ProviderVersionMetadata>>> GetProviderVersionsByFundingStream(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-            string url = $"providers/versions-by-fundingstream/{fundingStreamId}";
-
-            return await GetAsync<IEnumerable<ProviderVersionMetadata>>(url);
+            return await GetAsync<IEnumerable<ProviderVersionMetadata>>($"providers/versions-by-fundingstream/{fundingStreamId}");
         }
 
         public async Task<ApiResponse<ProviderVersionMetadata>> GetProviderVersionMetadata(string providerVersionId)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
-            string url = $"providers/versions/{providerVersionId}/metadata";
-
-            return await GetAsync<ProviderVersionMetadata>(url);
+            return await GetAsync<ProviderVersionMetadata>($"providers/versions/{providerVersionId}/metadata");
         }
 
         public async Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(string providerVersionId)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
-            string url = $"providers/versions/{providerVersionId}";
-
-            return await GetAsync<ProviderVersion>(url);
+            return await GetAsync<ProviderVersion>($"providers/versions/{providerVersionId}");
         }
 
         public async Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromProviderVersion(string providerVersionId, string providerId)
@@ -109,9 +100,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
-            string url = $"providers/versions/{providerVersionId}/{providerId}";
-
-            return await GetAsync<ProviderVersionSearchResult>(url);
+            return await GetAsync<ProviderVersionSearchResult>($"providers/versions/{providerVersionId}/{providerId}");
         }
 
         public async Task<NoValidatedContentApiResponse> UploadProviderVersion(string providerVersionId, ProviderVersionViewModel providers)
@@ -119,118 +108,124 @@ namespace CalculateFunding.Common.ApiClient.Providers
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
             Guard.ArgumentNotNull(providers, nameof(providers));
 
-            string url = $"providers/versions/{providerVersionId}";
-
-            return await ValidatedPostAsync(url, providers);
+            return await ValidatedPostAsync($"providers/versions/{providerVersionId}", providers);
         }
 
         public async Task<HttpStatusCode> SetProviderDateProviderVersion(int year, int month, int day, string providerVersionId)
         {
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
-            string url = $"providers/date/{year}/{month}/{day}";
-
-            return await PutAsync(url, providerVersionId);
+            return await PutAsync($"providers/date/{year}/{month}/{day}", providerVersionId);
         }
 
         public async Task<ApiResponse<ProviderVersion>> GetProvidersByVersion(int year, int month, int day)
         {
-            string url = $"providers/date/{year}/{month}/{day}";
-
-            return await GetAsync<ProviderVersion>(url);
+            return await GetAsync<ProviderVersion>($"providers/date/{year}/{month}/{day}");
         }
 
         public async Task<ApiResponse<ProviderVersionSearchResults>> SearchProviderVersions(int year, int month, int day, SearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
 
-            string url = "providers/date-search/{year}/{month}/{day}";
-
-            return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>("providers/date-search/{year}/{month}/{day}", searchModel);
         }
 
         public async Task<ApiResponse<ProviderVersion>> GetAllMasterProviders()
         {
-            string url = $"providers/master";
-
-            return await GetAsync<ProviderVersion>(url);
+            return await GetAsync<ProviderVersion>("providers/master");
         }
 
         public async Task<ApiResponse<ProviderVersionSearchResults>> SearchMasterProviders(SearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
 
-            string url = "providers/master-search";
-
-            return await PostAsync<ProviderVersionSearchResults, SearchModel>(url, searchModel);
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>("providers/master-search", searchModel);
         }
 
         public async Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
-            string url = $"providers/master/{providerId}";
-
-            return await GetAsync<ProviderVersionSearchResult>(url);
+            return await GetAsync<ProviderVersionSearchResult>($"providers/master/{providerId}");
         }
 
         public async Task<HttpStatusCode> SetMasterProviderVersion(MasterProviderVersionViewModel masterProviderVersion)
         {
             Guard.ArgumentNotNull(masterProviderVersion, nameof(masterProviderVersion));
 
-            string url = "providers/master";
-
-            return await PutAsync(url, masterProviderVersion);
+            return await PutAsync("providers/master", masterProviderVersion);
         }
 
         public async Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId)
         {
             Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
 
-            string url = $"providers/versions/{providerVersionId}";
-
-            return await HeadAsync(url);
+            return await HeadAsync($"providers/versions/{providerVersionId}");
         }
 
         public async Task<ApiResponse<IEnumerable<ProviderSummary>>> FetchCoreProviderData(string specificationId)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
 
-            string url = $"scopedproviders/get-provider-summaries/{specificationId}";
-
-            return await GetAsync<IEnumerable<ProviderSummary>>(url);
+            return await GetAsync<IEnumerable<ProviderSummary>>($"scopedproviders/get-provider-summaries/{specificationId}");
         }
 
         public async Task<ApiResponse<bool>> RegenerateProviderSummariesForSpecification(string specificationId,bool setCachedProviders = false)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
 
-            string url = $"scopedproviders/set-cached-providers/{specificationId}/{setCachedProviders}";
-
-            return await GetAsync<bool>(url);
+            return await GetAsync<bool>($"scopedproviders/set-cached-providers/{specificationId}/{setCachedProviders}");
         }
 
         public async Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIds(string specificationId)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
 
-            string url = $"scopedproviders/get-provider-ids/{specificationId}";
-
-            return await GetAsync<IEnumerable<string>>(url);
+            return await GetAsync<IEnumerable<string>>($"scopedproviders/get-provider-ids/{specificationId}");
         }
 
         public async Task<ApiResponse<IEnumerable<string>>> GetProviderNames()
         {
-            string url = $"providers/name";
-
-            return await GetAsync<IEnumerable<string>>(url);
+            return await GetAsync<IEnumerable<string>>("providers/name");
         }
         
         public async Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields()
         {
-            string url = "provider-graphql-fields";
+            return await GetAsync<IEnumerable<ProviderGraphQlFieldInfo>>("provider-graphql-fields");
+        }
+        
+        public async Task<HttpStatusCode> SetCurrentProviderVersion(string fundingStreamId,
+            string providerVersionId)
+        {
+            Guard.ArgumentNotNull(fundingStreamId, nameof(fundingStreamId));
+            Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
 
-            return await GetAsync<IEnumerable<ProviderGraphQlFieldInfo>>(url);
+            return await PutAsync($"providers/fundingstreams/{fundingStreamId}/current/{providerVersionId}");
+        }
+
+        public async Task<ApiResponse<ProviderVersion>> GetCurrentProvidersForFundingStream(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<ProviderVersion>($"providers/fundingstreams/{fundingStreamId}/current");
+        }
+        
+        public async Task<ApiResponse<ProviderVersionSearchResult>> GetCurrentProviderForFundingStream(string fundingStreamId,
+            string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<ProviderVersionSearchResult>($"providers/{providerId}/fundingstreams/{fundingStreamId}/current");
+        }
+        
+        public async Task<ApiResponse<ProviderVersionSearchResults>> SearchCurrentProviderVersionForFundingStream(string fundingStreamId,
+            SearchModel search)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.ArgumentNotNull(search, nameof(search));
+
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>($"providers/fundingstreams/{fundingStreamId}/current/search",
+                search);
         }
     }
 }
