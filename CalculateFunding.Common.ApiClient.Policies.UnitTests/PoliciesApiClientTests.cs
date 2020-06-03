@@ -98,11 +98,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
         public async Task GetFundingTemplate()
         {
             string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
             string templateVersion = NewRandomString();
 
-            await AssertGetRequest($"templates/{fundingStreamId}/{templateVersion}",
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}",
                 new FundingTemplateContents(),
-                () => _client.GetFundingTemplate(fundingStreamId, templateVersion));
+                () => _client.GetFundingTemplate(fundingStreamId, fundingPeriodId,templateVersion));
         }
 
         [TestMethod]
@@ -161,11 +162,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
         public async Task GetFundingTemplateSourceFile()
         {
             string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
             string templateVersion = NewRandomString();
 
-            await AssertGetRequest($"templates/{fundingStreamId}/{templateVersion}/sourcefile",
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/sourcefile",
                 NewRandomString(),
-                () => _client.GetFundingTemplateSourceFile(fundingStreamId, templateVersion));
+                () => _client.GetFundingTemplateSourceFile(fundingStreamId, fundingPeriodId, templateVersion));
 
         }
         
@@ -173,11 +175,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
         public async Task GetFundingTemplateContents()
         {
             string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
             string templateVersion = NewRandomString();
 
-            await AssertGetRequest($"templates/{fundingStreamId}/{templateVersion}/metadata",
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata",
                 new TemplateMetadataContents(),
-                () => _client.GetFundingTemplateContents(fundingStreamId, templateVersion));
+                () => _client.GetFundingTemplateContents(fundingStreamId, fundingPeriodId,templateVersion));
         }
     }
 }

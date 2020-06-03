@@ -81,12 +81,13 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<IEnumerable<FundingStream>>(url);
         }
 
-        public async Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string templateVersion)
+        public async Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{templateVersion}";
+            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}";
 
             return await GetAsync<FundingTemplateContents>(url);
         }
@@ -132,22 +133,24 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<string, object>(url, null);
         }
 
-        public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string templateVersion)
+        public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{templateVersion}/sourcefile";
+            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/sourcefile";
 
             return await GetAsync<string>(url);
         }
 
-        public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId, string templateVersion)
+        public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{templateVersion}/metadata";
+            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata";
 
             return await GetAsync<TemplateMetadataContents>(url);
         }
