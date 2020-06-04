@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using CalculateFunding.Common.Models;
 
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
@@ -8,11 +7,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
     {
         public DatasetVersions()
         {
-            Versions = new List<int>();
+            Versions = new List<DatasetVersionModel>();
         }
 
         public int? SelectedVersion { get; set; }
 
-        public IEnumerable<int> Versions { get; set; }
+        public IEnumerable<DatasetVersionModel> Versions { get; set; }
     }
 }
