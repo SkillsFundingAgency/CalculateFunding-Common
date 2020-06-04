@@ -8,6 +8,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
     {
         Number,
         Percentage,
-        Currency
+        Currency,
+        Boolean,
+        String
     }
 }
