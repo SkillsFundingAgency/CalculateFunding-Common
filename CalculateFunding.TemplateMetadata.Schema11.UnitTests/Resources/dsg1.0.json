@@ -60,19 +60,6 @@
         "fundingLines": [],
         "calculations": []
       }
-    ],
-    "fundingPeriod": {
-      "id": "AC-2021",
-      "period": "2021",
-      "name": "AC-2021",
-      "type": "FY",
-      "startDate": "2020-04-01T00:00:00+00:00",
-      "endDate": "2021-03-31T00:00:00+00:00"
-    },
-    "fundingStream": {
-      "code": "DSG",
-      "name": "DSG"
-    },
-    "fundingTemplateVersion": "#version#"
+    ]
   }
 }

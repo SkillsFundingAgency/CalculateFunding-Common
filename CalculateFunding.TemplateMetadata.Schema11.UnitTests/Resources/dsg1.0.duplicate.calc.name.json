@@ -1,20 +1,7 @@
 {
-  "$schema": "https://fundingschemas.blob.core.windows.net/schemas/logicalmodel-1.1.json#schema",
+  "$schema": "https://fundingschemas.blob.core.windows.net/schemas/funding-template-schema-1.1.json",
   "schemaVersion": "1.1",
   "fundingTemplate": {
-    "fundingTemplateVersion": "1.0",
-    "fundingStream": {
-      "code": "DSG",
-      "name": "Dedicated Schools Grant"
-    },
-    "fundingPeriod": {
-      "id": "AY-1920",
-      "period": "1920",
-      "name": "Academic year 2019-20",
-      "type": "AY",
-      "startDate": "2019-09-01T01:00:00+01:00",
-      "endDate": "2020-08-31T01:00:00+01:00"
-    },
     "fundingLines": [
       {
         "name": "Funding Line 1",
