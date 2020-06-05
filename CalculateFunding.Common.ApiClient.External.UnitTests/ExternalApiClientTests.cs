@@ -187,6 +187,96 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ThenTheResponseContentIs(actualFundingPeriods, expectedFunding);
         }
 
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void WhenTheTemplateSourceFileRetrieveThrowsExceptionIfNotSuppliedFundingStreamId(string fundingStreamId)
+        {
+            string fundingPeriodId = NewRandomString();
+            string majorVersion = NewRandomString();
+            string minorVersion = NewRandomString();
+
+            Func<Task<ApiResponse<string>>> invocation = () =>
+                WhenTheTemplateSourceFileRetrieved(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void WhenTheTemplateSourceFileRetrieveThrowsExceptionIfNotSuppliedFundingPeriodId(string fundingPeriodId)
+        {
+            string fundingStreamId = NewRandomString();
+            string majorVersion = NewRandomString();
+            string minorVersion = NewRandomString();
+
+            Func<Task<ApiResponse<string>>> invocation = () =>
+                WhenTheTemplateSourceFileRetrieved(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void WhenTheTemplateSourceFileRetrieveThrowsExceptionIfNotSuppliedMajorVersion(string majorVersion)
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string minorVersion = NewRandomString();
+
+            Func<Task<ApiResponse<string>>> invocation = () =>
+                WhenTheTemplateSourceFileRetrieved(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow(" ")]
+        [DataRow("")]
+        public void WhenTheTemplateSourceFileRetrieveThrowsExceptionIfNotSuppliedMinorVersion(string minorVersion)
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string majorVersion = NewRandomString();
+
+            Func<Task<ApiResponse<string>>> invocation = () =>
+                WhenTheTemplateSourceFileRetrieved(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
+
+            invocation
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [TestMethod]
+        public async Task GetFundingTemplateSourceFileGetCallWithSuppliedInput()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string majorVersion = NewRandomString();
+            string minorVersion = NewRandomString();
+
+            string response = NewRandomString();
+            
+            GivenTheResponse($"v3/funding-streams/{fundingStreamId}/funding-periods/{fundingPeriodId}/templates/{majorVersion}.{minorVersion}", response, HttpMethod.Get);
+
+            ApiResponse<string> actualResponse =
+                await WhenTheTemplateSourceFileRetrieved(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
+
+            ThenTheResponseContentIs(actualResponse, response);
+        }
+
         public static IEnumerable<object[]> NotificationsExamples()
         {
             yield return new object []
@@ -267,6 +357,12 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             string fundingStreamId)
         {
             return await _client.GetFundingPeriods(fundingStreamId);
+        }
+
+        private async Task<ApiResponse<string>> WhenTheTemplateSourceFileRetrieved(
+            string fundingStreamId, string fundingPeriodId, string majorVersion, string minorVersion)
+        {
+            return await _client.GetFundingTemplateSourceFile(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
         }
 
         private async Task<ApiResponse<AtomFeed<object>>> WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)

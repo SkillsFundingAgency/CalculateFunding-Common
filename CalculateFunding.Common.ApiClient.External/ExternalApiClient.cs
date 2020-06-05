@@ -97,5 +97,16 @@ namespace CalculateFunding.Common.ApiClient.External
             return await GetAsync<IEnumerable<FundingPeriod>>(
                 $"{Version}/{FundingStreamsBaseUri}/{fundingStreamId}/funding-periods");
         }
+
+        public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string fundingPeriodId, string majorVersion, string minorVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(majorVersion, nameof(majorVersion));
+            Guard.IsNullOrWhiteSpace(minorVersion, nameof(minorVersion));
+
+            return await GetAsync<string>(
+                $"{Version}/{FundingStreamsBaseUri}/{fundingStreamId}/funding-periods/{fundingPeriodId}/templates/{majorVersion}.{minorVersion}");
+        }
     }
 }

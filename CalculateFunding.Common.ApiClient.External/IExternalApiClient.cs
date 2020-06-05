@@ -20,6 +20,7 @@ namespace CalculateFunding.Common.ApiClient.External
 
         Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams();
         Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods(string fundingStreamId);
-
+        Task<ApiResponse<string>> GetFundingTemplateSourceFile(
+            string fundingStreamId, string fundingPeriodId, string majorVersion, string minorVersion);
     }
 }
