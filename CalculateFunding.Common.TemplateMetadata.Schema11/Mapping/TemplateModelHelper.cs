@@ -1,24 +1,52 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema11.Models;
+using AggregationType = CalculateFunding.Common.TemplateMetadata.Enums.AggregationType;
+using FundingLineType = CalculateFunding.Common.TemplateMetadata.Enums.FundingLineType;
 
 namespace CalculateFunding.Common.TemplateMetadata.Schema11.Mapping
 {
     public static class TemplateModelHelper
     {
-        public static Calculation ToCalculation(this SchemaJsonCalculation source)
+        private static Calculation ToCalculation(this SchemaJsonCalculation source)
         {
             return new Calculation
             {
                 Name = source.Name,
-                ValueFormat = (CalculationValueFormat) Enum.Parse(typeof(CalculationValueFormat), source.ValueFormat.ToString()),
-                AggregationType = (Enums.AggregationType) Enum.Parse(typeof(Enums.AggregationType), source.AggregationType.ToString()),
-                Type = (CalculationType) Enum.Parse(typeof(CalculationType), source.Type.ToString()),
+                ValueFormat = source.ValueFormat.AsMatchingEnum<CalculationValueFormat>(),
+                AggregationType = source.AggregationType.AsMatchingEnum<AggregationType>(),
+                Type = source.Type.AsMatchingEnum<CalculationType>(),
                 TemplateCalculationId = source.TemplateCalculationId,
                 FormulaText = source.FormulaText,
-                Calculations = source.Calculations?.Select(ToCalculation)
+                Calculations = source.Calculations?.Select(ToCalculation),
+                GroupRate = ToGroupRate(source.GroupRate),
+                PercentageChangeBetweenAandB = ToPercentageChangeBetweenAandB(source.PercentageChangeBetweenAandB),
+                AllowedEnumTypeValues = source.AllowedEnumTypeValues?.Any() == true ? source.AllowedEnumTypeValues : null
+            };
+        }
+
+        private static GroupRate ToGroupRate(SchemaJsonGroupRate source)
+        {
+            return source == null
+                ? null
+                : new GroupRate
+                {
+                    Denominator = source.Denominator,
+                    Numerator = source.Numerator
+                };
+        }
+
+        private static PercentageChangeBetweenAandB ToPercentageChangeBetweenAandB(SchemaJsonPercentageChangeBetweenAandB source)
+        {
+            return source == null 
+                ? null 
+                : new PercentageChangeBetweenAandB
+            {
+                CalculationA = source.CalculationA,
+                CalculationB = source.CalculationB,
+                CalculationAggregationType = source.CalculationAggregationType.AsMatchingEnum<AggregationType>()
             };
         }
         
@@ -29,7 +57,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Mapping
                 Name = source.Name,
                 TemplateLineId = source.TemplateLineId,
                 FundingLineCode = source.FundingLineCode,
-                Type = (Enums.FundingLineType) Enum.Parse(typeof(Enums.FundingLineType), source.Type.ToString()),
+                Type = source.Type.AsMatchingEnum<FundingLineType>(),
                 Calculations = source.Calculations?.Select(ToCalculation),
                 FundingLines = source.FundingLines?.Select(ToFundingLine)
             };

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema11.Mapping;
 using CalculateFunding.Common.TemplateMetadata.Schema11.Models;
@@ -7,7 +8,6 @@ using CalculateFunding.Common.TemplateMetadata.Schema11.Validators;
 using CalculateFunding.Common.Utility;
 using FluentValidation;
 using FluentValidation.Results;
-using Newtonsoft.Json;
 using Serilog;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
@@ -54,7 +54,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11
         {
             Guard.IsNullOrWhiteSpace(templateContents, nameof(templateContents));
 
-            (SchemaJson feedBaseModel, string errorMessage) = GetFeed(templateContents);
+            (SchemaJson feedBaseModel, string _) = GetFeed(templateContents);
 
             if (feedBaseModel != null)
             {
@@ -74,7 +74,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11
         {
             try
             {
-                return (JsonConvert.DeserializeObject<SchemaJson>(templateContents), null);
+                return (templateContents.AsPoco<SchemaJson>(), null);
             }
             catch (Exception ex)
             {

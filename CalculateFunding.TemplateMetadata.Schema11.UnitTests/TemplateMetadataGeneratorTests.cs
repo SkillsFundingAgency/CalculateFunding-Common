@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using CalculateFunding.Common.TemplateMetadata.Enums;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.TemplateMetadata.Schema11;
+using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,11 +17,11 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
     {
         private ILogger _logger;
         private TemplateMetadataGenerator _templateMetaDataGenerator;
-        private readonly string DsgTemplateWithNoIssues =
+
+        private const string DsgTemplateWithNoIssues =
             "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.dsg1.0.json";
-        private readonly string DsgTemplateWithFundingLinesMissing =
-            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.dsg1.0.fundinglines.missing.json";
-        private readonly string DsgTemplateWithDuplicateCalculationNames =
+
+        private const string DsgTemplateWithDuplicateCalculationNames =
             "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.dsg1.0.duplicate.calc.name.json";
 
         [TestInitialize]
@@ -35,7 +34,7 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema11_ValidMetaDataSupplied_ReturnsValid()
         {
-            var result = WhenTheTemplateIsValidated(DsgTemplateWithNoIssues);
+            ValidationResult result = WhenTheTemplateIsValidated(DsgTemplateWithNoIssues);
 
             result.IsValid.Should().BeTrue();
         }
@@ -43,7 +42,7 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema11_DuplicateCalcNameDifferentTemplateCalcId_ReturnsInvalid()
         {
-            var result = WhenTheTemplateIsValidated(DsgTemplateWithDuplicateCalculationNames);
+            ValidationResult result = WhenTheTemplateIsValidated(DsgTemplateWithDuplicateCalculationNames);
 
             result.IsValid.Should().BeFalse();
 
@@ -59,68 +58,115 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
         [TestMethod]
         public void TemplateMetadataSchema11_GetValidMetaData_ReturnsValidContents()
         {
-            var contents = WhenTheMetadataContentsIsGenerated(DsgTemplateWithNoIssues);
+            TemplateMetadataContents contents = WhenTheMetadataContentsIsGenerated(DsgTemplateWithNoIssues);
 
             contents.RootFundingLines.Should().HaveCount(2);
 
-            contents.RootFundingLines.First().Name
+            FundingLine fundingLineOne = contents.RootFundingLines.First();
+
+            fundingLineOne.Name
                 .Should()
                 .Be("Funding Line 1");
 
-            contents.RootFundingLines.First().Type
+            fundingLineOne.Type
                 .Should()
                 .Be(FundingLineType.Payment);
 
-            contents.RootFundingLines.Last().Name
+            FundingLine fundingLineTwo = contents.RootFundingLines.Last();
+
+            fundingLineTwo.Name
                 .Should()
                 .Be("Funding Line 2");
 
-            contents.RootFundingLines.Last().FundingLineCode
+            fundingLineTwo.FundingLineCode
                 .Should()
                 .Be("DSG-002");
 
-            contents.RootFundingLines.First().Calculations.First().ValueFormat
-                .Should()
-                .Be(CalculationValueFormat.Number);
+            IEnumerable<Calculation> calculations = fundingLineOne.Calculations;
 
-            contents.RootFundingLines.First().Calculations.First().AggregationType
+            calculations
                 .Should()
-                .Be(AggregationType.Sum);
+                .HaveCount(3);
 
-            contents.RootFundingLines.First().Calculations.First().Type
+            Calculation allowedEnumsCalculation = calculations.SingleOrDefault(_
+                => _.Type == CalculationType.Enum);
+
+            allowedEnumsCalculation
                 .Should()
-                .Be(CalculationType.Enum);
+                .BeEquivalentTo(new Calculation
+                {
+                    TemplateCalculationId = 2,
+                    Name = "Calculation 1",
+                    AggregationType = AggregationType.Sum,
+                    ValueFormat = CalculationValueFormat.Number,
+                    AllowedEnumTypeValues = new[]
+                    {
+                        "Option1", "Option2"
+                    },
+                    Type = CalculationType.Enum,
+                    FormulaText = "Enter formula text"
+                },
+                    opt
+                        => opt.Excluding(_ => _.Calculations));
 
-            contents.SchemaVersion.Should().Be("1.1");
+            Calculation groupRateCalculation = calculations.SingleOrDefault(_
+                => _.AggregationType == AggregationType.GroupRate);
+
+            groupRateCalculation
+                .Should()
+                .BeEquivalentTo(new Calculation
+                {
+                    TemplateCalculationId = 3,
+                    Name = "Calculation 2",
+                    AggregationType = AggregationType.GroupRate,
+                    ValueFormat = CalculationValueFormat.Number,
+                    GroupRate = new GroupRate
+                    {
+                        Denominator = 2,
+                        Numerator = 1
+                    },
+                    Type = CalculationType.Boolean,
+                    FormulaText = "Enter formula text"
+                },
+                    opt
+                        => opt.Excluding(_ => _.Calculations));
+
+            Calculation percentageChangeCalculation = calculations.SingleOrDefault(_
+                => _.AggregationType == AggregationType.PercentageChangeBetweenAandB);
+
+            percentageChangeCalculation
+                .Should()
+                .BeEquivalentTo(new Calculation
+                {
+                    TemplateCalculationId = 4,
+                    Name = "Calculation 3",
+                    AggregationType = AggregationType.PercentageChangeBetweenAandB,
+                    ValueFormat = CalculationValueFormat.Percentage,
+                    PercentageChangeBetweenAandB = new PercentageChangeBetweenAandB
+                    {
+                        CalculationA = 1,
+                        CalculationB = 2,
+                        CalculationAggregationType = AggregationType.Sum
+                    },
+                    Type = CalculationType.Number,
+                    FormulaText = "Enter formula text"
+                },
+                    opt
+                        => opt.Excluding(_ => _.Calculations));
+
+            contents.SchemaVersion
+                .Should()
+                .Be("1.1");
         }
 
         private ValidationResult WhenTheTemplateIsValidated(string templateResourcePath)
-        {
-            return _templateMetaDataGenerator.Validate(GetResourceString(templateResourcePath));
-        }
+            => _templateMetaDataGenerator.Validate(GetResourceString(templateResourcePath));
 
         private TemplateMetadataContents WhenTheMetadataContentsIsGenerated(string templateResourcePath)
-        {
-            return _templateMetaDataGenerator.GetMetadata(GetResourceString(templateResourcePath));
-        }
+            => _templateMetaDataGenerator.GetMetadata(GetResourceString(templateResourcePath));
 
         private string GetResourceString(string resourceName)
-        {
-            var resources = Assembly
-                .GetExecutingAssembly().GetManifestResourceNames();
-            var manifestResourceStream = Assembly
-                .GetExecutingAssembly()
-                .GetManifestResourceStream(resourceName);
-
-            manifestResourceStream
-                .Should()
-                .NotBeNull($"Expected an embedded resource file at {resourceName}");
-
-            using (Stream stream = manifestResourceStream)
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+            => typeof(TemplateMetadataGeneratorTests).Assembly
+                .GetEmbeddedResourceFileContents(resourceName);
     }
 }

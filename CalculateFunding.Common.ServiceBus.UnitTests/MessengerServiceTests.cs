@@ -234,7 +234,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         private async Task<T> WhenMessagesReceived<T>(string entityPath, Predicate<T> predicate)
             where T:class
         {
-            return await _messengerService.ReceiveMessage(entityPath, predicate, TimeSpan.FromSeconds(5));
+            return await _messengerService.ReceiveMessage(entityPath, predicate, TimeSpan.FromMilliseconds(1));
         }
 
         private async Task WhenMessageSentToTopic<T>(string topicName, T data, IDictionary<string, string> properties, string sessionId)

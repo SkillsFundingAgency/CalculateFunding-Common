@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CalculateFunding.Common.TemplateMetadata.Enums;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.TemplateMetadata.Models
 {
@@ -20,12 +21,18 @@ namespace CalculateFunding.Common.TemplateMetadata.Models
         public object Value { get; set; }
 
         public CalculationValueFormat ValueFormat { get; set; }
+        
+        public IEnumerable<string> AllowedEnumTypeValues { get; set; }
 
         public CalculationType Type { get; set; }
 
         public string FormulaText { get; set; }
 
         public AggregationType AggregationType { get; set; }
+        
+        public GroupRate GroupRate { get; set; }
+
+        public PercentageChangeBetweenAandB PercentageChangeBetweenAandB { get; set; }
 
         public IEnumerable<Calculation> Calculations { get; set; }
 
