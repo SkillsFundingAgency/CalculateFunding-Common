@@ -125,12 +125,15 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<FundingStream, FundingStreamUpdateModel>("fundingstreams", fundingStream);
         }
 
-        public async Task<ApiResponse<string>> SaveFundingTemplate(string templateJson)
+        public async Task<ApiResponse<string>> SaveFundingTemplate(string templateJson, string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(templateJson, nameof(templateJson));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = "templates";
-            return await PostAsync<string, object>(url, null);
+            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}";
+            return await PostAsync<string, object>(url, templateJson);
         }
 
         public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string fundingPeriodId, string templateVersion)

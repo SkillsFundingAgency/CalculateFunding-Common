@@ -148,14 +148,19 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
                 _client.SaveFundingStream);
         }
 
-        [TestMethod]
-        [Ignore("This has a messed impl internally as it ignores the schema arg passed in")]
+        [TestMethod]      
         public async Task SaveFundingTemplate()
         {
-            await AssertPostRequest("schemas",
-                NewRandomString(),
-                NewRandomString(),
-                _client.SaveFundingTemplate);   
+            string fundingStreamId = "fsId";
+            string fundingPeriodId = "fdId";
+            string templateVersion = "1.0";
+
+            string template = NewRandomString();
+
+            await AssertPostRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}", 
+                template, 
+                NewRandomString(), 
+                () => _client.SaveFundingTemplate(template, fundingStreamId, fundingPeriodId, templateVersion));
         }
 
         [TestMethod]
