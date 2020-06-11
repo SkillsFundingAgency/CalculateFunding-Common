@@ -64,25 +64,23 @@ namespace CalculateFunding.Common.Identity.Authorization
                 return false;
             }
 
-            if (requestedPermission == FundingStreamActionTypes.CanCreateSpecification)
+            return requestedPermission switch
             {
-                foreach (string item in fundingStreamIds)
-                {
-                    FundingStreamPermission foundPermission = actualPermissions.FirstOrDefault(p => p.FundingStreamId == item && p.CanCreateSpecification);
-
-                    if (foundPermission == null)
-                    {
-                        // A required permission is missing so can't succeed
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                FundingStreamActionTypes.CanCreateSpecification => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanCreateSpecification)),
+                FundingStreamActionTypes.CanChooseFunding => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanChooseFunding)),
+                FundingStreamActionTypes.CanCreateTemplates => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanCreateTemplates)),
+                FundingStreamActionTypes.CanEditTemplates => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanEditTemplates)),
+                FundingStreamActionTypes.CanDeleteTemplates => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanDeleteTemplates)),
+                FundingStreamActionTypes.CanApproveTemplates => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApproveTemplates)),
+                FundingStreamActionTypes.CanCreateProfilePattern => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanCreateProfilePattern)),
+                FundingStreamActionTypes.CanEditProfilePattern => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanEditProfilePattern)),
+                FundingStreamActionTypes.CanDeleteProfilePattern => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanDeleteProfilePattern)),
+                FundingStreamActionTypes.CanAssignProfilePattern => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanAssignProfilePattern)),
+                FundingStreamActionTypes.CanApplyCustomProfilePattern => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApplyCustomProfilePattern)),
+                FundingStreamActionTypes.CanApproveCalculations => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApproveCalculations)),
+                FundingStreamActionTypes.CanApproveAnyCalculations => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApproveAnyCalculations)),
+                _ => false,
+            };
         }
     }
 }

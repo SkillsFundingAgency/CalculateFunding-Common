@@ -3,9 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Users microservice client</Description>
-    <Version>2.2.0</Version>
-    
-    
+    <Version>2.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

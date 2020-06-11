@@ -7,6 +7,13 @@
         CanCreateTemplates,
         CanEditTemplates,
         CanDeleteTemplates,
-        CanApproveTemplates
+        CanApproveTemplates,
+        CanCreateProfilePattern,
+        CanEditProfilePattern,
+        CanDeleteProfilePattern,
+        CanAssignProfilePattern,
+        CanApplyCustomProfilePattern,
+        CanApproveCalculations,
+        CanApproveAnyCalculations
     }
 }

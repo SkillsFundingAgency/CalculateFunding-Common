@@ -75,5 +75,11 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
 
         [JsonProperty("canApplyCustomProfilePattern")]
         public bool CanApplyCustomProfilePattern { get; set; }
+
+        [JsonProperty("canApproveCalculations")]
+        public bool CanApproveCalculations { get; set; }
+
+        [JsonProperty("canApproveAnyCalculations")]
+        public bool CanApproveAnyCalculations { get; set; }
     }
 }
