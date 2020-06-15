@@ -1,0 +1,77 @@
+﻿parameters:
+- name: DotNetCoreVersion
+  type: string
+  default: '3.1.101'
+- name: BuildConfiguration
+  type: string
+  default: 'Release'
+- name: NugetProjectPath
+  type: string
+- name: UnitTestProjectPath
+  type: string
+  default: ''
+- name: vstsFeed
+  type: string
+  default: 'ecf37bc0-472b-47bf-91e3-6774809fd194'
+
+steps:
+ - task: UseDotNet@2
+   displayName: 'Use .NET Core sdk ${{ parameters.DotNetCoreVersion }}'
+   inputs:
+     version: ${{ parameters.DotNetCoreVersion }}
+
+ - task: DotNetCoreCLI@2
+   displayName: 'dotnet restore'
+   inputs:
+     command: restore
+     vstsFeed: '${{ parameters.vstsFeed }}'
+     projects: |
+       ${{ parameters.NugetProjectPath }}
+       ${{ parameters.UnitTestProjectPath }}
+
+ - task: DotNetCoreCLI@2
+   displayName: 'dotnet build'
+   inputs:
+     command: build
+     vstsFeed: '${{ parameters.vstsFeed }}'
+     projects: |
+       ${{ parameters.NugetProjectPath }}
+       ${{ parameters.UnitTestProjectPath }}
+
+     arguments: '--configuration ${{ parameters.BuildConfiguration}}'
+
+ - task: DotNetCoreCLI@2
+   displayName: 'dotnet test'
+   condition: and(succeeded(), ne('${{ parameters.UnitTestProjectPath }}', ''))
+   inputs:
+     command: test
+     arguments: '--configuration ${{ parameters.BuildConfiguration }}'
+     projects: |
+       ${{ parameters.UnitTestProjectPath }}
+
+ - task: DotNetCoreCLI@2
+   displayName: 'dotnet publish'
+   inputs:
+     command: publish
+     publishWebProjects: false
+     arguments: "--configuration ${{ parameters.BuildConfiguration }} --output $(Build.ArtifactStagingDirectory)"
+     projects: |
+      ${{ parameters.NugetProjectPath }}
+
+ - task: PublishBuildArtifacts@1
+   displayName: 'Publish Artifact: drop'
+
+ - task: DotNetCoreCLI@2
+   displayName: 'Create nuget packages'
+   condition: and(succeeded(), eq('${{ variables['Build.SourceBranch'] }}', 'refs/heads/master'))
+   inputs:
+    command: pack
+    packagesToPack: '${{ parameters.NugetProjectPath }}/*.csproj'
+
+ - task: Powershell@2
+   displayName: 'Publish nuget packages'
+   condition: and(succeeded(), eq('${{ variables['Build.SourceBranch'] }}', 'refs/heads/master'))
+   inputs:
+    targetType: filePath
+    filePath: ./NugetPublish.ps1
+    arguments: '-feedUrl "https://dfe-gov-uk.pkgs.visualstudio.com/_packaging/CalculateFundingService/nuget/v3/index.json" -username VssSessionToken -accessKey $env:SYSTEM_ACCESSTOKEN -packagePathWithFilter "$Env:Build_ArtifactStagingDirectory\*.nupkg"'
