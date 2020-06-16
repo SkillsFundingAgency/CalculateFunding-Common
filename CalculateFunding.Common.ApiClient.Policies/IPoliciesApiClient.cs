@@ -25,5 +25,6 @@ namespace CalculateFunding.Common.ApiClient.Policies
         Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string fundingPeriodId, string templateVersion);
         Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
         Task<ApiResponse<IEnumerable<FundingConfiguration>>> GetFundingConfigurationsByFundingStreamId(string fundingStreamId);
+        Task<ApiResponse<IEnumerable<PublishedFundingTemplate>>> GetFundingTemplates(string fundingStreamId, string fundingPeriodId);
     }
 }

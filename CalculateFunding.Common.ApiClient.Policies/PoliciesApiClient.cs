@@ -157,5 +157,15 @@ namespace CalculateFunding.Common.ApiClient.Policies
 
             return await GetAsync<TemplateMetadataContents>(url);
         }
+
+        public async Task<ApiResponse<IEnumerable<PublishedFundingTemplate>>> GetFundingTemplates(string fundingStreamId, string fundingPeriodId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));           
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+
+            string url = $"templates/{fundingStreamId}/{fundingPeriodId}";
+
+            return await GetAsync<IEnumerable<PublishedFundingTemplate>>(url);
+        }
     }
 }
