@@ -9,5 +9,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         Number,
         Percentage,
         Currency,
+        Boolean,
+        String
     }
 }

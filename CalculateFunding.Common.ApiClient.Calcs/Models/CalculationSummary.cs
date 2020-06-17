@@ -14,5 +14,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         [JsonProperty("version")]
         public int Version { get; set; }
+
+        [JsonProperty("calculationValueType")]
+        public CalculationValueType CalculationValueType { get; set; }
     }
 }
