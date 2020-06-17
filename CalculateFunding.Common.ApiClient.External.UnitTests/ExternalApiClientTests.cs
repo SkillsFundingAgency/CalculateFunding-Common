@@ -277,6 +277,26 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ThenTheResponseContentIs(actualResponse, response);
         }
 
+        [TestMethod]
+        public async Task GetPublishedFundingTemplatesMakesGetCallWithSuppliedFundingStreamIdAndFundingPeriodId()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+           
+
+            IEnumerable<PublishedFundingTemplate> expectedFundingTemplates = new List<PublishedFundingTemplate>
+            {
+                new PublishedFundingTemplate()
+            };
+
+            GivenTheResponse($"v3/funding-streams/{fundingStreamId}/funding-periods/{fundingPeriodId}/templates", expectedFundingTemplates, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<PublishedFundingTemplate>> actualFundingPeriods =
+                await WhenThePublishedFundingTemplatesIsQueriedByFundingStreamIdAndFundingPeriodId(fundingStreamId,fundingPeriodId);
+
+            ThenTheResponseContentIs(actualFundingPeriods, expectedFundingTemplates);
+        }
+
         public static IEnumerable<object[]> NotificationsExamples()
         {
             yield return new object []
@@ -357,6 +377,12 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             string fundingStreamId)
         {
             return await _client.GetFundingPeriods(fundingStreamId);
+        }
+
+        private async Task<ApiResponse<IEnumerable<PublishedFundingTemplate>>> WhenThePublishedFundingTemplatesIsQueriedByFundingStreamIdAndFundingPeriodId(
+           string fundingStreamId, string fundingPeriodId)
+        {
+            return await _client.GetPublishedFundingTemplates(fundingStreamId, fundingPeriodId);
         }
 
         private async Task<ApiResponse<string>> WhenTheTemplateSourceFileRetrieved(
