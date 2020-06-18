@@ -1,8 +1,5 @@
-﻿using CalculateFunding.Common.Graph.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using CalculateFunding.Common.Graph.Interfaces;
 
 namespace CalculateFunding.Common.Graph
 {
@@ -12,5 +9,10 @@ namespace CalculateFunding.Common.Graph
         public TNode Node { get; set; }
 
         public IEnumerable<IRelationship> Relationships { get; set; }
+
+        public void AddRelationship(IRelationship relationship)
+        {
+            ((List<IRelationship>)(Relationships ??= new List<IRelationship>())).Add(relationship);
+        }
     }
 }

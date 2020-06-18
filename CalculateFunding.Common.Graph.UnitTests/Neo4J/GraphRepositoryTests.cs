@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Graph.Interfaces;
+using CalculateFunding.Common.Graph.Neo4J;
+using CalculateFunding.Common.Graph.Serializer;
 using CalculateFunding.Common.Testing;
-using CalculateFunding.Services.Graph.Serializer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo4j.Driver;
 using NSubstitute;
 
-namespace CalculateFunding.Common.Graph.UnitTests
+namespace CalculateFunding.Common.Graph.UnitTests.Neo4J
 {
     [TestClass]
     public class GraphRepositoryTests
@@ -107,18 +108,6 @@ namespace CalculateFunding.Common.Graph.UnitTests
         }
 
         [TestMethod]
-        public async Task DeleteNodeAndChildNodesDetachDeletesRootAndImmediateChildrenInGraphFromRootWithSuppliedFieldValue()
-        {
-            string field = NewRandomString();
-            string value = NewRandomString();
-
-            await WhenTheNodeAndChildrenAreDeleted(field, value);
-
-            await ThenTheCypherWasExecuted($"MATCH ((o:object{{{field}:'{value}'}})-[*0..]->(x))\r\nDETACH DELETE x\r\n");
-            await AndTheSessionWasClosed();
-        }
-
-        [TestMethod]
         public async Task GetCircularDependencies()
         {
             string field = NewRandomString();
@@ -172,7 +161,7 @@ namespace CalculateFunding.Common.Graph.UnitTests
         private bool ParametersMatch(Dictionary<string, object> actualParameters, (string, object)[] expectedParameters)
         {
             Dictionary<string, IEnumerable<Dictionary<string, object>>> expectedParameterDictionaries =
-                expectedParameters.ToDictionary(_ => _.Item1, _ => ParameterSerializer.ToDictionary((IEnumerable<dynamic>) _.Item2));
+                expectedParameters.ToDictionary(_ => _.Item1, _ => ParameterSerializer.ToDictionaries((IEnumerable<dynamic>) _.Item2));
 
             foreach (KeyValuePair<string,object> actualParameter in actualParameters)
             {
@@ -244,11 +233,6 @@ namespace CalculateFunding.Common.Graph.UnitTests
         private async Task WhenGetAllEntitiesCalled(string field, string value, IEnumerable<string> relationships)
         {
             await _repository.GetAllEntities<dynamic>(new Field { Name = field, Value = value }, relationships);
-        }
-
-        private async Task WhenTheNodeAndChildrenAreDeleted(string field, string value)
-        {
-            await _repository.DeleteNodeAndChildNodes<dynamic>(new Field { Name = field, Value = value });
         }
 
         private async Task WhenTheRelationshipIsCreated(string relationShipName, string field, string valueA, string valueB)

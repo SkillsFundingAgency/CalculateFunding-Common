@@ -40,5 +40,12 @@ namespace CalculateFunding.Common.Extensions
             return Encoding.UTF8.GetBytes(text ?? string.Empty);
         }
 
+        public static string JoinWith(this IEnumerable<string> strings,
+            char separator)
+            => string.Join(separator, strings);
+
+        public static string ToPascalCase(this string literal)
+            => literal?.Length > 0 ? $"{char.ToLowerInvariant(literal[0])}{literal.Substring(1)}" : null;
+
     }
 }

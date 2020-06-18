@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CalculateFunding.Common.Graph.Serializers.Converters
+namespace CalculateFunding.Common.Graph.Serializer.Converters
 {
     public class CustomDictionaryConverter : JsonConverter
     {
@@ -49,7 +49,7 @@ namespace CalculateFunding.Common.Graph.Serializers.Converters
                     case JsonToken.Comment:
                         break;
                     case JsonToken.PropertyName:
-                        dic.Add(reader.Value.ToString(), ExpectDictionaryOrArrayOrPrimitive(reader));
+                        dic.Add(reader.Value.ToString().ToLowerInvariant(), ExpectDictionaryOrArrayOrPrimitive(reader));
                         break;
                     case JsonToken.EndObject:
                         return dic;

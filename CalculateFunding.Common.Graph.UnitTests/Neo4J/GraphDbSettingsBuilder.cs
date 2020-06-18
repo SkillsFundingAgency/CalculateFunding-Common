@@ -1,8 +1,7 @@
-
-using CalculateFunding.Common.Graph;
+using CalculateFunding.Common.Graph.Neo4J;
 using CalculateFunding.Common.Testing;
 
-namespace CalculateFunding.Common.Graph.UnitTests
+namespace CalculateFunding.Common.Graph.UnitTests.Neo4J
 {
     public class GraphDbSettingsBuilder
     {

@@ -1,7 +1,4 @@
-﻿using CalculateFunding.Common.Graph.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using CalculateFunding.Common.Graph.Interfaces;
 
 namespace CalculateFunding.Common.Graph
 {

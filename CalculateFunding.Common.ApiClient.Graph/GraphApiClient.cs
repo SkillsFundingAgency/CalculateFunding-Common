@@ -185,13 +185,6 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync(url);
         }
 
-        public async Task<HttpStatusCode> DeleteAllForSpecification(string specificationId)
-        {
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await DeleteAsync($"{UrlRoot}/specification/{specificationId}/all");
-        }
-
         public async Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));

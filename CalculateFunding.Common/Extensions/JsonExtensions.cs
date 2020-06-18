@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,29 +16,46 @@ namespace CalculateFunding.Common.Extensions
         public static TPoco AsPoco<TPoco>(this Stream jsonStream, bool useCamelCase = true)
             where TPoco : class
         {
-            using (BinaryReader reader = new BinaryReader(jsonStream))
-            {
-                return Encoding.UTF8.GetString(reader.ReadBytes((int)jsonStream.Length))
-                    .AsPoco<TPoco>();
-            }
+            using BinaryReader reader = new BinaryReader(jsonStream);
+            
+            return Encoding.UTF8.GetString(reader.ReadBytes((int)jsonStream.Length))
+                .AsPoco<TPoco>(useCamelCase);
         }
 
         public static byte[] AsJsonBytes<TPoco>(this TPoco poco, bool useCamelCase = true)
             where TPoco : class
         {
-            return Encoding.UTF8.GetBytes(poco.AsJson());
+            return Encoding.UTF8.GetBytes(poco.AsJson(useCamelCase));
         }
 
         public static TPoco AsPoco<TPoco>(this string json, bool useCamelCase = true)
             where TPoco : class
         {
-            return string.IsNullOrWhiteSpace(json) ? null : JsonConvert.DeserializeObject<TPoco>(json, NewJsonSerializerSettings(useCamelCase));
+            return json.AsPoco<TPoco>(NewJsonSerializerSettings(useCamelCase));
+        }
+        
+        public static TPoco AsPoco<TPoco>(this string json, JsonSerializerSettings settings)
+            where TPoco : class
+        {
+            return string.IsNullOrWhiteSpace(json) ? null : JsonConvert.DeserializeObject<TPoco>(json, settings);
+        }
+        
+        public static TPoco AsPoco<TPoco>(this string json, JsonConverter converter)
+            where TPoco : class
+        {
+            return string.IsNullOrWhiteSpace(json) ? null : JsonConvert.DeserializeObject<TPoco>(json, converter);
         }
 
         public static string AsJson<TPoco>(this TPoco poco, bool useCamelCase = true)
             where TPoco : class
         {
-            return poco == null ? null : JsonConvert.SerializeObject(poco, NewJsonSerializerSettings(useCamelCase));
+            return poco.AsJson(NewJsonSerializerSettings(useCamelCase));
+        }
+        
+        public static string AsJson<TPoco>(this TPoco poco, JsonSerializerSettings settings)
+            where TPoco : class
+        {
+            return poco == null ? null : JsonConvert.SerializeObject(poco, settings);
         }
 
         public static TPoco DeepCopy<TPoco>(this TPoco poco)

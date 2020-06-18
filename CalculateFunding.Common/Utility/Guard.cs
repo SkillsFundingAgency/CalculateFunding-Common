@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog;
 
 namespace CalculateFunding.Common.Utility
 {
@@ -10,6 +9,17 @@ namespace CalculateFunding.Common.Utility
     /// </summary>
     public static class Guard
     {
+        public static void Ensure(bool condition,
+            string message)
+        {
+            if (condition)
+            {
+                return;
+            }
+            
+            throw new InvalidOperationException(message);
+        }
+        
         public static void IsNotEmpty<TItem>(IEnumerable<TItem> collection, string parameterName)
         {
             if (collection?.Any() == true)
@@ -70,17 +80,6 @@ namespace CalculateFunding.Common.Utility
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw new ArgumentNullException(parameterName, message);
-            }
-        }
-
-        public static void IsNullOrWhiteSpace(string value, string parameterName, string message, ILogger logger)
-        {
-            ArgumentNotNull(logger, nameof(logger));
-
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                logger.Error(message);
                 throw new ArgumentNullException(parameterName, message);
             }
         }

@@ -63,17 +63,6 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 _client.DeleteSpecification);
         }
-        
-        [TestMethod]
-        public async Task DeleteAllForSpecification()
-        {
-            string id = NewRandomString();
-
-            await AssertDeleteRequest($"specification/{id}/all",
-                id,
-                HttpStatusCode.OK,
-                _client.DeleteAllForSpecification);
-        }
 
         [TestMethod]
         public async Task UpsertCalculationCalculationsRelationships()

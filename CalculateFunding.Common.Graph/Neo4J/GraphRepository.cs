@@ -1,17 +1,16 @@
-﻿using CalculateFunding.Common.Graph.Interfaces;
-using CalculateFunding.Common.Utility;
-using CalculateFunding.Services.Graph.Serializer;
-using CalculateFunding.Common.Extensions;
-using Neo4j.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Graph.Serializer;
+using CalculateFunding.Common.Utility;
+using Neo4j.Driver;
 using GraphInterfaces = CalculateFunding.Common.Graph.Interfaces;
 
-namespace CalculateFunding.Common.Graph
+namespace CalculateFunding.Common.Graph.Neo4J
 {
-    public class GraphRepository : IGraphRepository, IDisposable
+    public class GraphRepository : GraphInterfaces.IGraphRepository, IDisposable
     {
         private readonly IDriver _driver;
         private readonly ICypherBuilderFactory _cypherBuilderFactory;
@@ -32,7 +31,7 @@ namespace CalculateFunding.Common.Graph
 
         private IAsyncSession AsyncSession() => _driver.AsyncSession();
 
-        public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, IField field)
+        public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, GraphInterfaces.IField field)
             where TNode : class
         {
             IAsyncSession session = AsyncSession();
@@ -49,7 +48,7 @@ namespace CalculateFunding.Common.Graph
             }
         }
 
-        public async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field, IEnumerable<string> relationships)
+        public async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(GraphInterfaces.IField field, IEnumerable<string> relationships)
             where TNode:class
         {
             IAsyncSession session = AsyncSession();
@@ -93,7 +92,7 @@ namespace CalculateFunding.Common.Graph
                 }
 
                 string cypher = UpsertNodesCypher<T>(key);
-                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher, new Dictionary<string, object>() { { "nodes", ParameterSerializer.ToDictionary(nodes) } }));
+                await session.WriteTransactionAsync(tx => RunCypher(tx, cypher, new Dictionary<string, object>() { { "nodes", nodes.ToDictionaries() } }));
             }
             finally
             {
@@ -101,28 +100,21 @@ namespace CalculateFunding.Common.Graph
             }
         }
 
-        public async Task DeleteNodeAndChildNodes<T>(IField field)
-        {
-            string cypher = RemoveNodeAndChildrenCypher<T>(field);
-
-            await ExecuteCypher(cypher);
-        }
-
-        public async Task DeleteNode<T>(IField field)
+        public async Task DeleteNode<T>(GraphInterfaces.IField field)
         {
             string cypher = RemoveNodeCypher<T>(field.Name, field.Value);
 
             await ExecuteCypher(cypher);
         }
 
-        public async Task UpsertRelationship<A, B>(string relationShipName, IField left, IField right)
+        public async Task UpsertRelationship<A, B>(string relationShipName, GraphInterfaces.IField left, GraphInterfaces.IField right)
         {
             string cypher = UpsertRelationshipCypher<A, B>(relationShipName, left, right);
             
             await ExecuteCypher(cypher);
         }
 
-        public async Task DeleteRelationship<A, B>(string relationShipName, IField left, IField right)
+        public async Task DeleteRelationship<A, B>(string relationShipName, GraphInterfaces.IField left, GraphInterfaces.IField right)
         {
             string cypher = DeleteRelationshipCypher<A, B>(relationShipName, left, right);
 
@@ -137,13 +129,17 @@ namespace CalculateFunding.Common.Graph
             {
                 await session.WriteTransactionAsync(tx => RunCypher(tx, cypher, parameters));
             }
+            catch (Neo4jException e)
+            {
+                throw new GraphRepositoryException(e.Message, e);
+            }
             finally
             {
                 await session.CloseAsync();
             }    
         }
 
-        private string RemoveNodeAndChildrenCypher<T>(IField field)
+        private string RemoveNodeAndChildrenCypher<T>(GraphInterfaces.IField field)
         {
             string nodeName = typeof(T).Name.ToLowerInvariant();
 
@@ -154,7 +150,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string GetCircularDependencyCypher<TNode>(string relationShip, IField field)
+        private string GetCircularDependencyCypher<TNode>(string relationShip, GraphInterfaces.IField field)
         {
             string nodeName = typeof(TNode).Name.ToLowerInvariant();
 
@@ -169,7 +165,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string GetAllCypher<TNode>(IField field, IEnumerable<string> relationships)
+        private string GetAllCypher<TNode>(GraphInterfaces.IField field, IEnumerable<string> relationships)
             where TNode:class
         {
             string node = typeof(TNode).Name.ToLowerInvariant();
@@ -202,7 +198,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string UpsertRelationshipCypher<A, B>(string relationShipName, IField left, IField right)
+        private string UpsertRelationshipCypher<A, B>(string relationShipName, GraphInterfaces.IField left, GraphInterfaces.IField right)
         {
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();
@@ -215,7 +211,7 @@ namespace CalculateFunding.Common.Graph
                 .ToString();
         }
 
-        private string DeleteRelationshipCypher<A, B>(string relationShipName, IField left, IField right)
+        private string DeleteRelationshipCypher<A, B>(string relationShipName, GraphInterfaces.IField left, GraphInterfaces.IField right)
         {
             string objectAName = typeof(A).Name.ToLowerInvariant();
             string objectBName = typeof(B).Name.ToLowerInvariant();

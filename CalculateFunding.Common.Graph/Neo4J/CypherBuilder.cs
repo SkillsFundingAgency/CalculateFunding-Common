@@ -1,9 +1,8 @@
-﻿using CalculateFunding.Common.Graph.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CalculateFunding.Common.Graph
+namespace CalculateFunding.Common.Graph.Neo4J
 {
     public class CypherBuilder : ICypherBuilder
     {

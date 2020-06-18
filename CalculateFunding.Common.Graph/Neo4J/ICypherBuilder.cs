@@ -1,9 +1,4 @@
-﻿using CalculateFunding.Common.Graph.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CalculateFunding.Common.Graph
+﻿namespace CalculateFunding.Common.Graph.Neo4J
 {
     public interface ICypherBuilder
     {

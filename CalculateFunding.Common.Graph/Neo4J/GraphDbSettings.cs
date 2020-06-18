@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CalculateFunding.Common.Graph
+﻿namespace CalculateFunding.Common.Graph.Neo4J
 {
     public class GraphDbSettings
     {

@@ -1,21 +1,26 @@
 ﻿using System.Collections.Generic;
-using CalculateFunding.Common.Graph.Serializers.Converters;
+using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Graph.Serializer.Converters;
 using Newtonsoft.Json;
 
-namespace CalculateFunding.Services.Graph.Serializer
+namespace CalculateFunding.Common.Graph.Serializer
 {
     public static class ParameterSerializer
     {
-        public static IEnumerable<Dictionary<string, object>> ToDictionary<TSourceType>(IEnumerable<TSourceType> source)
+        private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            NullValueHandling = NullValueHandling.Ignore,
+        };
 
-            string json = JsonConvert.SerializeObject(source, settings);
+        public static Dictionary<string, object> ToDictionary<T>(this T source)
+            where T : class
+            => source.AsJson(Settings)
+                .AsPoco<Dictionary<string, object>>(NewCustomDictionaryConverter());
 
-            return JsonConvert.DeserializeObject<IEnumerable<Dictionary<string, object>>>(json, new CustomDictionaryConverter());
-        }
+        public static IEnumerable<Dictionary<string, object>> ToDictionaries<T>(this IEnumerable<T> source) =>
+            source.AsJson(Settings)
+                .AsPoco<IEnumerable<Dictionary<string, object>>>(NewCustomDictionaryConverter());
+
+        private static CustomDictionaryConverter NewCustomDictionaryConverter() => new CustomDictionaryConverter();
     }
 }

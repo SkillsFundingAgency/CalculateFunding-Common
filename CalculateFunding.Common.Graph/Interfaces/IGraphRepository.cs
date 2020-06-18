@@ -5,7 +5,7 @@ namespace CalculateFunding.Common.Graph.Interfaces
 {
     public interface IGraphRepository
     {
-        Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationShip, IField field)
+        Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, IField field)
             where TNode : class;
         Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field, IEnumerable<string> relationships)
             where TNode : class;
@@ -14,6 +14,5 @@ namespace CalculateFunding.Common.Graph.Interfaces
         Task UpsertRelationship<A, B>(string relationShipName, IField left, IField right);
 
         Task DeleteRelationship<A, B>(string relationShipName, IField left, IField right);
-        Task DeleteNodeAndChildNodes<T>(IField field);
     }
 }
