@@ -10,10 +10,6 @@ namespace CalculateFunding.Generators.Funding.Models
     /// </summary>
     public class Calculation
     {
-        public Calculation()
-        {
-        }
-
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -31,7 +27,7 @@ namespace CalculateFunding.Generators.Funding.Models
         /// <summary>
         /// The value the calculation is resulting in.
         /// </summary>[JsonProperty("value")]
-        public decimal? Value { get; set; }
+        public object Value { get; set; }
 
         /// <summary>
         /// The type of calculation.
@@ -51,5 +47,8 @@ namespace CalculateFunding.Generators.Funding.Models
         /// </summary>
         [JsonProperty("referenceData", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<ReferenceData> ReferenceData { get; set; }
+
+        public decimal? GetValueAsNullableDecimal() 
+            => decimal.TryParse(Value?.ToString() ?? "", out decimal @decimal) ? (decimal?) @decimal : null;
     }
 }

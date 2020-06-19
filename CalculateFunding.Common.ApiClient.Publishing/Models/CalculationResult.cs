@@ -10,6 +10,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public string Id { get; set; }
 
         [JsonProperty("value")] 
-        public decimal? Value { get; set; }
+        public object Value { get; set; }
     }
 }

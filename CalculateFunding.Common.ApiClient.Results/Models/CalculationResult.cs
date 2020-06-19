@@ -9,7 +9,7 @@ namespace CalculateFunding.Common.ApiClient.Results.Models
         public Reference Calculation { get; set; }
 
         [JsonProperty("value")]
-        public decimal? Value { get; set; }
+        public object Value { get; set; }
 
         [JsonProperty("exceptionType")]
         public string ExceptionType { get; set; }

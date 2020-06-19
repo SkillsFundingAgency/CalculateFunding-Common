@@ -9,7 +9,7 @@ namespace CalculateFunding.Generators.Funding
     {
         public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines)
         {
-            var fundingLinesList = fundingLines.ToList();
+            List<FundingLine> fundingLinesList = fundingLines.ToList();
 
             return new FundingValue
             {
@@ -58,11 +58,12 @@ namespace CalculateFunding.Generators.Funding
         private static decimal? GetCashCalculationsSum(FundingLine fundingLine)
         {
             List<Calculation> cashCalculations = fundingLine.Calculations?
-                .Where(calculation => calculation.Type == CalculationType.Cash).ToList();
+                .Where(calculation => calculation.Type == CalculationType.Cash)
+                .ToList();
 
             decimal? cashCalculationsSum = null;
 
-            if (cashCalculations != null && cashCalculations.Any(c => c.Value != null))
+            if (cashCalculations != null && cashCalculations.Any(c => c.GetValueAsNullableDecimal() != null))
                 cashCalculationsSum = cashCalculations.Sum(GetCalculationsTotalRecursive);
 
             return cashCalculationsSum;
@@ -72,16 +73,15 @@ namespace CalculateFunding.Generators.Funding
         {
             if(calculation.Type == CalculationType.Cash)
             {
-                return calculation.Value;
+                return calculation.GetValueAsNullableDecimal();
             }
             else
             {
-                IEnumerable<Calculation> cashCalculations = calculation.Calculations?
-                .Where(subCalculation => subCalculation.Type == CalculationType.Cash);
+                decimal? calculationSum = calculation.Calculations?
+                    .Where(subCalculation => subCalculation.Type == CalculationType.Cash)
+                    .Sum(GetCalculationsTotalRecursive);
 
-                decimal? calculationSum = cashCalculations.Sum(GetCalculationsTotalRecursive);
-
-                return calculation.Value.AddValueIfNotNull(calculationSum);
+                return calculation.GetValueAsNullableDecimal().AddValueIfNotNull(calculationSum);
             }
         }
     }
