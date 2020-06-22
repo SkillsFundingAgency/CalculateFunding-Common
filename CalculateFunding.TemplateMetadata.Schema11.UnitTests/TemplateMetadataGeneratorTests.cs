@@ -18,11 +18,28 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
         private ILogger _logger;
         private TemplateMetadataGenerator _templateMetaDataGenerator;
 
-        private const string DsgTemplateWithNoIssues =
-            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.dsg1.0.json";
-
-        private const string DsgTemplateWithDuplicateCalculationNames =
-            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.dsg1.0.duplicate.calc.name.json";
+        private const string TemplateWithNoIssues =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.perfect.json";
+        private const string TemplateWithNonMatchingClones =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.non.matching.clones.json";
+        private const string TemplateWithDuplicateCalculationNames =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.duplicate.calculation.name.json";
+        private const string TemplateWithDuplicateAllowedEnumNames =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.duplicate.allowed.enum.json";
+        private const string TemplateWithAnEmptyAllowedEnumName =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.empty.allowed.enum.value.json";
+        private const string TemplateWithANullAllowedEnumName =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.null.allowed.enum.value.json";
+        private const string TemplateWithInvalidGroupRateNumerator =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.invalid.groupRate.numerator.json";
+        private const string TemplateWithGroupRateNumeratorSameAsDenominator =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.groupRate.numerator.same.as.denominator.json";
+        private const string TemplateWithEnumTypeButNoAllowedEnums =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.enum.type.but.no.allowed.enums.json";
+        private const string TemplateWithRecursivePercentageChange =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.recursive.percentageChange.json";
+        private const string TemplateWithPercentageChangeCalculationASameAsCalculationB =
+            "CalculateFunding.TemplateMetadata.Schema11.UnitTests.Resources.template.with.percentageChange.CalculationA.same.as.CalculationB.json";
 
         [TestInitialize]
         public void SetUp()
@@ -34,15 +51,121 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
         [TestMethod]
         public void TemplateMetadataValidatorSchema11_ValidMetaDataSupplied_ReturnsValid()
         {
-            ValidationResult result = WhenTheTemplateIsValidated(DsgTemplateWithNoIssues);
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithNoIssues);
 
+            result.Errors.Should().BeNullOrEmpty();
             result.IsValid.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_WithNonMatchingClones_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithNonMatchingClones);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.First(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Calculation 2' and id '2' has child calculations which don't match.");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_DuplicateAllowedEnumNames_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithDuplicateAllowedEnumNames);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Duplicate enum' and id '2' has duplicate allowed enum values for 'enum2', 'enum3'");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_IncludingEmptyAllowedEnumNames_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithAnEmptyAllowedEnumName);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Duplicate enum' and id '2' contains a null or empty allowed enum value");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_IncludingNullAllowedEnumName_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithANullAllowedEnumName);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Duplicate enum' and id '2' contains a null or empty allowed enum value");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_MissingAllowedEnumValues_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithEnumTypeButNoAllowedEnums);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.First(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Contain("is of type Enum but has missing allowed enum values");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_InvalidGroupRateNumerator_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithInvalidGroupRateNumerator);
+
+            result.IsValid.Should().BeFalse();
+            
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Calculation 2' and id : '3' has a numerator with TemplateCalculationId 1 that does not refer to a calculation in this template.");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_GroupRateNumeratorSameAsDenominator_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithGroupRateNumeratorSameAsDenominator);
+
+            result.IsValid.Should().BeFalse();
+            
+            result.Errors.Where(x => x.PropertyName == "Calculation")
+                .Should().HaveCount(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .Be("Calculation with name 'Calculation 2' and id : '3' has the same numerator & denominator for Group Rate.");
         }
 
         [TestMethod]
         public void TemplateMetadataValidatorSchema11_DuplicateCalcNameDifferentTemplateCalcId_ReturnsInvalid()
         {
-            ValidationResult result = WhenTheTemplateIsValidated(DsgTemplateWithDuplicateCalculationNames);
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithDuplicateCalculationNames);
 
             result.IsValid.Should().BeFalse();
 
@@ -50,15 +173,47 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
                 .Should()
                 .Be(1);
 
-            result.Errors.First(x => x.PropertyName == "Calculation").ErrorMessage
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
                 .Should()
-                .StartWith("Calculation name: 'calc 11111' is present multiple times in the template but with a different templateCalculationIds.");
+                .StartWith("Calculation : 'Calc 11111' and id : '5' has a duplicate name in the template with a different TemplateCalculationIds.");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_TemplateWithRecursivePercentageChange_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithRecursivePercentageChange);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Count(x => x.PropertyName == "Calculation")
+                .Should()
+                .Be(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .StartWith("Calculation with name 'Calculation 3' and id : '4' has CalculationA with TemplateCalculationId 3 that contains a group rate referring back to this calculation.");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema11_TemplateWithPercentageChangeCalculationASameAsCalculationB_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithPercentageChangeCalculationASameAsCalculationB);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Count(x => x.PropertyName == "Calculation")
+                .Should()
+                .Be(1);
+
+            result.Errors.Single(x => x.PropertyName == "Calculation").ErrorMessage
+                .Should()
+                .StartWith("Calculation with name 'Calculation 3' and id : '4' has the same PercentageChangeBetweenAandB value for CalculationA and CalculationB");
         }
 
         [TestMethod]
         public void TemplateMetadataSchema11_GetValidMetaData_ReturnsValidContents()
         {
-            TemplateMetadataContents contents = WhenTheMetadataContentsIsGenerated(DsgTemplateWithNoIssues);
+            TemplateMetadataContents contents = WhenTheMetadataContentsIsGenerated(TemplateWithNoIssues);
 
             contents.RootFundingLines.Should().HaveCount(2);
 
@@ -96,7 +251,7 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
                 .BeEquivalentTo(new Calculation
                 {
                     TemplateCalculationId = 2,
-                    Name = "Calculation 1",
+                    Name = "Calculation 2",
                     AggregationType = AggregationType.Sum,
                     ValueFormat = CalculationValueFormat.Number,
                     AllowedEnumTypeValues = new[]
@@ -117,13 +272,13 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
                 .BeEquivalentTo(new Calculation
                 {
                     TemplateCalculationId = 3,
-                    Name = "Calculation 2",
+                    Name = "Calculation 3",
                     AggregationType = AggregationType.GroupRate,
                     ValueFormat = CalculationValueFormat.Number,
                     GroupRate = new GroupRate
                     {
-                        Denominator = 2,
-                        Numerator = 1
+                        Denominator = 12,
+                        Numerator = 11
                     },
                     Type = CalculationType.Boolean,
                     FormulaText = "Enter formula text"
@@ -139,12 +294,12 @@ namespace CalculateFunding.TemplateMetadata.Schema11.UnitTests
                 .BeEquivalentTo(new Calculation
                 {
                     TemplateCalculationId = 4,
-                    Name = "Calculation 3",
+                    Name = "Calculation 4",
                     AggregationType = AggregationType.PercentageChangeBetweenAandB,
                     ValueFormat = CalculationValueFormat.Percentage,
                     PercentageChangeBetweenAandB = new PercentageChangeBetweenAandB
                     {
-                        CalculationA = 1,
+                        CalculationA = 3,
                         CalculationB = 2,
                         CalculationAggregationType = AggregationType.Sum
                     },

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://fundingschemas.blob.core.windows.net/schemas/funding-template-schema-1.1.json",
+  "schemaVersion": "1.1",
+  "fundingTemplate": {
+    "fundingLines": [
+      {
+        "templateLineId": 1,
+        "type": "Payment",
+        "name": "Funding Line 1",
+        "fundingLineCode": "DSG-001",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "templateCalculationId": 2,
+            "type": "Enum",
+            "name": "Calculation 2",
+            "aggregationType": "Sum",
+            "formulaText": "Enter formula text",
+            "valueFormat": "Number",
+            "allowedEnumTypeValues": [
+              "Option1",
+              "Option2"
+            ],
+            "calculations": [{
+              "templateCalculationId": 11,
+              "type": "Number",
+              "name": "Calculation 11",
+              "aggregationType": "Sum",
+              "formulaText": "Enter formula text",
+              "valueFormat": "Number",
+              "calculations": []
+            },
+              {
+              "templateCalculationId": 12,
+              "type": "Number",
+              "name": "Calculation 12",
+              "aggregationType": "Sum",
+              "formulaText": "Enter formula text",
+              "valueFormat": "Number",
+              "calculations": []
+            }]
+          },
+          {
+            "templateCalculationId": 3,
+            "type": "Boolean",
+            "name": "Calculation 3",
+            "aggregationType": "GroupRate",
+            "formulaText": "Enter formula text",
+            "valueFormat": "Number",
+            "groupRate": {
+              "numerator": 11,
+              "denominator": 12
+            },
+            "calculations": []
+          },
+          {
+            "templateCalculationId": 4,
+            "type": "Number",
+            "name": "Calculation 4",
+            "aggregationType": "PercentageChangeBetweenAandB",
+            "formulaText": "Enter formula text",
+            "valueFormat": "Percentage",
+            "percentageChangeBetweenAandB": {
+              "calculationA": 3,
+              "calculationB": 2,
+              "calculationAggregationType": "Sum"
+            },
+            "calculations": []
+          }
+        ]
+      },
+      {
+        "templateLineId": 2,
+        "type": "Payment",
+        "name": "Funding Line 2",
+        "fundingLineCode": "DSG-002",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "templateCalculationId": 2,
+            "type": "Enum",
+            "name": "Calculation 2",
+            "aggregationType": "Sum",
+            "formulaText": "Enter formula text",
+            "valueFormat": "Number",
+            "allowedEnumTypeValues": [
+              "Option1",
+              "Option2"
+            ],
+            "calculations": [{
+              "templateCalculationId": 11,
+              "type": "Number",
+              "name": "Calculation 11",
+              "aggregationType": "Sum",
+              "formulaText": "Enter formula text",
+              "valueFormat": "Number",
+              "calculations": []
+            },
+              {
+                "templateCalculationId": 12,
+                "type": "Number",
+                "name": "Calculation 12",
+                "aggregationType": "Sum",
+                "formulaText": "Enter formula text",
+                "valueFormat": "Number",
+                "calculations": []
+              }]
+          }]
+      }
+    ]
+  }
+}

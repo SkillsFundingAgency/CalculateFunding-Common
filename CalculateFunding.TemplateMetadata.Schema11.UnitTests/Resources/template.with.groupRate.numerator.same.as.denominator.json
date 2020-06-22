@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://fundingschemas.blob.core.windows.net/schemas/funding-template-schema-1.1.json",
   "schemaVersion": "1.1",
   "fundingTemplate": {
@@ -31,34 +31,12 @@
             "formulaText": "Enter formula text",
             "valueFormat": "Number",
             "groupRate": {
-              "numerator": 1,
+              "numerator": 2,
               "denominator": 2
-            },
-            "calculations": []
-          },
-          {
-            "templateCalculationId": 4,
-            "type": "Number",
-            "name": "Calculation 3",
-            "aggregationType": "PercentageChangeBetweenAandB",
-            "formulaText": "Enter formula text",
-            "valueFormat": "Percentage",
-            "percentageChangeBetweenAandB": {
-              "calculationA": 1,
-              "calculationB": 2,
-              "calculationAggregationType": "Sum"
             },
             "calculations": []
           }
         ]
-      },
-      {
-        "templateLineId": 2,
-        "type": "Payment",
-        "name": "Funding Line 2",
-        "fundingLineCode": "DSG-002",
-        "fundingLines": [],
-        "calculations": []
       }
     ]
   }

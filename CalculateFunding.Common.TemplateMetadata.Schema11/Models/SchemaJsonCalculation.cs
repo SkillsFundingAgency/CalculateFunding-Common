@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
@@ -6,6 +7,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Models
 {
     public class SchemaJsonCalculation
     {
+        [JsonIgnore]
+        public Guid Id = Guid.NewGuid();
+        
         public uint TemplateCalculationId { get; set; }
         
         public string Name { get; set; }
