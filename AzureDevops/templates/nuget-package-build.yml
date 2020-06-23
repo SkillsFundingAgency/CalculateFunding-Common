@@ -66,7 +66,7 @@ steps:
    condition: and(succeeded(), eq('${{ variables['Build.SourceBranch'] }}', 'refs/heads/master'))
    inputs:
     command: pack
-    packagesToPack: '${{ parameters.NugetProjectPath }}/*.csproj'
+    packagesToPack: '${{ parameters.NugetProjectPath }}'
 
  - task: Powershell@2
    displayName: 'Publish nuget packages'
@@ -74,4 +74,4 @@ steps:
    inputs:
     targetType: filePath
     filePath: ./NugetPublish.ps1
-    arguments: '-feedUrl "https://dfe-gov-uk.pkgs.visualstudio.com/_packaging/CalculateFundingService/nuget/v3/index.json" -username VssSessionToken -accessKey $env:SYSTEM_ACCESSTOKEN -packagePathWithFilter "$Env:Build_ArtifactStagingDirectory\*.nupkg"'
+    arguments: -feedUrl "https://dfe-gov-uk.pkgs.visualstudio.com/_packaging/CalculateFundingService/nuget/v3/index.json" -username VssSessionToken -accessKey "$(System.AccessToken)" -packagePathWithFilter "$(Build.ArtifactStagingDirectory)\*.nupkg"
