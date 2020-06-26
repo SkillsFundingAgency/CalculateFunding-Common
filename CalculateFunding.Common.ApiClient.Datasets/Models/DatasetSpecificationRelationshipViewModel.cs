@@ -1,3 +1,4 @@
+using System;
 using CalculateFunding.Common.Models;
 
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
@@ -15,6 +16,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string RelationshipDescription { get; set; }
 
         public bool IsProviderData { get; set; }
+        
         public bool IsLatestVersion { get; set; }
+        
+        public DateTimeOffset? LastUpdatedDate { get; set; }
+        
+        public Reference LastUpdatedAuthor { get; set; }
     }
 }
