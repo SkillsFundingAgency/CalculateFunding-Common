@@ -18,5 +18,7 @@ namespace CalculateFunding.Common.JobManagement
         Task<JobSummary> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes);
         Task<JobLog> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel);
         Task<IEnumerable<JobSummary>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
+
+        Task<JobViewModel> GetJobById(string jobId);
     }
 }

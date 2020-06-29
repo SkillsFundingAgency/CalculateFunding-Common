@@ -258,5 +258,14 @@ namespace CalculateFunding.Common.JobManagement
 
             return jobSummaries;
         }
+
+        public async Task<JobViewModel> GetJobById(string jobId)
+        {
+            ApiResponse<JobViewModel> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetJobById(jobId));
+
+            JobViewModel jobViewModel = jobResponse?.Content;
+
+            return jobViewModel;
+        }
     }
 }

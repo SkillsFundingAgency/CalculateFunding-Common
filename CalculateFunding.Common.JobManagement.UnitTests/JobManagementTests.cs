@@ -578,6 +578,35 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                 .GetNonCompletedJobsWithinTimeFrame(from, to);
         }
 
+        [TestMethod]
+        public async Task GetJobDetails_ReturnsJobViewModel()
+        {
+
+            var jobsApiClient = Substitute.For<IJobsApiClient>();
+            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            var messengerService = Substitute.For<IMessengerService>();
+            var logger = Substitute.For<ILogger>();
+
+            var jvm = new JobViewModel { CompletionStatus = null };
+
+            var jobApiResponse = new ApiResponse<JobViewModel>(HttpStatusCode.OK, jvm);
+
+            jobsApiClient
+                .GetJobById(Arg.Any<string>())
+                .Returns(jobApiResponse);
+
+            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+
+            var jobId = "3456";
+
+            //Act
+            var viewModel = await jobManagement.GetJobById(jobId);
+
+            //Assert    
+            viewModel
+                .Should()
+                .Be(jvm);
+        }
 
     }
 }
