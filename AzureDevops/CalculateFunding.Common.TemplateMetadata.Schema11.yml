@@ -23,6 +23,13 @@ trigger:
     - CalculateFunding.Common.TemplateMetadata/*
     - CalculateFunding.Common/*
 
+pr:
+  paths:
+    include:
+    - CalculateFunding.Common.TemplateMetadata.Schema11/*
+    - CalculateFunding.Common.TemplateMetadata/*
+    - CalculateFunding.Common/*
+
 steps:
 - template: templates\nuget-package-build.yml
   parameters:

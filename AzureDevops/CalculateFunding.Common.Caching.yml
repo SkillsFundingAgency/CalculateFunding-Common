@@ -22,6 +22,12 @@ trigger:
     - CalculateFunding.Common.Caching/*
     - CalculateFunding.Common/*
 
+pr:
+  paths:
+    include:
+    - CalculateFunding.Common.Caching/*
+    - CalculateFunding.Common/*
+
 steps:
 - template: templates\nuget-package-build.yml
   parameters:

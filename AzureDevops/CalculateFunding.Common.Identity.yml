@@ -25,6 +25,15 @@ trigger:
     - CalculateFunding.Common.Models/*
     - CalculateFunding.Common/*
 
+pr:
+  paths:
+    include:
+    - CalculateFunding.Common.Identity/*
+    - CalculateFunding.Common.ApiClient.Users/*
+    - CalculateFunding.Common.ApiClient/*
+    - CalculateFunding.Common.Models/*
+    - CalculateFunding.Common/*
+
 steps:
 - template: templates\nuget-package-build.yml
   parameters:

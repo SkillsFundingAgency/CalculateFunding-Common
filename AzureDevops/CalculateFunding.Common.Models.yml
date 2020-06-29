@@ -21,6 +21,11 @@ trigger:
     include:
     - CalculateFunding.Common.Models/*
 
+pr:
+  paths:
+    include:
+    - CalculateFunding.Common.Models/*
+
 steps:
 - template: templates\nuget-package-build.yml
   parameters:

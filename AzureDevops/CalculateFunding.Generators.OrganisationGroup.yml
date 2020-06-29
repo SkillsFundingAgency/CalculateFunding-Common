@@ -23,6 +23,13 @@ trigger:
     - CalculateFunding.Common.ApiClient.Policies/*
     - CalculateFunding.Common.ApiClient.Providers/*
 
+pr:
+  paths:
+    include:
+    - CalculateFunding.Generators.OrganisationGroup/*
+    - CalculateFunding.Common.ApiClient.Policies/*
+    - CalculateFunding.Common.ApiClient.Providers/*
+
 steps:
 - template: templates\nuget-package-build.yml
   parameters:
