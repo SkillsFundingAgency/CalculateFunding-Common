@@ -12,5 +12,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("definitionRelationshipCount")]
         public int RelationshipCount { get; set; }
+        
+        [JsonProperty("fundingStreamNames")]
+        public string[] FundingStreamNames { get; set; }
+        
+        [JsonProperty("fundingPeriodName")]
+        public string FundingPeriodName { get; set; }
     }
 }
