@@ -118,6 +118,7 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         public async Task GetNotificationsMakesGetWithTheSuppliedPageRef(string[] fundingStreamIds,
             string[] fundingPeriodIds,
             GroupingReason[] groupingReasons,
+            VariationReason[] variationReasons,
             int? pageRef,
             int? pageSize,
             string expectedUri)
@@ -129,6 +130,7 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ApiResponse<AtomFeed<object>> actualFeed = await WhenTheNotificationsAreQueriedWithTheSuppliedPageRef(fundingStreamIds,
                 fundingPeriodIds,
                 groupingReasons,
+                variationReasons,
                 pageSize,
                 pageRef);
 
@@ -306,11 +308,13 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
                 null,
                 null,
                 null,
+                null,
                 "v3/funding/notifications"
             };
             yield return new object []
             {
                 new [] { "4", "55" },
+                null,
                 null,
                 null,
                 null,
@@ -322,18 +326,30 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
                 new [] { "4", "55" },
                 null,
                 new [] { GroupingReason.Information },
+                null,
                 99,
                 23,
                 "v3/funding/notifications/99?fundingStreamIds=4&fundingStreamIds=55&groupingReasons=Information&pageSize=23"
+            };
+            yield return new object[]
+            {
+                new [] { "4", "55" },
+                null,
+                null,
+                new [] { VariationReason.AuthorityFieldUpdated, VariationReason.CensusWardCodeFieldUpdated },
+                99,
+                23,
+                "v3/funding/notifications/99?fundingStreamIds=4&fundingStreamIds=55&variationReasons=AuthorityFieldUpdated&variationReasons=CensusWardCodeFieldUpdated&pageSize=23"
             };
             yield return new object []
             {
                 new [] { "3" },
                 new [] {"45", "99", "902384"},
                 new [] { GroupingReason.Payment, GroupingReason.Information },
+                new [] { VariationReason.AuthorityFieldUpdated, VariationReason.CensusWardCodeFieldUpdated },
                 null,
                 25,
-                "v3/funding/notifications?fundingStreamIds=3&fundingPeriodIds=45&fundingPeriodIds=99&fundingPeriodIds=902384&groupingReasons=Payment&groupingReasons=Information&pageSize=25"
+                "v3/funding/notifications?fundingStreamIds=3&fundingPeriodIds=45&fundingPeriodIds=99&fundingPeriodIds=902384&groupingReasons=Payment&groupingReasons=Information&variationReasons=AuthorityFieldUpdated&variationReasons=CensusWardCodeFieldUpdated&pageSize=25"
             };
         }
 
@@ -357,10 +373,11 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         private async Task<ApiResponse<AtomFeed<object>>> WhenTheNotificationsAreQueriedWithTheSuppliedPageRef(string[] fundingStreamIds = null,
             string[] fundingPeriodIds = null,
             GroupingReason[] groupingReasons = null,
+            VariationReason[] variationReasons = null,
             int? pageSize = null,
             int? pageRef = null)
         {
-            return await _client.GetFundingNotifications(fundingStreamIds, fundingPeriodIds, groupingReasons, pageSize: pageSize, pageRef: pageRef);
+            return await _client.GetFundingNotifications(fundingStreamIds, fundingPeriodIds, groupingReasons, variationReasons, pageSize: pageSize, pageRef: pageRef);
         }
 
         private async Task<ApiResponse<string>> WhenTheFundingIsQueriedByIdWithTheSuppliedId(string fundingId)

@@ -51,6 +51,7 @@ namespace CalculateFunding.Common.ApiClient.External
         public async Task<ApiResponse<AtomFeed<object>>> GetFundingNotifications(string[] fundingStreamIds = null,
             string[] fundingPeriodIds = null,
             GroupingReason[] groupingReasons = null,
+            VariationReason[] variationReasons = null,
             int? pageSize = null,
             int? pageRef = null)
         {
@@ -61,6 +62,7 @@ namespace CalculateFunding.Common.ApiClient.External
             string queryString = AddQueryStringParametersIfSupplied("", nameof(fundingStreamIds), fundingStreamIds);
             queryString = AddQueryStringParametersIfSupplied(queryString, nameof(fundingPeriodIds), fundingPeriodIds);
             queryString = AddQueryStringParametersIfSupplied(queryString, nameof(groupingReasons), groupingReasons);
+            queryString = AddQueryStringParametersIfSupplied(queryString, nameof(variationReasons), variationReasons);
 
             if (pageSize.HasValue)
             {

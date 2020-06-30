@@ -10,6 +10,7 @@ namespace CalculateFunding.Common.ApiClient.External
         Task<ApiResponse<AtomFeed<object>>> GetFundingNotifications(string[] fundingStreamIds = null,
             string[] fundingPeriodIds = null,
             GroupingReason[] groupingReasons = null,
+            VariationReason[] variationReasons = null,
             int? pageSize = null,
             int? pageRef = null);
 
