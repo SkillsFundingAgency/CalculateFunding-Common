@@ -554,6 +554,24 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 .ThrowExactlyAsync<ArgumentNullException>();
         }
 
+        
+        [TestMethod]
+        public async Task ReIndexSpecification()
+        {
+            string id = NewRandomString();
+            JobModel jobModel = new JobModel
+            {
+                JobId = NewRandomString()
+            };
+            
+            GivenTheResponse($"{id}/reindex", jobModel, HttpMethod.Post);
+
+            ApiResponse<JobModel> apiResponse = await _client.ReIndexSpecification(id);
+            
+            apiResponse?.Content
+                .Should()
+                .BeEquivalentTo(jobModel);
+        }
 
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
@@ -610,7 +628,5 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         private ProfileVariationPointer NewProfileVariationPointer() => new ProfileVariationPointer();
-        private string NewRandomString() => new RandomString();
-
     }
 }

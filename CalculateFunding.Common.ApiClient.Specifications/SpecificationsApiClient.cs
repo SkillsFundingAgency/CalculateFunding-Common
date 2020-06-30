@@ -248,5 +248,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointer);
         }
+
+        public async Task<ApiResponse<JobModel>> ReIndexSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<JobModel>($"{UrlRoot}/{specificationId}/reindex");
+        }
     }
 }

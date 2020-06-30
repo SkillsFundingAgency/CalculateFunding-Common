@@ -69,5 +69,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         Task<ApiResponse<IEnumerable<SpecificationReport>>> GetReportMetadataForSpecifications(string specificationId);
         
         Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string specificationReportIdentifier);
+        Task<ApiResponse<JobModel>> ReIndexSpecification(string specificationId);
     }
 }
