@@ -14,6 +14,7 @@ namespace CalculateFunding.Common.ApiClient.External
     public class ExternalApiClient : BearerBaseApiClient, IExternalApiClient
     {
         private const string Version = "v3";
+        private const string ProvidersBaseUri = "providers";
         private const string FundingBaseUri = "funding";
         private const string FundingStreamsBaseUri = "funding-streams";
 
@@ -119,6 +120,13 @@ namespace CalculateFunding.Common.ApiClient.External
 
             return await GetAsync<IEnumerable<PublishedFundingTemplate>>(
                 $"{Version}/{FundingStreamsBaseUri}/{fundingStreamId}/funding-periods/{fundingPeriodId}/templates");
+        }
+
+        public async Task<ApiResponse<ProviderVersionSearchResult>> GetPublishedProviderInformation(string publishedProviderVersion)
+        {
+            Guard.IsNullOrWhiteSpace(publishedProviderVersion, nameof(publishedProviderVersion));
+
+            return await GetAsync<ProviderVersionSearchResult>($"{Version}/{ProvidersBaseUri}/{publishedProviderVersion}");
         }
     }
 }

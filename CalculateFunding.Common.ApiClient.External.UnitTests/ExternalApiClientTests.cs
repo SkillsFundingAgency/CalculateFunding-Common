@@ -299,6 +299,21 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             ThenTheResponseContentIs(actualFundingPeriods, expectedFundingTemplates);
         }
 
+        [TestMethod]
+        public async Task GetPublishedFundingTemplatesMakesGetCallWithSuppliedPublishedProviderVersion()
+        {
+            string publishedProviderVersion = NewRandomString();
+
+            ProviderVersionSearchResult expectedProviderVersionSearchResult = new ProviderVersionSearchResult();
+
+            GivenTheResponse($"v3/providers/{publishedProviderVersion}", expectedProviderVersionSearchResult, HttpMethod.Get);
+
+            ApiResponse<ProviderVersionSearchResult> actualProviderVersionSearchResult =
+                await WhenThePublishedProviderIsQueriedByPublishedProviderVersion(publishedProviderVersion);
+
+            ThenTheResponseContentIs(actualProviderVersionSearchResult, expectedProviderVersionSearchResult);
+        }
+
         public static IEnumerable<object[]> NotificationsExamples()
         {
             yield return new object []
@@ -400,6 +415,11 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
            string fundingStreamId, string fundingPeriodId)
         {
             return await _client.GetPublishedFundingTemplates(fundingStreamId, fundingPeriodId);
+        }
+
+        private async Task<ApiResponse<ProviderVersionSearchResult>> WhenThePublishedProviderIsQueriedByPublishedProviderVersion(string publishedProviderVersion)
+        {
+            return await _client.GetPublishedProviderInformation(publishedProviderVersion);
         }
 
         private async Task<ApiResponse<string>> WhenTheTemplateSourceFileRetrieved(

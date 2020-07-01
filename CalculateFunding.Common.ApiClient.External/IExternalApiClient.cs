@@ -25,5 +25,7 @@ namespace CalculateFunding.Common.ApiClient.External
             string fundingStreamId, string fundingPeriodId, string majorVersion, string minorVersion);
 
         Task<ApiResponse<IEnumerable<PublishedFundingTemplate>>> GetPublishedFundingTemplates(string fundingStreamId, string fundingPeriodId);
+
+        Task<ApiResponse<ProviderVersionSearchResult>> GetPublishedProviderInformation(string publishedProviderVersion);
     }
 }
