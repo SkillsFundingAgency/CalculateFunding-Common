@@ -74,5 +74,11 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
         public string CountryName { get; set; }
 
         public string CountryCode { get; set; }
+
+        public string Street { get; set; }
+
+        public string Locality { get; set; }
+
+        public string Address3 { get; set; }
     }
 }
