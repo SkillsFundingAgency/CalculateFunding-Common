@@ -233,9 +233,17 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetSchemaRelationshipModel>>(DataSetsUriFor($"{specificationId}/schemaRelationshipFields"));
         }
 
+        public async Task<ApiResponse<IEnumerable<DatasetDefinationByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<DatasetDefinationByFundingStream>>(DataSetsUriFor($"get-data-definitions/{fundingStreamId}"));
+        }
+
         private string DataSetsUriFor(string relativeUri)
         {
             return $"datasets/{relativeUri}";
         }
+
     }
 }

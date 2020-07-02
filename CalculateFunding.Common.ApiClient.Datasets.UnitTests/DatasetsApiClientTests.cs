@@ -341,5 +341,16 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 () => _client.GetDatasetSchemaRelationshipModelsForSpecificationId(specificationId));
         }
 
+        [TestMethod]
+        public async Task GetDatasetDefinitionsByFundingStreamIdMakesGetCallWithSuppliedFundingStreamId()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"get-data-definitions/{fundingStreamId}",
+                fundingStreamId,
+                 Enumerable.Empty<DatasetDefinationByFundingStream>(),
+                _ => _client.GetDatasetDefinitionsByFundingStreamId(_));
+        }
+
     }
 }

@@ -45,5 +45,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             string specificationId, 
             string datasetDefinitionId);
 
+        Task<ApiResponse<IEnumerable<DatasetDefinationByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId);
+
     }
 }
