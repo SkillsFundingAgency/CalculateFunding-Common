@@ -68,7 +68,12 @@ namespace CalculateFunding.Common.Testing
         {
             return new Random().Next();
         }
-        
+
+        protected bool NewRandomBoolean()
+        {
+            return new RandomBoolean();
+        }
+
         protected void GivenThePrimitiveResponse<TResponse>(string uri, TResponse response, HttpMethod method = null, params string[] customHeaders)
         {
             _messageHandler.SetupStringResponse(uri, response.ToString().ToLower(), method: method, customerHeaders: customHeaders);

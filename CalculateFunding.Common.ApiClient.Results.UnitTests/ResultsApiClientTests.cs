@@ -160,5 +160,22 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
                 NewEnumerable(NewRandomString()),
                 _client.GetSpecificationIdsForProvider);
         }
+
+        [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task GetProviderHasResultsBySpecificationId(bool expectedHasResults)
+        {
+            string id = NewRandomString();
+
+            GivenThePrimitiveResponse($"provider-has-results?specificationId={id}", expectedHasResults, HttpMethod.Get);
+
+            ApiResponse<bool> apiResponse = await _client.GetProviderHasResultsBySpecificationId(id);
+
+            apiResponse?
+                .Content
+                .Should()
+                .Be(expectedHasResults);
+        }
     }
 }

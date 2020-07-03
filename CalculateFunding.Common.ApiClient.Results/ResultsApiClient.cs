@@ -104,6 +104,13 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/get-provider-specs?providerId={providerId}");
         }
 
+        public async Task<ApiResponse<bool>> GetProviderHasResultsBySpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<bool>($"{UrlRoot}/provider-has-results?specificationId={specificationId}");
+        }
+
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));

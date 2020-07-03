@@ -21,5 +21,6 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<IEnumerable<ProviderResult>>> GetProviderResultsBySpecificationId(string specificationId, string top = null);
         Task<ApiResponse<bool>> HasCalculationResults(string calculationId);
         Task<ApiResponse<IEnumerable<string>>> GetSpecificationIdsForProvider(string providerId);
+        Task<ApiResponse<bool>> GetProviderHasResultsBySpecificationId(string specificationId);
     }
 }
