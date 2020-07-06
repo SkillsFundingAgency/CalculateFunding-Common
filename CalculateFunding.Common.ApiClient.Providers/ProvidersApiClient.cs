@@ -227,5 +227,19 @@ namespace CalculateFunding.Common.ApiClient.Providers
             return await PostAsync<ProviderVersionSearchResults, SearchModel>($"providers/fundingstreams/{fundingStreamId}/current/search",
                 search);
         }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetLocalAuthorityNamesByProviderVersionId(string providerVersionId)
+        {
+            Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
+
+            return await GetAsync<IEnumerable<string>>($"local-authorities/versions/{providerVersionId}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetLocalAuthorityNamesByFundingStreamId(string fundingStreamId)
+        {
+            Guard.ArgumentNotNull(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<string>>($"local-authorities/fundingstreams/{fundingStreamId}");
+        }
     }
 }

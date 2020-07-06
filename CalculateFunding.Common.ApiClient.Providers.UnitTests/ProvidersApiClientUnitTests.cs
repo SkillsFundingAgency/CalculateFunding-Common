@@ -344,5 +344,34 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 new ProviderVersionSearchResults(),
                 () => _client.SearchCurrentProviderVersionForFundingStream(fundingStreamId, search));
         }
+
+        [TestMethod]
+        public async Task GetLocalAuthorityNamesByProviderVersionId()
+        {            
+            string providerVersionId = NewRandomString();
+
+            await AssertGetRequest($"local-authorities/versions/{providerVersionId}",
+                new[]
+                {
+                    NewRandomString(),
+                    NewRandomString(),
+                }.AsEnumerable(),
+                () => _client.GetLocalAuthorityNamesByProviderVersionId(providerVersionId));
+        }
+
+        [TestMethod]
+        public async Task GetLocalAuthorityNamesByFundingStreamId()
+        {
+            string fundingStreamId = NewRandomString();           
+
+            await AssertGetRequest($"local-authorities/fundingstreams/{fundingStreamId}",
+                new[]
+                {
+                    NewRandomString(),
+                    NewRandomString(),
+                }.AsEnumerable(),
+                () => _client.GetLocalAuthorityNamesByFundingStreamId(fundingStreamId));
+        }
+
     }
 }
