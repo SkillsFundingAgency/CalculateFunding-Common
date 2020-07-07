@@ -18,7 +18,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         Task<HttpStatusCode> SelectSpecificationForFunding(string specificationId);
 
-        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetApprovedSpecifications(string fundingPeriodId, string fundingStreamId);
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsByFundingPeriodIdAndFundingStreamId(string fundingPeriodId, string fundingStreamId);
+
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationResultsByFundingPeriodIdAndFundingStreamId(string fundingPeriodId, string fundingStreamId);
+
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetApprovedSpecificationsByFundingPeriodIdAndFundingStreamId(string fundingPeriodId, string fundingStreamId);
+
+        Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSelectedSpecificationsByFundingPeriodIdAndFundingStreamId(string fundingPeriodId, string fundingStreamId);
 
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsSelectedForFunding();
 

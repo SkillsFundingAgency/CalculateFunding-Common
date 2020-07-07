@@ -217,15 +217,51 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         [TestMethod]
-        public async Task GetApprovedSpecifications()
+        public async Task GetSpecificationsByFundingPeriodIdAndFundingStreamId()
         {
             string fundingPeriodId = NewRandomString();
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications-by-fundingperiod-and-fundingstream?fundingPeriodId={fundingPeriodId}&fundingStreamId={fundingStreamId}",
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}",
                 Enumerable.Empty<SpecificationSummary>(),
-                () => _client.GetApprovedSpecifications(fundingPeriodId, fundingStreamId));
+                () => _client.GetSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetSpecificationResultsByFundingPeriodIdAndFundingStreamId()
+        {
+            string fundingPeriodId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest(
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/with-results",
+                Enumerable.Empty<SpecificationSummary>(),
+                () => _client.GetSpecificationResultsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetApprovedSpecificationsByFundingPeriodIdAndFundingStreamId()
+        {
+            string fundingPeriodId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest(
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/approved",
+                Enumerable.Empty<SpecificationSummary>(),
+                () => _client.GetApprovedSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetSelectedSpecificationsByFundingPeriodIdAndFundingStreamId()
+        {
+            string fundingPeriodId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest(
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/selected",
+                Enumerable.Empty<SpecificationSummary>(),
+                () => _client.GetSelectedSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
         }
 
         [TestMethod]
