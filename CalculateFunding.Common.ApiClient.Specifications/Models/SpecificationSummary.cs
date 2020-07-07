@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Models;
@@ -22,6 +23,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("isSelectedForFunding")]
         public bool IsSelectedForFunding { get; set; }
+        
+        [JsonProperty("lastEditedDate")]
+        public DateTimeOffset? LastEditedDate { get; set; }
 
         [JsonProperty("approvalStatus")]
         public PublishStatus ApprovalStatus { get; set; }
