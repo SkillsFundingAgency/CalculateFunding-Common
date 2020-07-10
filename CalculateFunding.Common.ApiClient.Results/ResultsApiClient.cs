@@ -111,6 +111,29 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await GetAsync<bool>($"{UrlRoot}/provider-has-results?specificationId={specificationId}");
         }
 
+        public async Task<ApiResponse<IEnumerable<SpecificationInformation>>> GetSpecificationsWithProviderResultsForProviderId(string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            return await GetAsync<IEnumerable<SpecificationInformation>>($"{UrlRoot}/providers/{providerId}/specifications");
+        }
+        
+        public async Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForProvider(SpecificationInformation specificationInformation,
+            string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+            Guard.ArgumentNotNull(specificationInformation, nameof(specificationInformation));
+
+            return await PutAsync($"{UrlRoot}/providers/{providerId}/specifications", specificationInformation);
+        }
+        
+        public async Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForAllProviders(SpecificationInformation specificationInformation)
+        {
+            Guard.ArgumentNotNull(specificationInformation, nameof(specificationInformation));
+
+            return await PutAsync($"{UrlRoot}/providers/specifications", specificationInformation);
+        }
+
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
