@@ -1,15 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
     public class SpecificationEditModel
     {
-        public SpecificationEditModel()
-        {
-            FundingStreamIds = new List<string>();
-        }
         /// <summary>
         /// Used to pass from the service to the validator for duplicate name lookup
         /// </summary>
@@ -19,8 +14,8 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         public string ProviderVersionId { get; set; }
 
         public string FundingPeriodId { get; set; }
-
-        public IEnumerable<string> FundingStreamIds { get; set; }
+        
+        public IDictionary<string, string> AssignedTemplateIds { get; set; }
 
         public string Description { get; set; }
 
