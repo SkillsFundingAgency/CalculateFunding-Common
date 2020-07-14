@@ -10,6 +10,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("providerType")]
         public string ProviderType { get; set; }
+        
+        [JsonProperty("providerSubType")]
+        public string ProviderSubType { get; set; }
 
         [JsonProperty("localAuthority")]
         public string LocalAuthority { get; set; }
