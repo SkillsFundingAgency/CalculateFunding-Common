@@ -22,6 +22,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("ukprn")]
         public string UKPRN { get; set; }
+        
+        [JsonProperty("upin")]
+        public string UPIN { get; set; }
+        
+        [JsonProperty("urn")]
+        public string URN { get; set; }
 
         [JsonProperty("fundingValue")]
         public double FundingValue { get; set; }
