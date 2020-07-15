@@ -353,6 +353,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 new SearchResults<SpecificationDatasourceRelationshipSearchResultItem>()
                 {
                     Results = new [] { new SpecificationDatasourceRelationshipSearchResultItem() },
+                    Facets = new[] {new SearchFacet()}
                 });
             
             GivenTheResponse("specifications-dataset-relationships-search", expectedResponse, HttpMethod.Post);
@@ -368,7 +369,6 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 .Should()
                 .NotBeNull();   
         }
-        
         
         [TestMethod]
         public async Task FindSpecificationAndRelationships_UnSuccessfulSearch()

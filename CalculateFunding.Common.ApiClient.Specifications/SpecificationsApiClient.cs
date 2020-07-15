@@ -172,7 +172,8 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             PagedResult<SpecificationDatasourceRelationshipSearchResultItem> result = new SearchPagedResult<SpecificationDatasourceRelationshipSearchResultItem>(filterOptions, results.Content.TotalCount)
             {
-                Items = results.Content.Results
+                Items = results.Content.Results,
+                Facets = results.Content.Facets
             };
 
             return result;
