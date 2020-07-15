@@ -20,7 +20,7 @@ trigger:
   paths:
     include:
     - CalculateFunding.Common.ApiClient.Specifications.UnitTests/*
-    - CalculateFundingCommon.ApiClient.Specifications/*
+    - CalculateFunding.Common.ApiClient.Specifications/*
     - CalculateFunding.Common.Identity/*
     - CalculateFunding.Common.ApiClient.Users/*
     - CalculateFunding.Common.Models/*
@@ -30,7 +30,7 @@ pr:
   paths:
     include:
     - CalculateFunding.Common.ApiClient.Specifications.UnitTests/*
-    - CalculateFundingCommon.ApiClient.Specifications/*
+    - CalculateFunding.Common.ApiClient.Specifications/*
     - CalculateFunding.Common.Identity/*
     - CalculateFunding.Common.ApiClient.Users/*
     - CalculateFunding.Common.Models/*
