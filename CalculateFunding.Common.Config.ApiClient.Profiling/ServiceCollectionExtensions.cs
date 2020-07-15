@@ -9,6 +9,7 @@ using Polly;
 using Serilog;
 using System;
 using System.Net.Http;
+using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Profiling
 {
@@ -29,7 +30,7 @@ namespace CalculateFunding.Common.Config.ApiClient.Profiling
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            builder.AddHttpClient(HttpClientKeys.Profiling,
+            var httpBuilder = builder.AddHttpClient(HttpClientKeys.Profiling,
                (httpClient) =>
                {
                    ApiOptions apiOptions = new ApiOptions();
@@ -42,6 +43,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Profiling
                .AddTransientHttpErrorPolicy(c => c.WaitAndRetryAsync(retryTimeSpans))
                .AddTransientHttpErrorPolicy(c => c.CircuitBreakerAsync(numberOfExceptionsBeforeCircuitBreaker, circuitBreakerFailurePeriod))
                .AddUserProfilerHeaderPropagation();
+
+            // if a life time for the handler has been set then set it on the client builder
+            if (handlerLifetime != default)
+            {
+                httpBuilder.SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+            }
 
             builder.AddSingleton<ICancellationTokenProvider, InactiveCancellationTokenProvider>();
 
