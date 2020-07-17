@@ -53,14 +53,5 @@ namespace CalculateFunding.Common.Identity.Authentication
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddAzureAuthentication(this AuthenticationBuilder builder, string authenticationScheme, string displayName, Action<AzureAuthenticationOptions> configureOptions)
             => builder.AddScheme<AzureAuthenticationOptions, AzureAuthenticationHandler>(authenticationScheme, displayName, configureOptions);
-
-        public static IServiceCollection AddAzureAuthenticationHttpClients(this IServiceCollection services)
-        {
-            services.AddHttpClient(AzureAuthenticationHandler.AzureAuthenticationHttpClientName);
-
-            services.AddHttpClient(AzureAuthenticationHandler.GraphHttpClientName);
-
-            return services;
-        }
     }
 }

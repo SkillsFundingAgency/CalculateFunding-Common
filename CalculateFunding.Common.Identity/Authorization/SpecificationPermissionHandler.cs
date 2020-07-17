@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace CalculateFunding.Common.Identity.Authorization
 {
-    public class SpecificationPermissionHandler : AuthorizationHandler<SpecificationRequirement, ISpecificationAuthorizationEntity>
+    public class SpecificationPermissionHandler : AuthorizationHandler<SpecificationRequirement, string>
     {
         private readonly IUsersApiClient _usersApiClient;
         private readonly PermissionOptions _permissionOptions;
@@ -26,7 +26,7 @@ namespace CalculateFunding.Common.Identity.Authorization
             _permissionOptions = permissionOptions.Value;
         }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SpecificationRequirement requirement, ISpecificationAuthorizationEntity resource)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SpecificationRequirement requirement, string specificationId)
         {
             // If user belongs to the admin group then allow them access
             if (context.User.HasClaim(c => c.Type == Constants.GroupsClaimType && c.Value.ToLowerInvariant() == _permissionOptions.AdminGroupId.ToString().ToLowerInvariant()))
@@ -39,7 +39,7 @@ namespace CalculateFunding.Common.Identity.Authorization
                 if (context.User.HasClaim(c => c.Type == Constants.ObjectIdentifierClaimType))
                 {
                     string userId = context.User.FindFirst(Constants.ObjectIdentifierClaimType).Value;
-                    ApiResponse<EffectiveSpecificationPermission> permissionResponse = await _usersApiClient.GetEffectivePermissionsForUser(userId, resource.GetSpecificationId());
+                    ApiResponse<EffectiveSpecificationPermission> permissionResponse = await _usersApiClient.GetEffectivePermissionsForUser(userId, specificationId);
 
                     if (permissionResponse == null || permissionResponse.StatusCode != HttpStatusCode.OK)
                     {

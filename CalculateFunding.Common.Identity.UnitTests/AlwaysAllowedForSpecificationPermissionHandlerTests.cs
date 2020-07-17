@@ -20,7 +20,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
         {
             // Arrange
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity());
-            ISpecificationAuthorizationEntity spec = Substitute.For<ISpecificationAuthorizationEntity>();
+            string spec = null;
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, spec);
 
             AlwaysAllowedForSpecificationPermissionHandler authHandler = new AlwaysAllowedForSpecificationPermissionHandler();
@@ -38,7 +38,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             // Arrange
             string userId = Guid.NewGuid().ToString();
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            ISpecificationAuthorizationEntity spec = Substitute.For<ISpecificationAuthorizationEntity>();
+            string spec = null;
             AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, spec);
 
             AlwaysAllowedForSpecificationPermissionHandler authHandler = new AlwaysAllowedForSpecificationPermissionHandler();
@@ -67,7 +67,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
             authContext.HasSucceeded.Should().BeTrue();
         }
 
-        private AuthorizationHandlerContext CreateAuthenticationContext(ClaimsPrincipal principal, SpecificationActionTypes permissionRequired, ISpecificationAuthorizationEntity resource)
+        private AuthorizationHandlerContext CreateAuthenticationContext(ClaimsPrincipal principal, SpecificationActionTypes permissionRequired, string resource)
         {
             SpecificationRequirement requirement = new SpecificationRequirement(permissionRequired);
             return new AuthorizationHandlerContext(new[] { requirement }, principal, resource);

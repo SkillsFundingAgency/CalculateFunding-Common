@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.Identity.Authorization.Models;
 using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
-    public class SpecificationSummary : Reference, ISpecificationAuthorizationEntity
+    public class SpecificationSummary : Reference
     {
         [JsonProperty("fundingPeriod")]
         public Reference FundingPeriod { get; set; }
