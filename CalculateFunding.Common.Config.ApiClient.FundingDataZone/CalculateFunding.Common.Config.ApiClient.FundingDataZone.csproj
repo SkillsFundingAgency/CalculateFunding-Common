@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.FDZ\CalculateFunding.Common.ApiClient.FDZ.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.FundingDataZone\CalculateFunding.Common.ApiClient.FundingDataZone.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Config.ApiClient\CalculateFunding.Common.Config.ApiClient.csproj" />
   </ItemGroup>
 

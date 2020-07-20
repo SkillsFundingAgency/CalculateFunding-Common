@@ -1,17 +1,17 @@
-﻿using CalculateFunding.Common.ApiClient.FDZ.Models;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.FundingDataZone.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Serilog;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace CalculateFunding.Common.ApiClient.FDZ
+namespace CalculateFunding.Common.ApiClient.FundingDataZone
 {
-    public class FDZApiClient : BaseApiClient, IFDZApiClient
+    public class FundingDataZoneApiClient : BaseApiClient, IFundingDataZoneApiClient
     {
-        public FDZApiClient(
+        public FundingDataZoneApiClient(
             IHttpClientFactory httpClientFactory, 
             ILogger logger, 
             ICancellationTokenProvider cancellationTokenProvider = null)

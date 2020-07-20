@@ -153,11 +153,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Config.ApiClient.Scenarios", "CalculateFunding.Common.Config.ApiClient.Scenarios\CalculateFunding.Common.Config.ApiClient.Scenarios.csproj", "{A8C15D5F-ADF2-42FD-B2FE-1120CACFBA05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.FDZ", "CalculateFunding.Common.ApiClient.FDZ\CalculateFunding.Common.ApiClient.FDZ.csproj", "{99646FAE-762E-412F-AE3E-7CCAB9BD322F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.FundingDataZone", "CalculateFunding.Common.ApiClient.FundingDataZone\CalculateFunding.Common.ApiClient.FundingDataZone.csproj", "{99646FAE-762E-412F-AE3E-7CCAB9BD322F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.FDZ.UnitTests", "CalculateFunding.Common.ApiClient.FDZ.UnitTests\CalculateFunding.Common.ApiClient.FDZ.UnitTests.csproj", "{B86ADEB0-B3B8-47BC-892E-1F3E733CDEAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.ApiClient.FundingDataZone.UnitTests", "CalculateFunding.Common.ApiClient.FundingDataZone.UnitTests\CalculateFunding.Common.ApiClient.FundingDataZone.UnitTests.csproj", "{B86ADEB0-B3B8-47BC-892E-1F3E733CDEAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.FDZ", "CalculateFunding.Common.Config.ApiClient.FDZ\CalculateFunding.Common.Config.ApiClient.FDZ.csproj", "{72599B70-E6FC-4A59-8CBD-5B7B88CD7E74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.FundingDataZone", "CalculateFunding.Common.Config.ApiClient.FundingDataZone\CalculateFunding.Common.Config.ApiClient.FundingDataZone.csproj", "{72599B70-E6FC-4A59-8CBD-5B7B88CD7E74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Sql", "CalculateFunding.Common.Sql\CalculateFunding.Common.Sql.csproj", "{B04ECC95-7F6D-4109-B006-7A3AEC965BD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Sql.UnitTests", "CalculateFunding.Common.Sql.UnitTests\CalculateFunding.Common.Sql.UnitTests.csproj", "{7C9E4675-77F3-4FB3-9C1F-1A177C42599B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -437,6 +441,14 @@ Global
 		{A8C15D5F-ADF2-42FD-B2FE-1120CACFBA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8C15D5F-ADF2-42FD-B2FE-1120CACFBA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8C15D5F-ADF2-42FD-B2FE-1120CACFBA05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04ECC95-7F6D-4109-B006-7A3AEC965BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04ECC95-7F6D-4109-B006-7A3AEC965BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04ECC95-7F6D-4109-B006-7A3AEC965BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04ECC95-7F6D-4109-B006-7A3AEC965BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C9E4675-77F3-4FB3-9C1F-1A177C42599B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9E4675-77F3-4FB3-9C1F-1A177C42599B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C9E4675-77F3-4FB3-9C1F-1A177C42599B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9E4675-77F3-4FB3-9C1F-1A177C42599B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99646FAE-762E-412F-AE3E-7CCAB9BD322F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99646FAE-762E-412F-AE3E-7CCAB9BD322F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99646FAE-762E-412F-AE3E-7CCAB9BD322F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -517,6 +529,8 @@ Global
 		{3A1517DB-6442-4EE0-A0E0-D56CACA12D58} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{F35033F4-3E89-4829-869C-2C70895FD5BE} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}
 		{A8C15D5F-ADF2-42FD-B2FE-1120CACFBA05} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}
+		{B04ECC95-7F6D-4109-B006-7A3AEC965BD9} = {6D586895-4914-4C85-87ED-79B5A10D0431}
+		{7C9E4675-77F3-4FB3-9C1F-1A177C42599B} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{99646FAE-762E-412F-AE3E-7CCAB9BD322F} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{B86ADEB0-B3B8-47BC-892E-1F3E733CDEAE} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{72599B70-E6FC-4A59-8CBD-5B7B88CD7E74} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}

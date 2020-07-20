@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>CalculateFunding.Common.ApiClient.FDZ.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.FDZ\CalculateFunding.Common.ApiClient.FDZ.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.FundingDataZone\CalculateFunding.Common.ApiClient.FundingDataZone.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
 

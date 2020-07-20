@@ -1,11 +1,11 @@
-﻿using CalculateFunding.Common.ApiClient.FDZ.Models;
-using CalculateFunding.Common.ApiClient.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.FundingDataZone.Models;
+using CalculateFunding.Common.ApiClient.Models;
 
-namespace CalculateFunding.Common.ApiClient.FDZ
+namespace CalculateFunding.Common.ApiClient.FundingDataZone
 {
-    public interface IFDZApiClient
+    public interface IFundingDataZoneApiClient
     {
         Task<ApiResponse<object>> GetDataForDatasetVersion(string datasetCode, int versionNumber);
         Task<ApiResponse<IEnumerable<string>>> GetFundingStreamsWithDatasets();

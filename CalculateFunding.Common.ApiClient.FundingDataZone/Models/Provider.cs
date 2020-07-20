@@ -1,4 +1,4 @@
-﻿namespace CalculateFunding.Common.ApiClient.FDZ.Models
+﻿namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
 {
     public class Provider
     {

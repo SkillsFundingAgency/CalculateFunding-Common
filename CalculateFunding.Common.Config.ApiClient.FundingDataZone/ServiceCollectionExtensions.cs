@@ -1,18 +1,18 @@
-﻿using CalculateFunding.Common.ApiClient;
-using CalculateFunding.Common.ApiClient.FDZ;
+﻿using System;
+using System.Threading;
+using CalculateFunding.Common.ApiClient;
+using CalculateFunding.Common.ApiClient.FundingDataZone;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
-using System;
-using System.Threading;
 
-namespace CalculateFunding.Common.Config.ApiClient.FDZ
+namespace CalculateFunding.Common.Config.ApiClient.FundingDataZone
 {
     public static class ServiceCollectionExtensions
     {
         private const string ClientName = "fdzClient";
 
-        public static IServiceCollection AddFDZInterServiceClient(
+        public static IServiceCollection AddFundingDataServiceInterServiceClient(
             this IServiceCollection builder, 
             IConfiguration config,
             TimeSpan[] retryTimeSpans = null, 
@@ -20,13 +20,13 @@ namespace CalculateFunding.Common.Config.ApiClient.FDZ
             TimeSpan circuitBreakerFailurePeriod = default, 
             TimeSpan handlerLifetime = default)
         {
-            if (retryTimeSpans == null)
+            retryTimeSpans ??= new[]
             {
-                retryTimeSpans = new[] { TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5) };
-            }
+                TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5)
+            };
 
 
-            if (circuitBreakerFailurePeriod == default(TimeSpan))
+            if (circuitBreakerFailurePeriod == default)
             {
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
@@ -51,7 +51,7 @@ namespace CalculateFunding.Common.Config.ApiClient.FDZ
                 httpBuilder.SetHandlerLifetime(Timeout.InfiniteTimeSpan);
             }
 
-            builder.AddSingleton<IFDZApiClient, FDZApiClient>();
+            builder.AddSingleton<IFundingDataZoneApiClient, FundingDataZoneApiClient>();
 
             return builder;
         }

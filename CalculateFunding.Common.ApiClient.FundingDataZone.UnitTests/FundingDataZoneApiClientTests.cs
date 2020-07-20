@@ -1,4 +1,3 @@
-using CalculateFunding.Common.ApiClient.FDZ.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
@@ -9,18 +8,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.FundingDataZone;
+using CalculateFunding.Common.ApiClient.FundingDataZone.Models;
 
 namespace CalculateFunding.Common.ApiClient.FDZ.UnitTests
 {
     [TestClass]
-    public class FDZApiClientTests : ApiClientTestBase
+    public class FundingDataZoneApiClientTests : ApiClientTestBase
     {
-        private FDZApiClient _client;
+        private FundingDataZoneApiClient _client;
 
         [TestInitialize]
         public void SetUp()
         {
-            _client = new FDZApiClient(ClientFactory,
+            _client = new FundingDataZoneApiClient(ClientFactory,
                 new Mock<ILogger>().Object);
         }
 
