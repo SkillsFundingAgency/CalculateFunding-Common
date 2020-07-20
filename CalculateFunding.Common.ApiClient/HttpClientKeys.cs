@@ -29,5 +29,7 @@
         public const string Policies = "Policies";
 
         public const string Publishing = "Publishing";
+
+        public const string FDZ = "FDZ";
     }
 }
