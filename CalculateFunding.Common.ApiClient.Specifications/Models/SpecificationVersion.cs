@@ -48,6 +48,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("profileVariationPointers")]
         public IEnumerable<ProfileVariationPointer> ProfileVariationPointers { get; set; }
 
+        [JsonProperty("providerSource")]
+        public ProviderSource ProviderSource { get; set; }
+
+        [JsonProperty("providerSnapshotId")]
+        public int? ProviderSnapshotId { get; set; }
+
         public void AddOrUpdateTemplateId(string fundingStreamId,
             string templateId)
         {

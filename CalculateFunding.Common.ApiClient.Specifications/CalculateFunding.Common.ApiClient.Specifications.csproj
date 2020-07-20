@@ -5,7 +5,8 @@
     <Description>Specifications microservice client</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
-    <Version>6.1.0</Version>
+    <Version>6.2.0</Version>
+    
   </PropertyGroup>
 
   <ItemGroup>
