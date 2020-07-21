@@ -16,7 +16,7 @@ namespace CalculateFunding.Common.Sql
         protected SqlRepository(ISqlConnectionFactory connectionFactory)
         {
             Guard.ArgumentNotNull(connectionFactory, nameof(connectionFactory));
-                            
+
             _connectionFactory = connectionFactory;
         }
 
@@ -30,28 +30,58 @@ namespace CalculateFunding.Common.Sql
             }
             catch (Exception ex)
             {
-                return Task.FromResult((false, ex.Message));    
+                return Task.FromResult((false, ex.Message));
             }
         }
 
         protected async Task<TEntity> QuerySingle<TEntity>(string sql,
-            object parameters = null)
+            object parameters = null) =>
+            await QuerySingle<TEntity>(sql,
+                CommandType.StoredProcedure,
+                parameters);
+
+        protected async Task<TEntity> QuerySingleSql<TEntity>(string sql,
+            object parameters = null) =>
+            await QuerySingle<TEntity>(sql,
+                CommandType.Text,
+                parameters);
+
+        private async Task<TEntity> QuerySingle<TEntity>(string sql,
+            CommandType commandType,
+            object parameters)
         {
             using IDbConnection connection = NewOpenConnection();
 
-            return await connection.QuerySingleOrDefaultAsync(sql, 
-                    parameters ?? new {}, 
-                    commandType: CommandType.StoredProcedure);
+            return await connection.QuerySingleOrDefaultAsync(sql,
+                parameters ?? new
+                {
+                },
+                commandType: commandType);
         }
 
         protected async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
-            object parameters = null)
+            object parameters = null) =>
+            await Query<TEntity>(sql,
+                CommandType.StoredProcedure,
+                parameters);
+
+        protected async Task<IEnumerable<TEntity>> QuerySql<TEntity>(string sql,
+            object parameters = null) =>
+            await Query<TEntity>(sql,
+                CommandType.Text,
+                parameters);
+
+        private async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
+            CommandType commandType,
+            object parameters)
         {
             using IDbConnection connection = NewOpenConnection();
 
-            return (await connection.QueryAsync<TEntity>(sql, 
-                    parameters ?? new {}, 
-                    commandType: CommandType.StoredProcedure))
+            return (await connection.QueryAsync<TEntity>(sql,
+                    parameters ?? new
+                    {
+                    },
+                    commandType: commandType))
                 .ToArray();
         }
 
@@ -60,7 +90,7 @@ namespace CalculateFunding.Common.Sql
             IDbConnection connection = _connectionFactory.CreateConnection();
 
             connection.Open();
-            
+
             return connection;
         }
     }
