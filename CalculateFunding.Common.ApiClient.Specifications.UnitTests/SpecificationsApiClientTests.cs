@@ -223,7 +223,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}",
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingStreamId}/{fundingPeriodId}",
                 Enumerable.Empty<SpecificationSummary>(),
                 () => _client.GetSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
         }
@@ -235,7 +235,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/with-results",
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingStreamId}/{fundingPeriodId}/with-results",
                 Enumerable.Empty<SpecificationSummary>(),
                 () => _client.GetSpecificationResultsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
         }
@@ -247,7 +247,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/approved",
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingStreamId}/{fundingPeriodId}/approved",
                 Enumerable.Empty<SpecificationSummary>(),
                 () => _client.GetApprovedSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
         }
@@ -259,7 +259,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications-by-fundingperiod-and-fundingstream/{fundingPeriodId}/{fundingStreamId}/selected",
+                $"specifications-by-fundingperiod-and-fundingstream/{fundingStreamId}/{fundingPeriodId}/selected",
                 Enumerable.Empty<SpecificationSummary>(),
                 () => _client.GetSelectedSpecificationsByFundingPeriodIdAndFundingStreamId(fundingPeriodId, fundingStreamId));
         }
