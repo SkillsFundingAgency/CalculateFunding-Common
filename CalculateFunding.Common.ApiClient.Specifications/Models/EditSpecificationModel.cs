@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
@@ -17,5 +16,8 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("name")]
         public string Name { get; set; }
+        
+        [JsonProperty("assignedTemplateIds")]
+        public IDictionary<string, string> AssignedTemplateIds { get; set; }
     }
 }
