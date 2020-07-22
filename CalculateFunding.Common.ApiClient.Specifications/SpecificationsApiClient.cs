@@ -280,5 +280,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await PostAsync<JobModel>($"{UrlRoot}/{specificationId}/reindex");
         }
+
+        public async Task<HttpStatusCode> SetProviderVersion(string specificationId, string providerVersionId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
+
+            return await PutAsync($"{UrlRoot}/{specificationId}/providerversion", providerVersionId);
+        }
     }
 }

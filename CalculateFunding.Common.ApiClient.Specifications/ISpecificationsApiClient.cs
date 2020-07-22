@@ -76,5 +76,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
         
         Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string specificationReportIdentifier);
         Task<ApiResponse<JobModel>> ReIndexSpecification(string specificationId);
+
+        Task<HttpStatusCode> SetProviderVersion(string specificationId, string providerVersionId);
     }
 }

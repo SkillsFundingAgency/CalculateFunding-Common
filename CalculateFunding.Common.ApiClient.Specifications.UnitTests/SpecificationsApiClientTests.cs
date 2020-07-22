@@ -590,7 +590,36 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 .ThrowExactlyAsync<ArgumentNullException>();
         }
 
-        
+        [TestMethod]
+        public async Task SetProviderVersion()
+        {
+            string specificationId = NewRandomString();
+            string providerVersionId = NewRandomString();
+
+            await AssertPutRequest($"{specificationId}/providerversion",
+                HttpStatusCode.OK,
+                () => _client.SetProviderVersion(specificationId, providerVersionId));
+        }
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task SetProviderVersionThrowsExceptionIfSuppliedSpecificationIdMissing(string specificationId)
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProviderVersionSet(specificationId, null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task SetProviderVersionThrowsExceptionIfSuppliedSpecificationProviderVersionsMissing()
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProviderVersionSet(NewRandomString(), null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>();
+        }
+
         [TestMethod]
         public async Task ReIndexSpecification()
         {
@@ -632,6 +661,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)
         {
             return await _client.SetProfileVariationPointer(specificationId, profileVariationPointer);
+        }
+
+        private async Task<HttpStatusCode> WhenTheSpecificationProviderVersionSet(string specificationId, string providerVersionId)
+        {
+            return await _client.SetProviderVersion(specificationId, providerVersionId);
         }
 
         private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersSet(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
