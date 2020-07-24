@@ -154,5 +154,11 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("address3")]
         public string Address3 { get; set; }
+
+        [JsonProperty("paymentOrganisationIdentifier")]
+        public string PaymentOrganisationIdentifier { get; set; }
+
+        [JsonProperty("paymentOrganisationName")]
+        public string PaymentOrganisationName { get; set; }
     }
 }

@@ -100,5 +100,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("localGovernmentGroupTypeName")]
         public string LocalGovernmentGroupTypeName { get; set; }
+
+        [JsonProperty("paymentOrganisationIdentifier")]
+        public string PaymentOrganisationIdentifier { get; set; }
+
+        [JsonProperty("paymentOrganisationName")]
+        public string PaymentOrganisationName { get; set; }
     }
 }
