@@ -11,9 +11,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
 {
     public class TemplateMetadataValidator : AbstractValidator<SchemaJson>
     {
-        private List<ValidationFailure> _failures = new List<ValidationFailure>();
-        private List<SchemaJsonFundingLine> _flattenedLines = new List<SchemaJsonFundingLine>();
-        private List<SchemaJsonCalculation> _flattenedCalculations = new List<SchemaJsonCalculation>();
+        private List<ValidationFailure> _failures;
+        private List<SchemaJsonFundingLine> _flattenedLines;
+        private List<SchemaJsonCalculation> _flattenedCalculations;
         
         public TemplateMetadataValidator()
         {
@@ -25,8 +25,12 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                 .WithMessage("No funding lines provided for TemplateMetadataValidator")
                 .Custom((fundingLines, context) =>
                 {
+                    _failures = new List<ValidationFailure>();
                     if (fundingLines.AnyWithNullCheck())
                     {
+                        _flattenedLines = new List<SchemaJsonFundingLine>();
+                        _flattenedCalculations = new List<SchemaJsonCalculation>();
+                        
                         FlattenTree(fundingLines);
 
                         fundingLines.ToList().ForEach(x => 
@@ -87,25 +91,26 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
             foreach (var clone in fundingLineClones)
             {
                 if (!clone.FundingLines.IsNullOrEmpty() &&
-                    !clone.FundingLines.All(_ => fundingLine.FundingLines.Any(fl => fl.TemplateLineId == _.TemplateLineId)))
+                    !clone.FundingLines.All(cloneChild => 
+                        fundingLine.FundingLines.Any(child => child.TemplateLineId == cloneChild.TemplateLineId)))
                 {
                     AddFailure(context, "FundingLine",
-                        $"FundingLine : '{fundingLine.Name}' and id : '{fundingLine.TemplateLineId}' has funding line children which don't match.");
+                        $"Funding Line '{fundingLine.Name}' with id '{fundingLine.TemplateLineId}' has clone(s) with child funding lines which don't match.");
                 }
                 
-                if (!clone.Calculations.IsNullOrEmpty() && !clone.Calculations.All(_ =>
-                    fundingLine.Calculations.Any(c => c.TemplateCalculationId == _.TemplateCalculationId)))
+                if (!clone.Calculations.IsNullOrEmpty() && !clone.Calculations.All(cloneChild =>
+                    fundingLine.Calculations.Any(child => child.TemplateCalculationId == cloneChild.TemplateCalculationId)))
                 {
                     AddFailure(context, "FundingLine",
-                        $"FundingLine : '{fundingLine.Name}' and id : '{fundingLine.TemplateLineId}' has child calculations which don't match.");
+                        $"Funding Line '{fundingLine.Name}' with id '{fundingLine.TemplateLineId}' has clone(s) with child calculations which don't match.");
                 }
 
                 if (clone.Name.Trim().ToLower() != fundingLineName || clone.Type != fundingLine.Type ||
                     clone.FundingLineCode != fundingLine.FundingLineCode)
                 {
                     AddFailure(context, "FundingLine",
-                        $"FundingLine : '{fundingLine.Name}' and id : '{fundingLine.TemplateLineId}' " +
-                        "has a duplicate funding line with the same templateLineId but with different values.");
+                        $"Funding Line '{fundingLine.Name}' with id '{fundingLine.TemplateLineId}' " +
+                        "has clone(s) with different values.");
                 }
             }
 
@@ -122,7 +127,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
             if (nameUsages > 1)
             {
                 AddFailure(context, "FundingLine",
-                    $"FundingLine : '{fundingLine.Name}' and id : '{fundingLine.TemplateLineId}' " +
+                    $"Funding Line '{fundingLine.Name}' with id : '{fundingLine.TemplateLineId}' " +
                     "has a duplicate funding line name in the template with a different templateLineIds.");
             }
         }
