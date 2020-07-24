@@ -8,6 +8,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
     public class SpecificationSummary : Reference
     {
+        [JsonProperty("providerSource")]
+        public ProviderSource ProviderSource { get; set; }
+    
         [JsonProperty("fundingPeriod")]
         public Reference FundingPeriod { get; set; }
 
