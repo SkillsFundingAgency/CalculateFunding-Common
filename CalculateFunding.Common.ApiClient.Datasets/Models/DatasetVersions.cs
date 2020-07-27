@@ -10,6 +10,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
             Versions = new List<DatasetVersionModel>();
         }
 
+        public string Description { get; set; }
+
         public int? SelectedVersion { get; set; }
 
         public IEnumerable<DatasetVersionModel> Versions { get; set; }
