@@ -66,7 +66,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <param name="organisationGroupLookupParameters">Grouping Lookup Parameters</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
-        public async Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Provider> providersInGroup)
+        public async Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, 
+            GroupingReason groupReason, IEnumerable<Provider> providersInGroup, 
+            PaymentOrganisationSource paymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider)
         {
             Guard.ArgumentNotNull(organisationGroupLookupParameters, nameof(organisationGroupLookupParameters));
 
@@ -75,7 +77,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.IdentifierValue, nameof(organisationGroupLookupParameters.IdentifierValue));
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.ProviderVersionId, nameof(organisationGroupLookupParameters.ProviderVersionId));
 
-                return await GetTargetProviderDetailsForPayment(organisationGroupLookupParameters.IdentifierValue, organisationGroupLookupParameters.OrganisationGroupTypeCode, organisationGroupLookupParameters.ProviderVersionId, providersInGroup);
+                return await GetTargetProviderDetailsForPayment(organisationGroupLookupParameters.IdentifierValue, organisationGroupLookupParameters.OrganisationGroupTypeCode, organisationGroupLookupParameters.ProviderVersionId, providersInGroup, paymentOrganisationSource);
             }
             else
             {
@@ -104,7 +106,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <param name="providerVersionId">Provider version</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
-        private async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPayment(string identifierValue, OrganisationGroupTypeCode? organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup)
+        private async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPayment(string identifierValue, OrganisationGroupTypeCode? organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup, PaymentOrganisationSource paymentOrganisationSource)
         {
             if (!organisationGroupTypeCode.HasValue)
             {
@@ -130,7 +132,15 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
                     if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
                     {
-                        targetProvider = new Provider { ProviderId = identifierValue, UKPRN = identifierValue, TrustCode = identifierValue, Name = providersInGroup?.First().TrustName };
+                        targetProvider = new Provider
+                        {
+                            ProviderId = identifierValue,
+                            UKPRN = identifierValue,
+                            TrustCode = identifierValue,
+                            Name = providersInGroup?.First().TrustName,
+                            PaymentOrganisationIdentifier = providersInGroup?.First().PaymentOrganisationIdentifier,
+                            PaymentOrganisationName = providersInGroup?.First().PaymentOrganisationName
+                        };
                     }
                 }
             }
@@ -149,12 +159,21 @@ namespace CalculateFunding.Generators.OrganisationGroup
             }
 
             // Return the provider if found.
-            return new TargetOrganisationGroup()
-            {
-                Identifier = targetProvider.UKPRN,
-                Name = targetProvider.Name,
-                Identifiers = GenerateIdentifiersForProvider(GroupingReason.Payment, organisationGroupTypeCode.Value, targetProvider)
-            };
+            IEnumerable<OrganisationIdentifier> identifiers = GenerateIdentifiersForProvider(GroupingReason.Payment, organisationGroupTypeCode.Value, targetProvider);
+
+            return paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
+                ? new TargetOrganisationGroup()
+                {
+                    Identifier = targetProvider.PaymentOrganisationIdentifier,
+                    Name = targetProvider.PaymentOrganisationName,
+                    Identifiers = identifiers
+                }
+                : new TargetOrganisationGroup()
+                {
+                    Identifier = targetProvider.UKPRN,
+                    Name = targetProvider.Name,
+                    Identifiers = identifiers
+                };
         }
 
         private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(GroupingReason groupingReason, OrganisationGroupTypeCode organisationGroupTypeCode, Provider targetProvider)

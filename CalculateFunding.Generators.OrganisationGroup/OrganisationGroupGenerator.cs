@@ -64,7 +64,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         GroupTypeIdentifier = grouping.GroupTypeIdentifier
                     };
 
-                    targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);
+                    targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping, fundingConfiguration.PaymentOrganisationSource);
 
                     if (targetOrganisationGroup == null)
                     {

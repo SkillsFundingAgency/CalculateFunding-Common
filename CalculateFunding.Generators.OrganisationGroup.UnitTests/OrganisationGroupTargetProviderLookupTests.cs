@@ -686,6 +686,113 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             action.Should().Throw<Exception>().WithMessage("Unable to resolve field to identifier value");
         }
 
+        [TestMethod]
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnLocalAuthorityPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
+        {
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
+                IdentifierValue = "101",
+                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.LocalAuthority,
+                ProviderVersionId = _providerVersionId
+            };
+
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(
+                organisationGroupLookupParameters,
+                Common.ApiClient.Policies.Models.GroupingReason.Payment,
+                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "101").First() },
+                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
+
+            group.Identifiers.Any();
+
+            group.Name
+                .Should()
+                .Be("Payment Org Name 1");
+
+            group.Identifier
+                .Should()
+                .Be("Payment Org Identifier 1");
+
+            group.Identifiers.Count()
+                .Should()
+                .Be(3);
+
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
+                .Should()
+                .Be(true);
+
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
+                .Should()
+                .Be(true);
+
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.DfeNumber)
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnAcadmeyTrustPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
+        {
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
+                IdentifierValue = "102",
+                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
+                ProviderVersionId = _providerVersionId
+            };
+
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
+                Common.ApiClient.Policies.Models.GroupingReason.Payment,
+                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() },
+                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
+
+            group.Identifiers.Any();
+
+            group.Name
+                .Should()
+                .Be("Payment Org Name 3");
+
+            group.Identifier
+                .Should()
+                .Be("Payment Org Identifier 3");
+
+            group.Identifiers.Count()
+                .Should()
+                .Be(2);
+        }
+
+        [TestMethod]
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnProviderPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
+        {
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
+                IdentifierValue = "1003",
+                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.Provider,
+                ProviderVersionId = _providerVersionId
+            };
+
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
+                Common.ApiClient.Policies.Models.GroupingReason.Payment,
+                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() },
+                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
+
+            group.Name
+                .Should()
+                .Be("Payment Org Name 3");
+
+            group.Identifier
+                .Should()
+                .Be("Payment Org Identifier 3");
+
+            group.Identifiers
+                .Should()
+                .BeEmpty();
+        }
+
         private Common.ApiClient.Models.ApiResponse<ProviderVersion> GetProviderVersion()
         {
             return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = GenerateScopedProviders() });
@@ -693,156 +800,164 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
         private IEnumerable<Provider> GenerateScopedProviders()
         {
-            List<Provider> providers = new List<Provider>();
-
-            providers.Add(new Provider()
+            List<Provider> providers = new List<Provider>
             {
-                ProviderId = "Multi provider",
-                Name = "Multi provider",
-                TrustCode = "101",
-                TrustName = "Academy Trust 1",
-                TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
-                UKPRN = "1001",
-                ProviderType = "Academy trust",
-                ProviderSubType = "",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
-
-            providers.Add(new Provider()
-            {
-                ProviderId = "provider1",
-                Name = "Provider 1",
-                UKPRN = "1001",
-                LACode = "101",
-                Authority = "Local Authority 1",
-                DfeEstablishmentNumber = "Dfe Establishment Number",
-                TrustCode = "101",
-                TrustName = "Academy Trust 1",
-                ParliamentaryConstituencyCode = "BOS",
-                ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
-                MiddleSuperOutputAreaCode = "MSOA1",
-                MiddleSuperOutputAreaName = "Middle Super Output Area 1",
-                CensusWardCode = "CW1",
-                CensusWardName = "Census Ward 1",
-                DistrictCode = "D1",
-                DistrictName = "District 1",
-                GovernmentOfficeRegionCode = "GOR1",
-                GovernmentOfficeRegionName = "Government Office Region 1",
-                LowerSuperOutputAreaCode = "LSOA1",
-                LowerSuperOutputAreaName = "Lower Super Output Area 1",
-                WardCode = "W1",
-                WardName = "Ward 1",
-                RscRegionCode = "RSC1",
-                RscRegionName = "Rsc Region 1",
-                CountryCode = "C1",
-                CountryName = "Country 1",
-                ProviderType = "Local Authority",
-                ProviderSubType = "Local Authority",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
-
-            providers.Add(new Provider()
-            {
-                ProviderId = "provider2",
-                Name = "Provider 2",
-                UKPRN = "1002",
-                LACode = "101",
-                Authority = "Local Authority 1",
-                TrustCode = "101",
-                TrustName = "Academy Trust 1",
-                ParliamentaryConstituencyCode = "BOS",
-                ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
-                MiddleSuperOutputAreaCode = "MSOA1",
-                MiddleSuperOutputAreaName = "Middle Super Output Area 1",
-                CensusWardCode = "CW1",
-                CensusWardName = "Census Ward 1",
-                DistrictCode = "D1",
-                DistrictName = "District 1",
-                GovernmentOfficeRegionCode = "GOR1",
-                GovernmentOfficeRegionName = "Government Office Region 1",
-                LowerSuperOutputAreaCode = "LSOA1",
-                LowerSuperOutputAreaName = "Lower Super Output Area 1",
-                WardCode = "W1",
-                WardName = "Ward 1",
-                RscRegionCode = "RSC1",
-                RscRegionName = "Rsc Region 1",
-                CountryCode = "C1",
-                CountryName = "Country 1",
-                ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
-
-            providers.Add(new Provider()
-            {
-                ProviderId = "provider3",
-                Name = "Provider 3",
-                UKPRN = "1003",
-                LACode = "102",
-                Authority = "Local Authority 2",
-                TrustCode = "102",
-                TrustName = "Academy Trust 2",
-                TrustStatus = TrustStatus.SupportedByASingleAacademyTrust,
-                ParliamentaryConstituencyCode = "CA",
-                ParliamentaryConstituencyName = "Camden",
-                MiddleSuperOutputAreaCode = "MSOA2",
-                MiddleSuperOutputAreaName = "Middle Super Output Area 2",
-                CensusWardCode = "CW2",
-                CensusWardName = "Census Ward 2",
-                DistrictCode = "D2",
-                DistrictName = "District 2",
-                GovernmentOfficeRegionCode = "GOR2",
-                GovernmentOfficeRegionName = "Government Office Region 2",
-                LowerSuperOutputAreaCode = "LSOA2",
-                LowerSuperOutputAreaName = "Lower Super Output Area 2",
-                WardCode = "W2",
-                WardName = "Ward 2",
-                RscRegionCode = "RSC2",
-                RscRegionName = "Rsc Region 2",
-                CountryCode = "C2",
-                CountryName = "Country 2",
-                ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
-
-            providers.Add(new Provider()
-            {
-                ProviderId = "provider4",
-                Name = "Provider 3",
-                UKPRN = "1004",
-                LACode = "103",
-                TrustCode = "103",
-                TrustName = "Academy Trust 3",
-                Authority = "Local Authority 3",
-                DistrictCode = "D2",
-                DistrictName = "District 2",
-                ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
-
-            providers.Add(new Provider()
-            {
-                ProviderId = "provider5",
-                Name = "Provider 5",
-                UKPRN = "1004",
-                LACode = "103",
-                TrustCode = "103",
-                TrustName = "Academy Trust 3",
-                Authority = "Local Authority 3",
-                DistrictCode = "D2",
-                DistrictName = "District 2",
-                ProviderType = "ProviderType2",
-                ProviderSubType = "ProviderSubType2",
-                LocalGovernmentGroupTypeCode = "LGGTC1",
-                LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
-            });
+                new Provider()
+                {
+                    ProviderId = "Multi provider",
+                    Name = "Multi provider",
+                    TrustCode = "101",
+                    TrustName = "Academy Trust 1",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    UKPRN = "1001",
+                    ProviderType = "Academy trust",
+                    ProviderSubType = "",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier",
+                    PaymentOrganisationName = "Payment Org Name"
+                },
+                new Provider()
+                {
+                    ProviderId = "provider1",
+                    Name = "Provider 1",
+                    UKPRN = "1001",
+                    LACode = "101",
+                    Authority = "Local Authority 1",
+                    DfeEstablishmentNumber = "Dfe Establishment Number",
+                    TrustCode = "101",
+                    TrustName = "Academy Trust 1",
+                    ParliamentaryConstituencyCode = "BOS",
+                    ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
+                    MiddleSuperOutputAreaCode = "MSOA1",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 1",
+                    CensusWardCode = "CW1",
+                    CensusWardName = "Census Ward 1",
+                    DistrictCode = "D1",
+                    DistrictName = "District 1",
+                    GovernmentOfficeRegionCode = "GOR1",
+                    GovernmentOfficeRegionName = "Government Office Region 1",
+                    LowerSuperOutputAreaCode = "LSOA1",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 1",
+                    WardCode = "W1",
+                    WardName = "Ward 1",
+                    RscRegionCode = "RSC1",
+                    RscRegionName = "Rsc Region 1",
+                    CountryCode = "C1",
+                    CountryName = "Country 1",
+                    ProviderType = "Local Authority",
+                    ProviderSubType = "Local Authority",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier 1",
+                    PaymentOrganisationName = "Payment Org Name 1"
+                },
+                new Provider()
+                {
+                    ProviderId = "provider2",
+                    Name = "Provider 2",
+                    UKPRN = "1002",
+                    LACode = "101",
+                    Authority = "Local Authority 1",
+                    TrustCode = "101",
+                    TrustName = "Academy Trust 1",
+                    ParliamentaryConstituencyCode = "BOS",
+                    ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
+                    MiddleSuperOutputAreaCode = "MSOA1",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 1",
+                    CensusWardCode = "CW1",
+                    CensusWardName = "Census Ward 1",
+                    DistrictCode = "D1",
+                    DistrictName = "District 1",
+                    GovernmentOfficeRegionCode = "GOR1",
+                    GovernmentOfficeRegionName = "Government Office Region 1",
+                    LowerSuperOutputAreaCode = "LSOA1",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 1",
+                    WardCode = "W1",
+                    WardName = "Ward 1",
+                    RscRegionCode = "RSC1",
+                    RscRegionName = "Rsc Region 1",
+                    CountryCode = "C1",
+                    CountryName = "Country 1",
+                    ProviderType = "ProviderType",
+                    ProviderSubType = "ProviderSubType",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier 2",
+                    PaymentOrganisationName = "Payment Org Name 2"
+                },
+                new Provider()
+                {
+                    ProviderId = "provider3",
+                    Name = "Provider 3",
+                    UKPRN = "1003",
+                    LACode = "102",
+                    Authority = "Local Authority 2",
+                    TrustCode = "102",
+                    TrustName = "Academy Trust 2",
+                    TrustStatus = TrustStatus.SupportedByASingleAacademyTrust,
+                    ParliamentaryConstituencyCode = "CA",
+                    ParliamentaryConstituencyName = "Camden",
+                    MiddleSuperOutputAreaCode = "MSOA2",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 2",
+                    CensusWardCode = "CW2",
+                    CensusWardName = "Census Ward 2",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    GovernmentOfficeRegionCode = "GOR2",
+                    GovernmentOfficeRegionName = "Government Office Region 2",
+                    LowerSuperOutputAreaCode = "LSOA2",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 2",
+                    WardCode = "W2",
+                    WardName = "Ward 2",
+                    RscRegionCode = "RSC2",
+                    RscRegionName = "Rsc Region 2",
+                    CountryCode = "C2",
+                    CountryName = "Country 2",
+                    ProviderType = "ProviderType",
+                    ProviderSubType = "ProviderSubType",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier 3",
+                    PaymentOrganisationName = "Payment Org Name 3"
+                },
+                new Provider()
+                {
+                    ProviderId = "provider4",
+                    Name = "Provider 3",
+                    UKPRN = "1004",
+                    LACode = "103",
+                    TrustCode = "103",
+                    TrustName = "Academy Trust 3",
+                    Authority = "Local Authority 3",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    ProviderType = "ProviderType",
+                    ProviderSubType = "ProviderSubType",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier 4",
+                    PaymentOrganisationName = "Payment Org Name 4"
+                },
+                new Provider()
+                {
+                    ProviderId = "provider5",
+                    Name = "Provider 5",
+                    UKPRN = "1004",
+                    LACode = "103",
+                    TrustCode = "103",
+                    TrustName = "Academy Trust 3",
+                    Authority = "Local Authority 3",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    ProviderType = "ProviderType2",
+                    ProviderSubType = "ProviderSubType2",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "Payment Org Identifier 5",
+                    PaymentOrganisationName = "Payment Org Name 5"
+                }
+            };
 
             return providers;
         }

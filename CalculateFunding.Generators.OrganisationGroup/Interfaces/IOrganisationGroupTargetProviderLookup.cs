@@ -15,7 +15,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
         /// <param name="organisationGroupLookupParameters">Grouping Lookup Parameters</param>
         /// <param name="groupingReason">Grouping Reason</param>
         /// <param name="providersInGroup">Providers in group</param>
+        /// <param name="paymentOrganisationSource">Payment Organisation Source</param>
         /// <returns></returns>
-        Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Common.ApiClient.Providers.Models.Provider> providersInGroup);
+        Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, GroupingReason groupReason, IEnumerable<Common.ApiClient.Providers.Models.Provider> providersInGroup, PaymentOrganisationSource paymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider);
     }
 }
