@@ -36,6 +36,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("profilePattern")]
         public ProfilePeriodPattern[] ProfilePattern { get; set; }
 
+        [JsonProperty("profilePatternDisplayName")]
+        public string ProfilePatternDisplayName { get; set; }
+
         [JsonProperty("id")]
         public string Id => $"{FundingPeriodId}-{FundingStreamId}-{FundingLineId}{ProfilePatternKeyString}";
 
