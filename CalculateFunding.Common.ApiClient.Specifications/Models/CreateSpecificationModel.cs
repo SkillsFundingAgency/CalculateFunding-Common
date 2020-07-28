@@ -19,5 +19,8 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
 
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("assignedTemplateIds")]
+        public IDictionary<string, string> AssignedTemplateIds { get; set; }
     }
 }
