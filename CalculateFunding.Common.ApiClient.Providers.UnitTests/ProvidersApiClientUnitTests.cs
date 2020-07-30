@@ -27,50 +27,6 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
             _client = new ProvidersApiClient(ClientFactory,
                 Logger.None);
         }
-        
-        [TestMethod]
-        public async Task SearchMasterProviders_SuccessfulSearch()
-        {
-            ApiResponse<ProviderVersionSearchResults> expectedResponse = new ApiResponse<ProviderVersionSearchResults>(HttpStatusCode.OK, 
-                new ProviderVersionSearchResults
-                {
-                    Results = new [] { new ProviderVersionSearchResult() },
-                    Facets = new [] { new Facet(), }
-                });
-            
-            GivenTheResponse("providers/master-search", expectedResponse, HttpMethod.Post);
-
-            SearchModel search = NewRandomSearch();
-            
-            PagedResult<ProviderVersionSearchResult> apiResponse = await _client.SearchMasterProviders(new SearchFilterRequest
-            {
-                SearchTerm = search.SearchTerm
-            });
-
-            //can't get the results and facets deserializing properly
-            //so just going with a null check for now
-            apiResponse
-                .Should()
-                .NotBeNull();
-               
-            AndTheRequestContentsShouldHaveBeen(new SearchModel
-            {
-                SearchTerm = search.SearchTerm,
-                FacetCount = 0
-            }.AsJson());
-        }
-        
-        [TestMethod]
-        public async Task SearchMasterProviders_UnSuccessfulSearch()
-        {
-            GivenTheStatusCode("providers/master-search", HttpStatusCode.InternalServerError, HttpMethod.Post);
-
-            PagedResult<ProviderVersionSearchResult> apiResponse = await _client.SearchMasterProviders(new SearchFilterRequest());
-
-            apiResponse
-                .Should()
-                .BeNull();
-        }
 
         [TestMethod]
         public async Task SearchProviderVersions()
@@ -184,44 +140,6 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 () => _client.GetProvidersByVersion(year, month, day));
             
             //lol - the impl is a bit muddled on this one (url doesn't replace verson key parts) lol
-        }
-
-        [TestMethod]
-        public async Task GetAllMasterProviders()
-        {
-            await AssertGetRequest("providers/master",
-                new ProviderVersion(),
-                _client.GetAllMasterProviders);
-        }
-
-        [TestMethod]
-        public async Task SearchMasterProviders()
-        {
-            await AssertPostRequest("providers/master-search",
-                new SearchModel(),
-                new ProviderVersionSearchResults(),
-                _client.SearchMasterProviders);
-        }
-
-        [TestMethod]
-        public async Task GetProviderByIdFromMaster()
-        {
-            string id = NewRandomString();
-
-            await AssertGetRequest($"providers/master/{id}",
-                id,
-                new ProviderVersionSearchResult(),
-                _client.GetProviderByIdFromMaster);
-        }
-
-        [TestMethod]
-        public async Task SetMasterProviderVersion()
-        {
-            MasterProviderVersionViewModel model = new MasterProviderVersionViewModel();
-            
-            await AssertPutRequest("providers/master",
-                HttpStatusCode.OK,
-                () => _client.SetMasterProviderVersion(model));
         }
 
         [TestMethod]

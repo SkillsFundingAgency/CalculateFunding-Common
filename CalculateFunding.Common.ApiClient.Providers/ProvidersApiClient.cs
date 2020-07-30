@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
-using SearchMode = CalculateFunding.Common.Models.Search.SearchMode;
 
 namespace CalculateFunding.Common.ApiClient.Providers
 {
@@ -20,44 +18,6 @@ namespace CalculateFunding.Common.ApiClient.Providers
         public ProvidersApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
          : base(httpClientFactory, HttpClientKeys.Providers, logger, cancellationTokenProvider)
         { }
-
-        public async Task<PagedResult<ProviderVersionSearchResult>> SearchMasterProviders(SearchFilterRequest filterOptions)
-        {
-            Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
-
-            SearchModel searchModel = new SearchModel
-            {
-                PageNumber = filterOptions.Page,
-                Top = filterOptions.PageSize,
-                SearchTerm = filterOptions.SearchTerm,
-                IncludeFacets = filterOptions.IncludeFacets,
-                Filters = filterOptions.Filters ?? new Dictionary<string, string[]>(),
-                FacetCount = filterOptions.FacetCount,
-                SearchMode = filterOptions.SearchMode == ApiClient.Models.SearchMode.All ? Common.Models.Search.SearchMode.All : Common.Models.Search.SearchMode.Any,
-                ErrorToggle = filterOptions.ErrorToggle
-            };
-
-            ApiResponse<ProviderVersionSearchResults> results = await SearchMasterProviders(searchModel);
-
-            if (results.StatusCode == HttpStatusCode.OK)
-            {
-                PagedResult<ProviderVersionSearchResult> result = new SearchPagedResult<ProviderVersionSearchResult>(filterOptions, results.Content.TotalCount)
-                {
-                    Items = results.Content.Results,
-                    Facets = results.Content.Facets.Select(x => new SearchFacet
-                    {
-                        Name = x.Name,
-                        FacetValues = x.FacetValues.Select(v => new SearchFacetValue { Name = v.Name, Count = v.Count })
-                    }),
-                };
-
-                return result;
-            }
-            else
-            {
-                return null;
-            }
-        }
 
         public async Task<ApiResponse<ProviderVersionSearchResults>> SearchProviderVersions(SearchModel searchModel)
         {
@@ -129,33 +89,7 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             return await PostAsync<ProviderVersionSearchResults, SearchModel>("providers/date-search/{year}/{month}/{day}", searchModel);
         }
-
-        public async Task<ApiResponse<ProviderVersion>> GetAllMasterProviders()
-        {
-            return await GetAsync<ProviderVersion>("providers/master");
-        }
-
-        public async Task<ApiResponse<ProviderVersionSearchResults>> SearchMasterProviders(SearchModel searchModel)
-        {
-            Guard.ArgumentNotNull(searchModel, nameof(searchModel));
-
-            return await PostAsync<ProviderVersionSearchResults, SearchModel>("providers/master-search", searchModel);
-        }
-
-        public async Task<ApiResponse<ProviderVersionSearchResult>> GetProviderByIdFromMaster(string providerId)
-        {
-            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
-
-            return await GetAsync<ProviderVersionSearchResult>($"providers/master/{providerId}");
-        }
-
-        public async Task<HttpStatusCode> SetMasterProviderVersion(MasterProviderVersionViewModel masterProviderVersion)
-        {
-            Guard.ArgumentNotNull(masterProviderVersion, nameof(masterProviderVersion));
-
-            return await PutAsync("providers/master", masterProviderVersion);
-        }
-
+        
         public async Task<HttpStatusCode> DoesProviderVersionExist(string providerVersionId)
         {
             Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));

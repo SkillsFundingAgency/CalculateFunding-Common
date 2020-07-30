@@ -3,10 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Providers microservice client</Description>
-    <Version>3.2.0</Version>
+    <Version>4.0.0</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
-  
     
   </PropertyGroup>
 
