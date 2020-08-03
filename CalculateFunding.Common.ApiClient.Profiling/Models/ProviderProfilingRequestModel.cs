@@ -14,5 +14,9 @@
         public decimal? FundingValue { get; set; }
 
         public string ProfilePatternKey { get; set; }
+
+        public string ProviderType { get; set; }
+
+        public string ProviderSubType { get; set; }
     }
 }

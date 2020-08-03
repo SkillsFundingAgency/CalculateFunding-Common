@@ -8,5 +8,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public IEnumerable<ProfilingPeriod> DeliveryProfilePeriods { get; set; }
 
         public IEnumerable<DistributionPeriods> DistributionPeriods { get; set; }
+
+        public string ProfilePatternKey { get; set; }
+
+        public string ProfilePatternDisplayName { get; set; }
     }
 }

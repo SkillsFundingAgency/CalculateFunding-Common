@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CalculateFunding.Common.Models;
 using Newtonsoft.Json;
 
@@ -38,6 +39,12 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("profilePatternDisplayName")]
         public string ProfilePatternDisplayName { get; set; }
+
+        [JsonProperty("providerTypes")]
+        public IEnumerable<string> ProviderTypes { get; set; }
+
+        [JsonProperty("providerSubTypes")]
+        public IEnumerable<string> ProviderSubTypes { get; set; }
 
         [JsonProperty("id")]
         public string Id => $"{FundingPeriodId}-{FundingStreamId}-{FundingLineId}{ProfilePatternKeyString}";
