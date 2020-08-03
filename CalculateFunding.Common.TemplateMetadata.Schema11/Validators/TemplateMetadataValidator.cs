@@ -14,7 +14,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
         private List<ValidationFailure> _failures;
         private List<SchemaJsonFundingLine> _flattenedLines;
         private List<SchemaJsonCalculation> _flattenedCalculations;
-        
+
         public TemplateMetadataValidator()
         {
             RuleFor(model => model.FundingTemplate)
@@ -30,15 +30,15 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                     {
                         _flattenedLines = new List<SchemaJsonFundingLine>();
                         _flattenedCalculations = new List<SchemaJsonCalculation>();
-                        
+
                         FlattenTree(fundingLines);
 
-                        fundingLines.ToList().ForEach(x => 
+                        fundingLines.ToList().ForEach(x =>
                             ValidateFundingLine(context, x));
                     }
                 });
         }
-        
+
         private void AddFailure(CustomContext context, string propertyName, string errorMessage)
         {
             if (!_failures.Any(x => x.PropertyName == propertyName && x.ErrorMessage == errorMessage))
@@ -52,17 +52,17 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
         private void FlattenTree(IEnumerable<SchemaJsonFundingLine> fundingLineTree)
         {
             if (fundingLineTree == null) return;
-            
+
             foreach (var fundingLine in fundingLineTree)
             {
                 _flattenedLines.Add(fundingLine);
-                
+
                 foreach (var calculation in fundingLine.Calculations)
                 {
                     _flattenedCalculations.Add(calculation);
                     FlattenTree(fundingLine.Calculations);
                 }
-                
+
                 FlattenTree(fundingLine.FundingLines);
             }
         }
@@ -70,7 +70,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
         private void FlattenTree(IEnumerable<SchemaJsonCalculation> fundingCalculationTree)
         {
             if (fundingCalculationTree == null) return;
-            
+
             foreach (var calculation in fundingCalculationTree)
             {
                 _flattenedCalculations.Add(calculation);
@@ -83,7 +83,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
         private void ValidateFundingLine(CustomContext context, SchemaJsonFundingLine fundingLine)
         {
             string fundingLineName = fundingLine.Name.Trim().ToLower();
-            
+
             CheckForDuplicateNames(context, fundingLine, fundingLineName);
 
             var fundingLineClones = _flattenedLines
@@ -91,13 +91,13 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
             foreach (var clone in fundingLineClones)
             {
                 if (!clone.FundingLines.IsNullOrEmpty() &&
-                    !clone.FundingLines.All(cloneChild => 
+                    !clone.FundingLines.All(cloneChild =>
                         fundingLine.FundingLines.Any(child => child.TemplateLineId == cloneChild.TemplateLineId)))
                 {
                     AddFailure(context, "FundingLine",
                         $"Funding Line '{fundingLine.Name}' with id '{fundingLine.TemplateLineId}' has clone(s) with child funding lines which don't match.");
                 }
-                
+
                 if (!clone.Calculations.IsNullOrEmpty() && !clone.Calculations.All(cloneChild =>
                     fundingLine.Calculations.Any(child => child.TemplateCalculationId == cloneChild.TemplateCalculationId)))
                 {
@@ -135,13 +135,13 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
         private void ValidateCalculation(CustomContext context, SchemaJsonCalculation calculation)
         {
             calculation.Name = calculation.Name.Trim();
-            
+
             CheckForUniqueCalculationName(context, calculation);
-            
+
             CheckForClonesWithDifferentValues(context, calculation);
 
             CheckForGroupRateIssues(context, calculation);
-            
+
             CheckForPercentageChangeIssues(context, calculation);
 
             CheckForEnumIssues(context, calculation);
@@ -162,17 +162,72 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
             foreach (var clone in calculationClones)
             {
                 CheckForNonMatchingChildren(context, calculation, clone);
-                if (!clone.Name.Trim().Equals(calculation.Name, StringComparison.OrdinalIgnoreCase) ||
-                    clone.AggregationType != calculation.AggregationType ||
-                    clone.Type != calculation.Type ||
-                    clone.ValueFormat != calculation.ValueFormat ||
-                    clone.FormulaText != calculation.FormulaText ||
-                    clone.PercentageChangeBetweenAandB != calculation.PercentageChangeBetweenAandB ||
-                    clone.GroupRate != calculation.GroupRate ||
-                    !clone.AllowedEnumTypeValues.IsNullOrEmpty() && !clone.AllowedEnumTypeValues.SequenceEqual(calculation.AllowedEnumTypeValues))
+
+                if (!clone.Name.Trim().Equals(calculation.Name.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
                     AddFailure(context, "Calculation",
-                        $"Calculation with id '{calculation.TemplateCalculationId}' occurs more than once in the template but with different values.");
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        $"occurs more than once in the template but with different names ['{calculation.Name}' vs '{clone.Name}']");
+                }
+
+                if (clone.AggregationType != calculation.AggregationType)
+                {
+                    AddFailure(context, "Calculation",
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        "occurs more than once in the template but with different aggregation types " +
+                        $"['{calculation.AggregationType}' vs '{clone.AggregationType}']");
+                }
+
+                if (clone.Type != calculation.Type)
+                {
+                    AddFailure(context, "Calculation",
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        "occurs more than once in the template but with different calculation types " +
+                        $"['{calculation.Type}' vs '{clone.Type}']");
+                }
+
+                if (clone.ValueFormat != calculation.ValueFormat)
+                {
+                    AddFailure(context, "Calculation",
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        "occurs more than once in the template but with different value formats " +
+                        $"['{calculation.ValueFormat}' vs '{clone.ValueFormat}']");
+                }
+
+                if (clone.FormulaText != calculation.FormulaText)
+                {
+                    AddFailure(context, "Calculation",
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        "occurs more than once in the template but with different formula texts " +
+                        $"['{calculation.FormulaText}' vs '{clone.FormulaText}']");
+                }
+
+                switch (calculation.AggregationType)
+                {
+                    case AggregationType.PercentageChangeBetweenAandB
+                        when clone.PercentageChangeBetweenAandB.CalculationA != calculation.PercentageChangeBetweenAandB.CalculationA ||
+                             clone.PercentageChangeBetweenAandB.CalculationB != calculation.PercentageChangeBetweenAandB.CalculationB ||
+                             clone.PercentageChangeBetweenAandB.CalculationAggregationType !=
+                             calculation.PercentageChangeBetweenAandB.CalculationAggregationType:
+                        AddFailure(context, "Calculation",
+                            $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                            "occurs more than once in the template but with different values for percentage change between A and B");
+                        break;
+                    case AggregationType.GroupRate 
+                        when clone.GroupRate?.Numerator != calculation.GroupRate?.Numerator ||
+                             clone.GroupRate?.Denominator != calculation.GroupRate?.Denominator :
+                        AddFailure(context, "Calculation",
+                            $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                            "occurs more than once in the template but with different group rates");
+                        break;
+                }
+
+                if (!clone.AllowedEnumTypeValues.IsNullOrEmpty() && !clone.AllowedEnumTypeValues.SequenceEqual(calculation.AllowedEnumTypeValues))
+                {
+                    AddFailure(context, "Calculation",
+                        $"Calculation with id '{calculation.TemplateCalculationId}' " +
+                        "occurs more than once in the template but with different allowed enum type values " +
+                        $"['{calculation.AllowedEnumTypeValues}' vs '{clone.AllowedEnumTypeValues}']");
                 }
             }
         }
@@ -185,7 +240,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                     calculation.Calculations.Any(fl => fl.TemplateCalculationId == _.TemplateCalculationId)))
             {
                 AddFailure(context, "Calculation",
-                    $"Calculation with name '{clone.Name}' and id '{calculation.TemplateCalculationId}' has child calculations which don't match.");
+                    $"Calculation with name '{clone.Name}' and id '{calculation.TemplateCalculationId}' " +
+                    "has child calculations which don't match.");
             }
         }
 
@@ -220,7 +276,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                             $"has a denominator with TemplateCalculationId {calculation.GroupRate.Denominator} " +
                             "that does not refer to a calculation in this template.");
                     }
-                    
+
                     if (calculation.GroupRate.Numerator == calculation.GroupRate.Denominator)
                     {
                         AddFailure(context, "Calculation",
@@ -268,22 +324,23 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                     }
                     else
                     {
-                        if (calculationAMatches.Any(x => 
+                        if (calculationAMatches.Any(x =>
                             x.AggregationType == AggregationType.GroupRate &&
                             x.GroupRate != null &&
-                                 (x.GroupRate.Numerator == calculation.TemplateCalculationId ||
-                                  x.GroupRate.Denominator == calculation.TemplateCalculationId)))
+                            (x.GroupRate.Numerator == calculation.TemplateCalculationId ||
+                             x.GroupRate.Denominator == calculation.TemplateCalculationId)))
                         {
                             AddFailure(context, "Calculation",
                                 $"Calculation with name '{calculation.Name}' and id : '{calculation.TemplateCalculationId}' " +
                                 $"has CalculationA with TemplateCalculationId {calculation.PercentageChangeBetweenAandB.CalculationA} " +
                                 "that contains a group rate referring back to this calculation.");
                         }
-                        if (calculationAMatches.Any(x => 
-                            x.AggregationType == AggregationType.PercentageChangeBetweenAandB && 
+
+                        if (calculationAMatches.Any(x =>
+                            x.AggregationType == AggregationType.PercentageChangeBetweenAandB &&
                             x.PercentageChangeBetweenAandB != null &&
-                                 (x.PercentageChangeBetweenAandB.CalculationA == calculation.TemplateCalculationId ||
-                                  x.PercentageChangeBetweenAandB.CalculationB == calculation.TemplateCalculationId)))
+                            (x.PercentageChangeBetweenAandB.CalculationA == calculation.TemplateCalculationId ||
+                             x.PercentageChangeBetweenAandB.CalculationB == calculation.TemplateCalculationId)))
                         {
                             AddFailure(context, "Calculation",
                                 $"Calculation with name '{calculation.Name}' and id : '{calculation.TemplateCalculationId}' " +
@@ -291,6 +348,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                                 "that contains a PercentageChangeBetweenAandB referring back to this calculation.");
                         }
                     }
+
                     var calculationBMatches = _flattenedCalculations
                         .Where(c => c.TemplateCalculationId == calculation.PercentageChangeBetweenAandB.CalculationB);
                     if (!calculationBMatches.Any())
@@ -302,7 +360,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                     }
                     else
                     {
-                        if (calculationBMatches.Any(x => 
+                        if (calculationBMatches.Any(x =>
                             x.AggregationType == AggregationType.GroupRate &&
                             x.GroupRate != null &&
                             (x.GroupRate.Numerator == calculation.TemplateCalculationId ||
@@ -313,8 +371,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                                 $"has CalculationB with TemplateCalculationId {calculation.PercentageChangeBetweenAandB.CalculationB} " +
                                 "that contains a group rate referring back to this calculation.");
                         }
-                        if (calculationBMatches.Any(x => 
-                            x.AggregationType == AggregationType.PercentageChangeBetweenAandB && 
+
+                        if (calculationBMatches.Any(x =>
+                            x.AggregationType == AggregationType.PercentageChangeBetweenAandB &&
                             x.PercentageChangeBetweenAandB != null &&
                             (x.PercentageChangeBetweenAandB.CalculationA == calculation.TemplateCalculationId ||
                              x.PercentageChangeBetweenAandB.CalculationB == calculation.TemplateCalculationId)))
@@ -325,7 +384,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema11.Validators
                                 "that contains a PercentageChangeBetweenAandB referring back to this calculation.");
                         }
                     }
-                    
+
                     if (calculation.PercentageChangeBetweenAandB.CalculationA == calculation.PercentageChangeBetweenAandB.CalculationB)
                     {
                         AddFailure(context, "Calculation",
