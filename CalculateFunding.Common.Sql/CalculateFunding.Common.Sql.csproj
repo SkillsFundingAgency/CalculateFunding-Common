@@ -6,8 +6,8 @@
         <Company>Department for Education</Company>
         <Product>Calculate Funding Service</Product>
         <Description>Azure Sql Client</Description>
-        <Version>1.1.0</Version>
-        <PackageVersion>1.1.0</PackageVersion>
+        <Version>1.1.1</Version>
+        <PackageVersion>1.1.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

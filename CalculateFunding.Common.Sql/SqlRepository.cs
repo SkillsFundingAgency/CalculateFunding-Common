@@ -52,7 +52,7 @@ namespace CalculateFunding.Common.Sql
         {
             using IDbConnection connection = NewOpenConnection();
 
-            return await connection.QuerySingleOrDefaultAsync(sql,
+            return await connection.QuerySingleOrDefaultAsync<TEntity>(sql,
                 parameters ?? new
                 {
                 },
