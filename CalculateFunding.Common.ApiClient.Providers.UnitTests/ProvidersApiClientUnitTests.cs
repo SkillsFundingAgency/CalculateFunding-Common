@@ -187,7 +187,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"copedproviders/get-provider-ids/{id}",
+            await AssertGetRequest($"scopedproviders/get-provider-ids/{id}",
                 id,
                 new[]
                 {

@@ -23,7 +23,12 @@ namespace CalculateFunding.Common.ApiClient
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new CamelCasePropertyNamesContractResolver {
+                NamingStrategy = new CamelCaseNamingStrategy
+                {
+                    ProcessDictionaryKeys = false // this is the default.
+                }
+            }
         };
         private readonly ICancellationTokenProvider _cancellationTokenProvider;
 

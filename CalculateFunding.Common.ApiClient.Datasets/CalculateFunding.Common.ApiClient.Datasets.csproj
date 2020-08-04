@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <RootNamespace>CalculateFunding.Common.ApiClient.DataSets</RootNamespace>
         <Description>Datasets microservice client</Description>
-        <Version>5.2.1</Version>
+        <Version>5.3.1</Version>
         <Authors>Calculate Funding Service</Authors>
         <Company>Department for Education</Company>
        

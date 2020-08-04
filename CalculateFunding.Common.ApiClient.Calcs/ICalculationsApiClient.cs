@@ -49,7 +49,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
         Task<ApiResponse<BooleanResponseModel>> CheckHasAllApprovedTemplateCalculationsForSpecificationId(string specificationId);
 
-        Task<ApiResponse<TemplateMapping>> AssociateTemplateIdWithSpecification(string specificationId, string templateVersion, string fundingStreamId);
+        Task<ApiResponse<TemplateMapping>> ProcessTemplateMappings(string specificationId, string templateVersion, string fundingStreamId);
 
         Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
             CalculationType calculationType,

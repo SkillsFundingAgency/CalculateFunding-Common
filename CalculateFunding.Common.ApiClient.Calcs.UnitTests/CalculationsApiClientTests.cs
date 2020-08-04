@@ -355,7 +355,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 expectedResponse,
                 HttpMethod.Put);
             
-            ApiResponse<TemplateMapping> apiResponse = await _client.AssociateTemplateIdWithSpecification(specificationId,
+            ApiResponse<TemplateMapping> apiResponse = await _client.ProcessTemplateMappings(specificationId,
                 templateVersion, 
                 fundingStreamId);
             
