@@ -5,9 +5,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum PaymentOrganisationSource
-    {
-        Undefined = 0,
-        PaymentOrganisationAsProvider = 1,
-        PaymentOrganisationFields = 2
+    {       
+        PaymentOrganisationAsProvider = 0,
+        PaymentOrganisationFields = 1
     }
 }
