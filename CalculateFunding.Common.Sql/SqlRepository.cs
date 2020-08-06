@@ -6,18 +6,25 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.Sql.Interfaces;
 using CalculateFunding.Common.Utility;
 using Dapper;
+using Polly;
 
 namespace CalculateFunding.Common.Sql
 {
     public abstract class SqlRepository
     {
         private readonly ISqlConnectionFactory _connectionFactory;
+        private readonly AsyncPolicy _queryAsyncPolicy;
+        private readonly Policy _openConnectionPolicy;
 
-        protected SqlRepository(ISqlConnectionFactory connectionFactory)
+        protected SqlRepository(ISqlConnectionFactory connectionFactory,
+            ISqlPolicyFactory sqlPolicyFactory)
         {
             Guard.ArgumentNotNull(connectionFactory, nameof(connectionFactory));
-
+            Guard.ArgumentNotNull(sqlPolicyFactory, nameof(sqlPolicyFactory));
+            
             _connectionFactory = connectionFactory;
+            _queryAsyncPolicy = sqlPolicyFactory.CreateQueryAsyncPolicy();
+            _openConnectionPolicy = sqlPolicyFactory.CreateConnectionOpenPolicy();
         }
 
         public Task<(bool Ok, string Message)> IsHealthOk()
@@ -52,11 +59,11 @@ namespace CalculateFunding.Common.Sql
         {
             using IDbConnection connection = NewOpenConnection();
 
-            return await connection.QuerySingleOrDefaultAsync<TEntity>(sql,
+            return await _queryAsyncPolicy.ExecuteAsync(() => connection.QuerySingleOrDefaultAsync<TEntity>(sql,
                 parameters ?? new
                 {
                 },
-                commandType: commandType);
+                commandType: commandType));
         }
 
         protected async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
@@ -77,11 +84,11 @@ namespace CalculateFunding.Common.Sql
         {
             using IDbConnection connection = NewOpenConnection();
 
-            return (await connection.QueryAsync<TEntity>(sql,
+            return (await _queryAsyncPolicy.ExecuteAsync(() => connection.QueryAsync<TEntity>(sql,
                     parameters ?? new
                     {
                     },
-                    commandType: commandType))
+                    commandType: commandType)))
                 .ToArray();
         }
 
@@ -89,7 +96,7 @@ namespace CalculateFunding.Common.Sql
         {
             IDbConnection connection = _connectionFactory.CreateConnection();
 
-            connection.Open();
+            _openConnectionPolicy.Execute(() => connection.Open());
 
             return connection;
         }
