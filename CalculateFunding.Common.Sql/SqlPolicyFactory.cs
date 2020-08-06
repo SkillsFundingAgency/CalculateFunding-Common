@@ -24,8 +24,10 @@ namespace CalculateFunding.Common.Sql
             Policy circuitBreaker = Policy.Handle<SqlException>().CircuitBreaker(1000, DurationMinutes(1));
             Policy cannotOpenDatabase = Policy.Handle<SqlException>(_ => _.ErrorCode == 4060)
                 .WaitAndRetry(retryCount: 3, ExponentialBackOff);
+            Policy timeoutExpired = Policy.Handle<SqlException>(_ => _.Number == -2)
+                .WaitAndRetry(retryCount: 3, ExponentialBackOff);
             
-            return Policy.Wrap(cannotOpenDatabase, circuitBreaker);
+            return Policy.Wrap(cannotOpenDatabase, timeoutExpired, circuitBreaker);
         }
 
         public AsyncPolicy CreateQueryAsyncPolicy()

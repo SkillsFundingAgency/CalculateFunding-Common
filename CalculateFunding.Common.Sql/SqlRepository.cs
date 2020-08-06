@@ -21,7 +21,7 @@ namespace CalculateFunding.Common.Sql
         {
             Guard.ArgumentNotNull(connectionFactory, nameof(connectionFactory));
             Guard.ArgumentNotNull(sqlPolicyFactory, nameof(sqlPolicyFactory));
-            
+
             _connectionFactory = connectionFactory;
             _queryAsyncPolicy = sqlPolicyFactory.CreateQueryAsyncPolicy();
             _openConnectionPolicy = sqlPolicyFactory.CreateConnectionOpenPolicy();
