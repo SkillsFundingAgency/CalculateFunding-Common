@@ -68,6 +68,13 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await PostAsync<CalculationProviderResultSearchResults, SearchModel>($"{UrlRoot}/calculation-provider-results-search", search);
         }
 
+        public async Task<ApiResponse<CalculationProviderResultSearchResults>> SearchFundingLineProviderResults(SearchModel search)
+        {
+            Guard.ArgumentNotNull(search, nameof(search));
+
+            return await PostAsync<CalculationProviderResultSearchResults, SearchModel>($"{UrlRoot}/funding-line-provider-results-search", search);
+        }
+
         public async Task<ApiResponse<IEnumerable<string>>> GetScopedProviderIdsBySpecificationId(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));

@@ -103,6 +103,15 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
         }
 
         [TestMethod]
+        public async Task SearchFundingLineProviderResults()
+        {
+            await AssertPostRequest("funding-line-provider-results-search",
+                NewRandomSearch(),
+                new CalculationProviderResultSearchResults(),
+                _client.SearchFundingLineProviderResults);
+        }
+
+        [TestMethod]
         public async Task GetScopedProviderIdsBySpecificationId()
         {
             string id = NewRandomString();
