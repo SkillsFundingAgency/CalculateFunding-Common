@@ -77,10 +77,10 @@ namespace CalculateFunding.Common.ServiceBus
             await _managementClient.DeleteTopic(topicName);
         }
 
-        public async Task SendToQueue<T>(string queueName, 
-            T data, 
-            IDictionary<string, string> properties, 
-            bool compressData = false, 
+        public async Task SendToQueue<T>(string queueName,
+            T data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
             string sessionId = null) where T : class
         {
             string json = JsonConvert.SerializeObject(data);
@@ -88,10 +88,10 @@ namespace CalculateFunding.Common.ServiceBus
             await SendToQueueAsJson(queueName, json, properties, compressData, sessionId);
         }
 
-        public async Task SendToQueueAsJson(string queueName, 
-            string data, 
-            IDictionary<string, string> properties, 
-            bool compressData = false, 
+        public async Task SendToQueueAsJson(string queueName,
+            string data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
             string sessionId = null)
         {
             Guard.IsNullOrWhiteSpace(queueName, nameof(queueName));
@@ -109,9 +109,9 @@ namespace CalculateFunding.Common.ServiceBus
         }
 
         public async Task SendToTopic<T>(string topicName,
-            T data, 
-            IDictionary<string, string> properties, 
-            bool compressData = false, 
+            T data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
             string sessionId = null) where T : class
         {
             string json = JsonConvert.SerializeObject(data);
@@ -119,10 +119,10 @@ namespace CalculateFunding.Common.ServiceBus
             await SendToTopicAsJson(topicName, json, properties, compressData, sessionId);
         }
 
-        public async Task SendToTopicAsJson(string topicName, 
-            string data, 
-            IDictionary<string, string> properties, 
-            bool compressData = false, 
+        public async Task SendToTopicAsJson(string topicName,
+            string data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
             string sessionId = null)
         {
             Guard.IsNullOrWhiteSpace(topicName, nameof(topicName));
@@ -201,10 +201,7 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 byte[] bytes = compressData ? data.Compress() : Encoding.UTF8.GetBytes(data);
 
-                message = new Message(bytes)
-                {
-                    PartitionKey = Guid.NewGuid().ToString()
-                };
+                message = new Message(bytes);
 
                 if (compressData)
                 {
@@ -214,10 +211,7 @@ namespace CalculateFunding.Common.ServiceBus
             }
             else
             {
-                message = new Message()
-                {
-                    PartitionKey = Guid.NewGuid().ToString()
-                };
+                message = new Message();
             }
 
             if (!string.IsNullOrWhiteSpace(sessionId))
