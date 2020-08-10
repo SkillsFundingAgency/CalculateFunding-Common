@@ -596,7 +596,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string specificationId = NewRandomString();
             string providerVersionId = NewRandomString();
 
-            await AssertPutRequest($"{specificationId}/providerversion",
+            await AssertPatchRequest($"{specificationId}/providerversion",
                 HttpStatusCode.OK,
                 () => _client.SetProviderVersion(specificationId, providerVersionId));
         }

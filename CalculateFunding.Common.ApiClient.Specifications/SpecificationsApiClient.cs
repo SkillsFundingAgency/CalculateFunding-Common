@@ -286,7 +286,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/providerversion", providerVersionId);
+            return await PatchAsync($"{UrlRoot}/{specificationId}/providerversion", providerVersionId);
         }
     }
 }

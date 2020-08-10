@@ -101,7 +101,7 @@ namespace CalculateFunding.Common.ApiClient
             string rawContent = null,
             params string[] customerHeaders)
         {
-            IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete });
+            IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete, HttpMethod.Patch });
 
             HttpClient httpClient = await PrepareRequest(url,
                 TimeSpan.FromMinutes(5),
@@ -147,7 +147,7 @@ namespace CalculateFunding.Common.ApiClient
 
         private async Task<HttpStatusCode> StatusCodeRequest<TRequest>(string url, TRequest request, HttpMethod httpMethod, CancellationToken cancellationToken)
         {
-            IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put });
+            IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put , HttpMethod.Patch});
 
             HttpClient httpClient = await PrepareRequest(url,
                 $"ApiClient {httpMethod}: {{clientKey}}://{{url}} ({typeof(TRequest).Name})",
@@ -445,6 +445,13 @@ namespace CalculateFunding.Common.ApiClient
             CancellationToken cancellationToken = default)
         {
             return await TypedApiRequest<TResponse, TRequest>(url, request, HttpMethod.Patch, cancellationToken);
+        }
+
+        public async Task<HttpStatusCode> PatchAsync<TRequest>(string url,
+            TRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            return await StatusCodeRequest(url, request, HttpMethod.Patch, cancellationToken);
         }
 
         public async Task<ValidatedApiResponse<TResponse>> ValidatedPatchAsync<TResponse, TRequest>(

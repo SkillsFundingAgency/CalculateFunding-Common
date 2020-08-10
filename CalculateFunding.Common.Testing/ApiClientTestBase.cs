@@ -174,6 +174,16 @@ namespace CalculateFunding.Common.Testing
                 HttpMethod.Put);
         }
 
+        protected async Task AssertPatchRequest(string expectedUri,
+            HttpStatusCode expectedStatusCode,
+            Func<Task<HttpStatusCode>> action)
+        {
+            await AssertRequest(expectedUri,
+                expectedStatusCode,
+                action,
+                HttpMethod.Patch);
+        }
+
         protected async Task AssertHeadRequest(string expectedUri,
             HttpStatusCode expectedStatusCode,
             Func<Task<HttpStatusCode>> action)
