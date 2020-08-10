@@ -58,5 +58,10 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// Non-Levy Apprenticeships
         /// </summary>
         NONLEVY,
+
+        /// <summary>
+        /// Academies and Schools Academic Year
+        /// </summary>
+        AS
     }
 }
