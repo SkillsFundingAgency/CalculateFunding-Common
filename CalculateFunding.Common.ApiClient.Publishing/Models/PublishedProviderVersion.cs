@@ -15,6 +15,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// </summary>
         [JsonProperty("id")]
         public override string Id => $"publishedprovider-{FundingStreamId}-{FundingPeriodId}-{ProviderId}-{Version}";
+        
+        /// <summary>
+        /// Logical ID for this published provider to identify it between datastores and consistent between versions
+        /// </summary>
+        [JsonProperty("publishedProviderId")]
+        public string PublishedProviderId => $"{FundingStreamId}-{FundingPeriodId}-{ProviderId}";
 
         /// <summary>
         /// Funding Stream ID. eg PSG, DSG
@@ -38,10 +44,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// Entity ID for cosmos versioning. This refers to the parent PublishedProvider cosmos ID
         /// </summary>
         [JsonProperty("entityId")]
-        public override string EntityId
-        {
-            get { return $"publishedprovider-{FundingStreamId}-{FundingPeriodId}-{ProviderId}-{Version}"; }
-        }
+        public override string EntityId => $"publishedprovider-{FundingStreamId}-{FundingPeriodId}-{ProviderId}-{Version}";
 
         /// <summary>
         /// Published Provider Approval Status

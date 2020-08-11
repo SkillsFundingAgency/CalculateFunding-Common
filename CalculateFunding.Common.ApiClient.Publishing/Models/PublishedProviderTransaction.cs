@@ -2,12 +2,14 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
     public class PublishedProviderTransaction
     {
+        [JsonProperty("publishedProviderId")]
+        public string PublishedProviderId { get; set; }
+        
         /// <summary>
         /// Published Provider Approval Status
         /// </summary>
