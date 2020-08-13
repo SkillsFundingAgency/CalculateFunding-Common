@@ -200,5 +200,31 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
                  Enumerable.Empty<PublishedFundingTemplate>(),
                 () => _client.GetFundingTemplates(fundingStreamId, fundingPeriodId));
         }
+
+        [TestMethod]
+        public async Task GetFundingDate()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string fundingLineId = NewRandomString();
+
+            await AssertGetRequest($"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}",
+                new FundingDate(),
+                () => _client.GetFundingDate(fundingStreamId, fundingPeriodId, fundingLineId));
+        }
+
+        [TestMethod]
+        public async Task SaveFundingDate()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string fundingLineId = NewRandomString();
+            FundingDateUpdateViewModel updateViewModel = new FundingDateUpdateViewModel();
+
+            await AssertPostRequest($"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}",
+                updateViewModel,
+                new FundingDate(),
+                () => _client.SaveFundingDate(fundingStreamId, fundingPeriodId, fundingLineId, updateViewModel));
+        }
     }
 }

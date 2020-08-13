@@ -167,5 +167,31 @@ namespace CalculateFunding.Common.ApiClient.Policies
 
             return await GetAsync<IEnumerable<PublishedFundingTemplate>>(url);
         }
+
+        public async Task<ApiResponse<FundingDate>> GetFundingDate(string fundingStreamId, string fundingPeriodId, string fundingLineId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
+
+            string url = $"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}";
+
+            return await GetAsync<FundingDate>(url);
+        }
+
+        public async Task<ApiResponse<FundingDate>> SaveFundingDate(
+            string fundingStreamId, 
+            string fundingPeriodId, 
+            string fundingLineId, 
+            FundingDateUpdateViewModel configuration)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
+
+            string url = $"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}";
+
+            return await PostAsync<FundingDate, FundingDateUpdateViewModel>(url, configuration);
+        }
     }
 }
