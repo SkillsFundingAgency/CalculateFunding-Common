@@ -106,6 +106,12 @@ namespace CalculateFunding.Common.Identity.Authorization
                 case SpecificationActionTypes.CanDeleteQaTests:
                     return actualPermissions.CanDeleteQaTests;
 
+                case SpecificationActionTypes.CanApproveAnyCalculations:
+                    return actualPermissions.CanApproveAnyCalculations;
+
+                case SpecificationActionTypes.CanApproveCalculations:
+                    return actualPermissions.CanApproveCalculations;
+
                 default:
                     return false;
             }
