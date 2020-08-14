@@ -64,6 +64,8 @@ namespace CalculateFunding.Common.Testing
             return new RandomString();
         }
 
+        protected string NewRandomHeaderValue() => $"\"{NewRandomString().Replace("-", "")}\"";
+
         protected int NewRandomInt()
         {
             return new Random().Next();
@@ -92,7 +94,8 @@ namespace CalculateFunding.Common.Testing
 
         protected async Task AssertGetRequest<TResponse, TApiResponse>(string expectedUri,
             TResponse expectedResponse,
-            Func<Task<TApiResponse>> action)
+            Func<Task<TApiResponse>> action,
+            params string[] customHeaders)
             where TResponse : class
             where TApiResponse : ApiResponse<TResponse>
         {
@@ -105,7 +108,8 @@ namespace CalculateFunding.Common.Testing
         protected async Task AssertGetRequest<TRequest, TResponse, TApiResponse>(string expectedUri,
             TRequest request,
             TResponse expectedResponse,
-            Func<TRequest, Task<TApiResponse>> action)
+            Func<TRequest, Task<TApiResponse>> action,
+            params string[] customHeaders)
             where TRequest : class
             where TResponse : class
             where TApiResponse : ApiResponse<TResponse>
@@ -114,7 +118,8 @@ namespace CalculateFunding.Common.Testing
                 request,
                 expectedResponse,
                 HttpMethod.Get,
-                action);
+                action,
+                customHeaders);
         }
 
         protected async Task AssertPostRequest<TRequest, TResponse, TApiResponse>(string expectedUri,
@@ -299,12 +304,13 @@ namespace CalculateFunding.Common.Testing
             TRequest request,
             TResponse expectedResponse,
             HttpMethod method,
-            Func<TRequest, Task<TApiResponse>> action)
+            Func<TRequest, Task<TApiResponse>> action,
+            params string[] customHeaders)
             where TRequest : class
             where TResponse : class
             where TApiResponse : ApiResponse<TResponse>
         {
-            GivenTheResponse(expectedUri, expectedResponse, method);
+            GivenTheResponse(expectedUri, expectedResponse, method, customHeaders);
 
             TApiResponse apiResponse = await action(request);
 
@@ -320,11 +326,12 @@ namespace CalculateFunding.Common.Testing
         private async Task AssertRequest<TResponse, TApiResponse>(string expectedUri,
             TResponse expectedResponse,
             HttpMethod method,
-            Func<Task<TApiResponse>> action)
+            Func<Task<TApiResponse>> action,
+            params string[] customHeaders)
             where TResponse : class
             where TApiResponse : ApiResponse<TResponse>
         {
-            GivenTheResponse(expectedUri, expectedResponse, method);
+            GivenTheResponse(expectedUri, expectedResponse, method, customHeaders);
 
             TApiResponse apiResponse = await action();
 

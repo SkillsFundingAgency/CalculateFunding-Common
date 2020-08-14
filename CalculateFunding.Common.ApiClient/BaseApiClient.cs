@@ -18,6 +18,8 @@ namespace CalculateFunding.Common.ApiClient
 {
     public abstract class BaseApiClient
     {
+        protected const string IfNoneMatch = "If-None-Match";
+        
         private readonly string _clientKey;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
@@ -74,7 +76,7 @@ namespace CalculateFunding.Common.ApiClient
             return httpClient;
         }
 
-        private async Task<ApiResponse<T>> TypedRequest<T>(string url, HttpMethod httpMethod, CancellationToken cancellationToken)
+        private async Task<ApiResponse<T>> TypedRequest<T>(string url, HttpMethod httpMethod, CancellationToken cancellationToken, params string[] customHeaders)
         {
             IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Post });
 
@@ -85,6 +87,8 @@ namespace CalculateFunding.Common.ApiClient
                 url);
 
             if (cancellationToken == default(CancellationToken)) cancellationToken = CurrentCancellationToken();
+            
+            EnsureCustomHeadersSet(customHeaders, httpClient);
 
             using (HttpRequestMessage request = new HttpRequestMessage(httpMethod, url))
             {
@@ -99,7 +103,7 @@ namespace CalculateFunding.Common.ApiClient
             HttpMethod httpMethod,
             CancellationToken cancellationToken,
             string rawContent = null,
-            params string[] customerHeaders)
+            params string[] customHeaders)
         {
             IsOk(httpMethod, new[] { HttpMethod.Get, HttpMethod.Head, HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete, HttpMethod.Patch });
 
@@ -109,7 +113,7 @@ namespace CalculateFunding.Common.ApiClient
                 _clientKey,
                 url);
 
-            EnsureCustomHeadersSet(customerHeaders, httpClient);
+            EnsureCustomHeadersSet(customHeaders, httpClient);
 
             if (cancellationToken == default(CancellationToken)) cancellationToken = CurrentCancellationToken();
 
@@ -263,7 +267,7 @@ namespace CalculateFunding.Common.ApiClient
             if (response.IsSuccessStatusCode)
             {
                 string bodyContent = await response.Content.ReadAsStringAsync();
-                return new ApiResponse<T>(response.StatusCode, JsonConvert.DeserializeObject<T>(bodyContent, _serializerSettings));
+                return new ApiResponse<T>(response.StatusCode, response.Headers, JsonConvert.DeserializeObject<T>(bodyContent, _serializerSettings));
             }
 
             return new ApiResponse<T>(response.StatusCode);
@@ -312,9 +316,9 @@ namespace CalculateFunding.Common.ApiClient
         #endregion "Internal helper methods"
 
         #region "GET"
-        public async Task<ApiResponse<T>> GetAsync<T>(string url, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<ApiResponse<T>> GetAsync<T>(string url, CancellationToken cancellationToken = default(CancellationToken), params string[] customHeaders)
         {
-            return await TypedRequest<T>(url, HttpMethod.Get, cancellationToken);
+            return await TypedRequest<T>(url, HttpMethod.Get, cancellationToken, customHeaders);
         }
 
         public async Task<HttpStatusCode> GetAsync(string url, CancellationToken cancellationToken = default(CancellationToken))

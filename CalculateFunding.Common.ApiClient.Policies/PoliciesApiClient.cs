@@ -8,6 +8,7 @@ using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Policies.Models.ViewModels;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.Utility;
@@ -147,7 +148,10 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<string>(url);
         }
 
-        public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
+        public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId,
+            string fundingPeriodId,
+            string templateVersion,
+            string etag = null)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
@@ -155,7 +159,9 @@ namespace CalculateFunding.Common.ApiClient.Policies
 
             string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata";
 
-            return await GetAsync<TemplateMetadataContents>(url);
+            return etag.IsNullOrEmpty() 
+                ? await GetAsync<TemplateMetadataContents>(url) 
+                : await GetAsync<TemplateMetadataContents>(url, default, IfNoneMatch, etag);
         }
 
         public async Task<ApiResponse<IEnumerable<PublishedFundingTemplate>>> GetFundingTemplates(string fundingStreamId, string fundingPeriodId)

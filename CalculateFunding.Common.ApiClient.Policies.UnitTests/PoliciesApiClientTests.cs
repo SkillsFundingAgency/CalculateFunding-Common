@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Policies.Models;
@@ -187,6 +186,20 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
             await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata",
                 new TemplateMetadataContents(),
                 () => _client.GetFundingTemplateContents(fundingStreamId, fundingPeriodId,templateVersion));
+        }
+        
+        [TestMethod]
+        public async Task GetFundingTemplateContentsWhenEtagSupplied()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string templateVersion = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata",
+                new TemplateMetadataContents(),
+                () => _client.GetFundingTemplateContents(fundingStreamId, fundingPeriodId,templateVersion, etag),
+                "If-None-Match", etag);
         }
 
         [TestMethod]
