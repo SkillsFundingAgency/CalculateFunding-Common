@@ -10,7 +10,7 @@ namespace CalculateFunding.Common.ApiClient.Results
     public interface IResultsApiClient
     {
         Task<ApiResponse<IEnumerable<string>>> GetProviderSpecifications(string providerId);
-        Task<ApiResponse<ProviderResult>> GetProviderResults(string providerId, string specificationId);
+        Task<ApiResponse<ProviderResultResponse>> GetProviderResults(string providerId, string specificationId);
         Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeTemplate(string providerId, string specificationId);
         Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeAdditional(string providerId, string specificationId);
         Task<ApiResponse<IEnumerable<ProviderSourceDataset>>> GetProviderSourceDataSetsByProviderIdAndSpecificationId(string providerId, string specificationId);

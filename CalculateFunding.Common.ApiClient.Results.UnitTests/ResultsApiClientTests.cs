@@ -42,7 +42,7 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
             string specificationId = NewRandomString();
 
             await AssertGetRequest($"get-provider-results?providerId={providerId}&specificationId={specificationId}",
-                new ProviderResult(),
+                new ProviderResultResponse(),
                 () => _client.GetProviderResults(providerId, specificationId));
         }
 

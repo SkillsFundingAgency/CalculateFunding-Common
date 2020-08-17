@@ -27,11 +27,11 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await GetAsync<IEnumerable<string>>($"{UrlRoot}/get-provider-specs?providerId={providerId}");
         }
 
-        public async Task<ApiResponse<ProviderResult>> GetProviderResults(string providerId, string specificationId)
+        public async Task<ApiResponse<ProviderResultResponse>> GetProviderResults(string providerId, string specificationId)
         {
             EnsureProviderIdAndSpecificationIdSupplied(providerId, specificationId);
 
-            return await GetAsync<ProviderResult>($"{UrlRoot}/get-provider-results?providerId={providerId}&specificationId={specificationId}");
+            return await GetAsync<ProviderResultResponse>($"{UrlRoot}/get-provider-results?providerId={providerId}&specificationId={specificationId}");
         }
 
         public async Task<ApiResponse<ProviderResult>> GetProviderResultByCalculationTypeTemplate(string providerId, string specificationId)
