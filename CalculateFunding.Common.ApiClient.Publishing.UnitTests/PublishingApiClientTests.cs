@@ -236,6 +236,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task SearchPublishedProviderIds()
+        {
+            IEnumerable<string> result = new List<string>();
+
+            await AssertPostRequest("publishedprovider/publishedprovider-id-search",
+                new PublishedProviderIdSearchModel(),
+                result,
+                _client.SearchPublishedProviderIds);
+        }
+
+        [TestMethod]
         public async Task RefreshFundingForSpecification()
         {
             string id = NewRandomString();

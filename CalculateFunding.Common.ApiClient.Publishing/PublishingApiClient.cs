@@ -117,7 +117,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string url = $"publishedprovider/publishedprovider-search";
 
             return await PostAsync<SearchResults<PublishedProviderSearchItem>, SearchModel>(url, searchModel);
+        }
 
+        public async Task<ApiResponse<IEnumerable<string>>> SearchPublishedProviderIds(PublishedProviderIdSearchModel searchModel)
+        {
+            Guard.ArgumentNotNull(searchModel, nameof(searchModel));
+
+            string url = $"publishedprovider/publishedprovider-id-search";
+
+            return await PostAsync<IEnumerable<string>, PublishedProviderIdSearchModel>(url, searchModel);
         }
 
         public async Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId)
