@@ -196,5 +196,25 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await ValidatedPostAsync<HttpStatusCode, ApplyCustomProfileRequest>($"publishedproviders/customprofiles", request);
         }
+
+        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishProvidersRequest publishedProviderIds,
+            string specificationId)
+        {
+            Guard.ArgumentNotNull(publishedProviderIds, nameof(publishedProviderIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderFundingCount, PublishProvidersRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
+                publishedProviderIds);
+        }
+
+        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishProvidersRequest publishedProviderIds,
+            string specificationId)
+        {
+            Guard.ArgumentNotNull(publishedProviderIds, nameof(publishedProviderIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderFundingCount, PublishProvidersRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
+                publishedProviderIds);
+        }
     }
 }

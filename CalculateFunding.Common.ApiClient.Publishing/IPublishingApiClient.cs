@@ -51,5 +51,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             ProfilePatternKey profilePatternKey);
 
         Task<ValidatedApiResponse<HttpStatusCode>> ApplyCustomProfilePattern(ApplyCustomProfileRequest request);
+
+        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishProvidersRequest publishedProviderIds,
+            string specificationId);
+
+        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishProvidersRequest publishedProviderIds,
+            string specificationId);
     }
 }

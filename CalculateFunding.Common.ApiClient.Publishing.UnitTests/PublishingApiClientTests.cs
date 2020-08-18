@@ -380,5 +380,39 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             
             AndTheRequestContentsShouldHaveBeen(request.AsJson());
         }
+
+        [TestMethod]
+        public async Task GetProviderBatchForApprovalCount()
+        {
+            string specificationId = NewRandomString();
+            
+            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+
+            await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
+                publishProvidersRequest,
+                new PublishedProviderFundingCount
+                {
+                    Count = NewRandomInt(),
+                    TotalFunding = NewRandomInt()
+                }, 
+                () =>_client.GetProviderBatchForApprovalCount(publishProvidersRequest, specificationId));    
+        }
+        
+        [TestMethod]
+        public async Task GetProviderBatchForReleaseCount()
+        {
+            string specificationId = NewRandomString();
+            
+            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+
+            await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
+                publishProvidersRequest,
+                new PublishedProviderFundingCount
+                {
+                    Count = NewRandomInt(),
+                    TotalFunding = NewRandomInt()
+                }, 
+                () =>_client.GetProviderBatchForReleaseCount(publishProvidersRequest, specificationId));    
+        }
     }
 }
