@@ -161,11 +161,12 @@ namespace CalculateFunding.Common.JobManagement
         {
             ApiResponse<JobViewModel> response = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetJobById(jobId));
 
-            if (response == null || response.Content == null)
+            if (response?.Content == null)
             {
                 string error = $"Could not find the job with id: '{jobId}'";
 
                 _logger.Write(LogEventLevel.Error, error);
+                
                 throw new JobNotFoundException(error, jobId);
             }
 
@@ -176,6 +177,7 @@ namespace CalculateFunding.Common.JobManagement
                 string error = $"Received job with id: '{jobId}' is already in a completed state with status {job.CompletionStatus}";
 
                 _logger.Write(LogEventLevel.Information, error);
+                
                 throw new JobAlreadyCompletedException(error, job);
             }
 
@@ -212,25 +214,38 @@ namespace CalculateFunding.Common.JobManagement
         {
             ApiResponse<JobLog> jobLogResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.AddJobLog(jobId, jobLogUpdateModel));
 
-            if (jobLogResponse == null || jobLogResponse.Content == null)
+            if (jobLogResponse?.Content == null)
             {
                 _logger.Write(LogEventLevel.Error, $"Failed to add a job log for job id '{jobId}'");
             }
         }
 
-        public async Task<Job> QueueJob(JobCreateModel jobCreateModel)
+        public async Task<Job> QueueJob(JobCreateModel jobCreateModel) => await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.CreateJob(jobCreateModel));
+
+        public async Task<JobCreateResult> TryQueueJob(JobCreateModel jobCreateModel)
+            => (await TryQueueJobs(new[]
+            {
+                jobCreateModel
+            })).SingleOrDefault();
+        
+        public async Task<IEnumerable<JobCreateResult>> TryQueueJobs(IEnumerable<JobCreateModel> jobCreateModels)
         {
-            return await _jobsApiClientPolicy.ExecuteAsync(() => {
-                return _jobsApiClient.CreateJob(jobCreateModel);
-            });
+            ApiResponse<IEnumerable<JobCreateResult>> apiResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.TryCreateJobs(jobCreateModels));
+
+            if (apiResponse?.Content == null)
+            {
+                string message = "Failed to create jobs.";
+                
+                _logger.Error(message);
+                
+                throw new JobsNotCreatedException( message, 
+                    jobCreateModels.Select(_ => _.JobDefinitionId).Distinct()); 
+            }
+
+            return apiResponse.Content;
         }
 
-        public async Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels)
-        {
-            return await _jobsApiClientPolicy.ExecuteAsync(() => {
-                return _jobsApiClient.CreateJobs(jobCreateModels);
-            });
-        }
+        public async Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels) => await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.CreateJobs(jobCreateModels));
 
         public async Task<JobSummary> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes)
         {

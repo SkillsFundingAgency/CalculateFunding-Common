@@ -20,5 +20,6 @@ namespace CalculateFunding.Common.JobManagement
         Task<IEnumerable<JobSummary>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
 
         Task<JobViewModel> GetJobById(string jobId);
+        Task<JobCreateResult> TryQueueJob(JobCreateModel jobCreateModel);
     }
 }

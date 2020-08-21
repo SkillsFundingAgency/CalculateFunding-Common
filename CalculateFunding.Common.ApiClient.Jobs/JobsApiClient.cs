@@ -14,36 +14,37 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 {
     public class JobsApiClient : BaseApiClient, IJobsApiClient
     {
-        public JobsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
-          : base(httpClientFactory, HttpClientKeys.Jobs, logger, cancellationTokenProvider)
-        { }
+        public JobsApiClient(IHttpClientFactory httpClientFactory,
+            ILogger logger,
+            ICancellationTokenProvider cancellationTokenProvider = null)
+            : base(httpClientFactory, HttpClientKeys.Jobs, logger, cancellationTokenProvider)
+        {
+        }
 
-        public async Task<ApiResponse<JobLog>> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel)
+        public async Task<ApiResponse<JobLog>> AddJobLog(string jobId,
+            JobLogUpdateModel jobLogUpdateModel)
         {
             Guard.IsNullOrWhiteSpace(jobId, nameof(jobId));
             Guard.ArgumentNotNull(jobLogUpdateModel, nameof(jobLogUpdateModel));
 
-            string url = $"jobs/{jobId}/logs";
-
-            return await PostAsync<JobLog, JobLogUpdateModel>(url, jobLogUpdateModel);
+            return await PostAsync<JobLog, JobLogUpdateModel>($"jobs/{jobId}/logs", jobLogUpdateModel);
         }
 
         public async Task<ApiResponse<JobViewModel>> GetJobById(string jobId)
         {
             Guard.IsNullOrWhiteSpace(jobId, nameof(jobId));
 
-            string url = $"jobs/{jobId}";
-
-            return await GetAsync<JobViewModel>(url);
+            return await GetAsync<JobViewModel>($"jobs/{jobId}");
         }
 
-        public async Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes)
+        public async Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId,
+            IEnumerable<string> jobTypes)
         {
-            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             string api = $"jobs/latest?specificationId={specificationId}";
 
-            if (jobTypes != null && jobTypes.Count() > 0)
+            if (jobTypes?.Any() == true)
             {
                 api += $"&jobTypes={string.Join(",", jobTypes)}";
             }
@@ -55,9 +56,13 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         {
             Guard.ArgumentNotNull(jobCreateModel, nameof(jobCreateModel));
 
-            string url = $"jobs";
+            string url = "jobs";
 
-            ApiResponse<IEnumerable<Job>> jobs = await PostAsync<IEnumerable<Job>, IEnumerable<JobCreateModel>>(url, new[] { jobCreateModel });
+            ApiResponse<IEnumerable<Job>> jobs = await PostAsync<IEnumerable<Job>, IEnumerable<JobCreateModel>>(url,
+                new[]
+                {
+                    jobCreateModel
+                });
 
             if (jobs.Content.IsNullOrEmpty())
             {
@@ -67,17 +72,31 @@ namespace CalculateFunding.Common.ApiClient.Jobs
             return jobs.Content.First();
         }
 
+        public async Task<ApiResponse<JobCreateResult>> TryCreateJob(JobCreateModel jobCreateModel)
+        {
+            Guard.ArgumentNotNull(jobCreateModel, nameof(jobCreateModel));
+
+            return await PostAsync<JobCreateResult, JobCreateModel>("jobs/try-create-job",
+                jobCreateModel);
+        }
+
+        public async Task<ApiResponse<IEnumerable<JobCreateResult>>> TryCreateJobs(IEnumerable<JobCreateModel> jobCreateModels)
+        {
+            Guard.IsNotEmpty(jobCreateModels, nameof(jobCreateModels));
+
+            return await PostAsync<IEnumerable<JobCreateResult>, IEnumerable<JobCreateModel>>("jobs/try-create-jobs",
+                jobCreateModels);
+        }
+
         public async Task<IEnumerable<Job>> CreateJobs(IEnumerable<JobCreateModel> jobCreateModels)
         {
-            Guard.ArgumentNotNull(jobCreateModels, nameof(jobCreateModels));
+            Guard.IsNotEmpty(jobCreateModels, nameof(jobCreateModels));
 
-            string url = $"jobs";
-
-            ApiResponse<IEnumerable<Job>> jobs = await PostAsync<IEnumerable<Job>, IEnumerable<JobCreateModel>>(url, jobCreateModels);
+            ApiResponse<IEnumerable<Job>> jobs = await PostAsync<IEnumerable<Job>, IEnumerable<JobCreateModel>>("jobs", jobCreateModels);
 
             if (jobs.Content.IsNullOrEmpty())
             {
-                throw new Exception($"Failed to create jobs");
+                throw new Exception("Failed to create jobs");
             }
 
             return jobs.Content;
@@ -85,30 +104,25 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         public async Task<ApiResponse<IEnumerable<JobDefinition>>> GetJobDefinitions()
         {
-            string url = "jobs/jobdefinitions";
-
-            return await GetAsync<IEnumerable<JobDefinition>>(url);
+            return await GetAsync<IEnumerable<JobDefinition>>("jobs/jobdefinitions");
         }
 
         public async Task<ApiResponse<JobDefinition>> GetJobDefinition(string jobDefinitionId)
         {
             Guard.IsNullOrWhiteSpace(jobDefinitionId, nameof(jobDefinitionId));
 
-            string url = $"jobs/jobdefinitions/{jobDefinitionId}";
-
-            return await GetAsync<JobDefinition>(url);
+            return await GetAsync<JobDefinition>($"jobs/jobdefinitions/{jobDefinitionId}");
         }
 
-        public async Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo)
+        public async Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom,
+            DateTimeOffset dateTimeTo)
         {
             const string dateFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
 
             string dateTimeFromAsString = dateTimeFrom.ToUniversalTime().ToString(dateFormat);
             string dateTimeToAsString = dateTimeTo.ToUniversalTime().ToString(dateFormat);
 
-            string url = $"jobs/noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}";
-
-            return await GetAsync<IEnumerable<JobSummary>>(url);
+            return await GetAsync<IEnumerable<JobSummary>>($"jobs/noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}");
         }
     }
 }

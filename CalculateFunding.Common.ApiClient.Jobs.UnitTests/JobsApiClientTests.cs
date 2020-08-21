@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Testing;
 using FluentAssertions;
@@ -129,9 +130,47 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
                 () => _client.GetNonCompletedJobsWithinTimeFrame(from, to));
         }
         
+        [TestMethod]
+        public async Task TryCreateJobs()
+        {
+            IEnumerable<JobCreateModel> jobCreateModels = NewEnumerable(NewCreateModel(), NewCreateModel());
+            IEnumerable<JobCreateResult> jobs = NewEnumerable(NewCreateResult(), NewCreateResult());
+            
+            GivenTheResponse("jobs/try-create-jobs", jobs, HttpMethod.Post);
+
+            ApiResponse<IEnumerable<JobCreateResult>> apiResponse = await _client.TryCreateJobs(jobCreateModels);
+            
+            apiResponse
+                    ?.Content
+                .Should()
+                .BeEquivalentTo(jobs, 
+                    cfg => cfg.WithStrictOrdering());
+            
+            AndTheRequestContentsShouldHaveBeen(jobCreateModels.AsJson());    
+        }
+        
+        [TestMethod]
+        public async Task TryCreateJob()
+        {
+            JobCreateModel jobCreateRequest = NewCreateModel();
+            JobCreateResult result = NewCreateResult();
+            
+            GivenTheResponse("jobs/try-create-job", result, HttpMethod.Post);
+
+            ApiResponse<JobCreateResult> apiResponse = await _client.TryCreateJob(jobCreateRequest);
+            
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(result);
+            
+            AndTheRequestContentsShouldHaveBeen(jobCreateRequest.AsJson());    
+        }
         
         private JobCreateModel NewCreateModel() => new JobCreateModel();
         
         private Job NewJob() => new Job();
+        
+        private JobCreateResult NewCreateResult() => new JobCreateResult();
     }
 }

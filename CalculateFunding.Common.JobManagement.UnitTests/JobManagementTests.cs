@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Polly;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace CalculateFunding.Common.JobManagement.UnitTests
@@ -30,16 +31,19 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             LogEventLevel logEventLevel)
         {
             //Arrange
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var messengerService = Substitute.For<IMessengerService>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            ILogger logger = Substitute.For<ILogger>();
 
             jobsApiClient
                 .GetJobById(Arg.Any<string>())
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             Func<Task> test = async () => await jobManagement.RetrieveJobAndCheckCanBeProcessed(jobId);
 
@@ -61,21 +65,24 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [TestMethod]
         [DynamicData(nameof(RetrieveJobAndCheckCanBeProcessedFailsTestCasesWithJobAlreadyCompleted), DynamicDataSourceType.Method)]
         public async Task RetrieveJobAndCheckCanBeProcessed_FailsWithJobAlreadyCompleted_LogsAndErrors(ApiResponse<JobViewModel> jobApiResponse,
-    string jobId,
-    string errorMessage,
-    LogEventLevel logEventLevel)
+            string jobId,
+            string errorMessage,
+            LogEventLevel logEventLevel)
         {
             //Arrange
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var messengerService = Substitute.For<IMessengerService>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            ILogger logger = Substitute.For<ILogger>();
 
             jobsApiClient
                 .GetJobById(Arg.Any<string>())
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             Func<Task> test = async () => await jobManagement.RetrieveJobAndCheckCanBeProcessed(jobId);
 
@@ -99,9 +106,15 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         {
             string jobId = "3456";
 
-            foreach (var response in new[] { new ApiResponse<JobViewModel>(HttpStatusCode.NotFound), null })
+            foreach (ApiResponse<JobViewModel> response in new[]
             {
-                yield return new object[] { response, jobId, $"Could not find the job with id: '{jobId}'", LogEventLevel.Error };
+                new ApiResponse<JobViewModel>(HttpStatusCode.NotFound), null
+            })
+            {
+                yield return new object[]
+                {
+                    response, jobId, $"Could not find the job with id: '{jobId}'", LogEventLevel.Error
+                };
             }
         }
 
@@ -109,21 +122,19 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         {
             string jobId = "3456";
 
-            foreach (var cs in new[]
+            foreach (CompletionStatus cs in new[]
             {
-                CompletionStatus.Cancelled,
-                CompletionStatus.Failed,
-                CompletionStatus.Succeeded,
-                CompletionStatus.Superseded,
-                CompletionStatus.TimedOut
+                CompletionStatus.Cancelled, CompletionStatus.Failed, CompletionStatus.Succeeded, CompletionStatus.Superseded, CompletionStatus.TimedOut
             })
             {
                 yield return new object[]
                 {
-                    new ApiResponse<JobViewModel>(HttpStatusCode.OK, new JobViewModel { CompletionStatus = cs }),
-                    jobId,
-                    $"Received job with id: '{jobId}' is already in a completed state with status {cs}",
-                    LogEventLevel.Information
+                    new ApiResponse<JobViewModel>(HttpStatusCode.OK,
+                        new JobViewModel
+                        {
+                            CompletionStatus = cs
+                        }),
+                    jobId, $"Received job with id: '{jobId}' is already in a completed state with status {cs}", LogEventLevel.Information
                 };
             }
         }
@@ -133,37 +144,47 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [DataRow(false)]
         public async Task WaitForJobsToCompleteWithAllJobsSucceeded_ReturnsTrue(bool useServiceBus)
         {
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = null;
 
             if (useServiceBus)
             {
                 messengerService = Substitute.For<IMessengerService, IServiceBusService>();
-
             }
             else
             {
                 messengerService = Substitute.For<IMessengerService, IQueueService>();
-
             }
 
-            var logger = Substitute.For<ILogger>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             jobsApiClient
                 .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Succeeded, JobId = jobId }));
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK,
+                    new JobSummary
+                    {
+                        RunningStatus = RunningStatus.Completed,
+                        CompletionStatus = CompletionStatus.Succeeded,
+                        JobId = jobId
+                    }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000))
-                .Returns(new JobNotification { CompletionStatus = CompletionStatus.Succeeded });
+                .Returns(new JobNotification
+                {
+                    CompletionStatus = CompletionStatus.Succeeded
+                });
 
             //Act
-            bool jobsComplete = await jobManagement.QueueJobAndWait(async() =>  await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic");
+            bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic");
 
             //Assert
             if (useServiceBus)
@@ -189,37 +210,50 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [DataRow(false)]
         public async Task WaitForJobsToCompleteWithNoJobsSucceeded_ReturnsFalse(bool useServiceBus)
         {
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
 
             IMessengerService messengerService = null;
 
             if (useServiceBus)
             {
                 messengerService = Substitute.For<IMessengerService, IServiceBusService>();
-
             }
             else
             {
                 messengerService = Substitute.For<IMessengerService, IQueueService>();
             }
 
-            var logger = Substitute.For<ILogger>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             jobsApiClient
                 .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.InProgress, JobId = jobId }));
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK,
+                    new JobSummary
+                    {
+                        RunningStatus = RunningStatus.InProgress,
+                        JobId = jobId
+                    }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(1000))
                 .Returns(default(JobNotification));
 
             //Act
-            bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic", 1000, 100);
+            bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }),
+                "PopulateScopedProviders",
+                "specificationId",
+                "correlationId",
+                "topic",
+                1000,
+                100);
 
             //Assert
             if (useServiceBus)
@@ -237,20 +271,23 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [TestMethod]
         public async Task WaitForJobsToCompleteWithNoJobsRunning_ReturnsTrue()
         {
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var messengerService = Substitute.For<IMessengerService>(); 
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             jobsApiClient
                 .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, null));
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK));
 
             //Act
             bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic");
-            
+
             //Assert
             jobsComplete
                 .Should()
@@ -262,34 +299,45 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [DataRow(false)]
         public async Task WaitForJobsToCompleteWithJobsFailed_ReturnsFalse(bool useServiceBus)
         {
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
 
             IMessengerService messengerService = null;
 
             if (useServiceBus)
             {
                 messengerService = Substitute.For<IMessengerService, IServiceBusService>();
-
             }
             else
             {
                 messengerService = Substitute.For<IMessengerService, IQueueService>();
             }
 
-            var logger = Substitute.For<ILogger>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             jobsApiClient
                 .GetLatestJobForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Failed, JobId = jobId }));
+                .Returns(new ApiResponse<JobSummary>(HttpStatusCode.OK,
+                    new JobSummary
+                    {
+                        RunningStatus = RunningStatus.Completed,
+                        CompletionStatus = CompletionStatus.Failed,
+                        JobId = jobId
+                    }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000))
-                .Returns(new JobNotification { CompletionStatus = CompletionStatus.Failed });
+                .Returns(new JobNotification
+                {
+                    CompletionStatus = CompletionStatus.Failed
+                });
 
             //Act
             bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic");
@@ -311,25 +359,31 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         public async Task RetrieveJobAndCheckCanBeProcessed_ApiReturnsIncomplete_ReturnsCorrectly()
         {
             //Arrange
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var messengerService = Substitute.For<IMessengerService>();
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jvm = new JobViewModel { CompletionStatus = null };
+            JobViewModel jvm = new JobViewModel
+            {
+                CompletionStatus = null
+            };
 
-            var jobApiResponse = new ApiResponse<JobViewModel>(HttpStatusCode.OK, jvm);
+            ApiResponse<JobViewModel> jobApiResponse = new ApiResponse<JobViewModel>(HttpStatusCode.OK, jvm);
 
             jobsApiClient
                 .GetJobById(Arg.Any<string>())
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             //Act
-            var viewModel = await jobManagement.RetrieveJobAndCheckCanBeProcessed(jobId);
+            JobViewModel viewModel = await jobManagement.RetrieveJobAndCheckCanBeProcessed(jobId);
 
             //Assert
             await jobsApiClient
@@ -349,20 +403,23 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         public async Task UpdateJobStatusInternal_ApiResponseFailure_Logs(ApiResponse<JobLog> jobLogApiResponse)
         {
             //Arrange
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var messengerService = Substitute.For<IMessengerService>();
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
 
             jobsApiClient
                 .AddJobLog(Arg.Any<string>(), Arg.Any<JobLogUpdateModel>())
                 .Returns(jobLogApiResponse);
 
-            var updateModel = new JobLogUpdateModel();
+            JobLogUpdateModel updateModel = new JobLogUpdateModel();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             //Act
             await jobManagement.UpdateJobStatus(jobId, updateModel);
@@ -379,30 +436,39 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
 
         private static IEnumerable<object[]> UpdateJobStatusApiResponseFailureTestCases()
         {
-            yield return new object[] { new ApiResponse<JobLog>(HttpStatusCode.NotFound) };
-            yield return new object[] { null };
+            yield return new object[]
+            {
+                new ApiResponse<JobLog>(HttpStatusCode.NotFound)
+            };
+            yield return new object[]
+            {
+                null
+            };
         }
 
         [TestMethod]
         public async Task UpdateJobStatus_ApiResponseSuccess_Runs()
         {
             //Arrange
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var messengerService = Substitute.For<IMessengerService>();
-            var logger = Substitute.For<ILogger>();
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobLogApiResponse = new ApiResponse<JobLog>(HttpStatusCode.OK, new JobLog());
+            ApiResponse<JobLog> jobLogApiResponse = new ApiResponse<JobLog>(HttpStatusCode.OK, new JobLog());
 
             jobsApiClient
                 .AddJobLog(Arg.Any<string>(), Arg.Any<JobLogUpdateModel>())
                 .Returns(jobLogApiResponse);
 
-            var updateModel = new JobLogUpdateModel();
+            JobLogUpdateModel updateModel = new JobLogUpdateModel();
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             //Act
             await jobManagement.UpdateJobStatus(jobId, updateModel);
@@ -424,19 +490,28 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "3456";
 
             IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
-            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            Job jobApiResponse = new Job { Id = jobId };
+            Job jobApiResponse = new Job
+            {
+                Id = jobId
+            };
 
-            JobCreateModel jobCreateModel = new JobCreateModel { SpecificationId = specificationId };
+            JobCreateModel jobCreateModel = new JobCreateModel
+            {
+                SpecificationId = specificationId
+            };
 
             jobsApiClient
                 .CreateJob(jobCreateModel)
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
             await jobManagement.QueueJob(jobCreateModel);
@@ -453,23 +528,35 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "3456";
 
             IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
-            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            IEnumerable<Job> jobApiResponse = new List<Job> { new Job { Id = jobId } };
+            IEnumerable<Job> jobApiResponse = new List<Job>
+            {
+                new Job
+                {
+                    Id = jobId
+                }
+            };
 
-            IEnumerable<JobCreateModel> jobCreateModel = 
+            IEnumerable<JobCreateModel> jobCreateModel =
                 new List<JobCreateModel>
-                { 
-                    new JobCreateModel { SpecificationId = specificationId } 
+                {
+                    new JobCreateModel
+                    {
+                        SpecificationId = specificationId
+                    }
                 };
 
             jobsApiClient
                 .CreateJobs(jobCreateModel)
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
             await jobManagement.QueueJobs(jobCreateModel);
@@ -477,6 +564,113 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             await jobsApiClient
                 .Received(1)
                 .CreateJobs(jobCreateModel);
+        }
+        
+        [TestMethod]
+        public async Task TryQueueJobs_Called_ReturnsJobCreateResults()
+        {
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
+
+            JobCreateModel createModelOne = new JobCreateModel();
+            JobCreateModel createModelTwo = new JobCreateModel();
+            
+            JobCreateResult expectedCreateResultOne = new JobCreateResult();
+            JobCreateResult expectedCreateResultTwo = new JobCreateResult();
+
+            IEnumerable<JobCreateModel> createModels =
+                new []
+                {
+                    createModelOne,
+                    createModelTwo
+                };
+
+            jobsApiClient
+                .TryCreateJobs(Arg.Is<IEnumerable<JobCreateModel>>(_ => _.SequenceEqual(createModels)))
+                .Returns(new ApiResponse<IEnumerable<JobCreateResult>>(HttpStatusCode.OK, new[]
+                {
+                    expectedCreateResultOne,
+                    expectedCreateResultTwo
+                }));
+
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+
+            //Act
+            IEnumerable<JobCreateResult> actualResult = await jobManagement.TryQueueJobs(createModels);
+
+            actualResult
+                .Should()
+                .BeEquivalentTo<JobCreateResult>(new []
+                {
+                    expectedCreateResultOne, 
+                    expectedCreateResultTwo
+                });
+        }
+        
+        [TestMethod]
+        public async Task TryQueueJob_Called_ReturnsJobCreateResult()
+        {
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
+
+            JobCreateModel createModel = new JobCreateModel();
+            
+            JobCreateResult expectedCreateResult = new JobCreateResult();
+
+            IEnumerable<JobCreateModel> createModels =
+                new []
+                {
+                    createModel
+                };
+
+            jobsApiClient
+                .TryCreateJobs(Arg.Is<IEnumerable<JobCreateModel>>(_ => _.SequenceEqual(createModels)))
+                .Returns(new ApiResponse<IEnumerable<JobCreateResult>>(HttpStatusCode.OK, new[]
+                {
+                    expectedCreateResult
+                }));
+
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+
+            //Act
+            JobCreateResult actualResult = await jobManagement.TryQueueJob(createModel);
+
+            actualResult
+                .Should()
+                .BeSameAs(expectedCreateResult);
+        }
+        
+        [TestMethod]
+        public void TryQueueJob_ThrowsJobsNotCreatedExceptionIfApiResponseNull()
+        {
+            string specificationId = "1234";
+
+            JobManagement jobManagement = new JobManagement(Substitute.For<IJobsApiClient>(), 
+                Logger.None, 
+                new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            }, 
+                Substitute.For<IMessengerService>());
+
+            Func<Task<JobCreateResult>> invocation = () => jobManagement.TryQueueJob(new JobCreateModel
+            {
+                SpecificationId = specificationId
+            });
+
+            invocation
+                .Should()
+                .Throw<JobsNotCreatedException>();
         }
 
         [TestMethod]
@@ -487,20 +681,29 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "5678";
 
             IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
-            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            IEnumerable<string> jobTypes = new List<string> { jobType };
+            IEnumerable<string> jobTypes = new List<string>
+            {
+                jobType
+            };
 
-            JobSummary jobSummary = new JobSummary { JobId = jobId };
+            JobSummary jobSummary = new JobSummary
+            {
+                JobId = jobId
+            };
             ApiResponse<JobSummary> jobSummaryApiResponse = new ApiResponse<JobSummary>(HttpStatusCode.OK, jobSummary);
 
             jobsApiClient
                 .GetLatestJobForSpecification(specificationId, jobTypes)
                 .Returns(jobSummaryApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
             JobSummary result = await jobManagement.GetLatestJobForSpecification(specificationId, jobTypes);
@@ -518,11 +721,17 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "5678";
 
             IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
-            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            JobLog jobLog = new JobLog { JobId = jobId };
+            JobLog jobLog = new JobLog
+            {
+                JobId = jobId
+            };
             ApiResponse<JobLog> jobLogApiResponse = new ApiResponse<JobLog>(HttpStatusCode.OK, jobLog);
 
             JobLogUpdateModel jobLogUpdateModel = new JobLogUpdateModel();
@@ -531,7 +740,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                 .AddJobLog(jobId, jobLogUpdateModel)
                 .Returns(jobLogApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
             JobLog result = await jobManagement.AddJobLog(jobId, jobLogUpdateModel);
@@ -552,21 +761,30 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             DateTimeOffset to = DateTimeOffset.UtcNow.AddDays(-1);
 
             IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
-            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
 
-            JobSummary jobSummary = new JobSummary { JobId = jobId };
-            IEnumerable<JobSummary> jobSummaries = new List<JobSummary> { jobSummary };
-            ApiResponse<IEnumerable<JobSummary>> jobSummariesApiResponse 
+            JobSummary jobSummary = new JobSummary
+            {
+                JobId = jobId
+            };
+            IEnumerable<JobSummary> jobSummaries = new List<JobSummary>
+            {
+                jobSummary
+            };
+            ApiResponse<IEnumerable<JobSummary>> jobSummariesApiResponse
                 = new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, jobSummaries);
 
             jobsApiClient
                 .GetNonCompletedJobsWithinTimeFrame(from, to)
                 .Returns(jobSummariesApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
             IEnumerable<JobSummary> result = await jobManagement.GetNonCompletedJobsWithinTimeFrame(from, to);
@@ -581,32 +799,36 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         [TestMethod]
         public async Task GetJobDetails_ReturnsJobViewModel()
         {
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
 
-            var jobsApiClient = Substitute.For<IJobsApiClient>();
-            var policies = new JobManagementResiliencePolicies { JobsApiClient = Policy.NoOpAsync() };
-            var messengerService = Substitute.For<IMessengerService>();
-            var logger = Substitute.For<ILogger>();
+            JobViewModel jvm = new JobViewModel
+            {
+                CompletionStatus = null
+            };
 
-            var jvm = new JobViewModel { CompletionStatus = null };
-
-            var jobApiResponse = new ApiResponse<JobViewModel>(HttpStatusCode.OK, jvm);
+            ApiResponse<JobViewModel> jobApiResponse = new ApiResponse<JobViewModel>(HttpStatusCode.OK, jvm);
 
             jobsApiClient
                 .GetJobById(Arg.Any<string>())
                 .Returns(jobApiResponse);
 
-            var jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
-            var jobId = "3456";
+            string jobId = "3456";
 
             //Act
-            var viewModel = await jobManagement.GetJobById(jobId);
+            JobViewModel viewModel = await jobManagement.GetJobById(jobId);
 
             //Assert    
             viewModel
                 .Should()
                 .Be(jvm);
         }
-
     }
 }
