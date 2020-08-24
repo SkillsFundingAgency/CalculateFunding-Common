@@ -148,11 +148,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public string CorrelationId { get; set; }
         
         /// <summary>
-        /// Collection of any over payments keyed by funding line for the funding period
+        /// Collection of carry over payments keyed by funding line for the funding period
         /// this published provider version is in
         /// </summary>
-        [JsonProperty("fundingLineOverPayments")]
-        public IDictionary<string, decimal> FundingLineOverPayments { get; set; }
+        [JsonProperty("carryOvers")]
+        public ICollection<ProfilingCarryOver> CarryOvers { get; set; }
 
         public override VersionedItem Clone()
         {
