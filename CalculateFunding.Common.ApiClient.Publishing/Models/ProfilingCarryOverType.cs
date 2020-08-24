@@ -7,7 +7,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
     public enum ProfilingCarryOverType
     {
         Undefined = 0,
-        DSGReProfling,
+        DSGReProfiling,
         CustomProfile
     }
 }
