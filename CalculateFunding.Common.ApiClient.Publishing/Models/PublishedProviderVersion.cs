@@ -154,6 +154,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [JsonProperty("carryOvers")]
         public ICollection<ProfilingCarryOver> CarryOvers { get; set; }
 
+        /// <summary>
+        /// Collection of profiling audits for each funding line profile updates
+        /// </summary>
+        [JsonProperty("profilingAudits")]
+        public ICollection<ProfilingAudit> ProfilingAudits { get; set; }
+
         public override VersionedItem Clone()
         {
             // Serialise to perform a deep copy
