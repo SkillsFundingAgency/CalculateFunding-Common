@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Specifications.Models
 {
@@ -18,5 +19,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         
         [JsonProperty("fundingPeriodName")]
         public string FundingPeriodName { get; set; }
+
+        [JsonProperty("mapDatasetLastUpdated")]
+        public DateTimeOffset? MapDatasetLastUpdated { get; set; }
+        
+        [JsonProperty("totalMappedDataSets")]
+        public int TotalMappedDataSets { get; set; }
     }
 }
