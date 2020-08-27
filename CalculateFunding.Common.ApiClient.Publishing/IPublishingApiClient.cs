@@ -57,5 +57,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishProvidersRequest publishedProviderIds,
             string specificationId);
+
+        Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderErrors(string specificationId);
     }
 }

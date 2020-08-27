@@ -414,5 +414,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 }, 
                 () =>_client.GetProviderBatchForReleaseCount(publishProvidersRequest, specificationId));    
         }
+
+        [TestMethod]
+        public async Task GetPublishedProviderErrors()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"publishedprovidererrors/{specificationId}",
+                Enumerable.Repeat(NewRandomString(), 5),
+                () => _client.GetPublishedProviderErrors(specificationId));
+        }
     }
 }

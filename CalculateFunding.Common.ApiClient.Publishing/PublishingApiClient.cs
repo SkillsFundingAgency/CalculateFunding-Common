@@ -216,5 +216,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<PublishedProviderFundingCount, PublishProvidersRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
                 publishedProviderIds);
         }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderErrors(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<string>>($"api/publishedprovidererrors/{specificationId}");
+        }
     }
 }
