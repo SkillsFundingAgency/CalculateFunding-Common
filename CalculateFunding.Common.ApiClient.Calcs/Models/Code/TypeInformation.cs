@@ -4,7 +4,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Code
 {
     public class TypeInformation
     {
-        public TypeInformation(){}
+        public TypeInformation() { }
 
         public TypeInformation(string name)
         {
@@ -34,5 +34,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Code
         public IEnumerable<PropertyInformation> Properties { get; set; }
 
         public string Type { get; set; }
+
+        public IEnumerable<string> EnumValues { get; set; }
     }
 }
