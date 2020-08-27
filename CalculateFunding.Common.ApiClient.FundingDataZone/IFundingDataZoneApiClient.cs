@@ -23,7 +23,7 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
             int providerSnapshotId);
         Task<ApiResponse<IEnumerable<PaymentOrganisation>>> GetAllOrganisations(
             int providerSnapshotId);
-        Task<ApiResponse<IEnumerable<ProviderSnapshot>>> ListFundingStreamsWithProviderSnapshots();
+        Task<ApiResponse<IEnumerable<string>>> ListFundingStreamsWithProviderSnapshots();
         Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetProviderSnapshotsForFundingStream(string fundingStreamId);
         Task<ApiResponse<IEnumerable<Provider>>> GetProviderSnapshotMetadata(int providerSnapshotId);
     }

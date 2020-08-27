@@ -157,7 +157,7 @@ namespace CalculateFunding.Common.ApiClient.FDZ.UnitTests
         public async Task ListFundingStreamsWithProviderSnapshots()
         {
             await AssertGetRequest($"providers/fundingStreams",
-                Enumerable.Empty<ProviderSnapshot>(),
+                Enumerable.Empty<string>(),
                 () => _client.ListFundingStreamsWithProviderSnapshots());
         }
     }
