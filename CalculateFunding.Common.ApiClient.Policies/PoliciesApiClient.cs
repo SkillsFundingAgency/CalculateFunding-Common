@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
@@ -27,59 +25,45 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"configuration/{fundingStreamId}/{fundingPeriodId}";
-
-            return await GetAsync<FundingConfiguration>(url);
+            return await GetAsync<FundingConfiguration>($"configuration/{fundingStreamId}/{fundingPeriodId}");
         }
 
         public async Task<ApiResponse<IEnumerable<FundingConfiguration>>> GetFundingConfigurationsByFundingStreamId(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-            string url = $"configuration/{fundingStreamId}";
-
-            return await GetAsync<IEnumerable<FundingConfiguration>>(url);
+            return await GetAsync<IEnumerable<FundingConfiguration>>($"configuration/{fundingStreamId}");
         }
 
         public async Task<ApiResponse<FundingPeriod>> GetFundingPeriodById(string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"fundingperiods/{fundingPeriodId}";
-
-            return await GetAsync<FundingPeriod>(url);
+            return await GetAsync<FundingPeriod>($"fundingperiods/{fundingPeriodId}");
         }
 
         public async Task<ApiResponse<IEnumerable<FundingPeriod>>> GetFundingPeriods()
         {
-            string url = "fundingperiods";
-
-            return await GetAsync<IEnumerable<FundingPeriod>>(url);
+            return await GetAsync<IEnumerable<FundingPeriod>>("fundingperiods");
         }
 
         public async Task<ApiResponse<string>> GetFundingSchemaByVersion(string schemaVersion)
         {
             Guard.IsNullOrWhiteSpace(schemaVersion, nameof(schemaVersion));
 
-            string url = $"schemas/{schemaVersion}";
-
-            return await GetAsync<string>(url);
+            return await GetAsync<string>($"schemas/{schemaVersion}");
         }
 
         public async Task<ApiResponse<FundingStream>> GetFundingStreamById(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-            string url = $"fundingstreams/{fundingStreamId}";
-
-            return await GetAsync<FundingStream>(url);
+            return await GetAsync<FundingStream>($"fundingstreams/{fundingStreamId}");
         }
 
         public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreams()
         {
-            string url = "fundingstreams";
-
-            return await GetAsync<IEnumerable<FundingStream>>(url);
+            return await GetAsync<IEnumerable<FundingStream>>("fundingstreams");
         }
 
         public async Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string fundingPeriodId, string templateVersion)
@@ -88,9 +72,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}";
-
-            return await GetAsync<FundingTemplateContents>(url);
+            return await GetAsync<FundingTemplateContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}");
         }
 
         public async Task<ApiResponse<FundingConfiguration>> SaveFundingConfiguration(string fundingStreamId, string fundingPeriodId, FundingConfigurationUpdateViewModel configuration)
@@ -98,25 +80,21 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"configuration/{fundingStreamId}/{fundingPeriodId}";
-
-            return await PostAsync<FundingConfiguration, FundingConfigurationUpdateViewModel>(url, configuration);
+            return await PostAsync<FundingConfiguration, FundingConfigurationUpdateViewModel>($"configuration/{fundingStreamId}/{fundingPeriodId}", configuration);
         }
 
         public async Task<ApiResponse<FundingPeriod>> SaveFundingPeriods(FundingPeriodsUpdateModel fundingPeriodsUpdateModel)
         {
-            Guard.ArgumentNotNull(fundingPeriodsUpdateModel, nameof(fundingPeriodsUpdateModel));          
+            Guard.ArgumentNotNull(fundingPeriodsUpdateModel, nameof(fundingPeriodsUpdateModel));
 
-            string url = "fundingperiods";
-            return await PostAsync<FundingPeriod, FundingPeriodsUpdateModel>(url, fundingPeriodsUpdateModel);           
+            return await PostAsync<FundingPeriod, FundingPeriodsUpdateModel>("fundingperiods", fundingPeriodsUpdateModel);           
         }
 
         public async Task<ApiResponse<string>> SaveFundingSchema(string schema)
         {
             Guard.IsNullOrWhiteSpace(schema, nameof(schema));
-            string url = "schemas";
 
-            return await PostAsync<string, object>(url, null);
+            return await PostAsync<string, object>("schemas", null);
         }
 
         public async Task<ApiResponse<FundingStream>> SaveFundingStream(FundingStreamUpdateModel fundingStream)
@@ -133,8 +111,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}";
-            return await PostAsync<string, object>(url, templateJson);
+            return await PostAsync<string, object>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}", templateJson);
         }
 
         public async Task<ApiResponse<string>> GetFundingTemplateSourceFile(string fundingStreamId, string fundingPeriodId, string templateVersion)
@@ -143,9 +120,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/sourcefile";
-
-            return await GetAsync<string>(url);
+            return await GetAsync<string>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/sourcefile");
         }
 
         public async Task<ApiResponse<TemplateMetadataContents>> GetFundingTemplateContents(string fundingStreamId,
@@ -169,9 +144,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));           
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
 
-            string url = $"templates/{fundingStreamId}/{fundingPeriodId}";
-
-            return await GetAsync<IEnumerable<PublishedFundingTemplate>>(url);
+            return await GetAsync<IEnumerable<PublishedFundingTemplate>>($"templates/{fundingStreamId}/{fundingPeriodId}");
         }
 
         public async Task<ApiResponse<FundingDate>> GetFundingDate(string fundingStreamId, string fundingPeriodId, string fundingLineId)
@@ -180,9 +153,7 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
 
-            string url = $"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}";
-
-            return await GetAsync<FundingDate>(url);
+            return await GetAsync<FundingDate>($"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}");
         }
 
         public async Task<ApiResponse<FundingDate>> SaveFundingDate(
@@ -195,9 +166,55 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
 
-            string url = $"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}";
-
-            return await PostAsync<FundingDate, FundingDateUpdateViewModel>(url, configuration);
+            return await PostAsync<FundingDate, FundingDateUpdateViewModel>($"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}", configuration);
         }
+
+        public async Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await ValidatedPostAsync("funding-structures/lastModified", request);
+        }
+
+        public async Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string etag = null)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<FundingStructure>(
+                $"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                customHeaders: EtagHeader(etag));
+        }
+        
+        public async Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string providerId = null,
+            string etag = null)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}";
+
+            url = providerId.IsNullOrEmpty() ? url : $"{url}&providerId={providerId}";
+            
+            return await GetAsync<FundingStructure>(
+                url,
+                customHeaders: EtagHeader(etag));
+        }
+
+        private string[] EtagHeader(string etag)
+            => etag.IsNullOrEmpty()
+                ? null
+                : new[]
+                {
+                    IfNoneMatch, etag
+                };
     }
 }

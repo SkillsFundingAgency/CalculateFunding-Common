@@ -35,5 +35,18 @@ namespace CalculateFunding.Common.ApiClient.Policies
             string fundingPeriodId, 
             string fundingLineId,
             FundingDateUpdateViewModel configuration);
+
+        Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request);
+
+        Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string etag = null);
+
+        Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string providerId = null,
+            string etag = null);
     }
 }

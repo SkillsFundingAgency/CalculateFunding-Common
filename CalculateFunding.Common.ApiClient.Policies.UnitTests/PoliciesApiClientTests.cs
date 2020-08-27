@@ -1,10 +1,17 @@
+using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Policies.Models.ViewModels;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.TemplateMetadata.Models;
 using CalculateFunding.Common.Testing;
+using FluentAssertions;
+using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;
 // ReSharper disable HeapView.CanAvoidClosure
@@ -238,6 +245,106 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
                 updateViewModel,
                 new FundingDate(),
                 () => _client.SaveFundingDate(fundingStreamId, fundingPeriodId, fundingLineId, updateViewModel));
+        }
+
+        [TestMethod]
+        public async Task UpdateFundingStructureLastModified()
+        {
+            UpdateFundingStructureLastModifiedRequest request = new UpdateFundingStructureLastModifiedRequest
+            {
+                SpecificationId = NewRandomString()
+            };
+
+            GivenTheStatusCode("funding-structures/lastModified", HttpStatusCode.OK, HttpMethod.Post);
+
+            NoValidatedContentApiResponse apiResponse = await _client.UpdateFundingStructureLastModified(request);
+
+            apiResponse?
+                .StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
+        }
+
+        [TestMethod]
+        public async Task GetFundingStructure()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    LastModified = DateTimeOffset.UtcNow
+                },
+                () => _client.GetFundingStructure(fundingStreamId, fundingPeriodId, specificationId));
+        }
+        
+        [TestMethod]
+        public async Task GetFundingStructureEtagSupplied()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    LastModified = DateTimeOffset.UtcNow
+                },
+                () => _client.GetFundingStructure(fundingStreamId, fundingPeriodId, specificationId, etag),
+                "If-None-Match", etag);
+        }
+
+        [TestMethod]
+        public async Task GetFundingStructureResults()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    LastModified = DateTimeOffset.UtcNow
+                },
+                () => _client.GetFundingStructureResults(fundingStreamId, fundingPeriodId, specificationId));
+        }
+        
+        [TestMethod]
+        public async Task GetFundingStructureResultsProviderIdSupplied()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}&providerId={providerId}",
+                new FundingStructure
+                {
+                    LastModified = DateTimeOffset.UtcNow
+                },
+                () => _client.GetFundingStructureResults(fundingStreamId, fundingPeriodId, specificationId, providerId));
+        }
+        
+        [TestMethod]
+        public async Task GetFundingStructureResultsETagSupplied()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    LastModified = DateTimeOffset.UtcNow
+                },
+                () => _client.GetFundingStructureResults(fundingStreamId, fundingPeriodId, specificationId,  etag: etag),
+                "If-None-Match", etag);
         }
     }
 }
