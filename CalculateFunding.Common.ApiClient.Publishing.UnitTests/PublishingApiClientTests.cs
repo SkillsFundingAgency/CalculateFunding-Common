@@ -424,5 +424,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 Enumerable.Repeat(NewRandomString(), 5),
                 () => _client.GetPublishedProviderErrors(specificationId));
         }
+
+        [TestMethod]
+        public async Task GetFundingLinePublishedProviderDetails()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string fundingLineId = NewRandomString();
+
+            await AssertGetRequest($"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineId}",
+                new FundingLineProfile(),
+                () => _client.GetFundingLinePublishedProviderDetails(specificationId, providerId, fundingStreamId, fundingLineId));
+        }
     }
 }

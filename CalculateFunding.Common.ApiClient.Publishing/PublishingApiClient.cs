@@ -223,5 +223,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await GetAsync<IEnumerable<string>>($"api/publishedprovidererrors/{specificationId}");
         }
+
+        public async Task<ApiResponse<FundingLineProfile>> GetFundingLinePublishedProviderDetails(
+            string specificationId, 
+            string providerId, 
+            string fundingStreamId, 
+            string fundingLineId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
+
+            return await GetAsync<FundingLineProfile>(
+                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineId}");
+        }
     }
 }

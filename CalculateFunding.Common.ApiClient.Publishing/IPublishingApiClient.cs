@@ -59,5 +59,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string specificationId);
 
         Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderErrors(string specificationId);
+
+        Task<ApiResponse<FundingLineProfile>> GetFundingLinePublishedProviderDetails(
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
+            string fundingLineId);
     }
 }
