@@ -108,13 +108,13 @@ namespace CalculateFunding.Common.JobManagement
 
         private async Task<bool> CheckAllJobs(string jobType, string specificationId, Predicate<JobSummary> predicate)
         {
-            ApiResponse<JobSummary> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() => {
-                    return _jobsApiClient.GetLatestJobForSpecification(specificationId, new string[] { jobType });
+            ApiResponse<IEnumerable<JobSummary>> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() => {
+                    return _jobsApiClient.GetLatestJobsForSpecification(specificationId, new string[] { jobType });
                 });
 
             if ((int?)jobResponse?.StatusCode >= 200 && (int?)jobResponse?.StatusCode <= 299)
             {
-                JobSummary summary = jobResponse.Content;
+                JobSummary summary = jobResponse.Content?.FirstOrDefault();
 
                 return predicate(summary);
             }
@@ -247,11 +247,11 @@ namespace CalculateFunding.Common.JobManagement
 
         public async Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels) => await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.CreateJobs(jobCreateModels));
 
-        public async Task<JobSummary> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes)
+        public async Task<IEnumerable<JobSummary>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes)
         {
-            ApiResponse<JobSummary> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobForSpecification(specificationId, jobTypes));
+            ApiResponse<IEnumerable<JobSummary>> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes));
 
-            JobSummary jobSummary = jobSummaryResponse?.Content;
+            IEnumerable<JobSummary> jobSummary = jobSummaryResponse?.Content;
 
             return jobSummary;
         }

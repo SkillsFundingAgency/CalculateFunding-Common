@@ -37,8 +37,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
             return await GetAsync<JobViewModel>($"jobs/{jobId}");
         }
 
-        public async Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId,
-            IEnumerable<string> jobTypes)
+        public async Task<ApiResponse<IEnumerable<JobSummary>>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
@@ -49,7 +48,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
                 api += $"&jobTypes={string.Join(",", jobTypes)}";
             }
 
-            return await GetAsync<JobSummary>(api);
+            return await GetAsync<IEnumerable<JobSummary>>(api);
         }
 
         public async Task<Job> CreateJob(JobCreateModel jobCreateModel)

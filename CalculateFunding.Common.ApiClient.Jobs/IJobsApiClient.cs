@@ -12,7 +12,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         Task<ApiResponse<JobViewModel>> GetJobById(string jobId);
 
-        Task<ApiResponse<JobSummary>> GetLatestJobForSpecification(string specificationId, IEnumerable<string> jobTypes);
+        Task<ApiResponse<IEnumerable<JobSummary>>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes);
 
         Task<Job> CreateJob(JobCreateModel jobCreateModel);
 

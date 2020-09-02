@@ -58,10 +58,10 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
             string expectedJobsParameters)
         {
             string specificationId = NewRandomString();
-
+            IEnumerable<JobSummary> jobsummaries = NewEnumerable(NewJobSummary());
             await AssertGetRequest($"jobs/latest?specificationId={specificationId}{expectedJobsParameters}",
-                new JobSummary(),
-                () => _client.GetLatestJobForSpecification(specificationId, jobTypes));
+                jobsummaries,
+                () => _client.GetLatestJobsForSpecification(specificationId, jobTypes));
         }
 
         [TestMethod]
@@ -170,6 +170,8 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
         private JobCreateModel NewCreateModel() => new JobCreateModel();
         
         private Job NewJob() => new Job();
+
+        private JobSummary NewJobSummary() => new JobSummary();
         
         private JobCreateResult NewCreateResult() => new JobCreateResult();
     }
