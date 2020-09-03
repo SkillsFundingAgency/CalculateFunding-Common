@@ -8,6 +8,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public int Version { get; set; }
 
+        public string BlobName { get; set; }
+
         public Reference FundingStream { get; set; }
     }
 }

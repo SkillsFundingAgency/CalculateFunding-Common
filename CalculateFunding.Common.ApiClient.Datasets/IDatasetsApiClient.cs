@@ -11,6 +11,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
     {
         Task<HttpStatusCode> SaveDefinition(string yaml, string yamlFileName);
         Task<ApiResponse<IEnumerable<DatasetDefinition>>> GetDatasetDefinitions();
+        Task<ApiResponse<DatasetViewModel>> GetDatasetByDatasetId(string datasetId);
         Task<ApiResponse<DatasetDefinition>> GetDatasetDefinitionById(string datasetDefinitionId);
         Task<ApiResponse<IEnumerable<DatasetDefinition>>> GetDatasetDefinitionsByIds(params string[] definitionIds);
         Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel);

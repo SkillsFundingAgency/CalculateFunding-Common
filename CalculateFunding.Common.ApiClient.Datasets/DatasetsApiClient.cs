@@ -46,6 +46,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync<IEnumerable<DatasetDefinition>, IEnumerable<string>>(DataSetsUriFor("get-dataset-definitions-by-ids"), definitionIds);
         }
 
+        public async Task<ApiResponse<DatasetViewModel>> GetDatasetByDatasetId(string datasetId)
+        {
+            Guard.IsNotEmpty(datasetId, nameof(datasetId));
+
+            return await GetAsync<DatasetViewModel>(DataSetsUriFor($"get-dataset-by-datasetid?datasetId={datasetId}"));
+        }
+
         public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateNewDataset(CreateNewDatasetModel createNewDatasetModel)
         {
             Guard.ArgumentNotNull(createNewDatasetModel, nameof(createNewDatasetModel));

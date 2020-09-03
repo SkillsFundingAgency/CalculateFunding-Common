@@ -178,7 +178,18 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 Enumerable.Empty<DefinitionSpecificationRelationship>(),
                 () => _client.GetRelationshipBySpecificationIdAndName(id, name));
         }
-        
+
+        [TestMethod]
+        public async Task GetDatasetByDatasetIdMakesGetCallWithSuppliedId()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"get-dataset-by-datasetid?datasetId={id}",
+                id,
+                new DatasetViewModel(),
+                _ => _client.GetDatasetByDatasetId(_));
+        }
+
         [TestMethod]
         public async Task GetDatasetsByDefinitionIdMakesGetCallWithSuppliedId()
         {
