@@ -216,5 +216,32 @@ namespace CalculateFunding.Common.ApiClient.Policies
                 {
                     IfNoneMatch, etag
                 };
+
+        public async Task<ApiResponse<TemplateMetadataDistinctContents>> GetDistinctTemplateMetadataContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            return await GetAsync<TemplateMetadataDistinctContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct");
+        }
+
+        public async Task<ApiResponse<TemplateMetadataDistinctFundingLinesContents>> GetDistinctTemplateMetadataFundingLinesContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            return await GetAsync<TemplateMetadataDistinctFundingLinesContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct/funding-lines");
+        }
+
+        public async Task<ApiResponse<TemplateMetadataDistinctCalculationsContents>> GetDistinctTemplateMetadataCalculationsContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            return await GetAsync<TemplateMetadataDistinctCalculationsContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct/calculations");
+        }
     }
 }

@@ -346,5 +346,44 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
                 () => _client.GetFundingStructureResults(fundingStreamId, fundingPeriodId, specificationId,  etag: etag),
                 "If-None-Match", etag);
         }
+
+        [TestMethod]
+        public async Task GetDistinctTemplateMetadataContents()
+        {
+            string fundingPeriodId = NewRandomString();
+            string templateVersion = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+            
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct",
+                 new TemplateMetadataDistinctContents(),
+                () => _client.GetDistinctTemplateMetadataContents(fundingStreamId, fundingPeriodId, templateVersion));
+        }
+
+        [TestMethod]
+        public async Task GetDistinctTemplateMetadataFundingLinesContents()
+        {
+            string fundingPeriodId = NewRandomString();
+            string templateVersion = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct/funding-lines",
+                 new TemplateMetadataDistinctFundingLinesContents(),
+                () => _client.GetDistinctTemplateMetadataFundingLinesContents(fundingStreamId, fundingPeriodId, templateVersion));
+        }
+
+        [TestMethod]
+        public async Task GetDistinctTemplateMetadataCalculationsContents()
+        {
+            string fundingPeriodId = NewRandomString();
+            string templateVersion = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct/calculations",
+                 new TemplateMetadataDistinctCalculationsContents(),
+                () => _client.GetDistinctTemplateMetadataCalculationsContents(fundingStreamId, fundingPeriodId, templateVersion));
+        }
     }
 }

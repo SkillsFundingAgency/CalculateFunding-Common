@@ -48,5 +48,9 @@ namespace CalculateFunding.Common.ApiClient.Policies
             string specificationId,
             string providerId = null,
             string etag = null);
+
+        Task<ApiResponse<TemplateMetadataDistinctContents>> GetDistinctTemplateMetadataContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
+        Task<ApiResponse<TemplateMetadataDistinctFundingLinesContents>> GetDistinctTemplateMetadataFundingLinesContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
+        Task<ApiResponse<TemplateMetadataDistinctCalculationsContents>> GetDistinctTemplateMetadataCalculationsContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
     }
 }
