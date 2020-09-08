@@ -238,5 +238,35 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<FundingLineProfile>(
                 $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineId}");
         }
+
+        public async Task<ApiResponse<bool>> PreviousProfileExistsForSpecificationForProviderForFundingLine(
+            string specificationId, 
+            string providerId, 
+            string fundingStreamId, 
+            string fundingLineCode)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingLineCode, nameof(fundingLineCode));
+
+            return await GetAsync<bool>(
+                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/change-exists");
+        }
+
+        public async Task<ApiResponse<IEnumerable<FundingLineChange>>> GetPreviousProfilesForSpecificationForProviderForFundingLine(
+            string specificationId, 
+            string providerId, 
+            string fundingStreamId, 
+            string fundingLineCode)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingLineCode, nameof(fundingLineCode));
+
+            return await GetAsync<IEnumerable<FundingLineChange>>(
+                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes");
+        }
     }
 }

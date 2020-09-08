@@ -437,5 +437,49 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new FundingLineProfile(),
                 () => _client.GetFundingLinePublishedProviderDetails(specificationId, providerId, fundingStreamId, fundingLineId));
         }
+
+        [TestMethod]
+        public async Task PreviousProfileExistsForSpecificationForProviderForFundingLine()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string fundingLineCode = NewRandomString();
+
+            bool expectedResponse = false;
+
+            GivenThePrimitiveResponse(
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/change-exists",
+                expectedResponse, HttpMethod.Get);
+
+            ApiResponse<bool> apiResponse = await _client.PreviousProfileExistsForSpecificationForProviderForFundingLine(
+                    specificationId,
+                    providerId,
+                    fundingStreamId,
+                    fundingLineCode);
+
+            apiResponse
+                ?.Content
+                .Should()
+                .Be(expectedResponse);
+        }
+
+        [TestMethod]
+        public async Task GetPreviousProfilesForSpecificationForProviderForFundingLine()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string fundingLineCode = NewRandomString();
+
+            await AssertGetRequest(
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes",
+                Enumerable.Empty<FundingLineChange>(),
+                () => _client.GetPreviousProfilesForSpecificationForProviderForFundingLine(
+                    specificationId, 
+                    providerId, 
+                    fundingStreamId, 
+                    fundingLineCode));
+        }
     }
 }

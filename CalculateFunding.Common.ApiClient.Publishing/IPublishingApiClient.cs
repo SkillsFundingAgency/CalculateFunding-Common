@@ -65,5 +65,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string providerId,
             string fundingStreamId,
             string fundingLineId);
+
+        Task<ApiResponse<bool>> PreviousProfileExistsForSpecificationForProviderForFundingLine(
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
+            string fundingLineCode);
+
+        Task<ApiResponse<IEnumerable<FundingLineChange>>> GetPreviousProfilesForSpecificationForProviderForFundingLine(
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
+            string fundingLineCode);
     }
 }
