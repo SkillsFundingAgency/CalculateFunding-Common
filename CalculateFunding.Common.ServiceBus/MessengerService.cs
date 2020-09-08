@@ -160,25 +160,32 @@ namespace CalculateFunding.Common.ServiceBus
                 {
                     Message message = await receiver.ReceiveAsync(TimeSpan.FromSeconds(5));
 
-                    if (message != null)
+                    try
                     {
-                        await receiver.CompleteAsync(message.SystemProperties.LockToken);
-                        string json = null;
-
-                        using (MemoryStream inputStream = new MemoryStream(message.Body))
+                        if (message != null)
                         {
-                            using (StreamReader streamReader = new StreamReader(inputStream))
+                            await receiver.CompleteAsync(message.SystemProperties.LockToken);
+                            string json = null;
+
+                            using (MemoryStream inputStream = new MemoryStream(message.Body))
                             {
-                                json = streamReader.ReadToEnd();
+                                using (StreamReader streamReader = new StreamReader(inputStream))
+                                {
+                                    json = streamReader.ReadToEnd();
+                                }
+                            }
+
+                            T messageOfType = JsonConvert.DeserializeObject<T>(json);
+
+                            if (predicate(messageOfType))
+                            {
+                                break;
                             }
                         }
-
-                        T messageOfType = JsonConvert.DeserializeObject<T>(json);
-
-                        if (predicate(messageOfType))
-                        {
-                            break;
-                        }
+                    }
+                    catch (JsonSerializationException)
+                    {
+                        // don't do anything the serialization failed as this is not a message we are interested in
                     }
 
                     if (cancellationTokenSource.Token.IsCancellationRequested)

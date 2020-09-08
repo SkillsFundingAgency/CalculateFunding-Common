@@ -91,7 +91,11 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             Job job = new Job { JobDefinitionId = JobDefinitionId };
             Predicate<Job> predicate = _ => _.JobDefinitionId == JobDefinitionId;
 
+            Message ignoreMessage = NewMessage(_ => _.WithLockToken(lockToken)
+                .WithBody(JsonConvert.SerializeObject(Guid.NewGuid()).AsUTF8Bytes()));
+
             GivenMessageReceiverReturned(QueueName);
+            AndMessageReturnedFromServiceBus(ignoreMessage);
             await WhenMessagesReceived(QueueName, predicate);
             ThenReceiverTimesOut();
             _messageReceiverFactory.VerifyAll();
