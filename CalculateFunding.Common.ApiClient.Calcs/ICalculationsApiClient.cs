@@ -56,5 +56,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             PublishStatus? status,
             string searchTerm = null,
             int? page = null);
+
+        Task<ApiResponse<IEnumerable<CalculationFundingLine>>> GetRootFundingLinesForCalculation(string calculationId);
     }
 }

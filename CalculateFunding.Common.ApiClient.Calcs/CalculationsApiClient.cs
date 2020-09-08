@@ -264,5 +264,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await PutAsync<TemplateMapping, string>(url, templateVersion);
         }
+
+        public async Task<ApiResponse<IEnumerable<CalculationFundingLine>>> GetRootFundingLinesForCalculation(string calculationId)
+        {
+            Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
+
+            return await GetAsync<IEnumerable<CalculationFundingLine>>($"{UrlRoot}/{calculationId}/root-funding-lines");
+        }
     }
 }

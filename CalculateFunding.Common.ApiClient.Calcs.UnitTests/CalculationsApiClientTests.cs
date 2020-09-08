@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -369,6 +370,23 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .BeEquivalentTo(expectedResponse);
             
             AndTheRequestContentsShouldHaveBeen(templateVersion.AsJson());
+        }
+        
+        [TestMethod]
+        public async Task GetRootFundingLinesForCalculation()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"{id}/root-funding-lines",
+                new[]
+                {
+                    new CalculationFundingLine
+                    {
+                        Name = NewRandomString(),
+                        TemplateId = (uint)NewRandomInt()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetRootFundingLinesForCalculation(id));   
         }
     }
 }
