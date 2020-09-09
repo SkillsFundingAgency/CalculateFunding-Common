@@ -19,5 +19,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         public string Status { get; set; }
 
         public string Description { get; set; }
+
+        public bool IsSelectedForFunding { get; set; }
     }
 }
