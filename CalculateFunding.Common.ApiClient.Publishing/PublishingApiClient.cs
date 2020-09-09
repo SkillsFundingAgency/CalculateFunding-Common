@@ -221,7 +221,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<IEnumerable<string>>($"api/publishedprovidererrors/{specificationId}");
+            return await GetAsync<IEnumerable<string>>($"publishedprovidererrors/{specificationId}");
         }
 
         public async Task<ApiResponse<FundingLineProfile>> GetFundingLinePublishedProviderDetails(
@@ -236,7 +236,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
 
             return await GetAsync<FundingLineProfile>(
-                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineId}");
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineId}");
         }
 
         public async Task<ApiResponse<bool>> PreviousProfileExistsForSpecificationForProviderForFundingLine(
@@ -251,7 +251,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(fundingLineCode, nameof(fundingLineCode));
 
             return await GetAsync<bool>(
-                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/change-exists");
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/change-exists");
         }
 
         public async Task<ApiResponse<IEnumerable<FundingLineChange>>> GetPreviousProfilesForSpecificationForProviderForFundingLine(
@@ -266,7 +266,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(fundingLineCode, nameof(fundingLineCode));
 
             return await GetAsync<IEnumerable<FundingLineChange>>(
-                $"api/publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes");
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes");
         }
     }
 }
