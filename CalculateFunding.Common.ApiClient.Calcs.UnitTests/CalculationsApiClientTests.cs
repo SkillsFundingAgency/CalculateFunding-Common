@@ -388,5 +388,25 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 }.AsEnumerable(),
                 () => _client.GetRootFundingLinesForCalculation(id));   
         }
+
+        [TestMethod]
+        public async Task QueueCodeContextUpdate()
+        {
+            string specificationId = NewRandomString();
+            
+            Job expectedJob = new Job
+            {
+                Id = NewRandomString()
+            };
+            
+            GivenTheResponse($"specifications/{specificationId}/code-context/update", expectedJob, HttpMethod.Post);
+
+            ApiResponse<Job> apiResponse = await _client.QueueCodeContextUpdate(specificationId);
+            
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedJob);
+        }
     }
 }

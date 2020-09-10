@@ -271,5 +271,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await GetAsync<IEnumerable<CalculationFundingLine>>($"{UrlRoot}/{calculationId}/root-funding-lines");
         }
+
+        public async Task<ApiResponse<Job>> QueueCodeContextUpdate(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<Job>($"{UrlRoot}/specifications/{specificationId}/code-context/update");
+        }
     }
 }
