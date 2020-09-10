@@ -47,6 +47,11 @@ namespace CalculateFunding.Common.ServiceBus
             }
         }
 
+        public async Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan)
+        {
+            await _managementClient.CreateSubscription(topicName, subscriptionName, timeSpan);
+        }
+
         public async Task CreateSubscription(string topicName, string subscriptionName)
         {
             await _managementClient.CreateSubscription(topicName, subscriptionName);

@@ -1,5 +1,6 @@
 ﻿using CalculateFunding.Common.ServiceBus.Interfaces;
 using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.Management;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,6 +38,16 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 return new AzureServiceBus.QueueClient(_connectionString, key, ReceiveMode.PeekLock, RetryExponential.Default);
             });
+        }
+
+        public async Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan)
+        {
+            SubscriptionDescription subscriptionDescription = new SubscriptionDescription(topicName, subscriptionName)
+            {
+                DefaultMessageTimeToLive = timeSpan
+            };
+
+            await Client.CreateSubscriptionAsync(subscriptionDescription);
         }
 
         public async Task CreateSubscription(string topicName, string subscriptionName)

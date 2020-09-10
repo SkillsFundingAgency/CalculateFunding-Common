@@ -11,6 +11,8 @@ namespace CalculateFunding.Common.ServiceBus.Interfaces
 
         Task DeleteTopic(string topicName);
 
+        Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan);
+
         Task CreateSubscription(string topicName, string subscriptionName);
 
         Task DeleteSubscription(string topicName, string subscriptionName);

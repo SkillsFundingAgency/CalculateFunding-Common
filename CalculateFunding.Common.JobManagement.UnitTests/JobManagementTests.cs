@@ -183,6 +183,10 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             //Assert
             if (useServiceBus)
             {
+                await ((IServiceBusService)messengerService)
+                    .Received(1)
+                    .CreateSubscription("topic", "correlationId", Arg.Is<TimeSpan>(_ => _.Days == 1));
+
                 await messengerService
                     .Received(1)
                     .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000));
@@ -247,6 +251,10 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             //Assert
             if (useServiceBus)
             {
+                await ((IServiceBusService)messengerService)
+                       .Received(1)
+                       .CreateSubscription("topic", "correlationId", Arg.Is<TimeSpan>(_ => _.Days == 1));
+
                 await messengerService
                     .Received(1)
                     .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(1000));
@@ -328,6 +336,10 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             //Assert
             if (useServiceBus)
             {
+                await ((IServiceBusService)messengerService)
+                       .Received(1)
+                       .CreateSubscription("topic", "correlationId", Arg.Is<TimeSpan>(_ => _.Days == 1));
+
                 await messengerService
                     .Received(1)
                     .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000));

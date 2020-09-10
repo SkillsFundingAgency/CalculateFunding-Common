@@ -44,18 +44,18 @@ namespace CalculateFunding.Common.JobManagement
             return await _messengerService.IsHealthOk(queueName);
         }
 
-        public async Task<bool> QueueJobAndWait(Func<Task<bool>> queueJob ,string jobType, string specificationId, string correlationId, string jobNotificationTopic, double pollTimeout = 600000, double pollInterval = 120000)
+        public async Task<bool> QueueJobAndWait(Func<Task<bool>> queueJob, string jobType, string specificationId, string correlationId, string jobNotificationTopic, double pollTimeout = 600000, double pollInterval = 120000)
         {
             if (IsServiceBusService)
             {
-                await ((IServiceBusService)_messengerService).CreateSubscription(jobNotificationTopic, correlationId);
+                await ((IServiceBusService)_messengerService).CreateSubscription(jobNotificationTopic, correlationId, new TimeSpan(1,0,0,0));
             }
 
             bool jobQueued = await queueJob();
 
-            if (jobQueued)
+            try
             {
-                try
+                if (jobQueued)
                 {
                     if (IsServiceBusService)
                     {
@@ -74,18 +74,18 @@ namespace CalculateFunding.Common.JobManagement
                         return await WaitForJobToComplete(jobType, specificationId, pollTimeout, pollInterval);
                     }
                 }
-                finally
+                else
                 {
-                    if (IsServiceBusService)
-                    {
-                        await ((IServiceBusService)_messengerService).DeleteSubscription(jobNotificationTopic, correlationId);
-                    }
+                    // if job not queued then return true
+                    return true;
                 }
             }
-            else
+            finally
             {
-                // if job not queued then return true
-                return true;
+                if (IsServiceBusService)
+                {
+                    await ((IServiceBusService)_messengerService).DeleteSubscription(jobNotificationTopic, correlationId);
+                }
             }
         }
 
@@ -108,9 +108,10 @@ namespace CalculateFunding.Common.JobManagement
 
         private async Task<bool> CheckAllJobs(string jobType, string specificationId, Predicate<JobSummary> predicate)
         {
-            ApiResponse<IEnumerable<JobSummary>> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() => {
-                    return _jobsApiClient.GetLatestJobsForSpecification(specificationId, new string[] { jobType });
-                });
+            ApiResponse<IEnumerable<JobSummary>> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() =>
+            {
+                return _jobsApiClient.GetLatestJobsForSpecification(specificationId, new string[] { jobType });
+            });
 
             if ((int?)jobResponse?.StatusCode >= 200 && (int?)jobResponse?.StatusCode <= 299)
             {
@@ -150,7 +151,7 @@ namespace CalculateFunding.Common.JobManagement
 
                 return !cancellationTokenSource.Token.IsCancellationRequested;
             }
-            finally 
+            finally
             {
                 // make sure we cancel the poll timeout task
                 pollCancellationTokenSource.Cancel();
@@ -166,7 +167,7 @@ namespace CalculateFunding.Common.JobManagement
                 string error = $"Could not find the job with id: '{jobId}'";
 
                 _logger.Write(LogEventLevel.Error, error);
-                
+
                 throw new JobNotFoundException(error, jobId);
             }
 
@@ -177,7 +178,7 @@ namespace CalculateFunding.Common.JobManagement
                 string error = $"Received job with id: '{jobId}' is already in a completed state with status {job.CompletionStatus}";
 
                 _logger.Write(LogEventLevel.Information, error);
-                
+
                 throw new JobAlreadyCompletedException(error, job);
             }
 
@@ -227,7 +228,7 @@ namespace CalculateFunding.Common.JobManagement
             {
                 jobCreateModel
             })).SingleOrDefault();
-        
+
         public async Task<IEnumerable<JobCreateResult>> TryQueueJobs(IEnumerable<JobCreateModel> jobCreateModels)
         {
             ApiResponse<IEnumerable<JobCreateResult>> apiResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.TryCreateJobs(jobCreateModels));
@@ -235,11 +236,11 @@ namespace CalculateFunding.Common.JobManagement
             if (apiResponse?.Content == null)
             {
                 string message = "Failed to create jobs.";
-                
+
                 _logger.Error(message);
-                
-                throw new JobsNotCreatedException( message, 
-                    jobCreateModels.Select(_ => _.JobDefinitionId).Distinct()); 
+
+                throw new JobsNotCreatedException(message,
+                    jobCreateModels.Select(_ => _.JobDefinitionId).Distinct());
             }
 
             return apiResponse.Content;
