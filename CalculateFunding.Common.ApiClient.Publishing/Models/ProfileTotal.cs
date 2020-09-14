@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using System;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
@@ -15,8 +16,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("value")]
         public decimal Value { get; set; }
-        
+
+        [JsonProperty("periodType")]
+        public string PeriodType { get; set; }
+
         [JsonProperty("isPaid")]
         public bool IsPaid { get; set; }
+
+        [JsonProperty("installmentNumber")]
+        public int InstallmentNumber { get; set; }
+
+        [JsonProperty("profileRemainingPercentage")]
+        public decimal? ProfileRemainingPercentage { get; set; }
+
+        [JsonProperty("actualDate")]
+        public DateTimeOffset? ActualDate { get; set; }
     }
 }
