@@ -77,5 +77,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string providerId,
             string fundingStreamId,
             string fundingLineCode);
+
+        Task<ApiResponse<IEnumerable<FundingLineProfile>>> GetCurrentProfileConfig(
+            string specificationId,
+            string providerId,
+            string fundingStreamId);
     }
 }

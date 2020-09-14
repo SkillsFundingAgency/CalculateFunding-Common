@@ -268,5 +268,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<IEnumerable<FundingLineChange>>(
                 $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes");
         }
+
+        public async Task<ApiResponse<IEnumerable<FundingLineProfile>>> GetCurrentProfileConfig(
+            string specificationId, string providerId, string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<FundingLineProfile>>(
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}");
+        }
     }
 }

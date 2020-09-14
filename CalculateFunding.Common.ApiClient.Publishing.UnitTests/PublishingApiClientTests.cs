@@ -481,5 +481,21 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                     fundingStreamId, 
                     fundingLineCode));
         }
+
+        [TestMethod]
+        public async Task GetCurrentProfileConfig()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest(
+                $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}",
+                Enumerable.Empty<FundingLineProfile>(),
+                () => _client.GetCurrentProfileConfig(
+                    specificationId,
+                    providerId,
+                    fundingStreamId));
+        }
     }
 }

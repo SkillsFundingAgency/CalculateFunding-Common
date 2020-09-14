@@ -40,6 +40,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("profilePatternDisplayName")]
         public string ProfilePatternDisplayName { get; set; }
 
+        [JsonProperty("profilePatternDescription")]
+        public string ProfilePatternDescription { get; set; }
+
         [JsonProperty("providerTypes")]
         public IEnumerable<string> ProviderTypes { get; set; }
 
