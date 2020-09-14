@@ -112,12 +112,12 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetSpecificationRelationshipViewModel>>(DataSetsUriFor($"get-definitions-relationships?specificationId={specificationId}"));
         }
         
-        public async Task<ApiResponse<IEnumerable<DefinitionSpecificationRelationship>>> GetRelationshipBySpecificationIdAndName(string specificationId, string name)
+        public async Task<ApiResponse<DefinitionSpecificationRelationship>> GetRelationshipBySpecificationIdAndName(string specificationId, string name)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.IsNullOrWhiteSpace(name, nameof(name));
             
-            return await GetAsync<IEnumerable<DefinitionSpecificationRelationship>>(
+            return await GetAsync<DefinitionSpecificationRelationship>(
                 DataSetsUriFor($"get-definition-relationship-by-specificationid-name?specificationId={specificationId}&name={name}"));
         }
 

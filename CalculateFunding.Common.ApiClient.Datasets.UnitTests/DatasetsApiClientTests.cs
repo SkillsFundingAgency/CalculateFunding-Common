@@ -175,7 +175,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
             string name = NewRandomString();
 
             await AssertGetRequest($"get-definition-relationship-by-specificationid-name?specificationId={id}&name={name}",
-                Enumerable.Empty<DefinitionSpecificationRelationship>(),
+                new DefinitionSpecificationRelationship(),
                 () => _client.GetRelationshipBySpecificationIdAndName(id, name));
         }
 
