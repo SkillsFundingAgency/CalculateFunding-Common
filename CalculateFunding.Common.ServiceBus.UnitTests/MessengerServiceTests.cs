@@ -158,7 +158,9 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         }
 
         [TestMethod]
-        public async Task SendToTopic_MessageSentToTopic()
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task SendToTopic_MessageSentToTopic(bool compressData)
         {
             string sessionId = Guid.NewGuid().ToString();
             Job job = new Job { JobDefinitionId = JobDefinitionId };
@@ -169,9 +171,10 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             await WhenMessageSentToTopic(TopicName,
                 job,
                 message.UserProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
-                sessionId: sessionId);
+                sessionId: sessionId,
+                compressData: compressData);
 
-            ThenMessageSentToTopic(sessionId);
+            ThenMessageSentToTopic(sessionId, compressData);
             _managementClient.VerifyAll();
         }
 
@@ -241,13 +244,14 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             return await _messengerService.ReceiveMessage(entityPath, predicate, TimeSpan.FromMilliseconds(1));
         }
 
-        private async Task WhenMessageSentToTopic<T>(string topicName, T data, IDictionary<string, string> properties, string sessionId)
+        private async Task WhenMessageSentToTopic<T>(string topicName, T data, IDictionary<string, string> properties, string sessionId, bool compressData = false)
             where T:class
         {
             await _messengerService.SendToTopic<T>(topicName,
                 data,
                 properties,
-                sessionId: sessionId);
+                sessionId: sessionId,
+                compressData: compressData);
         }
 
         private async Task WhenMessageSentToQueue<T>(string queueName, T data, IDictionary<string, string> properties, string sessionId)
@@ -259,9 +263,16 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                 sessionId: sessionId);
         }
 
-        private void ThenMessageSentToTopic(string sessionId)
+        private void ThenMessageSentToTopic(string sessionId, bool compressData = false)
         {
-            _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+            if (compressData)
+            {
+                _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId && _.ContentType == "application/gzip")));
+            }
+            else
+            {
+                _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+            }
         }
 
         private void ThenMessageSentToQueue(string sessionId)

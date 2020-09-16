@@ -217,9 +217,8 @@ namespace CalculateFunding.Common.ServiceBus
 
                 if (compressData)
                 {
-                    message.UserProperties.Add("compressed", true);
+                    message.ContentType = "application/gzip";
                 }
-
             }
             else
             {
