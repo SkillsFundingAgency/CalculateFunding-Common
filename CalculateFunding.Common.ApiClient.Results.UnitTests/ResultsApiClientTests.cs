@@ -188,32 +188,20 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
         }
 
         [TestMethod]
-        public async Task QueueMergeSpecificationInformationForProviderJobForAllProviders()
-        {
-            SpecificationInformation specificationInformation = new SpecificationInformation
-            {
-                Id = NewRandomString()
-            };
-            
-            await AssertPutRequest("providers/specifications",
-                specificationInformation,
-                HttpStatusCode.OK,
-                () => _client.QueueMergeSpecificationInformationForProviderJobForAllProviders(specificationInformation));
-        }
-
-        [TestMethod]
         public async Task QueueMergeSpecificationInformationForProviderJobForProvider()
         {
-            SpecificationInformation specificationInformation = new SpecificationInformation
+            MergeSpecificationInformationRequest mergeRequest = new MergeSpecificationInformationRequest
             {
-                Id = NewRandomString()
+                SpecificationInformation = new SpecificationInformation
+                {
+                    Id = NewRandomString()
+                }
             };
-            string providerId = NewRandomString();
-            
-            await AssertPutRequest($"providers/{providerId}/specifications",
-                specificationInformation,
+
+            await AssertPutRequest("providers/specifications",
+                mergeRequest,
                 HttpStatusCode.OK,
-                () => _client.QueueMergeSpecificationInformationForProviderJobForProvider(specificationInformation, providerId));
+                () => _client.QueueMergeSpecificationInformationJob(mergeRequest));
         }
 
         [TestMethod]

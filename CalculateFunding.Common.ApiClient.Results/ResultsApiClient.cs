@@ -124,21 +124,12 @@ namespace CalculateFunding.Common.ApiClient.Results
 
             return await GetAsync<IEnumerable<SpecificationInformation>>($"{UrlRoot}/providers/{providerId}/specifications");
         }
-        
-        public async Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForProvider(SpecificationInformation specificationInformation,
-            string providerId)
-        {
-            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
-            Guard.ArgumentNotNull(specificationInformation, nameof(specificationInformation));
 
-            return await PutAsync($"{UrlRoot}/providers/{providerId}/specifications", specificationInformation);
-        }
-        
-        public async Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForAllProviders(SpecificationInformation specificationInformation)
+        public async Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest)
         {
-            Guard.ArgumentNotNull(specificationInformation, nameof(specificationInformation));
-
-            return await PutAsync($"{UrlRoot}/providers/specifications", specificationInformation);
+            Guard.ArgumentNotNull(mergeRequest, nameof(mergeRequest));
+            
+            return await PutAsync($"{UrlRoot}/providers/specifications", mergeRequest);
         }
 
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)

@@ -24,10 +24,6 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<IEnumerable<string>>> GetSpecificationIdsForProvider(string providerId);
         Task<ApiResponse<bool>> GetProviderHasResultsBySpecificationId(string specificationId);
         Task<ApiResponse<IEnumerable<SpecificationInformation>>> GetSpecificationsWithProviderResultsForProviderId(string providerId);
-
-        Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForProvider(SpecificationInformation specificationInformation,
-            string providerId);
-
-        Task<HttpStatusCode> QueueMergeSpecificationInformationForProviderJobForAllProviders(SpecificationInformation specificationInformation);
+        Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest);
     }
 }
