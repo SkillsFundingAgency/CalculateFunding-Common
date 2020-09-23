@@ -9,5 +9,10 @@
         {
             return builder.UseMiddleware<HealthCheckMiddleware>();
         }
+
+        public static IApplicationBuilder UseAuthenticatedHealthCheckMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<AuthenticatedHealthCheckMiddleware>();
+        }
     }
 }

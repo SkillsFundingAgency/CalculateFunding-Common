@@ -11,5 +11,12 @@
 
             return services;
         }
+
+        public static IServiceCollection AddAuthenticatedHealthCheckMiddleware(this IServiceCollection services)
+        {
+            services.AddTransient<AuthenticatedHealthCheckMiddleware>();
+
+            return services;
+        }
     }
 }
