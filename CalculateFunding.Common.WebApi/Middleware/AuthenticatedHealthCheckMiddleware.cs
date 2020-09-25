@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.WebApi.Middleware
 {
-    public class AuthenticatedHealthCheckMiddleware : HealthCheckMiddleware
+    public class AuthenticatedHealthCheckMiddleware : HealthCheckMiddleware, IMiddleware
     {
         public AuthenticatedHealthCheckMiddleware(IEnumerable<IHealthChecker> healthCheckers) : base(healthCheckers)
         {
