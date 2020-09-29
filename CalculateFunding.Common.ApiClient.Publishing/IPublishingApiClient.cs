@@ -82,5 +82,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string specificationId,
             string providerId,
             string fundingStreamId);
+
+        Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
+           string publishedProviderVersionId, string etag = null);
     }
 }

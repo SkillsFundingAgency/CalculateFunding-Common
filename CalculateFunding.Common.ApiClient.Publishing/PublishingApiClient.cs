@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
@@ -279,5 +280,24 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<IEnumerable<FundingLineProfile>>(
                 $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}");
         }
+
+        public async Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
+            string publishedProviderVersionId,
+            string etag = null)
+        {           
+            Guard.IsNullOrWhiteSpace(publishedProviderVersionId, nameof(publishedProviderVersionId));
+
+            return await GetAsync<PublishedProviderFundingStructure>(
+                $"publishedproviderfundingstructure/{publishedProviderVersionId}",
+                customHeaders: EtagHeader(etag));
+        }
+
+        private string[] EtagHeader(string etag)
+           => etag.IsNullOrEmpty()
+               ? null
+               : new[]
+               {
+                    IfNoneMatch, etag
+               };
     }
 }
