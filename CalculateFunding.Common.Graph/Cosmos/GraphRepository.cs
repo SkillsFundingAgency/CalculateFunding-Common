@@ -40,9 +40,9 @@ namespace CalculateFunding.Common.Graph.Cosmos
             string vertexLabel = GetVertexLabel<TNode>();
             
             string query = $"g.{VertexTraversal(vertexLabel, field)}.as('A')" +
-                           $".repeat({BothEdgeTraversal(relationship)}.inV().simplePath()).emit(loops().is(gte(1)))" +
-                           $".{BothEdgeTraversal(relationship)}.bothV().where(eq('A')).path()" +
-                            ".dedup().by(unfold().order().by(id).dedup().fold())";
+                           $".repeat({OutEdgeTraversal(relationship)}.inV().simplePath()).emit(loops().is(gte(1)))" +
+                           $".{OutEdgeTraversal(relationship)}.inV().where(eq('A')).path()" +
+                           ".dedup().by(unfold().order().by(id).dedup().fold())";
 
             IEnumerable<Dictionary<string, object>> results = await ExecuteQuery(query);
 
@@ -161,9 +161,9 @@ namespace CalculateFunding.Common.Graph.Cosmos
         
         private static string OutEdgeTraversal(params string[] edgeLabels)
             => $"outE({GetEdgeLabels(edgeLabels)})";
-        private static string InEdgeTraversal(params string[] edgeLabels)
-            => $"outE({GetEdgeLabels(edgeLabels)})";
         
+        private static string InEdgeTraversal(params string[] edgeLabels)
+            => $"inE({GetEdgeLabels(edgeLabels)})";
 
         private static string GetEdgeLabels(params string[] edgeLabels)
             => edgeLabels.Select(edgeLabel => $"'{GetEdgeLabel(edgeLabel)}'").JoinWith(',');

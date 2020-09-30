@@ -46,8 +46,8 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                 .WithValue(value));
             
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{value}').as('A')" +
-                                   $".repeat(bothE('{GremlinName(relationship)}').inV().simplePath()).emit(loops().is(gte(1)))" +
-                                   $".bothE('{GremlinName(relationship)}').bothV().where(eq('A')).path()" +
+                                   $".repeat(outE('{GremlinName(relationship)}').inV().simplePath()).emit(loops().is(gte(1)))" +
+                                   $".outE('{GremlinName(relationship)}').inV().where(eq('A')).path()" +
                                    ".dedup().by(unfold().order().by(id).dedup().fold())";
 
             Dictionary<string, object>[] queryResponse = new Dictionary<string, object>[0];
