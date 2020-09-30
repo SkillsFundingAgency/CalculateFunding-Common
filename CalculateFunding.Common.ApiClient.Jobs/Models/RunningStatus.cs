@@ -10,5 +10,6 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         QueuedWithService, // Sent to the microservice to action
         InProgress, // Job is running
         Completed, // Job has completed
+        Completing // Job is completing pre-completion jobs before being completed
     }
 }
