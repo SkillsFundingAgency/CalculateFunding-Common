@@ -36,8 +36,16 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> UpsertCalculationDataFieldRelationship(string calculationId, string fieldId);
+        Task<HttpStatusCode> UpsertFundingLines(FundingLine[] fundingLines);
+        Task<HttpStatusCode> DeleteFundingLine(string fieldId);
+        Task<HttpStatusCode> UpsertFundingLineCalculationRelationship(string fundingLineId, string calculationId);
+        Task<HttpStatusCode> UpsertCalculationFundingLineRelationship(string calculationId, string fundingLineId);
+        Task<HttpStatusCode> DeleteFundingLineCalculationRelationship(string fundingLineId, string calculationId);
+        Task<HttpStatusCode> DeleteCalculationFundingLineRelationship(string calculationId, string fundingLineId);
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId);
         Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntitiesRelatedToSpecification(string specificationId);
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculation(string calculationId);
+        Task<ApiResponse<IEnumerable<Entity<DataField>>>> GetAllEntitiesRelatedToDataset(string datasetFieldId);
+        Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLine(string fundingLineId);
     }
 }
