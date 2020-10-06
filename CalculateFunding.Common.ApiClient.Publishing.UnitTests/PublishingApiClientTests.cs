@@ -364,7 +364,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 ProviderId = NewRandomString(),
                 CustomProfileName = NewRandomString(),
                 FundingPeriodId = NewRandomString(),
-                FundingStreamId = NewRandomString()
+                FundingStreamId = NewRandomString(),
+                FundingLineCode = NewRandomString()
             };
             
             ValidatedApiResponse<HttpStatusCode> response = await _client.ApplyCustomProfilePattern(request);
