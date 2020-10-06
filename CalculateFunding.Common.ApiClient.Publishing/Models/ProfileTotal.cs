@@ -7,13 +7,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
     {
         [JsonProperty("year")]
         public int Year { get; set; }
-        
+
         [JsonProperty("typeValue")]
         public string TypeValue { get; set; }
-        
+
         [JsonProperty("occurrence")]
         public int Occurrence { get; set; }
-        
+
         [JsonProperty("value")]
         public decimal Value { get; set; }
 
@@ -31,5 +31,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("actualDate")]
         public DateTimeOffset? ActualDate { get; set; }
+
+        [JsonProperty("distributionPeriodId")]
+        public string DistributionPeriodId { get; set; }
     }
 }
