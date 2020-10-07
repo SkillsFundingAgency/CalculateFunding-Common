@@ -169,54 +169,6 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await PostAsync<FundingDate, FundingDateUpdateViewModel>($"fundingdates/{fundingStreamId}/{fundingPeriodId}/{fundingLineId}", configuration);
         }
 
-        public async Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request)
-        {
-            Guard.ArgumentNotNull(request, nameof(request));
-
-            return await ValidatedPostAsync("funding-structures/lastModified", request);
-        }
-
-        public async Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
-            string fundingPeriodId,
-            string specificationId,
-            string etag = null)
-        {
-            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            return await GetAsync<FundingStructure>(
-                $"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
-                customHeaders: EtagHeader(etag));
-        }
-        
-        public async Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
-            string fundingPeriodId,
-            string specificationId,
-            string providerId = null,
-            string etag = null)
-        {
-            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            string url = $"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}";
-
-            url = providerId.IsNullOrEmpty() ? url : $"{url}&providerId={providerId}";
-            
-            return await GetAsync<FundingStructure>(
-                url,
-                customHeaders: EtagHeader(etag));
-        }
-
-        private string[] EtagHeader(string etag)
-            => etag.IsNullOrEmpty()
-                ? null
-                : new[]
-                {
-                    IfNoneMatch, etag
-                };
-
         public async Task<ApiResponse<TemplateMetadataDistinctContents>> GetDistinctTemplateMetadataContents(string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));

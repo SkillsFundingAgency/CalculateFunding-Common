@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace CalculateFunding.Common.ApiClient.Policies
+namespace CalculateFunding.Common.ApiClient.Results.Models
 {
     public class FundingStructure
     {

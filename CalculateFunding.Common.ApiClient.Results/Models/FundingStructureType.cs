@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CalculateFunding.Common.ApiClient.Policies
+namespace CalculateFunding.Common.ApiClient.Results.Models
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum FundingStructureType
