@@ -244,11 +244,18 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<ProfileVariationPointer>>($"{UrlRoot}/{specificationId}/profilevariationpointers");
         }
 
-        public async Task<ApiResponse<IEnumerable<SpecificationReport>>> GetReportMetadataForSpecifications(string specificationId)
+        public async Task<ApiResponse<IEnumerable<SpecificationReport>>> GetReportMetadataForSpecifications(string specificationId, string targetFundingPeriodId = null)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<IEnumerable<SpecificationReport>>($"{UrlRoot}/{specificationId}/report-metadata");
+            if (!string.IsNullOrWhiteSpace(targetFundingPeriodId))
+            {
+                return await GetAsync<IEnumerable<SpecificationReport>>($"{UrlRoot}/{specificationId}/report-metadata/{targetFundingPeriodId}");
+            }
+            else
+            {
+                return await GetAsync<IEnumerable<SpecificationReport>>($"{UrlRoot}/{specificationId}/report-metadata");
+            }
         }
 
         public async Task<ApiResponse<SpecificationsDownloadModel>> DownloadSpecificationReport(string reportId)

@@ -487,19 +487,30 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         [TestMethod]
-        public async Task GetReportMetadataForSpecifications()
+        [DataRow("fp-1")]
+        [DataRow(null)]
+        public async Task GetReportMetadataForSpecifications(string targetFundingPeriod)
         {
             string specificationId = NewRandomString();
 
             IEnumerable<SpecificationReport> reportMetadata = new List<SpecificationReport> { };
 
-            string expectedUri = $"{specificationId}/report-metadata";
+            string expectedUri;
+
+            if (!string.IsNullOrWhiteSpace(targetFundingPeriod))
+            {
+                expectedUri = $"{specificationId}/report-metadata/{targetFundingPeriod}";
+            }
+            else
+            {
+                expectedUri = $"{specificationId}/report-metadata";
+            }
             
             GivenTheResponse(expectedUri, reportMetadata, HttpMethod.Get);
 
             await AssertGetRequest(expectedUri,
                 reportMetadata,
-                () => _client.GetReportMetadataForSpecifications(specificationId));
+                () => _client.GetReportMetadataForSpecifications(specificationId, targetFundingPeriod));
         }
 
         [TestMethod]
