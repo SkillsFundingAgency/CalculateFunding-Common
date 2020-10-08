@@ -191,11 +191,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync(url, profilePatternKey);
         }
 
-        public async Task<ValidatedApiResponse<HttpStatusCode>> ApplyCustomProfilePattern(ApplyCustomProfileRequest request)
+        public async Task<HttpStatusCode> ApplyCustomProfilePattern(ApplyCustomProfileRequest request)
         {
             Guard.ArgumentNotNull(request, nameof(request));
 
-            return await ValidatedPostAsync<HttpStatusCode, ApplyCustomProfileRequest>($"publishedproviders/customprofiles", request);
+            return await PostAsync($"publishedproviders/customprofiles", request);
         }
 
         public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishProvidersRequest publishedProviderIds,
