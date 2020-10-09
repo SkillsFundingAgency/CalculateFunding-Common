@@ -13,6 +13,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("fundingStreamId")]
         public string FundingStreamId { get; set; }
 
+        [JsonProperty("roundingStrategy")]
+        public RoundingStrategy RoundingStrategy { get; set; }
+
         [JsonProperty("fundingLineId")]
         public string FundingLineId { get; set; }
         
