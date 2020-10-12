@@ -11,6 +11,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("providerVersionId")]
         public string ProviderVersionId { get; set; }
 
+        [JsonProperty("providerSnapshotId")]
+        public int? ProviderSnapshotId { get; set; }
+
         [JsonProperty("description")]
         public string Description { get; set; }
 
