@@ -83,5 +83,27 @@ namespace CalculateFunding.Common.ApiClient.ProfilingApiClient.UnitTests
                 Enumerable.Empty<FundingStreamPeriodProfilePattern>(),
                 () => _client.GetProfilePatternsForFundingStreamAndFundingPeriod(fundingStreamId, fundingPeriodId));
         }
+        
+        [TestMethod]
+        public async Task ReProfile()
+        {
+            await AssertPostRequest("reprofile",
+                new ReProfileRequest(),
+                new ReProfileResponse(), 
+                _client.ReProfile);
+        }
+
+        [TestMethod]
+        public async Task GetReProfilingStrategies()
+        {
+            await AssertGetRequest("reprofilingstrategies",
+                new[]
+                {
+                    new ReProfilingStrategyResponse(),
+                    new ReProfilingStrategyResponse(),
+                    new ReProfilingStrategyResponse()
+                }.AsEnumerable(),
+                _client.GetAllReProfilingStrategies);
+        }
     }
 }

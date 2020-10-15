@@ -65,5 +65,17 @@ namespace CalculateFunding.Common.ApiClient.Profiling
 
             return await GetAsync<IEnumerable<FundingStreamPeriodProfilePattern>>($"profiling/patterns/fundingStream/{fundingStreamId}/fundingPeriod/{fundingPeriodId}");
         }
+
+        public async Task<ApiResponse<ReProfileResponse>> ReProfile(ReProfileRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<ReProfileResponse, ReProfileRequest>("reprofile", request);
+        }
+        
+        public async Task<ApiResponse<IEnumerable<ReProfilingStrategyResponse>>> GetAllReProfilingStrategies()
+        {
+            return await GetAsync<IEnumerable<ReProfilingStrategyResponse>>("reprofilingstrategies");
+        }
     }
 }

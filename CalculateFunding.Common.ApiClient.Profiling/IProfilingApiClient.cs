@@ -16,5 +16,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling
         Task<ApiResponse<IEnumerable<FundingStreamPeriodProfilePattern>>> GetProfilePatternsForFundingStreamAndFundingPeriod(string fundingStreamId,
             string fundingPeriodId);
         Task<(bool Ok, string Message)> IsHealthOk();
+        Task<ApiResponse<ReProfileResponse>> ReProfile(ReProfileRequest request);
+        Task<ApiResponse<IEnumerable<ReProfilingStrategyResponse>>> GetAllReProfilingStrategies();
     }
 }
