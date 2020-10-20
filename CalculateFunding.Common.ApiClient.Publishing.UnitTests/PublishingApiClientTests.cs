@@ -247,6 +247,25 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GetPrereqRefreshFundingForSpecification()
+        {
+            string specificationId = NewRandomString();
+
+            IEnumerable<string> expectedErrors = new List<string> { "Error1" };
+            string expectedUri = $"specifications/{specificationId}/refresh-prereq-errors";
+
+            GivenTheResponse(expectedUri, expectedErrors, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<string>> response = await _client.GetRefreshFundingPrereqErrorsForSpecification(specificationId);
+
+            response?.Content
+                .Should()
+                .BeEquivalentTo(expectedErrors);
+
+            AndTheUrisShouldHaveBeenRequested(expectedUri);
+        }
+
+        [TestMethod]
         public async Task RefreshFundingForSpecification()
         {
             string id = NewRandomString();

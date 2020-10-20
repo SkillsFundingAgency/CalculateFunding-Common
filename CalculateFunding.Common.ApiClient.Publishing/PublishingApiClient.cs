@@ -129,6 +129,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<IEnumerable<string>, PublishedProviderIdSearchModel>(url, searchModel);
         }
 
+        public async Task<ApiResponse<IEnumerable<string>>> GetRefreshFundingPrereqErrorsForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<string>>($"specifications/{specificationId}/refresh-prereq-errors");
+        }
+
         public async Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));

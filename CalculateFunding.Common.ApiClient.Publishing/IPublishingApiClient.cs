@@ -17,6 +17,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<SpecificationCheckChooseForFundingResult>> CanChooseForFunding(string specificationId);
 
+        Task<ApiResponse<IEnumerable<string>>> GetRefreshFundingPrereqErrorsForSpecification(string specificationId);
+
         Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId);
 
         Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId);
