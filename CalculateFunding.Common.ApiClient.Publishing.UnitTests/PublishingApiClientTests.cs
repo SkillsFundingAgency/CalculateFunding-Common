@@ -246,16 +246,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
-        public async Task GetPrereqRefreshFundingForSpecification()
+        public async Task ValidateSpecificationForRefresh_ReturnsOK()
         {
             string specificationId = NewRandomString();
 
             IEnumerable<string> expectedErrors = new List<string> { "Error1" };
-            string expectedUri = $"specifications/{specificationId}/refresh-prereq-errors";
+            string expectedUri = $"specifications/{specificationId}/validate-specification-for-refresh";
 
-            GivenTheResponse(expectedUri, expectedErrors, HttpMethod.Get);
+            GivenTheResponse(expectedUri, expectedErrors, HttpMethod.Post);
 
-            ApiResponse<IEnumerable<string>> response = await _client.GetRefreshFundingPrereqErrorsForSpecification(specificationId);
+            ValidatedApiResponse<IEnumerable<string>> response = await _client.ValidateSpecificationForRefresh(specificationId);
 
             response?.Content
                 .Should()

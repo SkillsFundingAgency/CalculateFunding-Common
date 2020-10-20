@@ -129,11 +129,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<IEnumerable<string>, PublishedProviderIdSearchModel>(url, searchModel);
         }
 
-        public async Task<ApiResponse<IEnumerable<string>>> GetRefreshFundingPrereqErrorsForSpecification(string specificationId)
+        public async Task<ValidatedApiResponse<IEnumerable<string>>> ValidateSpecificationForRefresh(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<IEnumerable<string>>($"specifications/{specificationId}/refresh-prereq-errors");
+            return await ValidatedPostAsync<IEnumerable<string>, string> (
+                $"specifications/{specificationId}/validate-specification-for-refresh", 
+                specificationId);
         }
 
         public async Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId)
