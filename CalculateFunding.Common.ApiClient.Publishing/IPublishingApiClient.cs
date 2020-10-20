@@ -87,5 +87,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
            string publishedProviderVersionId, string etag = null);
+
+        Task<ApiResponse<IEnumerable<ProfileTotal>>> PreviewProfileChange(ProfilePreviewRequest request);
     }
 }

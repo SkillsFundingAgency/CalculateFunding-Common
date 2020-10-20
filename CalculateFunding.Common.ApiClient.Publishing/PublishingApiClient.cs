@@ -299,6 +299,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                 customHeaders: EtagHeader(etag));
         }
 
+        public async Task<ApiResponse<IEnumerable<ProfileTotal>>> PreviewProfileChange(ProfilePreviewRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<IEnumerable<ProfileTotal>, ProfilePreviewRequest>("publishedproviderfundinglinepreview", request);
+        }
+
         private string[] EtagHeader(string etag)
            => etag.IsNullOrEmpty()
                ? null

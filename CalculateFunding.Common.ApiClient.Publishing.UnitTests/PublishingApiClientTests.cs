@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
@@ -465,7 +464,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string fundingStreamId = NewRandomString();
             string fundingLineCode = NewRandomString();
 
-            bool expectedResponse = false;
+            bool expectedResponse = NewRandomBoolean();
 
             GivenThePrimitiveResponse(
                 $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/change-exists",
@@ -528,5 +527,28 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 () => _client.GetPublishedProviderFundingStructure(
                     publishedProviderVersionId));
         }
+        
+        [TestMethod]
+        public async Task PreviewProfileChange()
+        {
+            ProfilePreviewRequest publishProvidersRequest = new ProfilePreviewRequest();
+
+            await AssertPostRequest("publishedproviderfundinglinepreview",
+                publishProvidersRequest,
+               new []
+               {
+                   NewRandomProfileTotal(),
+                   NewRandomProfileTotal(),
+                   NewRandomProfileTotal(),
+                   NewRandomProfileTotal(),
+                   NewRandomProfileTotal()
+               }.AsEnumerable(), 
+                () =>_client.PreviewProfileChange(publishProvidersRequest));    
+        }
+        
+        private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
+        {
+            Value = new RandomNumberBetween(999, int.MaxValue)
+        };
     }
 }
