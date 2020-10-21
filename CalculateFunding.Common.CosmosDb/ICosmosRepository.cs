@@ -24,6 +24,15 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<DocumentEntity<T>> ReadDocumentByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
 
+        /// <summary>
+        /// Read item by ID for partition and don't throw if not found
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="id">Cosmos item ID</param>
+        /// <param name="partitionKey">Partition key</param>
+        /// <returns>Document or default(DocumentEntity<T>) if not found</returns>
+        Task<DocumentEntity<T>> TryReadDocumentByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
+
         Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable;
 
         Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;

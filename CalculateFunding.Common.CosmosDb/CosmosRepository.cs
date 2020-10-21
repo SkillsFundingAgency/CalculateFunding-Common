@@ -349,12 +349,11 @@ namespace CalculateFunding.Common.CosmosDb
 
             try
             {
-                ItemResponse<T> response = await _container.ReadItemAsync<T>(id: id, partitionKey: new PartitionKey(partitionKey)); ;
-                return response.Resource;
+                return await ReadByIdPartitionedAsync<T>(id, partitionKey);
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { }
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -366,6 +365,29 @@ namespace CalculateFunding.Common.CosmosDb
             ItemResponse<DocumentEntity<T>> response = await _container.ReadItemAsync<DocumentEntity<T>>(id: id, partitionKey: new PartitionKey(partitionKey));
 
             return response.Resource;
+        }
+
+        /// <summary>
+        /// Read item by ID for partition and don't throw if not found
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="id">Cosmos item ID</param>
+        /// <param name="partitionKey">Partition key</param>
+        /// <returns>Document or default(DocumentEntity<T>) if not found</returns>
+        // As per https://github.com/Azure/azure-cosmos-dotnet-v3/issues/692
+        public async Task<DocumentEntity<T>> TryReadDocumentByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
+
+            try
+            {
+                return await ReadDocumentByIdPartitionedAsync<T>(id, partitionKey);
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { }
+            {
+                return default;
+            }
         }
 
         /// <summary>
