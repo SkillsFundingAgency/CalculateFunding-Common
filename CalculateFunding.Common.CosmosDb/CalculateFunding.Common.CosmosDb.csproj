@@ -7,7 +7,7 @@
     <Product>Calculate Funding Service</Product>
     <Description>Azure CosmosDB Client</Description>
     <Version>5.2.0</Version>
-    <PackageVersion>5.1.0</PackageVersion>   
+    <PackageVersion>5.2.0</PackageVersion>   
   </PropertyGroup>
 
   <ItemGroup>
