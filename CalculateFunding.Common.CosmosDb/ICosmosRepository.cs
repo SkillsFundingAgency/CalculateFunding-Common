@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
@@ -28,6 +27,15 @@ namespace CalculateFunding.Common.CosmosDb
         Task<T> ReadByIdAsync<T>(string id) where T : IIdentifiable;
 
         Task<T> ReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
+
+        /// <summary>
+        /// Read item by ID for partition and don't throw if not found
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="id">Cosmos item ID</param>
+        /// <param name="partitionKey">Partition key</param>
+        /// <returns>Document or default(T) if not found</returns>
+        Task<T> TryReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable;
 
         /// <summary>
         /// Query cosmos using IQueryable on a given entity.

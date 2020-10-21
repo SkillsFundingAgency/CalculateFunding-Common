@@ -334,6 +334,30 @@ namespace CalculateFunding.Common.CosmosDb
             return response.Resource;
         }
 
+        /// <summary>
+        /// Read item by ID for partition and don't throw if not found
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="id">Cosmos item ID</param>
+        /// <param name="partitionKey">Partition key</param>
+        /// <returns>Document or default(T) if not found</returns>
+        // As per https://github.com/Azure/azure-cosmos-dotnet-v3/issues/692
+        public async Task<T> TryReadByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+            Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
+
+            try
+            {
+                ItemResponse<T> response = await _container.ReadItemAsync<T>(id: id, partitionKey: new PartitionKey(partitionKey)); ;
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { }
+            {
+                return default(T);
+            }
+        }
+
         public async Task<DocumentEntity<T>> ReadDocumentByIdPartitionedAsync<T>(string id, string partitionKey) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
@@ -396,11 +420,11 @@ namespace CalculateFunding.Common.CosmosDb
 
             return results.Select(c => c.Content);
         }
-        
+
         public ICosmosDbFeedIterator<T> GetFeedIterator<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(cosmosDbQuery, nameof(cosmosDbQuery));
-            
+
             QueryRequestOptions queryOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
             return new CosmosDbFeedIterator<T>(_container.GetItemQueryIterator<DocumentEntity<T>>(
