@@ -315,5 +315,23 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                {
                     IfNoneMatch, etag
                };
+
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForRelease(PublishedProviderIdsRequest providerIds, string specificationId)
+        {
+            Guard.ArgumentNotNull(providerIds, nameof(providerIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/generate-csv-for-release",
+                providerIds);
+        }
+
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForApproval(PublishedProviderIdsRequest providerIds, string specificationId)
+        {
+            Guard.ArgumentNotNull(providerIds, nameof(providerIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/generate-csv-for-approval",
+                providerIds);
+        }
     }
 }

@@ -89,5 +89,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
            string publishedProviderVersionId, string etag = null);
 
         Task<ApiResponse<IEnumerable<ProfileTotal>>> PreviewProfileChange(ProfilePreviewRequest request);
+
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForRelease(
+            PublishedProviderIdsRequest providerIds,
+            string specificationId);
+
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForApproval(
+            PublishedProviderIdsRequest providerIds,
+            string specificationId);
     }
 }
