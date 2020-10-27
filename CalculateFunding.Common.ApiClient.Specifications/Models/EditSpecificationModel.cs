@@ -8,6 +8,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("fundingPeriodId")]
         public string FundingPeriodId { get; set; }
 
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
+
         [JsonProperty("providerVersionId")]
         public string ProviderVersionId { get; set; }
 
