@@ -112,6 +112,9 @@ namespace CalculateFunding.Common.Identity.Authorization
                 case SpecificationActionTypes.CanApproveCalculations:
                     return actualPermissions.CanApproveCalculations;
 
+                case SpecificationActionTypes.CanApproveAllCalculations:
+                    return actualPermissions.CanApproveAllCalculations;
+
                 default:
                     return false;
             }

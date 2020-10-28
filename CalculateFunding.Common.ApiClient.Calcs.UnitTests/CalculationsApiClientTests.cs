@@ -408,5 +408,25 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Should()
                 .BeEquivalentTo(expectedJob);
         }
+
+        [TestMethod]
+        public async Task QueueApproveAllSpecificationCalculations()
+        {
+            string specificationId = NewRandomString();
+
+            Job expectedJob = new Job
+            {
+                Id = NewRandomString()
+            };
+
+            GivenTheResponse($"specifications/{specificationId}/approve-all-calculations", expectedJob, HttpMethod.Post);
+
+            ApiResponse<Job> apiResponse = await _client.QueueApproveAllSpecificationCalculations(specificationId);
+
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedJob);
+        }
     }
 }

@@ -58,6 +58,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             int? page = null);
 
         Task<ApiResponse<IEnumerable<CalculationFundingLine>>> GetRootFundingLinesForCalculation(string calculationId);
+
         Task<ApiResponse<Job>> QueueCodeContextUpdate(string specificationId);
+
+        Task<ApiResponse<Job>> QueueApproveAllSpecificationCalculations(string specificationId);
     }
 }

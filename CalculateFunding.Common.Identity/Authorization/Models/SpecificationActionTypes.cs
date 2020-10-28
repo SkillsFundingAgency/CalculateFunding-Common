@@ -19,5 +19,6 @@
         CanDeleteQaTests,
         CanApproveCalculations,
         CanApproveAnyCalculations,
+        CanApproveAllCalculations
     }
 }

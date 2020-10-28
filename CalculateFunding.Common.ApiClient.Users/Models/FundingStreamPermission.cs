@@ -87,5 +87,8 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
 
         [JsonProperty("canApproveAnyCalculations")]
         public bool CanApproveAnyCalculations { get; set; }
+
+        [JsonProperty("canApproveAllCalculations")]
+        public bool CanApproveAllCalculations { get; set; }
     }
 }

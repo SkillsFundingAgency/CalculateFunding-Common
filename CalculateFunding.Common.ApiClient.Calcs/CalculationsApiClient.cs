@@ -278,5 +278,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await PostAsync<Job>($"{UrlRoot}/specifications/{specificationId}/code-context/update");
         }
+
+        public async Task<ApiResponse<Job>> QueueApproveAllSpecificationCalculations(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<Job>($"{UrlRoot}/specifications/{specificationId}/approve-all-calculations");
+        }
     }
 }
