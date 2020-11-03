@@ -16,7 +16,17 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<ThroughputResponse> SetThroughput(int requestUnits);
 
+        /// <summary>
+        /// Gets the provisioned throughput for a resource in measurement of request units per second in the Azure Cosmos service.
+        /// </summary>
+        /// <returns></returns>
         Task<int?> GetThroughput();
+
+        /// <summary>
+        /// Gets minimum throughput in measurement of request units per second in the Azure Cosmos service.
+        /// </summary>
+        /// <returns></returns>
+        Task<int?> GetMinimumThroughput();
 
         Task<IEnumerable<DocumentEntity<T>>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable;
 

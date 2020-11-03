@@ -273,6 +273,13 @@ namespace CalculateFunding.Common.CosmosDb
             return await _container.ReadThroughputAsync();
         }
 
+        public async Task<int?> GetMinimumThroughput()
+        {
+            ThroughputResponse response = await _container.ReadThroughputAsync(new RequestOptions());
+
+            return response?.MinThroughput;
+        }
+
         public async Task<IEnumerable<DocumentEntity<T>>> Read<T>(int itemsPerPage = 1000) where T : IIdentifiable
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
