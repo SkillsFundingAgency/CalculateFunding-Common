@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
+using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Models;
 using CalculateFunding.Common.Utility;
 using Microsoft.Azure.Cosmos;
@@ -18,6 +19,7 @@ namespace CalculateFunding.Common.CosmosDb
     public class CosmosRepository : ICosmosRepository, IDisposable
     {
         private const int _defaultThroughput = 400;
+        private readonly ItemRequestOptions _disableContentResponseOnWriteRequestOptions = new ItemRequestOptions() { EnableContentResponseOnWrite = false };
 
         private readonly string _containerName;
         private readonly string _partitionKey;
@@ -26,7 +28,9 @@ namespace CalculateFunding.Common.CosmosDb
         private Database _database;
         private Container _container;
 
-        public CosmosRepository(CosmosDbSettings settings)
+
+
+        public CosmosRepository(CosmosDbSettings settings, CosmosClientOptions cosmosClientOptions = null)
         {
             Guard.ArgumentNotNull(settings, nameof(settings));
             Guard.IsNullOrWhiteSpace(settings.ContainerName, nameof(settings.ContainerName));
@@ -36,7 +40,8 @@ namespace CalculateFunding.Common.CosmosDb
             _containerName = settings.ContainerName;
             _partitionKey = settings.PartitionKey;
             _databaseName = settings.DatabaseName;
-            _cosmosClient = CosmosDbConnectionString.Parse(settings.ConnectionString);
+
+            _cosmosClient = CosmosDbConnectionString.Parse(settings.ConnectionString, cosmosClientOptions);
 
             _database = _cosmosClient.GetDatabase(_databaseName);
 
@@ -48,26 +53,22 @@ namespace CalculateFunding.Common.CosmosDb
 
         private QueryRequestOptions GetQueryRequestOptions(int itemsPerPage)
         {
-            QueryRequestOptions queryRequestOptions = new QueryRequestOptions
+            return new QueryRequestOptions
             {
                 MaxItemCount = itemsPerPage
             };
-
-            return queryRequestOptions;
         }
 
         private QueryRequestOptions GetDefaultQueryRequestOptions(int? itemsPerPage = null,
             int? maxBufferedItemCount = null,
             int? maxConcurrency = null)
         {
-            QueryRequestOptions queryRequestOptions = new QueryRequestOptions
+            return new QueryRequestOptions
             {
                 MaxItemCount = itemsPerPage == -1 ? 1000 : itemsPerPage,
                 MaxBufferedItemCount = maxBufferedItemCount ?? 100,
                 MaxConcurrency = maxConcurrency ?? 50
             };
-
-            return queryRequestOptions;
         }
 
         private QueryRequestOptions GetDefaultQueryRequestOptions(string partitionKey)
@@ -626,18 +627,18 @@ namespace CalculateFunding.Common.CosmosDb
             };
         }
 
-        private async Task<ItemResponse<DocumentEntity<T>>> CreateDocumentInternalAsync<T>(T entity) where T : IIdentifiable
+        private async Task<ItemResponse<DocumentEntity<T>>> CreateDocumentInternalAsync<T>(T entity, ItemRequestOptions requestOptions = null) where T : IIdentifiable
         {
             DocumentEntity<T> doc = CreateDocumentEntity(entity);
 
-            return await _container.CreateItemAsync(doc);
+            return await _container.CreateItemAsync(doc, requestOptions: requestOptions);
         }
 
         public async Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entity, nameof(entity));
 
-            ItemResponse<DocumentEntity<T>> response = await CreateDocumentInternalAsync(entity);
+            ItemResponse<DocumentEntity<T>> response = await CreateDocumentInternalAsync(entity, _disableContentResponseOnWriteRequestOptions);
 
             return response.StatusCode;
         }
@@ -696,7 +697,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             doc.Content = entity;
 
-            ItemResponse<DocumentEntity<T>> response = await _container.UpsertItemAsync(doc);
+            ItemResponse<DocumentEntity<T>> response = await _container.UpsertItemAsync(doc, requestOptions: _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 
@@ -707,7 +708,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             DocumentEntity<T> doc = CreateDocumentEntity(entity.Value);
 
-            ItemResponse<DocumentEntity<T>> response = await _container.CreateItemAsync(item: doc, partitionKey: new PartitionKey(entity.Key));
+            ItemResponse<DocumentEntity<T>> response = await _container.CreateItemAsync(item: doc, partitionKey: new PartitionKey(entity.Key), _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 
@@ -724,10 +725,28 @@ namespace CalculateFunding.Common.CosmosDb
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
 
-            await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
+            List<Task> allTasks = new List<Task>(entities.Count);
+            SemaphoreSlim throttler = new SemaphoreSlim(degreeOfParallelism);
+
+            foreach (T entity in entities)
             {
-                Task.WaitAll(CreateAsync(item));
-            }));
+                await throttler.WaitAsync();
+
+                allTasks.Add(
+                    Task.Run(async () =>
+                   {
+                       try
+                       {
+                           await CreateAsync(entity);
+                       }
+                       finally
+                       {
+                           throttler.Release();
+                       }
+                   }));
+            }
+
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task BulkCreateAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5) where T : IIdentifiable
@@ -754,15 +773,7 @@ namespace CalculateFunding.Common.CosmosDb
                     }));
             }
 
-            await Task.WhenAll(allTasks.ToArray());
-
-            foreach (Task task in allTasks)
-            {
-                if (task.Exception != null)
-                {
-                    throw task.Exception;
-                }
-            }
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable
@@ -807,15 +818,7 @@ namespace CalculateFunding.Common.CosmosDb
                         }
                     }));
             }
-            await Task.WhenAll(allTasks.ToArray());
-
-            foreach (Task task in allTasks)
-            {
-                if (task.Exception != null)
-                {
-                    throw task.Exception;
-                }
-            }
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference
@@ -838,7 +841,7 @@ namespace CalculateFunding.Common.CosmosDb
                 doc.Deleted = false;
             }
 
-            ItemResponse<DocumentEntity<T>> response = await _container.ReplaceItemAsync(item: doc, id: entity.Id);
+            ItemResponse<DocumentEntity<T>> response = await _container.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 

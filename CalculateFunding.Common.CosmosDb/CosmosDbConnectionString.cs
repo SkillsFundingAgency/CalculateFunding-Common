@@ -9,21 +9,32 @@ namespace CalculateFunding.Common.CosmosDb
     public static class CosmosDbConnectionString
     {
 
-        private static readonly CosmosClientOptions ConnectionPolicy = new CosmosClientOptions
+        private static readonly CosmosClientOptions DefaultCosmosClientOptions = new CosmosClientOptions
         {
             ConnectionMode = ConnectionMode.Direct,
             RequestTimeout = new TimeSpan(1, 0, 0),
             MaxRequestsPerTcpConnection = 300,
         };
 
-        public static CosmosClient Parse(string connectionString)
+        /// <summary>
+        /// Parse cosmos client connection string and return a cosmos client 
+        /// </summary>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="cosmosClientOptions">Cosmos client options (optional). Default options will be used if a null value provided</param>
+        /// <returns>Cosmos Client</returns>
+        public static CosmosClient Parse(string connectionString, CosmosClientOptions cosmosClientOptions = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new ArgumentException("Connection string cannot be empty.");
             }
 
-            if (ParseImpl(connectionString, out var ret, err => throw new FormatException(err)))
+            if (cosmosClientOptions == null)
+            {
+                cosmosClientOptions = DefaultCosmosClientOptions;
+            }
+
+            if (ParseImpl(connectionString, cosmosClientOptions, out var ret, err => throw new FormatException(err)))
             {
                 return ret;
             }
@@ -31,7 +42,7 @@ namespace CalculateFunding.Common.CosmosDb
             throw new ArgumentException($"Connection string was not able to be parsed into a document client.");
         }
 
-        public static bool TryParse(string connectionString, out CosmosClient cosmosClient)
+        public static bool TryParse(string connectionString, out CosmosClient cosmosClient, CosmosClientOptions cosmosClientOptions = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -41,7 +52,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             try
             {
-                return ParseImpl(connectionString, out cosmosClient, err => { });
+                return ParseImpl(connectionString, cosmosClientOptions, out cosmosClient, err => { });
             }
             catch (Exception)
             {
@@ -54,7 +65,7 @@ namespace CalculateFunding.Common.CosmosDb
         private const string AccountKeyKey = "AccountKey";
         private static readonly HashSet<string> RequireSettings = new HashSet<string>(new[] { AccountEndpointKey, AccountKeyKey }, StringComparer.OrdinalIgnoreCase);
 
-        internal static bool ParseImpl(string connectionString, out CosmosClient cosmosClient, Action<string> error)
+        internal static bool ParseImpl(string connectionString, CosmosClientOptions cosmosClientOptions, out CosmosClient cosmosClient, Action<string> error)
         {
             IDictionary<string, string> settings = ParseStringIntoSettings(connectionString, error);
 
@@ -76,7 +87,7 @@ namespace CalculateFunding.Common.CosmosDb
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            cosmosClient = new CosmosClient(settings[AccountEndpointKey], settings[AccountKeyKey], ConnectionPolicy);
+            cosmosClient = new CosmosClient(settings[AccountEndpointKey], settings[AccountKeyKey], cosmosClientOptions);
             return true;
         }
 
