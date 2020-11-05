@@ -28,7 +28,26 @@ namespace CalculateFunding.Common.CosmosDb
         private Database _database;
         private Container _container;
 
+        // To be used for testing purposes
+        public CosmosRepository(CosmosDbSettings settings, CosmosClient cosmosClient = null)
+        {
+            Guard.ArgumentNotNull(settings, nameof(settings));
+            Guard.IsNullOrWhiteSpace(settings.ContainerName, nameof(settings.ContainerName));
+            Guard.IsNullOrWhiteSpace(settings.DatabaseName, nameof(settings.DatabaseName));
 
+            _containerName = settings.ContainerName;
+            _partitionKey = settings.PartitionKey;
+            _databaseName = settings.DatabaseName;
+
+            _cosmosClient = cosmosClient;
+
+            _database = _cosmosClient.GetDatabase(_databaseName);
+
+            if (_database != null)
+            {
+                _container = _database.GetContainer(_containerName);
+            }
+        }
 
         public CosmosRepository(CosmosDbSettings settings, CosmosClientOptions cosmosClientOptions = null)
         {
