@@ -6,8 +6,8 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Azure CosmosDB Client</Description>
-    <Version>5.5.0</Version>
-    <PackageVersion>5.5.0</PackageVersion>   
+    <Version>5.6.0</Version>
+    <PackageVersion>5.6.0</PackageVersion>   
   </PropertyGroup>
 
   <ItemGroup>

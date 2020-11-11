@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Helpers;
@@ -24,30 +25,11 @@ namespace CalculateFunding.Common.CosmosDb
         private readonly string _containerName;
         private readonly string _partitionKey;
         private readonly string _databaseName;
-        private readonly CosmosClient _cosmosClient;
+        private readonly string _connectionString;
+        private readonly CosmosClientOptions _cosmosClientOptions;
+        private CosmosClient _cosmosClient;
         private Database _database;
         private Container _container;
-
-        // To be used for testing purposes
-        public CosmosRepository(CosmosDbSettings settings, CosmosClient cosmosClient = null)
-        {
-            Guard.ArgumentNotNull(settings, nameof(settings));
-            Guard.IsNullOrWhiteSpace(settings.ContainerName, nameof(settings.ContainerName));
-            Guard.IsNullOrWhiteSpace(settings.DatabaseName, nameof(settings.DatabaseName));
-
-            _containerName = settings.ContainerName;
-            _partitionKey = settings.PartitionKey;
-            _databaseName = settings.DatabaseName;
-
-            _cosmosClient = cosmosClient;
-
-            _database = _cosmosClient.GetDatabase(_databaseName);
-
-            if (_database != null)
-            {
-                _container = _database.GetContainer(_containerName);
-            }
-        }
 
         public CosmosRepository(CosmosDbSettings settings, CosmosClientOptions cosmosClientOptions = null)
         {
@@ -59,16 +41,15 @@ namespace CalculateFunding.Common.CosmosDb
             _containerName = settings.ContainerName;
             _partitionKey = settings.PartitionKey;
             _databaseName = settings.DatabaseName;
-
-            _cosmosClient = CosmosDbConnectionString.Parse(settings.ConnectionString, cosmosClientOptions);
-
-            _database = _cosmosClient.GetDatabase(_databaseName);
-
-            if (_database != null)
-            {
-                _container = _database.GetContainer(_containerName);
-            }
+            _connectionString = settings.ConnectionString;
+            _cosmosClientOptions = cosmosClientOptions;
         }
+
+        private CosmosClient RepositoryClient =>_cosmosClient ??= GetClient(_connectionString, _cosmosClientOptions);
+
+        private Database RepositoryDatabase => _database ??= RepositoryClient.GetDatabase(_databaseName);
+
+        private Container RepositoryContainer => _container ??= RepositoryDatabase?.GetContainer(_containerName);
 
         private QueryRequestOptions GetQueryRequestOptions(int itemsPerPage)
         {
@@ -92,17 +73,17 @@ namespace CalculateFunding.Common.CosmosDb
 
         private QueryRequestOptions GetDefaultQueryRequestOptions(string partitionKey)
         {
-            return new QueryRequestOptions
+            return !string.IsNullOrWhiteSpace(partitionKey) ? 
+            new QueryRequestOptions
             {
-                PartitionKey = !string.IsNullOrWhiteSpace(partitionKey)
-                    ? new PartitionKey(partitionKey)
-                    : PartitionKey.None
-            };
+                PartitionKey = new PartitionKey(partitionKey)
+            }:
+            null;
         }
 
         private async Task<IEnumerable<T>> ResultsFromQueryAndOptions<T>(CosmosDbQuery cosmosDbQuery, QueryRequestOptions queryOptions, int? maxItemCount = null)
         {
-            FeedIterator<T> query = _container.GetItemQueryIterator<T>(
+            FeedIterator<T> query = RepositoryContainer.GetItemQueryIterator<T>(
                 queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
                 requestOptions: queryOptions);
 
@@ -111,7 +92,7 @@ namespace CalculateFunding.Common.CosmosDb
 
         private async Task<IEnumerable<T>> ResultsFromQueryAndOptions<T>(CosmosDbQuery cosmosDbQuery, Func<List<T>, Task> batchAction, QueryRequestOptions queryOptions)
         {
-            FeedIterator<T> query = _container.GetItemQueryIterator<T>(
+            FeedIterator<T> query = RepositoryContainer.GetItemQueryIterator<T>(
                 queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
                 requestOptions: queryOptions);
 
@@ -170,7 +151,7 @@ namespace CalculateFunding.Common.CosmosDb
             foreach (Document document in documents)
             {
                 dynamic json = document;
-                yield return JsonConvert.SerializeObject((object)document); // haven't tried this yet!
+                yield return JsonConvert.SerializeObject(document); // haven't tried this yet!
             }
         }
 
@@ -185,7 +166,7 @@ namespace CalculateFunding.Common.CosmosDb
             {
                 partitionKeyForCosmos = new PartitionKey(partitionKey);
             }
-            return await _container.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos);
+            return await RepositoryContainer.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos);
         }
 
         private async Task<ItemResponse<DocumentEntity<T>>> SoftDeleteAsync<T>(T entity, PartitionKey partitionKey) where T : IIdentifiable
@@ -196,7 +177,7 @@ namespace CalculateFunding.Common.CosmosDb
             item.DocumentType = GetDocumentType<T>();
 
 
-            return await _container.ReplaceItemAsync(item: item, id: entity.Id, partitionKey);
+            return await RepositoryContainer.ReplaceItemAsync(item: item, id: entity.Id, partitionKey);
         }
 
         private async Task<HttpStatusCode> DeleteAsync<T>(T entity, string partitionKey, bool hardDelete = false) where T : IIdentifiable
@@ -227,11 +208,16 @@ namespace CalculateFunding.Common.CosmosDb
             return typeof(T).Name;
         }
 
+        protected virtual CosmosClient GetClient(string connectionString, CosmosClientOptions cosmosClientOptions)
+        {
+            return CosmosDbConnectionString.Parse(connectionString, cosmosClientOptions);
+        }
+
         public (bool Ok, string Message) IsHealthOk()
         {
             try
             {
-                _cosmosClient.GetDatabase(_databaseName);
+                RepositoryClient.GetDatabase(_databaseName);
                 return (true, string.Empty);
             }
             catch (Exception ex)
@@ -240,15 +226,15 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        private async Task<Database> CreateDatabaseIfNotExists(string databaseName)
+        private async Task CreateDatabaseIfNotExists()
         {
-            if (_database != null) return _database;
+            if (RepositoryDatabase != null) return;
 
-            DatabaseResponse databaseResponse = await _cosmosClient.CreateDatabaseIfNotExistsAsync(databaseName);
+            DatabaseResponse databaseResponse = await RepositoryClient.CreateDatabaseIfNotExistsAsync(_databaseName);
 
             if (databaseResponse.StatusCode == HttpStatusCode.OK)
             {
-                return databaseResponse.Database;
+                _database = databaseResponse.Database;
             }
             else
             {
@@ -256,16 +242,16 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        private async Task<Container> CreateContainerIfNotExists(string containerName, string partitionKey, int defaultThroughput)
+        private async Task CreateContainerIfNotExists()
         {
-            ContainerResponse containerResponse = await _database.CreateContainerIfNotExistsAsync(
-                id: containerName,
-                partitionKeyPath: partitionKey,
-                throughput: defaultThroughput);
+            ContainerResponse containerResponse = await RepositoryDatabase.CreateContainerIfNotExistsAsync(
+                id: _containerName,
+                partitionKeyPath: _partitionKey,
+                throughput: _defaultThroughput);
 
             if (containerResponse.StatusCode == HttpStatusCode.OK)
             {
-                return containerResponse.Container;
+                _container = containerResponse.Container;
             }
             else
             {
@@ -275,27 +261,27 @@ namespace CalculateFunding.Common.CosmosDb
 
         public async Task EnsureContainerExists()
         {
-            if (_container == null)
+            if (RepositoryContainer == null)
             {
-                _database = await CreateDatabaseIfNotExists(_databaseName);
+                await CreateDatabaseIfNotExists();
 
-                _container = await CreateContainerIfNotExists(_containerName, _partitionKey, _defaultThroughput);
+                await CreateContainerIfNotExists();
             }
         }
 
         public async Task<ThroughputResponse> SetThroughput(int requestUnits)
         {
-            return await _container.ReplaceThroughputAsync(requestUnits);
+            return await RepositoryContainer.ReplaceThroughputAsync(requestUnits);
         }
 
         public async Task<int?> GetThroughput()
         {
-            return await _container.ReadThroughputAsync();
+            return await RepositoryContainer.ReadThroughputAsync();
         }
 
         public async Task<int?> GetMinimumThroughput()
         {
-            ThroughputResponse response = await _container.ReadThroughputAsync(new RequestOptions());
+            ThroughputResponse response = await RepositoryContainer.ReadThroughputAsync(new RequestOptions());
 
             return response?.MinThroughput;
         }
@@ -304,7 +290,7 @@ namespace CalculateFunding.Common.CosmosDb
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            FeedIterator<DocumentEntity<T>> feedIterator = _container
+            FeedIterator<DocumentEntity<T>> feedIterator = RepositoryContainer
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                 .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
                 .ToFeedIterator();
@@ -329,7 +315,7 @@ namespace CalculateFunding.Common.CosmosDb
                 }
             };
 
-            FeedIterator<DocumentEntity<T>> feedIterator = _container
+            FeedIterator<DocumentEntity<T>> feedIterator = RepositoryContainer
                 .GetItemQueryIterator<DocumentEntity<T>>(cosmosDbQuery.CosmosQueryDefinition);
 
             return (await ResultsFromFeedIterator(feedIterator)).SingleOrDefault();
@@ -347,7 +333,7 @@ namespace CalculateFunding.Common.CosmosDb
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -356,7 +342,7 @@ namespace CalculateFunding.Common.CosmosDb
             Guard.IsNullOrWhiteSpace(id, nameof(id));
             Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
 
-            ItemResponse<T> response = await _container.ReadItemAsync<T>(id: id, partitionKey: new PartitionKey(partitionKey));
+            ItemResponse<T> response = await RepositoryContainer.ReadItemAsync<T>(id: id, partitionKey: new PartitionKey(partitionKey));
 
             return response.Resource;
         }
@@ -389,7 +375,7 @@ namespace CalculateFunding.Common.CosmosDb
             Guard.IsNullOrWhiteSpace(id, nameof(id));
             Guard.IsNullOrWhiteSpace(partitionKey, nameof(partitionKey));
 
-            ItemResponse<DocumentEntity<T>> response = await _container.ReadItemAsync<DocumentEntity<T>>(id: id, partitionKey: new PartitionKey(partitionKey));
+            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.ReadItemAsync<DocumentEntity<T>>(id: id, partitionKey: new PartitionKey(partitionKey));
 
             return response.Resource;
         }
@@ -432,14 +418,14 @@ namespace CalculateFunding.Common.CosmosDb
 
             if (query != null)
             {
-                feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                feedIterator = RepositoryContainer.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                     .Where(expression)
                     .Where(query)
                     .ToFeedIterator();
             }
             else
             {
-                feedIterator = _container.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                feedIterator = RepositoryContainer.GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                     .Where(expression)
                     .ToFeedIterator();
             }
@@ -476,7 +462,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             QueryRequestOptions queryOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
-            return new CosmosDbFeedIterator<T>(_container.GetItemQueryIterator<DocumentEntity<T>>(
+            return new CosmosDbFeedIterator<T>(RepositoryContainer.GetItemQueryIterator<DocumentEntity<T>>(
                 queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
                 requestOptions: queryOptions));
         }
@@ -528,20 +514,20 @@ namespace CalculateFunding.Common.CosmosDb
 
             if (query == null)
             {
-                feedIterator = _container
+                feedIterator = RepositoryContainer
                     .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                     .Where(d => d.DocumentType == GetDocumentType<T>())
                     .ToFeedIterator();
             }
             else
             {
-                feedIterator = _container
+                feedIterator = RepositoryContainer
                     .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                     .Where(query)
                     .ToFeedIterator();
             }
 
-            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator);
+            return await ResultsFromFeedIterator(feedIterator);
         }
 
         public async Task<IEnumerable<DocumentEntity<T>>> GetAllDocumentsAsync<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = 1000) where T : IIdentifiable
@@ -550,7 +536,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(itemsPerPage);
 
-            FeedIterator<DocumentEntity<T>> documents = _container
+            FeedIterator<DocumentEntity<T>> documents = RepositoryContainer
                 .GetItemQueryIterator<DocumentEntity<T>>(queryDefinition: cosmosDbQuery.CosmosQueryDefinition,
                     requestOptions: queryRequestOptions);
 
@@ -563,7 +549,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             IQueryable<DocumentEntity<T>> allResults;
 
-            IOrderedQueryable<DocumentEntity<T>> queryable = _container.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions);
+            IOrderedQueryable<DocumentEntity<T>> queryable = RepositoryContainer.GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions);
 
             if (query == null)
             {
@@ -588,22 +574,22 @@ namespace CalculateFunding.Common.CosmosDb
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
-            FeedIterator<DocumentEntity<T>> feedIterator = _container
+            FeedIterator<DocumentEntity<T>> feedIterator = RepositoryContainer
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
                 .ToFeedIterator();
 
-            return await ResultsFromFeedIterator<DocumentEntity<T>>(feedIterator, maxItemCount);
+            return await ResultsFromFeedIterator(feedIterator, maxItemCount);
         }
 
         public async Task<IEnumerable<string>> QueryAsJson(int itemsPerPage = -1, int? maxItemCount = null)
         {
             QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
 
-            FeedIterator<Document> feedIterator = _container
+            FeedIterator<Document> feedIterator = RepositoryContainer
                 .GetItemLinqQueryable<Document>(requestOptions: queryRequestOptions)
                 .ToFeedIterator();
 
-            IEnumerable<Document> documents = await ResultsFromFeedIterator<Document>(feedIterator, maxItemCount);
+            IEnumerable<Document> documents = await ResultsFromFeedIterator(feedIterator, maxItemCount);
 
             return JsonFromDocuments(documents);
         }
@@ -650,7 +636,7 @@ namespace CalculateFunding.Common.CosmosDb
         {
             DocumentEntity<T> doc = CreateDocumentEntity(entity);
 
-            return await _container.CreateItemAsync(doc, requestOptions: requestOptions);
+            return await RepositoryContainer.CreateItemAsync(doc, requestOptions: requestOptions);
         }
 
         public async Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable
@@ -682,7 +668,7 @@ namespace CalculateFunding.Common.CosmosDb
             if (maintainCreatedDate)
             {
                 //SingleOrDefault not supported on the current Cosmos driver
-                List<DocumentEntity<T>> documents = _container
+                List<DocumentEntity<T>> documents = RepositoryContainer
                     .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions)
                     .Where(d => d.Id == entity.Id)
                     .ToList();
@@ -716,7 +702,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             doc.Content = entity;
 
-            ItemResponse<DocumentEntity<T>> response = await _container.UpsertItemAsync(doc, requestOptions: _disableContentResponseOnWriteRequestOptions);
+            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.UpsertItemAsync(doc, requestOptions: _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 
@@ -727,7 +713,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             DocumentEntity<T> doc = CreateDocumentEntity(entity.Value);
 
-            ItemResponse<DocumentEntity<T>> response = await _container.CreateItemAsync(item: doc, partitionKey: new PartitionKey(entity.Key), _disableContentResponseOnWriteRequestOptions);
+            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.CreateItemAsync(item: doc, partitionKey: new PartitionKey(entity.Key), _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 
@@ -737,7 +723,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             DocumentEntity<T> doc = CreateDocumentEntity(entity);
 
-            return await _container.CreateItemAsync(doc);
+            return await RepositoryContainer.CreateItemAsync(doc);
         }
 
         public async Task BulkCreateAsync<T>(IList<T> entities, int degreeOfParallelism = 5) where T : IIdentifiable
@@ -860,7 +846,7 @@ namespace CalculateFunding.Common.CosmosDb
                 doc.Deleted = false;
             }
 
-            ItemResponse<DocumentEntity<T>> response = await _container.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: _disableContentResponseOnWriteRequestOptions);
+            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: _disableContentResponseOnWriteRequestOptions);
             return response.StatusCode;
         }
 
@@ -889,7 +875,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             dynamic[] args = new dynamic[] { JsonConvert.DeserializeObject<dynamic>(documentsAsJson) };
 
-            Scripts cosmosScripts = _container.Scripts;
+            Scripts cosmosScripts = RepositoryContainer.Scripts;
 
             StoredProcedureExecuteResponse<string> response = await cosmosScripts.ExecuteStoredProcedureAsync<string>(
                 storedProcedureId: storedProcedureName,

@@ -20,17 +20,19 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         
         private string _databaseName;
         private string _containerName;
+        private string _connectionString;
 
         private string _id;
         private string _partitionKey;
 
-        private CosmosRepository _cosmosRepository;
+        private CosmosRepositoryTest _cosmosRepository;
 
         [TestInitialize]
         public void Initialize()
         {
             _databaseName = NewRandomString();
             _containerName = NewRandomString();
+            _connectionString = NewRandomString();
 
             _id = NewRandomString();
             _partitionKey = NewRandomString();
@@ -47,10 +49,11 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
                 .Setup(_ => _.GetContainer(_containerName))
                 .Returns(_container.Object);
 
-            _cosmosRepository = new CosmosRepository(
+            _cosmosRepository = new CosmosRepositoryTest(
                 new CosmosDbSettings {
                     ContainerName = _containerName,
-                    DatabaseName = _databaseName
+                    DatabaseName = _databaseName,
+                    ConnectionString = _connectionString
                 }, 
                 _cosmosDbClient.Object);
         }
