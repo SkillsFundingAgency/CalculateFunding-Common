@@ -23,11 +23,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId);
         
-        Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, ApproveProvidersRequest approveProvidersRequest);
+        Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest approveProvidersRequest);
 
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId);
         
-        Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishProvidersRequest publishProvidersRequest);
+        Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest publishProvidersRequest);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
 
@@ -54,10 +54,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<HttpStatusCode> ApplyCustomProfilePattern(ApplyCustomProfileRequest request);
 
-        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishProvidersRequest publishedProviderIds,
+        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishedProviderIdsRequest publishedProviderIds,
             string specificationId);
 
-        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishProvidersRequest publishedProviderIds,
+        Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishedProviderIdsRequest publishedProviderIds,
             string specificationId);
 
         Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderErrors(string specificationId);

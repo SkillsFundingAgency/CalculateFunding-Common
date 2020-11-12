@@ -152,11 +152,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/approve", specificationId);
         }
 
-        public async Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, ApproveProvidersRequest approveProvidersRequest)
+        public async Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest approveProvidersRequest)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await ValidatedPostAsync<JobCreationResponse, ApproveProvidersRequest>($"specifications/{specificationId}/approve-providers", approveProvidersRequest);
+            return await ValidatedPostAsync<JobCreationResponse, PublishedProviderIdsRequest>($"specifications/{specificationId}/approve-providers", approveProvidersRequest);
         }
 
         public async Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId)
@@ -166,11 +166,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await ValidatedPostAsync<JobCreationResponse, string>($"specifications/{specificationId}/publish", specificationId);
         }
 
-        public async Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishProvidersRequest publishProvidersRequest)
+        public async Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest publishProvidersRequest)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await ValidatedPostAsync<JobCreationResponse, PublishProvidersRequest>($"specifications/{specificationId}/publish-providers", publishProvidersRequest);
+            return await ValidatedPostAsync<JobCreationResponse, PublishedProviderIdsRequest>($"specifications/{specificationId}/publish-providers", publishProvidersRequest);
         }
 
         public async Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId, string providerType = null, string localAuthority = null, string status = null)
@@ -207,23 +207,25 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync($"publishedproviders/customprofiles", request);
         }
 
-        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(PublishProvidersRequest publishedProviderIds,
+        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForReleaseCount(
+            PublishedProviderIdsRequest publishedProviderIds,
             string specificationId)
         {
             Guard.ArgumentNotNull(publishedProviderIds, nameof(publishedProviderIds));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await PostAsync<PublishedProviderFundingCount, PublishProvidersRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
+            return await PostAsync<PublishedProviderFundingCount, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
                 publishedProviderIds);
         }
 
-        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(PublishProvidersRequest publishedProviderIds,
+        public async Task<ApiResponse<PublishedProviderFundingCount>> GetProviderBatchForApprovalCount(
+            PublishedProviderIdsRequest publishedProviderIds,
             string specificationId)
         {
             Guard.ArgumentNotNull(publishedProviderIds, nameof(publishedProviderIds));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await PostAsync<PublishedProviderFundingCount, PublishProvidersRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
+            return await PostAsync<PublishedProviderFundingCount, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
                 publishedProviderIds);
         }
 

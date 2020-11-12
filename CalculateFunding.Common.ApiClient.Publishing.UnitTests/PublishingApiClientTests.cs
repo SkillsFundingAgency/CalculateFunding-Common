@@ -290,7 +290,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         public async Task ApproveFundingForBatchProviders()
         {
             string id = NewRandomString();
-            ApproveProvidersRequest approveProvidersRequest = new ApproveProvidersRequest();
+            PublishedProviderIdsRequest approveProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{id}/approve-providers",
                 approveProvidersRequest,
@@ -313,7 +313,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         public async Task PublishFundingForBatchProviders()
         {
             string id = NewRandomString();
-            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+            PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{id}/publish-providers",
                 publishProvidersRequest,
@@ -404,7 +404,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         {
             string specificationId = NewRandomString();
             
-            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+            PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
                 publishProvidersRequest,
@@ -421,7 +421,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         {
             string specificationId = NewRandomString();
             
-            PublishProvidersRequest publishProvidersRequest = new PublishProvidersRequest();
+            PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
                 publishProvidersRequest,
