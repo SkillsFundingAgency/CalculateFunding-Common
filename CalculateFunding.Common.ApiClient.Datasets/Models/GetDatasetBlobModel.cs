@@ -20,6 +20,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public string FundingStreamId { get; set; }
 
+        public bool MergeExistingVersion { get; set; }
+
         public override string ToString()
         {
             return $"{DatasetId}/v{Version}/{Filename}";
