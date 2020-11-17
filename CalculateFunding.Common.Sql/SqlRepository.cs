@@ -78,6 +78,17 @@ namespace CalculateFunding.Common.Sql
                 CommandType.Text,
                 parameters);
 
+        protected int ExecuteNoneQuery(string sql)
+        {
+            using IDbConnection connection = NewOpenConnection();
+            IDbCommand command = connection.CreateCommand();
+            
+            command.CommandText = sql;
+            command.CommandType = CommandType.Text;
+
+            return command.ExecuteNonQuery();
+        }
+
         private async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
             CommandType commandType,
             object parameters)

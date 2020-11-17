@@ -545,6 +545,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                }.AsEnumerable(), 
                 () =>_client.PreviewProfileChange(publishProvidersRequest));    
         }
+
+        [TestMethod]
+        public async Task QueueSpecificationFundingStreamSqlImport()
+        {
+            string specificationId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/import/queue",
+                new JobCreationResponse(),
+                () => _client.QueueSpecificationFundingStreamSqlImport(specificationId, fundingStreamId));
+        }
         
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {

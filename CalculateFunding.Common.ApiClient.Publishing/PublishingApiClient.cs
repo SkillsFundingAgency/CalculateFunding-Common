@@ -335,5 +335,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/generate-csv-for-approval",
                 providerIds);
         }
+
+        public async Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
+            string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<JobCreationResponse>($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/import/queue");
+        }
     }
 }

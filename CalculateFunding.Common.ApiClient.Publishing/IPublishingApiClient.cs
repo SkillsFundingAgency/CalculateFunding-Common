@@ -97,5 +97,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForApproval(
             PublishedProviderIdsRequest providerIds,
             string specificationId);
+
+        Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
+            string fundingStreamId);
     }
 }
