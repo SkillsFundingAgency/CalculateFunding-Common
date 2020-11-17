@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Utility;
 using Microsoft.Azure.Storage.Blob;
 using Newtonsoft.Json;
@@ -12,47 +11,41 @@ namespace CalculateFunding.Common.Storage
 {
     public class BlobClient : IBlobClient
     {
-        private readonly Lazy<CloudBlobContainer> _container;
-        private readonly BlobStorageOptions _azureStorageSettings;
         private readonly IBlobContainerRepository _blobContainerRepository;
 
-        public BlobClient(BlobStorageOptions blobStorageSettings, IBlobContainerRepository blobContainerRepository)
+        public BlobClient(IBlobContainerRepository blobContainerRepository)
         {
-            Guard.ArgumentNotNull(blobStorageSettings, nameof(blobStorageSettings));
-            Guard.IsNullOrWhiteSpace(blobStorageSettings.ConnectionString, nameof(blobStorageSettings.ConnectionString));
-            Guard.IsNullOrWhiteSpace(blobStorageSettings.ContainerName, nameof(blobStorageSettings.ContainerName));
             Guard.ArgumentNotNull(blobContainerRepository, nameof(blobContainerRepository));
-
-            _azureStorageSettings = blobStorageSettings;
+            
             _blobContainerRepository = blobContainerRepository;
+        }
 
-            _container = new Lazy<CloudBlobContainer>(() => _blobContainerRepository.GetCloudBlobContainer(_azureStorageSettings));
+        public async Task<(bool Ok, string Message)> IsHealthOk()
+        {
+            try
+            {
+                _blobContainerRepository.VerifyContainer(); 
+                return await Task.FromResult((true, string.Empty));
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
 
         public async Task BatchProcessBlobs(Func<IEnumerable<IListBlobItem>, Task> batchProcessor, 
             string containerName = null, 
             int batchSize = 50)
         {
-            BlobContinuationToken continuationToken = null;
+            (BlobContinuationToken BlobContinuationToken, IEnumerable<IListBlobItem> Results) response = (null, null);
 
-            CloudBlobContainer container = GetContainer(containerName);
-            
             do
             {
-                BlobResultSegment response = await container.ListBlobsSegmentedAsync(
-                    prefix: null,
-                    useFlatBlobListing: true,
-                    currentToken: continuationToken,
-                    maxResults: batchSize,
-                    options: null,
-                    operationContext: null,
-                    blobListingDetails: BlobListingDetails.None);
-                
-                continuationToken = response.ContinuationToken;
+                response = await _blobContainerRepository.BatchProcessBlobs(batchSize, continuationToken: response.BlobContinuationToken);
 
                 await batchProcessor(response.Results);
 
-            } while (continuationToken != null);
+            } while (response.BlobContinuationToken != null);
         }
 
         public void VerifyFileName(string fileName)
@@ -75,27 +68,11 @@ namespace CalculateFunding.Common.Storage
             }
         }
 
-        public async Task<(bool Ok, string Message)> IsHealthOk()
-        {
-            try
-            {
-                GetContainer();
-                
-                return await Task.FromResult((true, string.Empty));
-            }
-            catch (Exception ex)
-            {
-                return (false, ex.Message);
-            }
-        }
-
         public async Task<bool> DoesBlobExistAsync(string blobName, string containerName = null)
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
-            ICloudBlob blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
-
-            return await blob.ExistsAsync();
+            return await _blobContainerRepository.BlobExistsAsync(blobName, containerName);
         }
 
         public string GetBlobSasUrl(string blobName,
@@ -119,8 +96,7 @@ namespace CalculateFunding.Common.Storage
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
 
-            CloudBlockBlob blob = GetContainer(containerName).GetBlockBlobReference(blobName);
-            string json = await blob.DownloadTextAsync();
+            string json = await _blobContainerRepository.DownloadTextAsync(blobName, containerName);
 
             return JsonConvert.DeserializeObject<T>(json);
         }
@@ -132,20 +108,6 @@ namespace CalculateFunding.Common.Storage
             string json = JsonConvert.SerializeObject(contents);
 
             return await UploadFileAsync(blobName, json, containerName);
-        }
-
-        public ICloudBlob GetBlockBlobReference(string blobName, string containerName = null)
-        {
-            Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
-            
-            return GetContainer(containerName).GetBlockBlobReference(blobName);
-        }
-
-        public Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName, string containerName = null)
-        {
-            Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
-
-            return GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
         }
 
         public async Task<Stream> DownloadToStreamAsync(ICloudBlob blob)
@@ -165,7 +127,7 @@ namespace CalculateFunding.Common.Storage
 
             VerifyFileName(blobName);
 
-            CloudBlockBlob blob = GetContainer(containerName).GetBlockBlobReference(blobName);
+            CloudBlockBlob blob = (CloudBlockBlob)GetBlockBlobReference(blobName, containerName);
 
             await blob.UploadTextAsync(fileContents);
 
@@ -174,30 +136,19 @@ namespace CalculateFunding.Common.Storage
 
         public async Task<bool> BlobExistsAsync(string blobName, string containerName = null)
         {
-            var blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
-
-            return await blob.ExistsAsync(null, null);
+            return await DoesBlobExistAsync(blobName, containerName);
         }
 
         public async Task<Stream> GetAsync(string blobName, string containerName = null)
         {
-            ICloudBlob blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
+            ICloudBlob blob = await GetBlobReferenceFromServerAsync(blobName, containerName);
 
             return await blob.OpenReadAsync(null, null, null);
         }
 
-        private CloudBlobContainer GetContainer(string containerName = null)
-        {
-            return containerName.IsNullOrEmpty() ? 
-                _container.Value : 
-                _blobContainerRepository.GetCloudBlobContainer(_azureStorageSettings, containerName);
-        }
-
         public IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None)
         {
-            CloudBlobContainer container = GetContainer(containerName);
-
-            return container.ListBlobs(prefix, useFlatBlobListing, blobListingDetails);
+            return _blobContainerRepository.ListBlobs(prefix, useFlatBlobListing, blobListingDetails);
         }
 
         public async Task UploadFileAsync(ICloudBlob blob, Stream data)
@@ -223,6 +174,16 @@ namespace CalculateFunding.Common.Storage
         private string ReplaceInvalidMetadataKeyCharacters(string metadataKey)
         {
             return metadataKey.Replace('-', '_');
+        }
+
+        public ICloudBlob GetBlockBlobReference(string blobName, string containerName = null)
+        {
+            return _blobContainerRepository.GetBlockBlobReference(blobName, containerName);
+        }
+
+        public Task<ICloudBlob> GetBlobReferenceFromServerAsync(string blobName, string containerName = null)
+        {
+            return _blobContainerRepository.GetBlobReferenceFromServerAsync(blobName, containerName);
         }
     }
 }
