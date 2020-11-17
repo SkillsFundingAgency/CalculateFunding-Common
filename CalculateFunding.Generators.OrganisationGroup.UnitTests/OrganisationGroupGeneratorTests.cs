@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         private IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
         private OrganisationGroupGenerator _generator;
         private string _providerVersionId;
+        private IEnumerable<Provider> _scopedProviders;
+        private FundingConfiguration _fundingConfiguration;
+        private IEnumerable<OrganisationGroupResult> _result;
 
         [TestInitialize]
         public void Setup()
@@ -58,8 +62,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(la1);
 
             TargetOrganisationGroup la2 = new TargetOrganisationGroup()
@@ -72,8 +76,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(la2);
 
             TargetOrganisationGroup la3 = new TargetOrganisationGroup()
@@ -86,8 +90,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId), 
-               Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+               Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                .Returns(la3);
 
             // Act
@@ -144,18 +148,18 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
                 .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
         }
 
         [TestMethod]
@@ -190,8 +194,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(at1);
 
             TargetOrganisationGroup at2 = new TargetOrganisationGroup()
@@ -204,8 +208,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(at2);
 
             TargetOrganisationGroup at3 = new TargetOrganisationGroup()
@@ -218,8 +222,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(at3);
 
             // Act
@@ -276,20 +280,20 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
         }
 
         [TestMethod]
@@ -324,8 +328,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1001" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1001" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(p1);
 
             TargetOrganisationGroup p2 = new TargetOrganisationGroup()
@@ -338,8 +342,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1002" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1002" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(p2);
 
             TargetOrganisationGroup p3 = new TargetOrganisationGroup()
@@ -352,8 +356,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1003" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1003" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                 .Returns(p3);
 
             TargetOrganisationGroup p4 = new TargetOrganisationGroup()
@@ -366,8 +370,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1004" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-               Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1004" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+               Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
                .Returns(p4);
 
             // Act
@@ -436,23 +440,23 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1001" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1001" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1002" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1002" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1003" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1003" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1004" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId), 
-                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>(), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "1004" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
         }
 
         [TestMethod]
@@ -485,8 +489,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "BOS"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "BOS"))
                 .Returns(bos);
 
             TargetOrganisationGroup camden = new TargetOrganisationGroup()
@@ -499,8 +503,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "CA"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "CA"))
                 .Returns(camden);
 
 
@@ -548,13 +552,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "CA"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "CA"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "BOS"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.ParliamentaryConstituencyCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().ParliamentaryConstituencyCode == "BOS"));
         }
 
         [TestMethod]
@@ -587,8 +591,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA1"))
                 .Returns(msoa1);
 
             TargetOrganisationGroup msoa2 = new TargetOrganisationGroup()
@@ -601,8 +605,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA2"))
                 .Returns(msoa2);
 
 
@@ -650,14 +654,14 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA1"));
 
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.MiddleSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().MiddleSuperOutputAreaCode == "MSOA2"));
         }
 
         [TestMethod]
@@ -690,8 +694,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW1"))
                 .Returns(cw1);
 
             TargetOrganisationGroup cw2 = new TargetOrganisationGroup()
@@ -704,8 +708,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW2"))
                 .Returns(cw2);
 
 
@@ -753,13 +757,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CensusWardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CensusWardCode == "CW2"));
         }
 
         [TestMethod]
@@ -792,8 +796,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D1"))
                 .Returns(d1);
 
             TargetOrganisationGroup d2 = new TargetOrganisationGroup()
@@ -806,8 +810,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D2"))
                 .Returns(d2);
 
 
@@ -855,13 +859,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.DistrictCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().DistrictCode == "D2"));
         }
 
         [TestMethod]
@@ -894,8 +898,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"))
                 .Returns(gor1);
 
             TargetOrganisationGroup gor2 = new TargetOrganisationGroup()
@@ -908,8 +912,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"))
                 .Returns(gor2);
 
 
@@ -957,13 +961,115 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), 
-                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), 
-                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"));
+        }
+
+        [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByGovernmentOfficeRegionWithPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.GovernmentOfficeRegion,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationFields
+            };
+
+            TargetOrganisationGroup gor1 = new TargetOrganisationGroup()
+            {
+                Identifier = "GOR1",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Government Office Region 1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"))
+                .Returns(gor1);
+
+            TargetOrganisationGroup gor2 = new TargetOrganisationGroup()
+            {
+                Identifier = "GOR2",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Government Office Region 2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"))
+                .Returns(gor2);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Government Office Region 1",
+                    SearchableName = "Government_Office_Region_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.GovernmentOfficeRegion,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "GOR1",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.GovernmentOfficeRegionCode == "GOR1")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Government Office Region 2",
+                    SearchableName = "Government_Office_Region_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.GovernmentOfficeRegion,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "GOR2",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.GovernmentOfficeRegionCode == "GOR2")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR1"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().GovernmentOfficeRegionCode == "GOR2"));
         }
 
         [TestMethod]
@@ -996,8 +1102,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA1"))
                 .Returns(lsoa1);
 
             TargetOrganisationGroup lsoa2 = new TargetOrganisationGroup()
@@ -1010,8 +1116,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA2"))
                 .Returns(lsoa2);
 
 
@@ -1059,13 +1165,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-               Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+               Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information), 
-               Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LowerSuperOutputAreaCode), Arg.Is(GroupingReason.Information),
+               Arg.Is<IEnumerable<Provider>>(_ => _.First().LowerSuperOutputAreaCode == "LSOA2"));
         }
 
         [TestMethod]
@@ -1098,8 +1204,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W1"))
                 .Returns(w1);
 
             TargetOrganisationGroup w2 = new TargetOrganisationGroup()
@@ -1112,8 +1218,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W2"))
                 .Returns(w2);
 
 
@@ -1161,13 +1267,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.WardCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().WardCode == "W2"));
         }
 
         [TestMethod]
@@ -1200,8 +1306,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC1"))
                 .Returns(rsc1);
 
             TargetOrganisationGroup rsc2 = new TargetOrganisationGroup()
@@ -1214,8 +1320,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC2"))
                 .Returns(rsc2);
 
 
@@ -1263,13 +1369,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.RscRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().RscRegionCode == "RSC2"));
         }
 
         [TestMethod]
@@ -1302,8 +1408,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C1"))
                 .Returns(c1);
 
             TargetOrganisationGroup c2 = new TargetOrganisationGroup()
@@ -1316,8 +1422,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C2"))
                 .Returns(c2);
 
 
@@ -1365,13 +1471,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.CountryCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().CountryCode == "C2"));
         }
 
         [TestMethod]
@@ -1404,8 +1510,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"))
                 .Returns(lac1);
 
             TargetOrganisationGroup lac2 = new TargetOrganisationGroup()
@@ -1418,8 +1524,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"))
                 .Returns(lac2);
 
 
@@ -1467,13 +1573,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), 
-                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName1"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LocalGovernmentGroupTypeName == "LocalGovernmentGroupTypeName2"));
         }
 
         [TestMethod]
@@ -1506,8 +1612,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"))
                 .Returns(c1);
 
             TargetOrganisationGroup c2 = new TargetOrganisationGroup()
@@ -1520,8 +1626,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"))
                 .Returns(c2);
 
             TargetOrganisationGroup c3 = new TargetOrganisationGroup()
@@ -1534,8 +1640,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"))
                 .Returns(c3);
 
 
@@ -1595,18 +1701,18 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"));
 
             await _organisationGroupTargetProviderLookup
                 .Received(1)
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"));
 
             await _organisationGroupTargetProviderLookup
                .Received(1)
-               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-               Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider));
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+               Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"));
         }
 
         [TestMethod]
@@ -1639,8 +1745,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "101"))
                 .Returns(c1);
 
             TargetOrganisationGroup c2 = new TargetOrganisationGroup()
@@ -1653,8 +1759,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "102"))
                 .Returns(c2);
 
             TargetOrganisationGroup c3 = new TargetOrganisationGroup()
@@ -1667,8 +1773,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             };
 
             _organisationGroupTargetProviderLookup
-                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information), 
-                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"), Arg.Is<PaymentOrganisationSource>(_ => _ == PaymentOrganisationSource.PaymentOrganisationAsProvider))
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LACode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LACode == "103"))
                 .Returns(c3);
 
             Provider excludedProvider = new Provider()
@@ -1765,6 +1871,324 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .Providers
                 .Should()
                 .NotContain(excludedProvider);
+        }
+
+        [TestMethod]
+        public async Task WhenProducingPaymentForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Payment)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.AcademyTrustCode)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.AcademyTrust)
+                            .WithProviderTypeMatch("Academies", "Academy converter")
+                            .WithProviderTypeMatch("Academy", "Academy special converter")
+                            .WithProviderTypeMatch("Academy", "Academy")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 1",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 2",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 3",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 4",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9005",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
+                },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
+        public async Task WhenProducingContractingGroupsForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Contracting)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.AcademyTrustCode)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.AcademyTrust)
+                            .WithProviderTypeMatch("Academies", "Academy converter")
+                            .WithProviderTypeMatch("Academy", "Academy special converter")
+                            .WithProviderTypeMatch("Academy", "Academy")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 1",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 2",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 3",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 4",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9005",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
+                },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
+        public async Task WhenProducingPaymentForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Payment)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.AcademyTrustCode)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.AcademyTrust)
+                            .WithProviderTypeMatch("Academies", "Academy converter")
+                            .WithProviderTypeMatch("Academy", "Academy special converter")
+                            .WithProviderTypeMatch("Academy", "Academy")
+                            ))
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Payment)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthority)
+                            .WithProviderTypeMatch("Maintained schools", "Local authority school")
+                            .WithProviderTypeMatch("Local authority maintained schools", "Community school")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 1",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 2",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 3",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 4",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9005",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Org - LA 1",
+                    SearchableName = "Payment_Org_LA_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9013",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Local authority 2",
+                    SearchableName = "Payment_Organisation_Local_authority_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9006",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
+                },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        private async Task WhenGeneratingOrganisationGroups()
+        {
+            _result = await _generator.GenerateOrganisationGroup(
+                _fundingConfiguration,
+                _scopedProviders,
+                _providerVersionId);
+        }
+
+        private FundingConfiguration GivenFundingConfiguration(Action<FundingConfigurationBuilder> setup = null)
+        {
+            _fundingConfiguration = NewFundingConfiguration(setup);
+
+            return _fundingConfiguration;
+        }
+
+
+        private FundingConfiguration NewFundingConfiguration(Action<FundingConfigurationBuilder> setup = null)
+        {
+            FundingConfigurationBuilder configBuilder = new FundingConfigurationBuilder();
+
+            setup?.Invoke(configBuilder);
+
+            return configBuilder.Build();
+        }
+
+        private OrganisationGroupingConfiguration NewOrganisationGroupingConfiguration(Action<OrganisationGroupingConfigurationBuilder> setup = null)
+        {
+            OrganisationGroupingConfigurationBuilder configBuilder = new OrganisationGroupingConfigurationBuilder();
+
+            setup?.Invoke(configBuilder);
+
+            return configBuilder.Build();
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()
@@ -1899,6 +2323,285 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 ProviderType = "ProviderType2",
                 ProviderSubType = "ProviderSubType2"
             });
+
+            return providers;
+        }
+
+        private void AndScopedProvidersWithPaymentOrganisationSourceIsSet()
+        {
+            _scopedProviders = GenerateScopedProvidersWithPaymentOrganisationSource();
+        }
+
+        private IEnumerable<Provider> GenerateScopedProvidersWithPaymentOrganisationSource()
+        {
+            List<Provider> providers = new List<Provider>
+            {
+                new Provider()
+                {
+                    ProviderId = "1001",
+                    Name = "Provider 1",
+                    UKPRN = "1001",
+                    LACode = "101",
+                    Authority = "Local Authority 1",
+                    DfeEstablishmentNumber = "Dfe Establishment Number",
+                    TrustCode = "101",
+                    TrustName = "Payment Organisation - Multi academy trust 1",
+                    ParliamentaryConstituencyCode = "BOS",
+                    ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
+                    MiddleSuperOutputAreaCode = "MSOA1",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 1",
+                    CensusWardCode = "CW1",
+                    CensusWardName = "Census Ward 1",
+                    DistrictCode = "D1",
+                    DistrictName = "District 1",
+                    GovernmentOfficeRegionCode = "GOR1",
+                    GovernmentOfficeRegionName = "Government Office Region 1",
+                    LowerSuperOutputAreaCode = "LSOA1",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 1",
+                    WardCode = "W1",
+                    WardName = "Ward 1",
+                    RscRegionCode = "RSC1",
+                    RscRegionName = "Rsc Region 1",
+                    CountryCode = "C1",
+                    CountryName = "Country 1",
+                    ProviderType = "Academies",
+                    ProviderSubType = "Academy converter",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "9001",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 1",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1002",
+                    Name = "Provider 2",
+                    UKPRN = "1002",
+                    LACode = "101",
+                    Authority = "Local Authority 1",
+                    TrustCode = "101",
+                    TrustName = "Academy Trust 1",
+                    ParliamentaryConstituencyCode = "BOS",
+                    ParliamentaryConstituencyName = "Bermondsey and Old Southwark",
+                    MiddleSuperOutputAreaCode = "MSOA1",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 1",
+                    CensusWardCode = "CW1",
+                    CensusWardName = "Census Ward 1",
+                    DistrictCode = "D1",
+                    DistrictName = "District 1",
+                    GovernmentOfficeRegionCode = "GOR1",
+                    GovernmentOfficeRegionName = "Government Office Region 1",
+                    LowerSuperOutputAreaCode = "LSOA1",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 1",
+                    WardCode = "W1",
+                    WardName = "Ward 1",
+                    RscRegionCode = "RSC1",
+                    RscRegionName = "Rsc Region 1",
+                    CountryCode = "C1",
+                    CountryName = "Country 1",
+                    ProviderType = "Academies",
+                    ProviderSubType = "Academy converter",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "9001",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 1",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1003",
+                    Name = "Provider 3",
+                    UKPRN = "1003",
+                    LACode = "102",
+                    Authority = "Local Authority 2",
+                    TrustCode = "102",
+                    TrustName = "Payment Organisation - Single academy trust 1",
+                    TrustStatus = TrustStatus.SupportedByASingleAacademyTrust,
+                    ParliamentaryConstituencyCode = "CA",
+                    ParliamentaryConstituencyName = "Camden",
+                    MiddleSuperOutputAreaCode = "MSOA2",
+                    MiddleSuperOutputAreaName = "Middle Super Output Area 2",
+                    CensusWardCode = "CW2",
+                    CensusWardName = "Census Ward 2",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    GovernmentOfficeRegionCode = "GOR2",
+                    GovernmentOfficeRegionName = "Government Office Region 2",
+                    LowerSuperOutputAreaCode = "LSOA2",
+                    LowerSuperOutputAreaName = "Lower Super Output Area 2",
+                    WardCode = "W2",
+                    WardName = "Ward 2",
+                    RscRegionCode = "RSC2",
+                    RscRegionName = "Rsc Region 2",
+                    CountryCode = "C2",
+                    CountryName = "Country 2",
+                    ProviderType = "Academies",
+                    ProviderSubType = "Single academy",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "9002",
+                    PaymentOrganisationName = "Payment Organisation - Single academy trust 1",
+                },
+                new Provider()
+                {
+                    ProviderId = "1004",
+                    Name = "Provider 3",
+                    UKPRN = "1004",
+                    LACode = "103",
+                    TrustCode = null,
+                    TrustName = null,
+                    Authority = "Local Authority 1",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    ProviderType = "Maintained schools",
+                    ProviderSubType = "Local authority school",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "9013",
+                    PaymentOrganisationName = "Payment Org - LA 1",
+                    TrustStatus = TrustStatus.NotSupportedByATrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1005",
+                    Name = "Provider 5",
+                    UKPRN = "1004",
+                    LACode = "103",
+                    TrustCode = null,
+                    TrustName = null,
+                    Authority = "Local Authority 1",
+                    DistrictCode = "D2",
+                    DistrictName = "District 2",
+                    ProviderType = "Maintained schools",
+                    ProviderSubType = "Local authority school",
+                    LocalGovernmentGroupTypeCode = "LGGTC1",
+                    LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
+                    PaymentOrganisationIdentifier = "9013",
+                    PaymentOrganisationName = "Payment Org - LA 1",
+                    TrustStatus = TrustStatus.NotSupportedByATrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1006",
+                    UKPRN = "1006",
+                    Name = "Provider 6 - Academy",
+                    TrustCode = "106",
+                    TrustName = "Academy Trust 2",
+                    LACode = "805",
+                    Authority = "Local authority 5",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                    PaymentOrganisationIdentifier = "9003",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 2",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1007",
+                    UKPRN = "1007",
+                    Name = "Provider 7 - Academy",
+                    TrustCode = "106",
+                    TrustName = "Payment Organisation - Multi academy trust 2",
+                    LACode = "804",
+                    Authority = "Local authority 4",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                    PaymentOrganisationIdentifier = "9003",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 2",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1008",
+                    UKPRN = "1008",
+                    Name = "Provider 8 - Academy",
+                    TrustCode = "106",
+                    TrustName = "Payment Organisation - Multi academy trust 2",
+                    LACode = "803",
+                    Authority = "Local authority 3",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                    PaymentOrganisationIdentifier = "9003",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 2",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1009",
+                    UKPRN = "1009",
+                    Name = "Provider 9 - Academy",
+                    TrustCode = "107",
+                    TrustName = "Payment Organisation - Multi academy trust 3",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                    PaymentOrganisationIdentifier = "9004",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 3",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1010",
+                    UKPRN = "1010",
+                    Name = "Provider 10 - Academy",
+                    TrustCode = "108",
+                    TrustName = "Payment Organisation - Multi academy trust 4",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy special converter",
+                    PaymentOrganisationIdentifier = "9005",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1011",
+                    UKPRN = "1011",
+                    Name = "Provider 11 - Academy",
+                    TrustCode = "108",
+                    TrustName = "Payment Organisation - Multi academy trust 4",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy special converter",
+                    PaymentOrganisationIdentifier = "9005",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1012",
+                    UKPRN = "1012",
+                    Name = "Provider 12 - Academy",
+                    TrustCode = "108",
+                    TrustName = "Payment Organisation - Multi academy trust 4",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy special converter",
+                    PaymentOrganisationIdentifier = "9005",
+                    PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
+                    TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                },
+                new Provider()
+                {
+                    ProviderId = "1010",
+                    UKPRN = "1010",
+                    Name = "Provider 10 - Academy",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    TrustCode = null,
+                    TrustName = null,
+                    ProviderType = "Local authority maintained schools",
+                    ProviderSubType = "Community school",
+                    PaymentOrganisationIdentifier = "9006",
+                    PaymentOrganisationName = "Payment Organisation - Local authority 2",
+                    TrustStatus = TrustStatus.NotSupportedByATrust,
+                },
+
+            };
 
             return providers;
         }

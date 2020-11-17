@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Calcs.Models.Code;
 using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.Testing;
 using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;
@@ -27,11 +26,11 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             _client = new CalculationsApiClient(ClientFactory,
                 Logger.None);
         }
-        
+
         [TestMethod]
-        [DataRow("spec1", CalculationType.Additional, null, null, 10, 
+        [DataRow("spec1", CalculationType.Additional, null, null, 10,
             "specifications/spec1/calculations/calculationType/Additional?page=10")]
-        [DataRow("spec2", CalculationType.Template, null, "find me", null, 
+        [DataRow("spec2", CalculationType.Template, null, "find me", null,
             "specifications/spec2/calculations/calculationType/Template?searchTerm=find+me")]
         [DataRow("spec3", CalculationType.Additional, null, "and find me", 20,
             "specifications/spec3/calculations/calculationType/Additional?searchTerm=and+find+me&page=20")]
@@ -49,7 +48,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             await AssertGetRequest(expectedUri,
                 new SearchResults<CalculationSearchResult>(),
                 () => _client.SearchCalculationsForSpecification(specificationId,
-                    calculationType, 
+                    calculationType,
                     status,
                     searchTerm,
                     page));
@@ -85,7 +84,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             await AssertGetRequest($"{id}/assembly",
                 id,
                 new byte[0],
-                _client.GetAssemblyBySpecificationId);  
+                _client.GetAssemblyBySpecificationId);
         }
 
         [TestMethod]
@@ -93,10 +92,10 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         {
             string id = NewRandomString();
             string expectedUri = $"update-buildproject-relationships?specificationId={id}";
-            
+
             BuildProject expectedResponse = new BuildProject();
             DatasetRelationshipSummary expectedRequest = new DatasetRelationshipSummary();
-            
+
             GivenTheResponse(expectedUri, expectedResponse, HttpMethod.Post);
 
             ApiResponse<BuildProject> apiResponse = await _client.UpdateBuildProjectRelationships(id, expectedRequest);
@@ -126,8 +125,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         public async Task CompileAndSaveAssembly()
         {
             string id = NewRandomString();
-            
-            GivenTheStatusCode($"{id}/compileAndSaveAssembly",  HttpStatusCode.OK, HttpMethod.Get);
+
+            GivenTheStatusCode($"{id}/compileAndSaveAssembly", HttpStatusCode.OK, HttpMethod.Get);
 
             ApiResponse<HttpStatusCode> apiResponse = await _client.CompileAndSaveAssembly(id);
 
@@ -157,7 +156,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             string specificationId = NewRandomString();
             string existingCalculationId = NewRandomString();
             string calculationName = NewRandomString();
-            
+
             GivenTheStatusCode($"validate-calc-name/{specificationId}/{calculationName}/{existingCalculationId}",
                 statusCode,
                 HttpMethod.Get);
@@ -196,7 +195,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
 
             await AssertPutRequest($"specifications/{specificationId}/calculations/{calculationId}",
                 calculationEditModel,
-                new Calculation(), 
+                new Calculation(),
                 () => _client.EditCalculation(specificationId, calculationId, calculationEditModel));
         }
 
@@ -230,15 +229,15 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 NewRandomInt(),
             };
             string calculationId = NewRandomString();
-            
+
             CalculationVersionsCompareModel expectedRequest = new CalculationVersionsCompareModel
             {
                 Versions = versionIds,
                 CalculationId = calculationId
             };
-            
+
             IEnumerable<CalculationVersion> expectedResponse = Enumerable.Empty<CalculationVersion>();
-            
+
             GivenTheResponse("calculation-versions", expectedResponse, HttpMethod.Post);
 
             ApiResponse<IEnumerable<CalculationVersion>> apiResponse = await _client.GetMultipleVersionsByCalculationId(versionIds, calculationId);
@@ -251,7 +250,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Content
                 .Should()
                 .BeEquivalentTo(expectedResponse);
-            
+
             AndTheRequestContentsShouldHaveBeen(expectedRequest.AsJson());
         }
 
@@ -293,11 +292,11 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             SearchFilterRequest input = new SearchFilterRequest();
             SearchQueryRequest expectedRequest = SearchQueryRequest.FromSearchFilterRequest(input);
             SearchResults<CalculationSearchResult> expectedResults = new SearchResults<CalculationSearchResult>();
-            
+
             GivenTheResponse("calculations-search", expectedResults, HttpMethod.Post);
 
             ApiResponse<SearchResults<CalculationSearchResult>> apiResponse = await _client.FindCalculations(input);
-            
+
             apiResponse?.StatusCode
                 .Should()
                 .Be(HttpStatusCode.OK);
@@ -306,7 +305,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Content
                 .Should()
                 .BeEquivalentTo(expectedResults);
-            
+
             AndTheRequestContentsShouldHaveBeen(expectedRequest.AsJson());
         }
 
@@ -318,7 +317,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             await AssertGetRequest($"specifications/{id}/calculations/metadata",
                 id,
                 Enumerable.Empty<CalculationMetadata>(),
-                _client.GetCalculationMetadataForSpecification);   
+                _client.GetCalculationMetadataForSpecification);
         }
 
         [TestMethod]
@@ -340,7 +339,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             await AssertGetRequest($"specifications/{id}/templateCalculations/allApproved",
                 id,
                 new BooleanResponseModel(),
-                _client.CheckHasAllApprovedTemplateCalculationsForSpecificationId);   
+                _client.CheckHasAllApprovedTemplateCalculationsForSpecificationId);
         }
 
         [TestMethod]
@@ -349,17 +348,17 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             string specificationId = NewRandomString();
             string templateVersion = NewRandomString();
             string fundingStreamId = NewRandomString();
-            
+
             TemplateMapping expectedResponse = new TemplateMapping();
 
             GivenTheResponse($"specifications/{specificationId}/templates/{fundingStreamId}",
                 expectedResponse,
                 HttpMethod.Put);
-            
+
             ApiResponse<TemplateMapping> apiResponse = await _client.ProcessTemplateMappings(specificationId,
-                templateVersion, 
+                templateVersion,
                 fundingStreamId);
-            
+
             apiResponse?.StatusCode
                 .Should()
                 .Be(HttpStatusCode.OK);
@@ -368,10 +367,10 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Content
                 .Should()
                 .BeEquivalentTo(expectedResponse);
-            
+
             AndTheRequestContentsShouldHaveBeen(templateVersion.AsJson());
         }
-        
+
         [TestMethod]
         public async Task GetRootFundingLinesForCalculation()
         {
@@ -386,23 +385,23 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                         TemplateId = (uint)NewRandomInt()
                     }
                 }.AsEnumerable(),
-                () => _client.GetRootFundingLinesForCalculation(id));   
+                () => _client.GetRootFundingLinesForCalculation(id));
         }
 
         [TestMethod]
         public async Task QueueCodeContextUpdate()
         {
             string specificationId = NewRandomString();
-            
+
             Job expectedJob = new Job
             {
                 Id = NewRandomString()
             };
-            
+
             GivenTheResponse($"specifications/{specificationId}/code-context/update", expectedJob, HttpMethod.Post);
 
             ApiResponse<Job> apiResponse = await _client.QueueCodeContextUpdate(specificationId);
-            
+
             apiResponse?
                 .Content
                 .Should()

@@ -19,6 +19,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         private IProvidersApiClient _providersApiClient;
         private IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
         private string _providerVersionId;
+        private IEnumerable<Provider> _scopedProviders;
+
         public AsyncPolicy MockCacheProviderPolicy { get; set; } = Policy.NoOpAsync();
 
         [TestInitialize]
@@ -30,9 +32,23 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 ProvidersApiClient = Policy.NoOpAsync()
             });
             _providerVersionId = "test-providers";
+
+
+            _scopedProviders = GenerateScopedProviders();
+
+            AndCoreProviderListExistsWithStandardProviders();
+        }
+
+        private void AndCoreProviderListExistsWithProviderVerionIdAndProviders(string providerVersionId, IEnumerable<Provider> scopedProviders)
+        {
             _providersApiClient
-                .GetProvidersByVersion(Arg.Is(_providerVersionId))
-                .Returns(GetProviderVersion());
+                .GetProvidersByVersion(Arg.Is(providerVersionId))
+                .Returns(GenerateProviderVersion(scopedProviders));
+        }
+
+        private void AndCoreProviderListExistsWithStandardProviders()
+        {
+            AndCoreProviderListExistsWithProviderVerionIdAndProviders(_providerVersionId, _scopedProviders);
         }
 
         [TestMethod]
@@ -136,6 +152,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             {
                 IdentifierValue = "1002",
                 OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.District,
+                GroupTypeIdentifier = Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 ProviderVersionId = _providerVersionId
             };
 
@@ -147,53 +164,31 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public void WhenLookingUpTargetOrganisationGroupBasedOnUnknownIdentifierPayment_ThenExceptionIsThrown()
-        {
-            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
-
-            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
-            {
-                IdentifierValue = "1002",
-                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
-                ProviderVersionId = _providerVersionId
-            };
-
-            Func<Task> action = async () => await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
-                Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { });
-
-            action.Should().Throw<Exception>().WithMessage("Unable to find target provider, given the OrganisationGroupTypeCode. Identifier = '1002'. OrganisationGroupTypeCode= 'AcademyTrust'");
-        }
-
-        [TestMethod]
         public async Task WhenLookingUpTargetOrganisationGroupBasedOnAcadmeyTrustPayment_ThenTargetOrganisationGroupReturned()
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
 
             OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
-                IdentifierValue = "102",
+                IdentifierValue = "107",
                 OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
+                GroupTypeIdentifier = Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 ProviderVersionId = _providerVersionId
             };
 
             TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() });
+                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "107" && _.ProviderType == "Academy trust").Single() });
 
             group.Identifiers.Any();
 
             group.Name
                 .Should()
-                .Be("Academy Trust 2");
+                .Be("Academy Trust 3");
 
             group.Identifier
                 .Should()
-                .Be("102");
-
-            group.Identifiers.Count()
-                .Should()
-                .Be(2);
+                .Be("1009");
         }
 
         [TestMethod]
@@ -203,24 +198,24 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
-                IdentifierValue = "101",
+                IdentifierValue = "106",
                 OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
                 ProviderVersionId = _providerVersionId
             };
 
             TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
                 Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "101").First() });
+                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "106" && _.ProviderType == "Academy trust").First() });
 
             group.Identifiers.Any();
 
             group.Name
                 .Should()
-                .Be("Multi provider");
+                .Be("Academy Trust 2");
 
             group.Identifier
                 .Should()
-                .Be("1001");
+                .Be("1008");
 
             group.Identifiers.Count()
                 .Should()
@@ -686,116 +681,38 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             action.Should().Throw<Exception>().WithMessage("Unable to resolve field to identifier value");
         }
 
-        [TestMethod]
-        public async Task WhenLookingUpTargetOrganisationGroupBasedOnLocalAuthorityPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
-        {
-            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
-
-            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
-            {
-                IdentifierValue = "101",
-                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.LocalAuthority,
-                ProviderVersionId = _providerVersionId
-            };
-
-            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(
-                organisationGroupLookupParameters,
-                Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "101").First() },
-                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
-
-            group.Identifiers.Any();
-
-            group.Name
-                .Should()
-                .Be("Payment Org Name 1");
-
-            group.Identifier
-                .Should()
-                .Be("Payment Org Identifier 1");
-
-            group.Identifiers.Count()
-                .Should()
-                .Be(3);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
-                .Should()
-                .Be(true);
-
-            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.DfeNumber)
-                .Should()
-                .Be(true);
-        }
 
         [TestMethod]
-        public async Task WhenLookingUpTargetOrganisationGroupBasedOnAcadmeyTrustPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnMultiAcademyTrustForContracting_ThenTargetOrganisationGroupReturned()
         {
-            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
-
             OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
-                IdentifierValue = "102",
+                IdentifierValue = "106",
+                GroupTypeIdentifier = Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.UKPRN,
                 OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.AcademyTrust,
-                ProviderVersionId = _providerVersionId
+                ProviderVersionId = _providerVersionId,
             };
 
+            AndCoreProviderListExistsWithStandardProviders();
+
             TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
-                Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() },
-                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
+                Common.ApiClient.Policies.Models.GroupingReason.Contracting,
+                _scopedProviders.Where(_ => _.TrustCode == "106" && _.ProviderType == "Academy trust"));
 
             group.Identifiers.Any();
 
             group.Name
                 .Should()
-                .Be("Payment Org Name 3");
+                .Be("Academy Trust 2");
 
             group.Identifier
                 .Should()
-                .Be("Payment Org Identifier 3");
-
-            group.Identifiers.Count()
-                .Should()
-                .Be(2);
+                .Be("1008");
         }
 
-        [TestMethod]
-        public async Task WhenLookingUpTargetOrganisationGroupBasedOnProviderPaymentAndPaymentOrganisationSourceSetToPaymentOrganisationFields_ThenTargetOrganisationGroupReturnedWithPaymentOrganisationDetails()
+        private Common.ApiClient.Models.ApiResponse<ProviderVersion> GenerateProviderVersion(IEnumerable<Provider> providers)
         {
-            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
-
-            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
-            {
-                IdentifierValue = "1003",
-                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.Provider,
-                ProviderVersionId = _providerVersionId
-            };
-
-            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
-                Common.ApiClient.Policies.Models.GroupingReason.Payment,
-                new List<Provider> { scopedProviders.Where(_ => _.TrustCode == "102").First() },
-                Common.ApiClient.Policies.Models.PaymentOrganisationSource.PaymentOrganisationFields);
-
-            group.Name
-                .Should()
-                .Be("Payment Org Name 3");
-
-            group.Identifier
-                .Should()
-                .Be("Payment Org Identifier 3");
-
-            group.Identifiers
-                .Should()
-                .BeEmpty();
-        }
-
-        private Common.ApiClient.Models.ApiResponse<ProviderVersion> GetProviderVersion()
-        {
-            return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = GenerateScopedProviders() });
+            return new Common.ApiClient.Models.ApiResponse<ProviderVersion>(System.Net.HttpStatusCode.OK, new ProviderVersion { Providers = providers });
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()
@@ -804,14 +721,14 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             {
                 new Provider()
                 {
-                    ProviderId = "Multi provider",
+                    ProviderId = "1000",
                     Name = "Multi provider",
                     TrustCode = "101",
                     TrustName = "Academy Trust 1",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
-                    UKPRN = "1001",
+                    UKPRN = "1000",
                     ProviderType = "Academy trust",
-                    ProviderSubType = "",
+                    ProviderSubType = "Academy trust",
                     LocalGovernmentGroupTypeCode = "LGGTC1",
                     LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
                     PaymentOrganisationIdentifier = "Payment Org Identifier",
@@ -819,7 +736,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "provider1",
+                    ProviderId = "1001",
                     Name = "Provider 1",
                     UKPRN = "1001",
                     LACode = "101",
@@ -854,7 +771,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "provider2",
+                    ProviderId = "1002",
                     Name = "Provider 2",
                     UKPRN = "1002",
                     LACode = "101",
@@ -888,7 +805,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "provider3",
+                    ProviderId = "1003",
                     Name = "Provider 3",
                     UKPRN = "1003",
                     LACode = "102",
@@ -923,7 +840,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "provider4",
+                    ProviderId = "1004",
                     Name = "Provider 3",
                     UKPRN = "1004",
                     LACode = "103",
@@ -941,7 +858,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "provider5",
+                    ProviderId = "1005",
                     Name = "Provider 5",
                     UKPRN = "1004",
                     LACode = "103",
@@ -956,7 +873,57 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
                     PaymentOrganisationIdentifier = "Payment Org Identifier 5",
                     PaymentOrganisationName = "Payment Org Name 5"
-                }
+                },
+                new Provider()
+                {
+                    ProviderId = "1006",
+                    UKPRN = "1006",
+                    Name = "Provider 6 - Academy",
+                    TrustCode = "106",
+                    TrustName = "Academy Trust 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                },
+                new Provider()
+                {
+                    ProviderId = "1007",
+                    UKPRN = "1007",
+                    Name = "Provider 7 - Academy",
+                    TrustCode = "106",
+                    TrustName = "Academy Trust 2",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                },
+                new Provider()
+                {
+                    ProviderId = "1008",
+                    UKPRN = "1008",
+                    Name = "Academy Trust 2",
+                    TrustCode = "106",
+                    TrustName = "Academy Trust 2",
+                    ProviderType = "Academy trust",
+                    ProviderSubType = "Academy trust",
+                },
+                new Provider()
+                {
+                    ProviderId = "1009",
+                    UKPRN = "1009",
+                    Name = "Academy Trust 3",
+                    TrustCode = "107",
+                    TrustName = "Academy Trust 3",
+                    ProviderType = "Academy trust",
+                    ProviderSubType = "Academy trust",
+                },
+                new Provider()
+                {
+                    ProviderId = "1010",
+                    UKPRN = "10010",
+                    Name = "Provider 7 - Academy",
+                    TrustCode = "109",
+                    TrustName = "Academy Trust 3",
+                    ProviderType = "Academy",
+                    ProviderSubType = "Academy",
+                },
             };
 
             return providers;

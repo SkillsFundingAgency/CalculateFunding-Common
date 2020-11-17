@@ -8,6 +8,7 @@ using CalculateFunding.Common.ApiClient.Providers.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Utility;
+using CalculateFunding.Generators.OrganisationGroup.Extensions;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
 
@@ -33,7 +34,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             foreach (OrganisationGroupingConfiguration grouping in fundingConfiguration.OrganisationGroupings)
             {
                 // Get the provider attribute required to group
-                Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason);
+                Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason, fundingConfiguration.PaymentOrganisationSource);
 
                 // Filter providers based on provider type and subtypes
                 IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
@@ -42,7 +43,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 IEnumerable<IGrouping<string, Provider>> groupedProviders = providersForGroup.GroupBy(providerFilterAttribute);
 
                 // Common values for all groups
-                Enums.OrganisationGroupTypeClassification organisationGroupTypeClassification = grouping.GroupingReason == GroupingReason.Payment ? Enums.OrganisationGroupTypeClassification.LegalEntity : Enums.OrganisationGroupTypeClassification.GeographicalBoundary;
+                Enums.OrganisationGroupTypeClassification organisationGroupTypeClassification = grouping.GroupingReason.IsForProviderPayment() ? Enums.OrganisationGroupTypeClassification.LegalEntity : Enums.OrganisationGroupTypeClassification.GeographicalBoundary;
                 Enums.OrganisationGroupTypeCode organisationGroupTypeCode = grouping.OrganisationGroupTypeCode.AsMatchingEnum<Enums.OrganisationGroupTypeCode>();
 
                 // Generate Organisation Group results based on the grouped providers
@@ -56,15 +57,27 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
                     TargetOrganisationGroup targetOrganisationGroup = null;
 
-                    OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
-                    {
-                        IdentifierValue = providerGrouping.Key,
-                        OrganisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
-                        ProviderVersionId = providerVersionId,
-                        GroupTypeIdentifier = grouping.GroupTypeIdentifier
-                    };
+                    if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
+                        && grouping.GroupingReason.IsForProviderPayment())
+                        // TODO - lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
+                        // Will use providerGrouping.Key as the identifier of the PaymentOrganisation
 
-                    targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping, fundingConfiguration.PaymentOrganisationSource);
+                        targetOrganisationGroup = new TargetOrganisationGroup()
+                        {
+                            Identifier = providerGrouping.First().PaymentOrganisationIdentifier,
+                            Name = providerGrouping.First().PaymentOrganisationName,
+                            Identifiers = new OrganisationIdentifier[0],
+                        };
+
+
+                    else if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider
+                       || (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
+                                && !grouping.GroupingReason.IsForProviderPayment())
+                       )
+                    {
+                        targetOrganisationGroup = await ObtainTargetOrganisationGroupFromProviderData(fundingConfiguration, providerVersionId, grouping, providerGrouping, targetOrganisationGroup);
+                    }
+
 
                     if (targetOrganisationGroup == null)
                     {
@@ -92,22 +105,50 @@ namespace CalculateFunding.Generators.OrganisationGroup
             return results;
         }
 
-        private Func<Provider, string> GetProviderFieldForGrouping(OrganisationGroupTypeIdentifier identifierType, OrganisationGroupTypeCode organisationGroupTypeCode, GroupingReason groupingReason)
+        private async Task<TargetOrganisationGroup> ObtainTargetOrganisationGroupFromProviderData(FundingConfiguration fundingConfiguration, string providerVersionId, OrganisationGroupingConfiguration grouping, IGrouping<string, Provider> providerGrouping, TargetOrganisationGroup targetOrganisationGroup)
         {
-            // If the grouping reason is for payment, then the organisation identifier needs to be returned as a UKPRN, but grouped on the type code
-            if (groupingReason == GroupingReason.Payment)
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
-                switch (organisationGroupTypeCode)
+                IdentifierValue = providerGrouping.Key,
+                OrganisationGroupTypeCode = grouping.OrganisationGroupTypeCode,
+                ProviderVersionId = providerVersionId,
+                GroupTypeIdentifier = grouping.GroupTypeIdentifier
+            };
+
+            targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);
+
+            return targetOrganisationGroup;
+        }
+
+        private Func<Provider, string> GetProviderFieldForGrouping(OrganisationGroupTypeIdentifier identifierType, OrganisationGroupTypeCode organisationGroupTypeCode, GroupingReason groupingReason, PaymentOrganisationSource paymentOrganisationSource)
+        {
+            if (groupingReason.IsForProviderPayment())
+            {
+                if (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider)
                 {
-                    case OrganisationGroupTypeCode.AcademyTrust:
-                        return c => c.TrustCode;
-                    case OrganisationGroupTypeCode.LocalAuthority:
-                        return c => c.LACode;
-                    case OrganisationGroupTypeCode.Provider:
-                        return c => c.UKPRN;
+                    // If the grouping reason is for payment, then the organisation identifier needs to be returned as a UKPRN, but grouped on the type code
+                    switch (organisationGroupTypeCode)
+                    {
+                        case OrganisationGroupTypeCode.AcademyTrust:
+                            return c => c.TrustCode;
+                        case OrganisationGroupTypeCode.LocalAuthority:
+                            return c => c.LACode;
+                        case OrganisationGroupTypeCode.Provider:
+                            return c => c.UKPRN;
+                        default:
+                            throw new InvalidOperationException($"Unknown organisation group type code to select for identifer for payment. '{organisationGroupTypeCode}'");
+                    }
+                }
+                else if (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields)
+                {
+                    return p => p.PaymentOrganisationIdentifier;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unknown paymentOrganisationSource '{paymentOrganisationSource}'");
                 }
             }
-            else
+            else if (groupingReason == GroupingReason.Information)
             {
                 // TODO: Map all fields required
                 switch (identifierType)

@@ -19,7 +19,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         private readonly AsyncPolicy _providersApiClientPolicy;
         private readonly IDictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> _additionalIdentifierKeys;
 
-        private IDictionary<string, IEnumerable<Provider>> _providers = null;
+        private Dictionary<string, Dictionary<string, Provider>> _providers = null;
 
         private readonly IEnumerable<string> _academyTrustTypes = new string[] { "Academy trust" };
 
@@ -31,7 +31,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             _providersApiClient = providersApiClient;
             _providersApiClientPolicy = resiliencePolicies.ProvidersApiClient;
             _additionalIdentifierKeys = GenerateAdditionalKeys();
-            _providers = new Dictionary<string, IEnumerable<Provider>>();
+            _providers = new Dictionary<string, Dictionary<string, Provider>>();
         }
 
         private Dictionary<GroupingReason, Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>> GenerateAdditionalKeys()
@@ -66,18 +66,17 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <param name="organisationGroupLookupParameters">Grouping Lookup Parameters</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
-        public async Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters, 
-            GroupingReason groupReason, IEnumerable<Provider> providersInGroup, 
-            PaymentOrganisationSource paymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider)
+        public async Task<TargetOrganisationGroup> GetTargetProviderDetails(OrganisationGroupLookupParameters organisationGroupLookupParameters,
+            GroupingReason groupReason, IEnumerable<Provider> providersInGroup)
         {
             Guard.ArgumentNotNull(organisationGroupLookupParameters, nameof(organisationGroupLookupParameters));
 
-            if (groupReason == GroupingReason.Payment)
+            if (groupReason == GroupingReason.Payment || groupReason == GroupingReason.Contracting)
             {
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.IdentifierValue, nameof(organisationGroupLookupParameters.IdentifierValue));
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.ProviderVersionId, nameof(organisationGroupLookupParameters.ProviderVersionId));
 
-                return await GetTargetProviderDetailsForPayment(organisationGroupLookupParameters.IdentifierValue, organisationGroupLookupParameters.OrganisationGroupTypeCode, organisationGroupLookupParameters.ProviderVersionId, providersInGroup, paymentOrganisationSource);
+                return await GetTargetProviderDetailsForPaymentOrContracting(organisationGroupLookupParameters.IdentifierValue, organisationGroupLookupParameters.OrganisationGroupTypeCode, organisationGroupLookupParameters.ProviderVersionId, providersInGroup);
             }
             else
             {
@@ -106,7 +105,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         /// <param name="providerVersionId">Provider version</param>
         /// <param name="providersInGroup">Providers in group</param>
         /// <returns></returns>
-        private async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPayment(string identifierValue, OrganisationGroupTypeCode? organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup, PaymentOrganisationSource paymentOrganisationSource)
+        private async Task<TargetOrganisationGroup> GetTargetProviderDetailsForPaymentOrContracting(string identifierValue, OrganisationGroupTypeCode? organisationGroupTypeCode, string providerVersionId, IEnumerable<Provider> providersInGroup)
         {
             if (!organisationGroupTypeCode.HasValue)
             {
@@ -118,17 +117,17 @@ namespace CalculateFunding.Generators.OrganisationGroup
             // Always return a UKRPN, as we need to pay a LegalEntity
             if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust || organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
             {
-                IEnumerable<Provider> allProviders = await GetAllProviders(providerVersionId);
+                Dictionary<string, Provider> allProviders = await GetAllProviders(providerVersionId);
 
                 if (organisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority)
                 {
                     // Lookup the local authority by LACode and provider type and subtype
-                    targetProvider = allProviders.SingleOrDefault(p => p.ProviderType == "Local Authority" && p.ProviderSubType == "Local Authority" && p.LACode == identifierValue);
+                    targetProvider = allProviders.Values.SingleOrDefault(p => p.ProviderType == "Local Authority" && p.ProviderSubType == "Local Authority" && p.LACode == identifierValue);
                 }
                 else if (organisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust)
                 {
                     // Lookup by multi academy trust. NOTE: actual data does not contain the multi academy trust entity
-                    targetProvider = allProviders.SingleOrDefault(p => p.TrustCode == identifierValue && _academyTrustTypes.Any(_ => p.ProviderType.Equals(_, StringComparison.OrdinalIgnoreCase) || p.ProviderSubType.Equals(_, StringComparison.OrdinalIgnoreCase)));
+                    targetProvider = allProviders.Values.SingleOrDefault(p => p.TrustCode == identifierValue && _academyTrustTypes.Any(_ => p.ProviderType.Equals(_, StringComparison.OrdinalIgnoreCase) || p.ProviderSubType.Equals(_, StringComparison.OrdinalIgnoreCase)));
 
                     if (targetProvider == null && !providersInGroup.IsNullOrEmpty())
                     {
@@ -138,8 +137,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                             UKPRN = identifierValue,
                             TrustCode = identifierValue,
                             Name = providersInGroup?.First().TrustName,
-                            PaymentOrganisationIdentifier = providersInGroup?.First().PaymentOrganisationIdentifier,
-                            PaymentOrganisationName = providersInGroup?.First().PaymentOrganisationName
+                            PaymentOrganisationIdentifier = providersInGroup?.First().ProviderId,
+                            PaymentOrganisationName = providersInGroup?.First().Name
                         };
                     }
                 }
@@ -161,19 +160,12 @@ namespace CalculateFunding.Generators.OrganisationGroup
             // Return the provider if found.
             IEnumerable<OrganisationIdentifier> identifiers = GenerateIdentifiersForProvider(GroupingReason.Payment, organisationGroupTypeCode.Value, targetProvider);
 
-            return paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
-                ? new TargetOrganisationGroup()
-                {
-                    Identifier = targetProvider.PaymentOrganisationIdentifier,
-                    Name = targetProvider.PaymentOrganisationName,
-                    Identifiers = identifiers
-                }
-                : new TargetOrganisationGroup()
-                {
-                    Identifier = targetProvider.UKPRN,
-                    Name = targetProvider.Name,
-                    Identifiers = identifiers
-                };
+            return new TargetOrganisationGroup()
+            {
+                Identifier = targetProvider.UKPRN,
+                Name = targetProvider.Name,
+                Identifiers = identifiers
+            };
         }
 
         private IEnumerable<OrganisationIdentifier> GenerateIdentifiersForProvider(GroupingReason groupingReason, OrganisationGroupTypeCode organisationGroupTypeCode, Provider targetProvider)
@@ -206,11 +198,28 @@ namespace CalculateFunding.Generators.OrganisationGroup
             }
         }
 
-        private async Task<IEnumerable<Provider>> GetAllProviders(string providerVersionId)
+        private async Task<Dictionary<string, Provider>> GetAllProviders(string providerVersionId)
         {
             if (!_providers.ContainsKey(providerVersionId))
             {
-                _providers.Add(providerVersionId, (await _providersApiClientPolicy.ExecuteAsync(() => _providersApiClient.GetProvidersByVersion(providerVersionId))).Content.Providers);
+                Common.ApiClient.Models.ApiResponse<ProviderVersion> providerResult = await _providersApiClientPolicy.ExecuteAsync(() => _providersApiClient.GetProvidersByVersion(providerVersionId));
+                if (providerResult == null)
+                {
+                    throw new InvalidOperationException($"Provider lookup returned null for provider version id '{providerVersionId}'");
+                }
+
+                if (providerResult.Content == null)
+                {
+                    throw new InvalidOperationException($"Provider lookup content returned null for provider version id '{providerVersionId}'");
+                }
+
+                if (providerResult.Content.Providers == null)
+                {
+                    throw new InvalidOperationException($"Provider lookup provider content returned null for provider version id '{providerVersionId}'");
+                }
+
+
+                _providers.Add(providerVersionId, providerResult.Content.Providers.ToDictionary(c => c.ProviderId, p => p));
             }
 
             return _providers[providerVersionId];
