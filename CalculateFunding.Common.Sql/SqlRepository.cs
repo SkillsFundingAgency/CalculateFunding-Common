@@ -81,7 +81,7 @@ namespace CalculateFunding.Common.Sql
         protected int ExecuteNoneQuery(string sql)
         {
             using IDbConnection connection = NewOpenConnection();
-            IDbCommand command = connection.CreateCommand();
+            using IDbCommand command = connection.CreateCommand();
             
             command.CommandText = sql;
             command.CommandType = CommandType.Text;
