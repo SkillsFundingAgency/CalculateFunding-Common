@@ -31,5 +31,7 @@
         public const string Publishing = "Publishing";
 
         public const string FDZ = "FDZ";
+
+        public const string CalcEngine = "CalcEngine";
     }
 }

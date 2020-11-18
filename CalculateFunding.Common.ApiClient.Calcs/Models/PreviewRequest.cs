@@ -6,6 +6,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public string CalculationId { get; set; }
         public string SourceCode { get; set; }
         public string Name { get; set; }
+        public string ProviderId { get; set; }
     }
 }
 
