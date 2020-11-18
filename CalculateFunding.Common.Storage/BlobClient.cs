@@ -41,7 +41,7 @@ namespace CalculateFunding.Common.Storage
 
             do
             {
-                response = await _blobContainerRepository.BatchProcessBlobs(batchSize, continuationToken: response.BlobContinuationToken);
+                response = await _blobContainerRepository.BatchProcessBlobs(batchSize, continuationToken: response.BlobContinuationToken, containerName: containerName);
 
                 await batchProcessor(response.Results);
 
@@ -148,7 +148,7 @@ namespace CalculateFunding.Common.Storage
 
         public IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None)
         {
-            return _blobContainerRepository.ListBlobs(prefix, useFlatBlobListing, blobListingDetails);
+            return _blobContainerRepository.ListBlobs(prefix, useFlatBlobListing, blobListingDetails, containerName);
         }
 
         public async Task UploadFileAsync(ICloudBlob blob, Stream data)
