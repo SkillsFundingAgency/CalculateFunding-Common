@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -343,6 +344,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
             return await GetAsync<JobCreationResponse>($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/import/queue");
+        }
+
+        public async Task<ApiResponse<LatestPublishedDate>> GetLatestPublishedDate(string fundingStreamId,
+            string fundingPeriodId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+
+            return await GetAsync<LatestPublishedDate>($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/lastupdated");
         }
     }
 }

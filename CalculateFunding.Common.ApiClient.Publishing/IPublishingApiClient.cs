@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -100,5 +101,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
             string fundingStreamId);
+
+        Task<ApiResponse<LatestPublishedDate>> GetLatestPublishedDate(string fundingStreamId,
+            string fundingPeriodId);
     }
 }

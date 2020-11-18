@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -555,6 +556,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertGetRequest($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/import/queue",
                 new JobCreationResponse(),
                 () => _client.QueueSpecificationFundingStreamSqlImport(specificationId, fundingStreamId));
+        }
+        
+        [TestMethod]
+        public async Task GetLatestPublishedDate()
+        {
+            string fundingPeriodId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/lastupdated",
+                new LatestPublishedDate(), 
+                () => _client.GetLatestPublishedDate(fundingStreamId, fundingPeriodId));
         }
         
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
