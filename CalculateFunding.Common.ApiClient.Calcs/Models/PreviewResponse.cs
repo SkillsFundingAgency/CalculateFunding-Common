@@ -5,5 +5,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public Calculation Calculation { get; set; }
 
         public Build CompilerOutput { get; set; }
+
+        public PreviewProviderCalculationResponseModel PreviewProviderCalculation { get; set; }
     }
 }
