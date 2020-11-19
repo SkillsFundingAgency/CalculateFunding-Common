@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.CalcEngine.Models;
 using CalculateFunding.Common.Testing;
@@ -24,10 +25,13 @@ namespace CalculateFunding.Common.ApiClient.CalcEngine.Tests
         {
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
+            string assemblyContentString = NewRandomString();
+            byte[] assemblyContent = Encoding.Default.GetBytes(assemblyContentString);
 
-            await AssertGetRequest($"calculations-results/{specificationId}/{providerId}/preview",
+            await AssertPostRequest($"calculations-results/{specificationId}/{providerId}/preview",
+                assemblyContent,
                 new ProviderResult(),
-                 () => _client.PreviewCalculationResults(specificationId, providerId));
+                 () => _client.PreviewCalculationResults(specificationId, providerId, assemblyContent));
         }
     }
 }
