@@ -90,5 +90,8 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
 
         [JsonProperty("canApproveAllCalculations")]
         public bool CanApproveAllCalculations { get; set; }
+        
+        [JsonProperty("canRefreshPublishedQa")]
+        public bool CanRefreshPublishedQa { get; set; } 
     }
 }

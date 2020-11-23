@@ -14,6 +14,7 @@
         CanAssignProfilePattern,
         CanApplyCustomProfilePattern,
         CanApproveCalculations,
-        CanApproveAnyCalculations
+        CanApproveAnyCalculations,
+        CanRefreshPublishedQa 
     }
 }

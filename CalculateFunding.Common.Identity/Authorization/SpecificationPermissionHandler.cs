@@ -114,6 +114,9 @@ namespace CalculateFunding.Common.Identity.Authorization
 
                 case SpecificationActionTypes.CanApproveAllCalculations:
                     return actualPermissions.CanApproveAllCalculations;
+                
+                case SpecificationActionTypes.CanRefreshPublishedQa:
+                    return actualPermissions.CanRefreshPublishedQa;
 
                 default:
                     return false;
