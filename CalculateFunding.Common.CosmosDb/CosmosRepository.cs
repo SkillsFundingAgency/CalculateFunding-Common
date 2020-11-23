@@ -576,6 +576,7 @@ namespace CalculateFunding.Common.CosmosDb
 
             FeedIterator<DocumentEntity<T>> feedIterator = RepositoryContainer
                 .GetItemLinqQueryable<DocumentEntity<T>>(requestOptions: queryRequestOptions)
+                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted)
                 .ToFeedIterator();
 
             return await ResultsFromFeedIterator(feedIterator, maxItemCount);
