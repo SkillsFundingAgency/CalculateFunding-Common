@@ -87,5 +87,8 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
         
         [JsonProperty("canRefreshPublishedQa")]
         public bool CanRefreshPublishedQa { get; set; } 
+        
+        [JsonProperty("canUploadDataSourceFiles")]
+        public bool CanUploadDataSourceFiles { get; set; } 
     }
 }

@@ -20,6 +20,7 @@
         CanApproveCalculations,
         CanApproveAnyCalculations,
         CanApproveAllCalculations,
-        CanRefreshPublishedQa 
+        CanRefreshPublishedQa,
+        CanUploadDataSourceFiles,
     }
 }

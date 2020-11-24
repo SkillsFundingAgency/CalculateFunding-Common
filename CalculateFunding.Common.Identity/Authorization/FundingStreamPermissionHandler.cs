@@ -80,6 +80,7 @@ namespace CalculateFunding.Common.Identity.Authorization
                 FundingStreamActionTypes.CanApproveCalculations => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApproveCalculations)),
                 FundingStreamActionTypes.CanApproveAnyCalculations => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanApproveAnyCalculations)),
                 FundingStreamActionTypes.CanRefreshPublishedQa => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanRefreshPublishedQa)),
+                FundingStreamActionTypes.CanUploadDataSourceFiles => fundingStreamIds.All(fs => actualPermissions.Any(p => p.FundingStreamId == fs && p.CanUploadDataSourceFiles)),
                 _ => false,
             };
         }

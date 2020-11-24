@@ -15,6 +15,7 @@
         CanApplyCustomProfilePattern,
         CanApproveCalculations,
         CanApproveAnyCalculations,
-        CanRefreshPublishedQa 
+        CanRefreshPublishedQa,
+        CanUploadDataSourceFiles,
     }
 }

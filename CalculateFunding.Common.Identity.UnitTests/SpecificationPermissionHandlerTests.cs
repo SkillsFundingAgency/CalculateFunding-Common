@@ -464,6 +464,35 @@ namespace CalculateFunding.Common.Identity.UnitTests
             // Assert
             authContext.HasSucceeded.Should().BeTrue();
         }
+        
+        [TestMethod]
+        public async Task WhenUserCanUploadDataSourceFilesForSpecification_ShouldSucceed()
+        {
+            // Arrange
+            string userId = Guid.NewGuid().ToString();
+            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
+            string specification = WellKnownSpecificationId;
+            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanUploadDataSourceFiles, specification);
+
+            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            {
+                CanUploadDataSourceFiles = true
+            };
+
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
+            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
+
+            // Act
+            await authHandler.HandleAsync(authContext);
+
+            // Assert
+            authContext.HasSucceeded.Should().BeTrue();
+        }
 
         private AuthorizationHandlerContext CreateAuthenticationContext(ClaimsPrincipal principal, SpecificationActionTypes permissionRequired, string resource)
         {

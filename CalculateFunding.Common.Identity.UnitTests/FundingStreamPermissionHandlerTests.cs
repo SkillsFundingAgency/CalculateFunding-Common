@@ -383,6 +383,36 @@ namespace CalculateFunding.Common.Identity.UnitTests
             // Assert
             authContext.HasSucceeded.Should().BeTrue();
         }
+        
+        [TestMethod]
+        public async Task WhenUserCanUploadDataSourceFilesForFundingStream_ShouldSucceed()
+        {
+            // Arrange
+            string userId = Guid.NewGuid().ToString();
+            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
+            List<string> fundingStreamIds = new List<string> { WellKnownFundingStreamId };
+            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, FundingStreamActionTypes.CanUploadDataSourceFiles, fundingStreamIds);
+
+            List<FundingStreamPermission> actualPermissions = new List<FundingStreamPermission> {
+                new FundingStreamPermission { CanUploadDataSourceFiles = true, FundingStreamId = WellKnownFundingStreamId },
+                new FundingStreamPermission { CanUploadDataSourceFiles = true, FundingStreamId = "fs2" },
+                new FundingStreamPermission { CanUploadDataSourceFiles = false, FundingStreamId = "fs3" }
+            };
+
+            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
+            usersApiClient.GetFundingStreamPermissionsForUser(Arg.Is(userId)).Returns(new ApiResponse<IEnumerable<FundingStreamPermission>>(HttpStatusCode.OK, actualPermissions));
+
+            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
+            options.Value.Returns(actualOptions);
+
+            FundingStreamPermissionHandler authHandler = new FundingStreamPermissionHandler(usersApiClient, options);
+
+            // Act
+            await authHandler.HandleAsync(authContext);
+
+            // Assert
+            authContext.HasSucceeded.Should().BeTrue();
+        }
 
         private AuthorizationHandlerContext CreateAuthenticationContext(ClaimsPrincipal principal, FundingStreamActionTypes permissionRequired, IEnumerable<string> resource)
         {
