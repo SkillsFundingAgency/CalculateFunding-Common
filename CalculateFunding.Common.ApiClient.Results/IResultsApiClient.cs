@@ -38,5 +38,7 @@ namespace CalculateFunding.Common.ApiClient.Results
             string specificationId,
             string providerId = null,
             string etag = null);
+
+        Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
     }
 }
