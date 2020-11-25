@@ -117,9 +117,6 @@ namespace CalculateFunding.Common.Identity.Authorization
                 
                 case SpecificationActionTypes.CanRefreshPublishedQa:
                     return actualPermissions.CanRefreshPublishedQa;
-                
-                case SpecificationActionTypes.CanUploadDataSourceFiles:
-                    return actualPermissions.CanUploadDataSourceFiles;
 
                 default:
                     return false;

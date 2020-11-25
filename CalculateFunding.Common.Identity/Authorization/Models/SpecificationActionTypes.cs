@@ -21,6 +21,5 @@
         CanApproveAnyCalculations,
         CanApproveAllCalculations,
         CanRefreshPublishedQa,
-        CanUploadDataSourceFiles,
     }
 }
