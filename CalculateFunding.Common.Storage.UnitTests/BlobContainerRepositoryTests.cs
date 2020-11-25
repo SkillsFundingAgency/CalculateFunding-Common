@@ -91,8 +91,8 @@ namespace CalculateFunding.Common.Storage.UnitTests
             string blobName = NewRandomString();
 
             GivenContainer();
-            GivenCloudBlob(blobName);
-            _cloudBlob.Setup(_ => _.ExistsAsync()).ReturnsAsync(true).Verifiable();
+            GivenCloudBlockBlob(blobName);
+            _cloudBlockBlob.Setup(_ => _.ExistsAsync()).ReturnsAsync(true).Verifiable();
 
             bool exists = await _blobContainerRepository.BlobExistsAsync(blobName);
 

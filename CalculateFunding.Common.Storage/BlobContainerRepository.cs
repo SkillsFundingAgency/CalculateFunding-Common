@@ -74,7 +74,7 @@ namespace CalculateFunding.Common.Storage
         {
             Guard.IsNullOrWhiteSpace(blobName, nameof(blobName));
             
-            ICloudBlob blob = await GetContainer(containerName).GetBlobReferenceFromServerAsync(blobName);
+            ICloudBlob blob = GetContainer(containerName).GetBlockBlobReference(blobName);
 
             return await blob.ExistsAsync();
         }

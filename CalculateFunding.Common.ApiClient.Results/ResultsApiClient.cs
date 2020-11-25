@@ -173,6 +173,14 @@ namespace CalculateFunding.Common.ApiClient.Results
                 customHeaders: EtagHeader(etag));
         }
 
+        public async Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            return await PostAsync<Job, string>(
+                $"{UrlRoot}/specifications/{specificationId}/generate-calculation-csv-results", string.Empty);
+        }
+
         private string[] EtagHeader(string etag)
             => etag.IsNullOrEmpty()
                 ? null
