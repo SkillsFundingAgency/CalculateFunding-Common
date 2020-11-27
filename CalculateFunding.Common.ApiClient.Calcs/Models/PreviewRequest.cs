@@ -7,6 +7,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public string SourceCode { get; set; }
         public string Name { get; set; }
         public string ProviderId { get; set; }
+        public CalculationDataType DataType { get; set; }
     }
 }
 

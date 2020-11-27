@@ -22,6 +22,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         public CalculationValueType ValueType { get; set; }
 
+        public CalculationDataType DataType { get; set; }
+
         public DateTimeOffset? LastUpdated { get; set; }
 
         public Reference Author { get; set; }
