@@ -9,6 +9,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public string DefaultTemplateVersion { get; set; }
         
         public ApprovalMode ApprovalMode { get; set; }
-        
+
+        public UpdateCoreProviderVersion UpdateCoreProviderVersion { get; set; }
+
     }
 }
