@@ -72,6 +72,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<IDictionary<int, ProfilingVersion>>(url);
         }
 
+        public async Task<ApiResponse<PublishedProviderVersion>> GetCurrentPublishedProviderVersion(string specificationId, string fundingStreamId, string providerId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            string url = $"api/specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}";
+
+            return await GetAsync<PublishedProviderVersion>(url);
+        }
+
         public async Task<ApiResponse<PublishedProviderVersion>> GetPublishedProviderVersion(string fundingStreamId, string fundingPeriodId, string providerId, string version)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
@@ -291,6 +302,21 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await GetAsync<IEnumerable<FundingLineProfile>>(
                 $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}");
+        }
+
+        public async Task<ApiResponse<PublishedProviderFundingStructure>> GetCurrentPublishedProviderFundingStructure(
+            string specificationId, 
+            string fundingStreamId, 
+            string providerId,
+            string etag = null)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
+
+            return await GetAsync<PublishedProviderFundingStructure>(
+                $"api/specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
+                customHeaders: EtagHeader(etag));
         }
 
         public async Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(

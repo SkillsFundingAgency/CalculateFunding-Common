@@ -11,6 +11,9 @@ namespace CalculateFunding.Common.ApiClient.Results.Models
         
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("fundingLineCode")]
+        public string FundingLineCode { get; set; }
         
         [JsonProperty("calculationId")]
         public string CalculationId { get; set; }

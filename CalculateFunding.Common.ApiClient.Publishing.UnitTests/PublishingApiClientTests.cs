@@ -181,6 +181,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GetCurrentPublishedProviderVersion()
+        {
+            string fundingStreamId = NewRandomString();
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"api/specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}",
+                new PublishedProviderVersion(),
+                () => _client.GetCurrentPublishedProviderVersion(specificationId, fundingStreamId, providerId));
+        }
+
+        [TestMethod]
         public async Task GetPublishedProviderVersion()
         {
             string fundingStreamId = NewRandomString();
@@ -515,6 +527,19 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                     specificationId,
                     providerId,
                     fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetCurrentPublishedProviderFundingStructure()
+        {           
+            string fundingStreamId = NewRandomString();
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest(
+                $"api/specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
+                new PublishedProviderFundingStructure(),
+                () => _client.GetCurrentPublishedProviderFundingStructure(specificationId, fundingStreamId, providerId));
         }
 
         [TestMethod]
