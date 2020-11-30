@@ -10,6 +10,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 {
     public interface IPublishingApiClient
     {
+        Task<ApiResponse<PublishedProviderVersion>> GetCurrentPublishedProviderVersion(string specificationId, string fundingStreamId, string providerId);
+
         Task<ApiResponse<PublishedProviderVersion>> GetPublishedProviderVersion(string fundingStreamId, string fundingPeriodId, string providerId, string version);
 
         Task<ApiResponse<IEnumerable<PublishedProviderTransaction>>> GetPublishedProviderTransactions(string specificationId, string providerId);
@@ -86,6 +88,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string providerId,
             string fundingStreamId);
 
+        Task<ApiResponse<PublishedProviderFundingStructure>> GetCurrentPublishedProviderFundingStructure(
+            string specificationId,
+            string fundingStreamId,
+            string providerId,
+            string etag = null);
+        
         Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
            string publishedProviderVersionId, string etag = null);
 
