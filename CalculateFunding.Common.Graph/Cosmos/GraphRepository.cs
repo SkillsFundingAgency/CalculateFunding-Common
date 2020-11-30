@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Graph.Interfaces;
 using CalculateFunding.Common.Graph.Serializer;
+using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Utility;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
@@ -23,15 +25,18 @@ namespace CalculateFunding.Common.Graph.Cosmos
 
         private readonly IGremlinClientFactory _clientFactory;
         private readonly IPathResultsTransform _pathResultsTransform;
+        private readonly int _degreeOfParallelism = 5;
 
         public GraphRepository(IGremlinClientFactory clientFactory,
-            IPathResultsTransform pathResultsTransform)
+            IPathResultsTransform pathResultsTransform,
+            int degreeOfParallelism = 5)
         {
             Guard.ArgumentNotNull(pathResultsTransform, nameof(pathResultsTransform));
             Guard.ArgumentNotNull(clientFactory, nameof(clientFactory));
 
             _pathResultsTransform = pathResultsTransform;
             _clientFactory = clientFactory;
+            _degreeOfParallelism = degreeOfParallelism;
         }
 
         public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship,
@@ -79,15 +84,33 @@ namespace CalculateFunding.Common.Graph.Cosmos
             Guard.Ensure(vertices.First().ContainsKey(property),
                 $"Unable to upsert {vertexLabel} as did not locate index property {property}");
 
+            List<Task> allTasks = new List<Task>(vertices.Count());
+            SemaphoreSlim throttler = new SemaphoreSlim(_degreeOfParallelism);
+
             foreach (Dictionary<string, object> vertex in vertices)
             {
-                string value = vertex[property].ToString();
-                string query = $"g.{VertexTraversal(vertexLabel, property, value)}.fold()" +
-                               $".coalesce(unfold(), addV('{vertexLabel}'){ImmutablePropertyProcessors(vertex)})" +
-                               $".{MutablePropertyProcessors(vertex)}";
+                await throttler.WaitAsync();
 
-                await ExecuteQuery(query);
+                allTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            string value = vertex[property].ToString();
+                            string query = $"g.{VertexTraversal(vertexLabel, property, value)}.fold()" +
+                                           $".coalesce(unfold(), addV('{vertexLabel}'){ImmutablePropertyProcessors(vertex)})" +
+                                           $".{MutablePropertyProcessors(vertex)}";
+
+                            await ExecuteQuery(query);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
             }
+
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task DeleteNode<T>(IField field)

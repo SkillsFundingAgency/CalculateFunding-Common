@@ -11,5 +11,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
         public string ApiKey { get; set; }
         
         public string ContainerPath { get; set; }
+
+        public int DegreeOfParallelism { get; set; }
     }
 }

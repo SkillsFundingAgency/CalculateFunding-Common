@@ -6,5 +6,6 @@ namespace CalculateFunding.Common.Graph.Interfaces
         int Port { get; set; }
         string ApiKey { get; set; }
         string ContainerPath { get; set; }
+        int DegreeOfParallelism { get; set; }
     }
 }
