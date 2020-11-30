@@ -30,51 +30,27 @@ namespace CalculateFunding.Generators.Funding.Enums
         PupilNumber,
 
         /// <summary>
+        /// Number
+        /// </summary>
+        [EnumMember(Value = "Number")]
+        Number,
+
+        /// <summary>
         /// A number between 0 and 1.
         /// </summary>
         [EnumMember(Value = "Weighting")]
         Weighting,
 
         /// <summary>
-        /// Work out eligibility (0 or 1).
+        /// Boolean
         /// </summary>
-        [EnumMember(Value = "Scope")]
-        Scope,
+        [EnumMember(Value = "Boolean")]
+        Boolean,
 
         /// <summary>
-        /// Informational information only.
+        /// Enum
         /// </summary>
-        [EnumMember(Value = "Information")]
-        Information,
-
-        /// <summary>
-        /// Drilldown
-        /// </summary>
-        [EnumMember(Value = "Drilldown")]
-        Drilldown,
-
-        /// <summary>
-        /// Per Puple Funding
-        /// </summary>
-        [EnumMember(Value = "Per Pupil Funding")]
-        PerPupilFunding,
-
-        /// <summary>
-        /// Lump Sum
-        /// </summary>
-        [EnumMember(Value = "Lump Sum")]
-        LumpSum,
-
-        /// <summary>
-        /// Provider Led Funding
-        /// </summary>
-        [EnumMember(Value = "Provider Led Funding")]
-        ProviderLedFunding,
-
-        /// <summary>
-        /// Number
-        /// </summary>
-        [EnumMember(Value = "Number")]
-        Number,
+        [EnumMember(Value = "Enum")]
+        Enum,
     }
 }
