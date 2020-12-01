@@ -315,7 +315,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
             return await GetAsync<PublishedProviderFundingStructure>(
-                $"api/specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
+                $"specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
                 customHeaders: EtagHeader(etag));
         }
 

@@ -537,7 +537,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string providerId = NewRandomString();
 
             await AssertGetRequest(
-                $"api/specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
+                $"specifications/{specificationId}/publishedproviders/{providerId}/fundingStreams/{fundingStreamId}/fundingStructure",
                 new PublishedProviderFundingStructure(),
                 () => _client.GetCurrentPublishedProviderFundingStructure(specificationId, fundingStreamId, providerId));
         }
