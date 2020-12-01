@@ -45,6 +45,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("dataDefinitionRelationshipIds")]
         public IEnumerable<string> DataDefinitionRelationshipIds { get; set; }
 
+        [JsonProperty("coreProviderVersionUpdates")]
+        public CoreProviderVersionUpdates CoreProviderVersionUpdates { get; set; }
+
         public string GetSpecificationId()
         {
             return Id;

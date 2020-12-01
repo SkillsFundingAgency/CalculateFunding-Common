@@ -295,5 +295,10 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
             return await PatchAsync($"{UrlRoot}/{specificationId}/providerversion", providerVersionId);
         }
+
+        public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsWithProviderVersionUpdatesAsUseLatest()
+        {
+            return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-with-provider-version-updates-uselatest");
+        }
     }
 }

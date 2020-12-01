@@ -54,6 +54,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("providerSnapshotId")]
         public int? ProviderSnapshotId { get; set; }
 
+        [JsonProperty("coreProviderVersionUpdates")]
+        public CoreProviderVersionUpdates CoreProviderVersionUpdates { get; set; }
+
         public void AddOrUpdateTemplateId(string fundingStreamId,
             string templateId)
         {

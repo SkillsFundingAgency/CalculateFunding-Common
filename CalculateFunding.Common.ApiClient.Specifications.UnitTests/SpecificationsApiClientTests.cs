@@ -647,6 +647,38 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             apiResponse?.Content
                 .Should()
                 .BeEquivalentTo(jobModel);
+        }        
+
+        [TestMethod]
+        public async Task GetSpecificationsWithProviderVersionUpdatesAsUseLatest()
+        {
+            string fundingPeriodId = NewRandomString();
+            IEnumerable<SpecificationSummary> expectedSummarySpecification = new[]
+            {
+                NewSpecificationSummary(),
+                NewSpecificationSummary(),
+                NewSpecificationSummary()
+            };
+
+            string expectedGetByIdUri = $"specs/specifications-with-provider-version-updates-uselatest";
+
+            GivenTheResponse(expectedGetByIdUri, expectedSummarySpecification, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<SpecificationSummary>> apiResponse =
+                await WhenTheSpecificationSummaryIsQueriedForProviderVersionUpdatesAsUseLatest(fundingPeriodId);
+
+            apiResponse?.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            apiResponse?.Content
+                .Select(_ => _.Id)
+                .Should()
+                .NotBeNull()
+                .And
+                .BeEquivalentTo(expectedSummarySpecification.Select(_ => _.Id));
+
+            AndTheUrisShouldHaveBeenRequested(expectedGetByIdUri);
         }
 
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
@@ -688,6 +720,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             string fundingPeriod)
         {
             return await _client.GetSpecificationsSelectedForFundingByPeriod(fundingPeriod);
+        }
+
+        private async Task<ApiResponse<IEnumerable<SpecificationSummary>>> WhenTheSpecificationSummaryIsQueriedForProviderVersionUpdatesAsUseLatest(
+            string fundingPeriod)
+        {
+            return await _client.GetSpecificationsWithProviderVersionUpdatesAsUseLatest();
         }
 
         private async Task<ApiResponse<IEnumerable<string>>> WhenGetDistinctFundingStreamsForSpecification()
