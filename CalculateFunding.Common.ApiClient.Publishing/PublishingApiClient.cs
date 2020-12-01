@@ -78,7 +78,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
-            string url = $"api/specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}";
+            string url = $"specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}";
 
             return await GetAsync<PublishedProviderVersion>(url);
         }

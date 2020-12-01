@@ -187,7 +187,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
 
-            await AssertGetRequest($"api/specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}",
+            await AssertGetRequest($"specifications/{specificationId}/publishedproviderversions/{providerId}/fundingStreams/{fundingStreamId}",
                 new PublishedProviderVersion(),
                 () => _client.GetCurrentPublishedProviderVersion(specificationId, fundingStreamId, providerId));
         }
