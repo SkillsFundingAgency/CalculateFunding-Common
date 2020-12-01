@@ -17,16 +17,16 @@ namespace CalculateFunding.Common.ApiClient.CalcEngine
             : base(httpClientFactory, HttpClientKeys.CalcEngine, logger, cancellationTokenProvider){ }
 
         public async Task<ApiResponse<ProviderResult>> PreviewCalculationResults(
-            string specificationId, 
+            string specificationId,
             string providerId,
-            byte[] assemblyContent)
+            PreviewCalculationRequest previewCalculationRequest)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
             string url = $"calculations-results/{specificationId}/{providerId}/preview";
 
-            return await PostAsync<ProviderResult, byte[]>(url, assemblyContent);
+            return await PostAsync<ProviderResult, PreviewCalculationRequest>(url, previewCalculationRequest);
         }
     }
 }

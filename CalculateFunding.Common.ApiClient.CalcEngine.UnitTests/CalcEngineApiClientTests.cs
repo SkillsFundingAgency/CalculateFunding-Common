@@ -26,12 +26,13 @@ namespace CalculateFunding.Common.ApiClient.CalcEngine.Tests
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
             string assemblyContentString = NewRandomString();
-            byte[] assemblyContent = Encoding.Default.GetBytes(assemblyContentString);
+
+            PreviewCalculationRequest previewCalculationRequest = new PreviewCalculationRequest();
 
             await AssertPostRequest($"calculations-results/{specificationId}/{providerId}/preview",
-                assemblyContent,
+                previewCalculationRequest,
                 new ProviderResult(),
-                 () => _client.PreviewCalculationResults(specificationId, providerId, assemblyContent));
+                 () => _client.PreviewCalculationResults(specificationId, providerId, previewCalculationRequest));
         }
     }
 }

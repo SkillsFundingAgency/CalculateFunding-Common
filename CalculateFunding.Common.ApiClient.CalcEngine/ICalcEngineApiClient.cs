@@ -9,6 +9,6 @@ namespace CalculateFunding.Common.ApiClient.CalcEngine
         Task<ApiResponse<ProviderResult>> PreviewCalculationResults(
             string specificationId, 
             string providerId,
-            byte[] assemblyContent);
+            PreviewCalculationRequest previewCalculationRequest);
     }
 }
