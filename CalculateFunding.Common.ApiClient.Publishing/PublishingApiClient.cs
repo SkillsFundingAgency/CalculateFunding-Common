@@ -380,5 +380,26 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await GetAsync<LatestPublishedDate>($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/lastupdated");
         }
+
+        public async Task<ApiResponse<BatchUploadResponse>> UploadBatch(BatchUploadRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<BatchUploadResponse, BatchUploadRequest>("publishedproviderbatch", request);
+        }
+
+        public async Task<ValidatedApiResponse<JobCreationResponse>> QueueBatchUploadValidation(BatchUploadValidationRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await ValidatedPostAsync<JobCreationResponse, BatchUploadValidationRequest>("publishedproviderbatch/validate", request);
+        }
+
+        public async Task<ApiResponse<IEnumerable<string>>> GetBatchPublishedProviderIds(string batchId)
+        {
+            Guard.IsNullOrWhiteSpace(batchId, nameof(batchId));
+
+            return await GetAsync<IEnumerable<string>>($"publishedproviderbatch/{batchId}/publishedProviders");
+        }
     }
 }

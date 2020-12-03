@@ -593,6 +593,51 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new LatestPublishedDate(), 
                 () => _client.GetLatestPublishedDate(fundingStreamId, fundingPeriodId));
         }
+
+        [TestMethod]
+        public async Task UploadBatch()
+        {
+            BatchUploadRequest batchUploadRequest = new BatchUploadRequest();
+
+            await AssertPostRequest("publishedproviderbatch",
+                batchUploadRequest,
+                new BatchUploadResponse
+                {
+                    BatchId = NewRandomString(),
+                    Url = NewRandomString()
+                }, 
+                () =>_client.UploadBatch(batchUploadRequest));     
+        }
+        [TestMethod]
+        public async Task QueueBatchUploadValidation()
+        {
+            BatchUploadValidationRequest uploadValidationRequest = new BatchUploadValidationRequest();
+
+            await AssertPostRequest("publishedproviderbatch/validate",
+                uploadValidationRequest,
+                new JobCreationResponse
+                {
+                    JobId = NewRandomString()
+                }, 
+                () =>_client.QueueBatchUploadValidation(uploadValidationRequest));     
+        }
+
+        [TestMethod]
+        public async Task GetBatchPublishedProviderIds()
+        {
+            string batchId = NewRandomString();
+
+            await AssertGetRequest($"publishedproviderbatch/{batchId}/publishedProviders",
+                batchId,
+                new []
+                {
+                    NewRandomString(),
+                    NewRandomString(),
+                    NewRandomString(),
+                    NewRandomString(),
+                }.AsEnumerable(), 
+                _client.GetBatchPublishedProviderIds);            
+        }
         
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {

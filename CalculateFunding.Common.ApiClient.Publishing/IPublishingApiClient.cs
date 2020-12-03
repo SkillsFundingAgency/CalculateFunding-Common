@@ -112,5 +112,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<LatestPublishedDate>> GetLatestPublishedDate(string fundingStreamId,
             string fundingPeriodId);
+
+        Task<ApiResponse<BatchUploadResponse>> UploadBatch(BatchUploadRequest request);
+        Task<ValidatedApiResponse<JobCreationResponse>> QueueBatchUploadValidation(BatchUploadValidationRequest request);
+        Task<ApiResponse<IEnumerable<string>>> GetBatchPublishedProviderIds(string batchId);
     }
 }

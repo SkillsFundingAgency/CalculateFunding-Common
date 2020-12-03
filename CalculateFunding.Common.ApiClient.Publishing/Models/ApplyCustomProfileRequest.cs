@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
