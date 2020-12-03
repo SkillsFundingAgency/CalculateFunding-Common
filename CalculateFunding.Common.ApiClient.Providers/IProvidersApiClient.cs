@@ -29,9 +29,13 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<ApiResponse<IEnumerable<ProviderGraphQlFieldInfo>>> GetProviderGraphQlFields();
 
         Task<HttpStatusCode> SetCurrentProviderVersion(string fundingStreamId,
-            string providerVersionId);
+            string providerVersionId, int? providerSnapshotId = null);
 
         Task<ApiResponse<ProviderVersion>> GetCurrentProvidersForFundingStream(string fundingStreamId);
+
+        Task<ApiResponse<CurrentProviderVersionMetadata>> GetCurrentProviderMetadataForFundingStream(string fundingStreamId);
+
+        Task<ApiResponse<IEnumerable<CurrentProviderVersionMetadata>>> GetCurrentProviderMetadataForAllFundingStreams();
 
         Task<ApiResponse<ProviderVersionSearchResult>> GetCurrentProviderForFundingStream(string fundingStreamId,
             string providerId);

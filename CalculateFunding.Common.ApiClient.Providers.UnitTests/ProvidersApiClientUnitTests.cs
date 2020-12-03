@@ -12,6 +12,7 @@ using CalculateFunding.Common.Extensions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;
+using System.Collections.Generic;
 // ReSharper disable HeapView.CanAvoidClosure
 
 namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
@@ -36,47 +37,47 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 new ProviderVersionSearchResults(),
                 _client.SearchProviderVersions);
         }
-        
+
         [TestMethod]
         public async Task SearchProvidersInProviderVersion()
         {
             string id = NewRandomString();
             SearchModel search = NewRandomSearch();
-            
+
             await AssertPostRequest($"providers/versions-search/{id}",
                 search,
                 new ProviderVersionSearchResults(),
                () => _client.SearchProvidersInProviderVersion(id, search));
         }
-        
+
         [TestMethod]
         public async Task GetProviderVersionsByFundingStream()
         {
             string id = NewRandomString();
-            
+
             await AssertGetRequest($"providers/versions-by-fundingstream/{id}",
                 id,
                 Enumerable.Empty<ProviderVersionMetadata>(),
                 _client.GetProviderVersionsByFundingStream);
         }
-        
+
         [TestMethod]
         public async Task GetProviderVersionMetadata()
         {
             string id = NewRandomString();
-            
+
             await AssertGetRequest($"providers/versions/{id}/metadata",
                 id,
                 new ProviderVersionMetadata(),
                 _client.GetProviderVersionMetadata);
         }
-        
+
         [TestMethod]
         public async Task GetProviderByIdFromProviderVersion()
         {
             string providerVersionId = NewRandomString();
             string providerId = NewRandomString();
-            
+
             await AssertGetRequest($"providers/versions/{providerVersionId}/{providerId}",
                 new ProviderVersionSearchResult(),
                () => _client.GetProviderByIdFromProviderVersion(providerVersionId, providerId));
@@ -96,7 +97,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 .StatusCode
                 .Should()
                 .Be(HttpStatusCode.OK);
-            
+
             AndTheRequestContentsShouldHaveBeen(model.AsJson());
         }
 
@@ -111,7 +112,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
             await AssertPutRequest($"providers/date/{year}/{month}/{day}",
                 HttpStatusCode.OK,
                 () => _client.SetProviderDateProviderVersion(year, month, day, providerVersionId));
-            
+
             AndTheRequestContentsShouldHaveBeen(providerVersionId.AsJson());
         }
 
@@ -126,7 +127,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 new ProviderVersion(),
                 () => _client.GetProvidersByVersion(year, month, day));
         }
-        
+
         [TestMethod]
         [Ignore("no idea what the impl of the mut is supposed to be about but its wrong")]
         public async Task SearchProviderVersions_ByVersion()
@@ -138,7 +139,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
             await AssertGetRequest($"providers/date/{year}/{month}/{day}",
                 new ProviderVersion(),
                 () => _client.GetProvidersByVersion(year, month, day));
-            
+
             //lol - the impl is a bit muddled on this one (url doesn't replace verson key parts) lol
         }
 
@@ -170,7 +171,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
             string id = NewRandomString();
 
             bool expectedResponse = false;
-            
+
             GivenThePrimitiveResponse($"scopedproviders/set-cached-providers/{id}/{setCachedProviders}",
                 expectedResponse, HttpMethod.Get);
 
@@ -231,6 +232,20 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
         }
 
         [TestMethod]
+        public async Task SetCurrentProviderVersionWithProviderSnapshotId()
+        {
+            string fundingStreamId = NewRandomString();
+            string providerVersionId = NewRandomString();
+            int? providerSnapshotId = NewRandomInt();
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
+
+            await AssertPutRequest($"providers/fundingstreams/{fundingStreamId}/current/{providerVersionId}?providerSnapshotId={providerSnapshotId.Value}",
+                expectedStatusCode,
+                () => _client.SetCurrentProviderVersion(fundingStreamId, providerVersionId, providerSnapshotId));
+        }
+
+        [TestMethod]
         public async Task GetCurrentProvidersForFundingStream()
         {
             string fundingStreamId = NewRandomString();
@@ -239,7 +254,25 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
                 new ProviderVersion(),
                 () => _client.GetCurrentProvidersForFundingStream(fundingStreamId));
         }
-        
+
+        [TestMethod]
+        public async Task GetCurrentProviderMetadataForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"providers/fundingstreams/{fundingStreamId}/current/metadata",
+                new CurrentProviderVersionMetadata(),
+                () => _client.GetCurrentProviderMetadataForFundingStream(fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetCurrentProviderMetadataForAllFundingStreams()
+        {
+            await AssertGetRequest($"providers/fundingstreams",
+                new List<CurrentProviderVersionMetadata>() { new CurrentProviderVersionMetadata() }.AsEnumerable(),
+                () => _client.GetCurrentProviderMetadataForAllFundingStreams());
+        }
+
         [TestMethod]
         public async Task GetCurrentProviderForFundingStream()
         {
@@ -247,7 +280,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
             string providerId = NewRandomString();
 
             await AssertGetRequest($"providers/{providerId}/fundingstreams/{fundingStreamId}/current",
-                new ProviderVersionSearchResult(), 
+                new ProviderVersionSearchResult(),
                 () => _client.GetCurrentProviderForFundingStream(fundingStreamId, providerId));
         }
 
@@ -256,7 +289,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
         {
             string fundingStreamId = NewRandomString();
             SearchModel search = NewRandomSearch();
-            
+
             await AssertPostRequest($"providers/fundingstreams/{fundingStreamId}/current/search",
                 search,
                 new ProviderVersionSearchResults(),
@@ -265,7 +298,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
 
         [TestMethod]
         public async Task GetLocalAuthorityNamesByProviderVersionId()
-        {            
+        {
             string providerVersionId = NewRandomString();
 
             await AssertGetRequest($"local-authorities/versions/{providerVersionId}",
@@ -280,7 +313,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.UnitTests
         [TestMethod]
         public async Task GetLocalAuthorityNamesByFundingStreamId()
         {
-            string fundingStreamId = NewRandomString();           
+            string fundingStreamId = NewRandomString();
 
             await AssertGetRequest($"local-authorities/fundingstreams/{fundingStreamId}",
                 new[]

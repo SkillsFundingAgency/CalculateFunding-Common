@@ -129,12 +129,13 @@ namespace CalculateFunding.Common.ApiClient.Providers
         }
         
         public async Task<HttpStatusCode> SetCurrentProviderVersion(string fundingStreamId,
-            string providerVersionId)
+            string providerVersionId, int? providerSnapshotId = null)
         {
             Guard.ArgumentNotNull(fundingStreamId, nameof(fundingStreamId));
             Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
 
-            return await PutAsync($"providers/fundingstreams/{fundingStreamId}/current/{providerVersionId}");
+            string queryString = providerSnapshotId.HasValue ? $"?providerSnapshotId={providerSnapshotId.Value}" : string.Empty;
+            return await PutAsync($"providers/fundingstreams/{fundingStreamId}/current/{providerVersionId}{queryString}");
         }
 
         public async Task<ApiResponse<ProviderVersion>> GetCurrentProvidersForFundingStream(string fundingStreamId)
@@ -143,7 +144,19 @@ namespace CalculateFunding.Common.ApiClient.Providers
 
             return await GetAsync<ProviderVersion>($"providers/fundingstreams/{fundingStreamId}/current");
         }
-        
+
+        public async Task<ApiResponse<CurrentProviderVersionMetadata>> GetCurrentProviderMetadataForFundingStream(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<CurrentProviderVersionMetadata>($"providers/fundingstreams/{fundingStreamId}/current/metadata");
+        }
+
+        public async Task<ApiResponse<IEnumerable<CurrentProviderVersionMetadata>>> GetCurrentProviderMetadataForAllFundingStreams()
+        {
+            return await GetAsync<IEnumerable<CurrentProviderVersionMetadata>>($"providers/fundingstreams");
+        }
+
         public async Task<ApiResponse<ProviderVersionSearchResult>> GetCurrentProviderForFundingStream(string fundingStreamId,
             string providerId)
         {
