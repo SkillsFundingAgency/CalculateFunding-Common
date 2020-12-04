@@ -87,6 +87,12 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         /// </summary>
         [JsonProperty("completed")]
         public DateTimeOffset? Completed { get; set; }
+        
+        /// <summary>
+        /// Classification of the job outcome
+        /// </summary>
+        [JsonProperty("outcomeType")]
+        public OutcomeType? OutcomeType { get; set; }
 
         /// <summary>
         /// Summary string of job outcome
@@ -94,6 +100,12 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         /// </summary>
         [JsonProperty("outcome")]
         public string Outcome { get; set; }
+        
+        /// <summary>
+        /// Outcomes of any child jobs this job spawned
+        /// </summary>
+        [JsonProperty("outcomes")]
+        public IEnumerable<Outcome> Outcomes { get; set; }
 
         /// <summary>
         /// Date and time job was last updated
