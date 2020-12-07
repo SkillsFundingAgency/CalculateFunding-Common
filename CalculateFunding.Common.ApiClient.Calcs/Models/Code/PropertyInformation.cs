@@ -12,6 +12,10 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Code
 
         public string Type { get; set; }
 
+        public string TypeClass { get; set; }
+
+        public bool IsNullable { get; set; }
+
         public string IsAggregable { get; set; }
 
         public IEnumerable<PropertyInformation> Children { get; set; }
