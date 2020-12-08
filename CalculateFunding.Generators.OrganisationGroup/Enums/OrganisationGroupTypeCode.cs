@@ -78,5 +78,20 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         /// Local Government Group
         /// </summary>
         LocalGovernmentGroup,
+
+        /// <summary>
+        /// Local Authority Ssf
+        /// </summary>
+        LocalAuthoritySsf,
+
+        /// <summary>
+        /// Local Authority Mss
+        /// </summary>
+        LocalAuthorityMss,
+
+        /// <summary>
+        /// Local Authority Maintained
+        /// </summary>
+        LocalAuthorityMaintained,
     }
 }

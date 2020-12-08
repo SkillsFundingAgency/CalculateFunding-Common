@@ -1583,6 +1583,334 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByUKPRN_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.UKPRN,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthority,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider
+            };
+
+            TargetOrganisationGroup lac1 = new TargetOrganisationGroup()
+            {
+                Identifier = "1001",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1001"))
+                .Returns(lac1);
+
+            TargetOrganisationGroup lac2 = new TargetOrganisationGroup()
+            {
+                Identifier = "1002",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1002"))
+                .Returns(lac2);
+            
+            TargetOrganisationGroup lac3 = new TargetOrganisationGroup()
+                {
+                    Identifier = "1003",
+                    Identifiers = new List<OrganisationIdentifier>()
+                    {
+                    },
+                    Name = "LocalGovernmentGroupTypeName3",
+                };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1003"))
+                .Returns(lac3);
+
+            TargetOrganisationGroup lac4 = new TargetOrganisationGroup()
+            {
+                Identifier = "1004",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName4",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1004"))
+                .Returns(lac4);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName1",
+                    SearchableName = "LocalGovernmentGroupTypeName1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1001")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName2",
+                    SearchableName = "LocalGovernmentGroupTypeName2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1002",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1002")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName3",
+                    SearchableName = "LocalGovernmentGroupTypeName3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1003")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName4",
+                    SearchableName = "LocalGovernmentGroupTypeName4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1004" && p.ProviderType == "ProviderType")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1001"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1002"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1003"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1004"));
+        }
+
+        [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByUKPRNMaintained_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.UKPRN,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthorityMaintained,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider
+            };
+
+            TargetOrganisationGroup lac1 = new TargetOrganisationGroup()
+            {
+                Identifier = "1001",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1001"))
+                .Returns(lac1);
+
+            TargetOrganisationGroup lac2 = new TargetOrganisationGroup()
+            {
+                Identifier = "1002",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1002"))
+                .Returns(lac2);
+
+            TargetOrganisationGroup lac3 = new TargetOrganisationGroup()
+            {
+                Identifier = "1003",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName3",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1003"))
+                .Returns(lac3);
+
+            TargetOrganisationGroup lac4 = new TargetOrganisationGroup()
+            {
+                Identifier = "1004",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "LocalGovernmentGroupTypeName4",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1004"))
+                .Returns(lac4);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName1",
+                    SearchableName = "LocalGovernmentGroupTypeName1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMaintained,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1001")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName2",
+                    SearchableName = "LocalGovernmentGroupTypeName2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMaintained,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1002",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1002")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName3",
+                    SearchableName = "LocalGovernmentGroupTypeName3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMaintained,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1003")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "LocalGovernmentGroupTypeName4",
+                    SearchableName = "LocalGovernmentGroupTypeName4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMaintained,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "1004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.UKPRN == "1004" && p.ProviderType == "ProviderType")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1001"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1002"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1003"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN),
+                Arg.Is(GroupingReason.Information), Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1004"));
+        }
+
+        [TestMethod]
         public async Task WhenCreatingInformationOrganisationGroupsByLACode_ThenOrganisationGroupsAreCreated()
         {
             // Arrange
@@ -2042,6 +2370,124 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenProducingContractingGroupsForASpecForLocalAuthoritiesSsfWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Contracting)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthoritySsf)
+                            .WithProviderTypeMatch("Maintained schools", "Local authority school")
+                            .WithProviderTypeMatch("Local authority maintained schools", "Community school")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Org - LA 1",
+                    SearchableName = "Payment_Org_LA_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthoritySsf,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9013",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Local authority 2",
+                    SearchableName = "Payment_Organisation_Local_authority_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthoritySsf,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9006",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
+                },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
+        public async Task WhenProducingContractingGroupsForASpecForLocalAuthoritiesMssWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Contracting)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthorityMss)
+                            .WithProviderTypeMatch("Maintained schools", "Local authority school")
+                            .WithProviderTypeMatch("Local authority maintained schools", "Community school")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Org - LA 1",
+                    SearchableName = "Payment_Org_LA_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMss,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9013",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Local authority 2",
+                    SearchableName = "Payment_Organisation_Local_authority_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMss,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9006",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
+                },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
         public async Task WhenProducingPaymentForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
         {
             GivenFundingConfiguration(
@@ -2150,6 +2596,90 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
                 },
+            };
+
+            _result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+        }
+
+        [TestMethod]
+        public async Task WhenProducingContractingForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        {
+            GivenFundingConfiguration(
+                  c =>
+                  {
+                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
+                            g.WithGroupingReason(GroupingReason.Contracting)
+                            .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
+                            .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
+                            .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.Provider)
+                            .WithProviderTypeMatch("Academies", "Academy converter")
+                            .WithProviderTypeMatch("Academy", "Academy special converter")
+                            .WithProviderTypeMatch("Academy", "Academy")
+                            ));
+                  }
+            );
+
+            AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            await WhenGeneratingOrganisationGroups();
+
+            _result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 1",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9001",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 2",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9003",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 3",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9004",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Payment Organisation - Multi academy trust 4",
+                    SearchableName = "Payment_Organisation_Multi_academy_trust_4",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    IdentifierValue = "9005",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
+                }
             };
 
             _result
