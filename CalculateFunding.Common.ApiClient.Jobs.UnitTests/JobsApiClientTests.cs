@@ -166,7 +166,18 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
             
             AndTheRequestContentsShouldHaveBeen(jobCreateRequest.AsJson());    
         }
-        
+
+        [TestMethod]
+        public async Task GetLatestJobForSpecification()
+        {
+            string specificationId = NewRandomString();
+            string jobDefinitonId = NewRandomString();
+            JobSummary jobsummary = NewJobSummary();
+            await AssertGetRequest($"jobs/latest-success?specificationId={specificationId}&jobDefinitonId={jobDefinitonId}",
+                jobsummary,
+                () => _client.GetLatestSuccessfulJobForSpecification(specificationId, jobDefinitonId));
+        }
+
         private JobCreateModel NewCreateModel() => new JobCreateModel();
         
         private Job NewJob() => new Job();

@@ -123,5 +123,15 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
             return await GetAsync<IEnumerable<JobSummary>>($"jobs/noncompleted/dateTimeFrom/{dateTimeFromAsString}/dateTimeTo/{dateTimeToAsString}");
         }
+
+        public async Task<ApiResponse<JobSummary>> GetLatestSuccessfulJobForSpecification(string specificationId, string jobDefinitionId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string api = $"jobs/latest-success?specificationId={specificationId}&jobDefinitionId={jobDefinitionId}";
+
+            return await GetAsync<JobSummary>(api);
+        }
     }
 }
