@@ -10,6 +10,6 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         ValidationError,
         UserError,
         Inconclusive,
-        Failed    
+        Failed
     }
 }

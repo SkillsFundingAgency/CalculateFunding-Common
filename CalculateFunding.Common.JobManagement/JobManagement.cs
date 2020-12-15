@@ -59,7 +59,7 @@ namespace CalculateFunding.Common.JobManagement
                 {
                     if (IsServiceBusService)
                     {
-                        JobNotification scopedJob = await _messengerService.ReceiveMessage<JobNotification>($"{jobNotificationTopic}/Subscriptions/{correlationId}", _ =>
+                        JobSummary scopedJob = await _messengerService.ReceiveMessage<JobSummary>($"{jobNotificationTopic}/Subscriptions/{correlationId}", _ =>
                         {
                             return _?.JobType == jobType &&
                             _.SpecificationId == specificationId &&

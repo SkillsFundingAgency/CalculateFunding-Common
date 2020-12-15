@@ -171,8 +171,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                 .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Succeeded, JobId = jobId } }));
 
             messengerService
-                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000))
-                .Returns(new JobNotification
+                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000))
+                .Returns(new JobSummary
                 {
                     CompletionStatus = CompletionStatus.Succeeded
                 });
@@ -189,7 +189,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
 
                 await messengerService
                     .Received(1)
-                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000));
+                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000));
             }
             else
             {
@@ -236,8 +236,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                 .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.InProgress, JobId = jobId } }));
 
             messengerService
-                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(1000))
-                .Returns(default(JobNotification));
+                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(1000))
+                .Returns(default(JobSummary));
 
             //Act
             bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }),
@@ -257,7 +257,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
 
                 await messengerService
                     .Received(1)
-                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(1000));
+                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(1000));
             }
 
             jobsComplete
@@ -324,8 +324,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
                 .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Failed, JobId = jobId } }));
 
             messengerService
-                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000))
-                .Returns(new JobNotification
+                .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000))
+                .Returns(new JobSummary
                 {
                     CompletionStatus = CompletionStatus.Failed
                 });
@@ -342,7 +342,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
 
                 await messengerService
                     .Received(1)
-                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobNotification>>(), TimeSpan.FromMilliseconds(600000));
+                    .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000));
             }
 
             jobsComplete

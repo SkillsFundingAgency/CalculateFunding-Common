@@ -6,8 +6,8 @@
     <Product>Calculate Funding Service</Product>
     <Company>Department for Education</Company>
     <Description>Common API Client functionality</Description>    
-    <Version>3.2.0</Version>    
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>   
+    <Version>4.1.1</Version>    
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>    
    
   </PropertyGroup>
 
