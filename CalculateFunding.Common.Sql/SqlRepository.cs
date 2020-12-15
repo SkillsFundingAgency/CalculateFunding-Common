@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.Sql
         private readonly ISqlConnectionFactory _connectionFactory;
         private readonly AsyncPolicy _queryAsyncPolicy;
         private readonly Policy _openConnectionPolicy;
+        private readonly Policy _executePolicy;
 
         protected SqlRepository(ISqlConnectionFactory connectionFactory,
             ISqlPolicyFactory sqlPolicyFactory)
@@ -25,6 +26,7 @@ namespace CalculateFunding.Common.Sql
             _connectionFactory = connectionFactory;
             _queryAsyncPolicy = sqlPolicyFactory.CreateQueryAsyncPolicy();
             _openConnectionPolicy = sqlPolicyFactory.CreateConnectionOpenPolicy();
+            _executePolicy = sqlPolicyFactory.CreateExecutePolicy();
         }
 
         public Task<(bool Ok, string Message)> IsHealthOk()
@@ -86,7 +88,8 @@ namespace CalculateFunding.Common.Sql
             command.CommandText = sql;
             command.CommandType = CommandType.Text;
 
-            return command.ExecuteNonQuery();
+            // ReSharper disable once AccessToDisposedClosure
+            return _executePolicy.Execute(() => command.ExecuteNonQuery());
         }
 
         private async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,

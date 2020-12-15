@@ -7,5 +7,7 @@ namespace CalculateFunding.Common.Sql.Interfaces
         Policy CreateConnectionOpenPolicy();
         
         AsyncPolicy CreateQueryAsyncPolicy();
+        
+        Policy CreateExecutePolicy();
     }
 }

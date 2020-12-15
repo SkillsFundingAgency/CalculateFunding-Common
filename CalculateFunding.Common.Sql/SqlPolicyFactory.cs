@@ -40,6 +40,17 @@ namespace CalculateFunding.Common.Sql
             
             return Policy.WrapAsync(tooBusy, transientError, circuitBreaker);
         }
+        
+        public Policy CreateExecutePolicy()
+        {
+            Policy circuitBreaker = Policy.Handle<SqlException>().CircuitBreaker(1000, DurationMinutes(1));
+            Policy tooBusy = Policy.Handle<SqlException>(_ => _.ErrorCode == 111)
+                .WaitAndRetry(retryCount: 3, _ => DurationSeconds(10));
+            Policy transientError = Policy.Handle<SqlException>(_ => IsTransientError(_.ErrorCode))
+                .WaitAndRetry(retryCount: 3, ExponentialBackOff);
+            
+            return Policy.Wrap(tooBusy, transientError, circuitBreaker);
+        }
 
         private static bool IsTransientError(int errorCode) => TransientErrorCodes.Contains(errorCode);
 
