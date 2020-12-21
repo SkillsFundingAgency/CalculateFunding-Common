@@ -26,19 +26,5 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<IEnumerable<SpecificationInformation>>> GetSpecificationsWithProviderResultsForProviderId(string providerId);
         Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest);
 
-        Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request);
-
-        Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
-            string fundingPeriodId,
-            string specificationId,
-            string etag = null);
-
-        Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
-            string fundingPeriodId,
-            string specificationId,
-            string providerId = null,
-            string etag = null);
-
-        Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
     }
 }

@@ -79,6 +79,14 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         Task<HttpStatusCode> SetProviderVersion(string specificationId, string providerVersionId);
 
+
+        Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request);
+
+        Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string etag = null);
+
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsWithProviderVersionUpdatesAsUseLatest();
     }
 }

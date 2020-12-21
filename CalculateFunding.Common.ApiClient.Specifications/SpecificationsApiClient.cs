@@ -296,9 +296,40 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await PatchAsync($"{UrlRoot}/{specificationId}/providerversion", providerVersionId);
         }
 
+
+        public async Task<NoValidatedContentApiResponse> UpdateFundingStructureLastModified(UpdateFundingStructureLastModifiedRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await ValidatedPostAsync("funding-structures/lastModified", request);
+        }
+
+        public async Task<ApiResponse<FundingStructure>> GetFundingStructure(string fundingStreamId,
+            string fundingPeriodId,
+            string specificationId,
+            string etag = null)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<FundingStructure>(
+                $"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                customHeaders: EtagHeader(etag));
+        }
+
+        private string[] EtagHeader(string etag)
+            => string.IsNullOrWhiteSpace(etag)
+                ? null
+                : new[]
+                {
+                    IfNoneMatch, etag
+                };
+
         public async Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsWithProviderVersionUpdatesAsUseLatest()
         {
             return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-with-provider-version-updates-uselatest");
         }
+
     }
 }

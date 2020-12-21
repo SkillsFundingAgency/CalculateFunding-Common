@@ -681,6 +681,58 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             AndTheUrisShouldHaveBeenRequested(expectedGetByIdUri);
         }
 
+        [TestMethod]
+        public async Task UpdateFundingStructureLastModified()
+        {
+            UpdateFundingStructureLastModifiedRequest request = new UpdateFundingStructureLastModifiedRequest
+            {
+                SpecificationId = NewRandomString()
+            };
+
+            GivenTheStatusCode("funding-structures/lastModified", HttpStatusCode.OK, HttpMethod.Post);
+
+            NoValidatedContentApiResponse apiResponse = await _client.UpdateFundingStructureLastModified(request);
+
+            apiResponse?
+                .StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
+        }
+
+        [TestMethod]
+        public async Task GetFundingStructure()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    Items = new List<FundingStructureItem>()
+                },
+                () => _client.GetFundingStructure(fundingStreamId, fundingPeriodId, specificationId));
+        }
+
+        [TestMethod]
+        public async Task GetFundingStructureEtagSupplied()
+        {
+            string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
+            string specificationId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"funding-structures?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}",
+                new FundingStructure
+                {
+                    Items = new List<FundingStructureItem>()
+                },
+                () => _client.GetFundingStructure(fundingStreamId, fundingPeriodId, specificationId, etag),
+                "If-None-Match", etag);
+        }
+
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
