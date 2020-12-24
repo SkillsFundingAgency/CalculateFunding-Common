@@ -399,13 +399,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 FundingLineCode = NewRandomString()
             };
             
-            HttpStatusCode response = await _client.ApplyCustomProfilePattern(request);
+            NoValidatedContentApiResponse response = await _client.ApplyCustomProfilePattern(request);
 
             response
                 .Should()
                 .NotBeNull();
 
             response
+                .StatusCode
                 .Should()
                 .Be(expectedStatusCode);    
             
