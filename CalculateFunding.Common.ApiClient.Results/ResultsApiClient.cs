@@ -133,6 +133,14 @@ namespace CalculateFunding.Common.ApiClient.Results
             return await PutAsync($"{UrlRoot}/providers/specifications", mergeRequest);
         }
 
+        public async Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+
+            return await PostAsync<Job, string>(
+                $"{UrlRoot}/specifications/{specificationId}/generate-calculation-csv-results", string.Empty);
+        }
+
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));

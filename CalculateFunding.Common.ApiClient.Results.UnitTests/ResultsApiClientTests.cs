@@ -222,6 +222,16 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
                 () => _client.GetSpecificationsWithProviderResultsForProviderId(providerId));
         }
 
+        [TestMethod]
+        public async Task RunGenerateCalculationCsvResultsJob()
+        {
+            string specificationId = new RandomString();
+            Job job = new Job();
 
+            await AssertPostRequest($"specifications/{specificationId}/generate-calculation-csv-results",
+                string.Empty,
+                job,
+                () => _client.RunGenerateCalculationCsvResultsJob(specificationId));
+        }
     }
 }
