@@ -345,22 +345,48 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                     IfNoneMatch, etag
                };
 
-        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForRelease(PublishedProviderIdsRequest providerIds, string specificationId)
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForRelease(
+            PublishedProviderIdsRequest providerIds, 
+            string specificationId)
         {
             Guard.ArgumentNotNull(providerIds, nameof(providerIds));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/generate-csv-for-release",
+            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-release/batch",
                 providerIds);
         }
 
-        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForApproval(PublishedProviderIdsRequest providerIds, string specificationId)
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForApproval(
+            PublishedProviderIdsRequest providerIds, 
+            string specificationId)
         {
             Guard.ArgumentNotNull(providerIds, nameof(providerIds));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>($"specifications/{specificationId}/publishedproviders/generate-csv-for-approval",
+            return await PostAsync<PublishedProviderDataDownload, PublishedProviderIdsRequest>(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-approval/batch",
                 providerIds);
+        }
+
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForRelease(
+            string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderDataDownload, string>(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-release/all",
+                string.Empty);
+        }
+
+        public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForApproval(
+            string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<PublishedProviderDataDownload, string>(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-approval/all",
+                string.Empty);
         }
 
         public async Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,

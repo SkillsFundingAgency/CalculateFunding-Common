@@ -596,6 +596,68 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GenerateCsvForBatchPublishedProvidersForRelease()
+        {
+            PublishedProviderIdsRequest publishedProviderIdsRequest = new PublishedProviderIdsRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-release/batch",
+                publishedProviderIdsRequest,
+                new PublishedProviderDataDownload
+                {
+                    Url = NewRandomString()
+                },
+                () => _client.GenerateCsvForBatchPublishedProvidersForRelease(publishedProviderIdsRequest, specificationId));
+        }
+
+        [TestMethod]
+        public async Task GenerateCsvForBatchPublishedProvidersForApproval()
+        {
+            PublishedProviderIdsRequest publishedProviderIdsRequest = new PublishedProviderIdsRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-approval/batch",
+                publishedProviderIdsRequest,
+                new PublishedProviderDataDownload
+                {
+                    Url = NewRandomString()
+                },
+                () => _client.GenerateCsvForBatchPublishedProvidersForApproval(publishedProviderIdsRequest, specificationId));
+        }
+
+        [TestMethod]
+        public async Task GenerateCsvForAllPublishedProvidersForRelease()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-release/all",
+                string.Empty,
+                new PublishedProviderDataDownload
+                {
+                    Url = NewRandomString()
+                },
+                () => _client.GenerateCsvForAllPublishedProvidersForRelease(specificationId));
+        }
+
+        [TestMethod]
+        public async Task GenerateCsvForAllPublishedProvidersForApproval()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest(
+                $"specifications/{specificationId}/publishedproviders/generate-csv-for-approval/all",
+                string.Empty,
+                new PublishedProviderDataDownload
+                {
+                    Url = NewRandomString()
+                },
+                () => _client.GenerateCsvForAllPublishedProvidersForApproval(specificationId));
+        }
+
+        [TestMethod]
         public async Task UploadBatch()
         {
             BatchUploadRequest batchUploadRequest = new BatchUploadRequest();
@@ -609,6 +671,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 }, 
                 () =>_client.UploadBatch(batchUploadRequest));     
         }
+
         [TestMethod]
         public async Task QueueBatchUploadValidation()
         {

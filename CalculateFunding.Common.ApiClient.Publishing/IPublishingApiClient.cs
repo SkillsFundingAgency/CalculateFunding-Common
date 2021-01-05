@@ -99,12 +99,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<IEnumerable<ProfileTotal>>> PreviewProfileChange(ProfilePreviewRequest request);
 
-        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForRelease(
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForRelease(
             PublishedProviderIdsRequest providerIds,
             string specificationId);
 
-        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForPublishedProvidersForApproval(
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForApproval(
             PublishedProviderIdsRequest providerIds,
+            string specificationId);
+
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForRelease(
+            string specificationId);
+
+        Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForApproval(
             string specificationId);
 
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
