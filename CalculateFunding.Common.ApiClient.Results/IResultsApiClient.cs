@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -26,5 +27,8 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<IEnumerable<SpecificationInformation>>> GetSpecificationsWithProviderResultsForProviderId(string providerId);
         Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest);
         Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
+
+        [Obsolete]
+        Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId, string fundingPeriodId, string specificationId, string providerId = null, string etag = null);
     }
 }

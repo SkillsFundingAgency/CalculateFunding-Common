@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -129,7 +130,7 @@ namespace CalculateFunding.Common.ApiClient.Results
         public async Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest)
         {
             Guard.ArgumentNotNull(mergeRequest, nameof(mergeRequest));
-            
+
             return await PutAsync($"{UrlRoot}/providers/specifications", mergeRequest);
         }
 
@@ -146,5 +147,33 @@ namespace CalculateFunding.Common.ApiClient.Results
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
         }
+
+        [Obsolete]
+        public async Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
+           string fundingPeriodId,
+           string specificationId,
+           string providerId = null,
+           string etag = null)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}";
+
+            url = providerId.IsNullOrEmpty() ? url : $"{url}&providerId={providerId}";
+
+            return await GetAsync<FundingStructure>(
+                url,
+                customHeaders: EtagHeader(etag));
+        }
+
+        private string[] EtagHeader(string etag)
+           => etag.IsNullOrEmpty()
+               ? null
+               : new[]
+               {
+                    IfNoneMatch, etag
+               };
     }
 }
