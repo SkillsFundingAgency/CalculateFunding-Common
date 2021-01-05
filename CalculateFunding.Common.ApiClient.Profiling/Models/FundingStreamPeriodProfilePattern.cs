@@ -28,12 +28,6 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("fundingStreamPeriodEndDate")]
         public DateTime FundingStreamPeriodEndDate { get; set; }
 
-        [JsonProperty("reProfilePastPeriods")]
-        public bool ReProfilePastPeriods { get; set; }
-
-        [JsonProperty("calculateBalancingPayment")]
-        public bool CalculateBalancingPayment { get; set; }
-
         [JsonProperty("allowUserToEditProfilePattern")]
         public bool AllowUserToEditProfilePattern { get; set; }
 

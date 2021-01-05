@@ -14,10 +14,6 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         public DateTime? FundingStreamPeriodEndDate { get; set; }
 
-        public bool ReProfilePastPeriods { get; set; }
-
-        public bool CalculateBalancingPayment { get; set; }
-
         public ProfilePeriodPattern[] ProfilePattern { get; set; }
     }
 }
