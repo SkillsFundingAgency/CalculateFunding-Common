@@ -26,6 +26,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("variations")]
         public IEnumerable<FundingVariation> Variations { get; set; }
 
+        [JsonProperty("errorDetectors")]
+        public IEnumerable<string> ErrorDetectors { get; set; }
+
         [JsonProperty("approvalMode")]
         public ApprovalMode ApprovalMode { get; set; }
 
@@ -34,7 +37,6 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("paymentOrganisationSource")]
         public PaymentOrganisationSource PaymentOrganisationSource { get; set; }
-
 
         [JsonProperty("updateCoreProviderVersion")]
         public UpdateCoreProviderVersion UpdateCoreProviderVersion { get; set; }
