@@ -17,6 +17,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("calculationId")]
         public string CalculationId { get; set; }
 
+        [JsonProperty("templateId")]
+        public uint TemplateId { get; set; }
+
         [JsonProperty("type")]
         public FundingStructureType Type { get; set; }
 
