@@ -283,6 +283,15 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task GetValidateDatasetValidationErrorSasUrl()
+        {
+            await AssertPostRequest("get-validate-dataset-error-url",
+                new DatasetValidationErrorRequestModel(),
+                new DatasetValidationErrorSasUrlResponseModel(),
+                _ => _client.GetValidateDatasetValidationErrorSasUrl(_));
+        }
+
+        [TestMethod]
         public async Task GetValidateDatasetStatus()
         {
             string id = NewRandomString();

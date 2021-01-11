@@ -252,5 +252,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return $"datasets/{relativeUri}";
         }
 
+        public async Task<ApiResponse<DatasetValidationErrorSasUrlResponseModel>> GetValidateDatasetValidationErrorSasUrl(
+            DatasetValidationErrorRequestModel requestModel)
+        {
+            Guard.ArgumentNotNull(requestModel, nameof(requestModel));
+
+            return await PostAsync<DatasetValidationErrorSasUrlResponseModel, DatasetValidationErrorRequestModel>(
+                DataSetsUriFor("get-validate-dataset-error-url"), requestModel);
+        }
     }
 }
