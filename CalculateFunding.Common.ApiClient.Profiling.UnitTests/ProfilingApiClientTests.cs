@@ -32,6 +32,19 @@ namespace CalculateFunding.Common.ApiClient.ProfilingApiClient.UnitTests
                 new ProviderProfilingResponseModel(),
                 _client.GetProviderProfilePeriods);
         }
+        
+        [TestMethod]
+        public async Task GetBatchProfilePeriods()
+        {
+            await AssertPostRequest("profiling/batch",
+                new BatchProfilingRequestModel(),
+                new[]
+                {
+                    new BatchProviderProfilingResponseModel(),
+                    new BatchProviderProfilingResponseModel(),
+                }.AsEnumerable(),
+                _client.GetBatchProfilePeriods);
+        }
 
         [TestMethod]
         public async Task CreateProfilePattern()

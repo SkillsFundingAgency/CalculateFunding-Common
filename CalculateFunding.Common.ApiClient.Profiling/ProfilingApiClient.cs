@@ -21,6 +21,13 @@ namespace CalculateFunding.Common.ApiClient.Profiling
             ICancellationTokenProvider cancellationTokenProvider = null) : base(httpClientFactory, clientKey, logger, bearerTokenProvider, cancellationTokenProvider)
         {
         }
+        
+        public async Task<ValidatedApiResponse<IEnumerable<BatchProviderProfilingResponseModel>>> GetBatchProfilePeriods(BatchProfilingRequestModel requestModel)
+        {
+            Guard.ArgumentNotNull(requestModel, nameof(requestModel));
+
+            return await ValidatedPostAsync<IEnumerable<BatchProviderProfilingResponseModel>, BatchProfilingRequestModel>("profiling/batch", requestModel);
+        }
 
         public async Task<ValidatedApiResponse<ProviderProfilingResponseModel>> GetProviderProfilePeriods(ProviderProfilingRequestModel requestModel)
         {

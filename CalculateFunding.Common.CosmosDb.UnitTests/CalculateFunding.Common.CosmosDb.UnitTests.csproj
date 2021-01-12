@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Calcs\CalculateFunding.Common.ApiClient.Calcs.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.CosmosDb\CalculateFunding.Common.CosmosDb.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
