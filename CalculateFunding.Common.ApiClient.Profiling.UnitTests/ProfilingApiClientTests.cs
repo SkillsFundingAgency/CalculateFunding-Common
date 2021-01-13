@@ -40,8 +40,8 @@ namespace CalculateFunding.Common.ApiClient.ProfilingApiClient.UnitTests
                 new BatchProfilingRequestModel(),
                 new[]
                 {
-                    new BatchProviderProfilingResponseModel(),
-                    new BatchProviderProfilingResponseModel(),
+                    new BatchProfilingResponseModel(),
+                    new BatchProfilingResponseModel(),
                 }.AsEnumerable(),
                 _client.GetBatchProfilePeriods);
         }

@@ -18,6 +18,6 @@ namespace CalculateFunding.Common.ApiClient.Profiling
         Task<(bool Ok, string Message)> IsHealthOk();
         Task<ApiResponse<ReProfileResponse>> ReProfile(ReProfileRequest request);
         Task<ApiResponse<IEnumerable<ReProfilingStrategyResponse>>> GetAllReProfilingStrategies();
-        Task<ValidatedApiResponse<IEnumerable<BatchProviderProfilingResponseModel>>> GetBatchProfilePeriods(BatchProfilingRequestModel requestModel);
+        Task<ValidatedApiResponse<IEnumerable<BatchProfilingResponseModel>>> GetBatchProfilePeriods(BatchProfilingRequestModel requestModel);
     }
 }

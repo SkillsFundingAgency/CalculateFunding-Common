@@ -22,11 +22,11 @@ namespace CalculateFunding.Common.ApiClient.Profiling
         {
         }
         
-        public async Task<ValidatedApiResponse<IEnumerable<BatchProviderProfilingResponseModel>>> GetBatchProfilePeriods(BatchProfilingRequestModel requestModel)
+        public async Task<ValidatedApiResponse<IEnumerable<BatchProfilingResponseModel>>> GetBatchProfilePeriods(BatchProfilingRequestModel requestModel)
         {
             Guard.ArgumentNotNull(requestModel, nameof(requestModel));
 
-            return await ValidatedPostAsync<IEnumerable<BatchProviderProfilingResponseModel>, BatchProfilingRequestModel>("profiling/batch", requestModel);
+            return await ValidatedPostAsync<IEnumerable<BatchProfilingResponseModel>, BatchProfilingRequestModel>("profiling/batch", requestModel);
         }
 
         public async Task<ValidatedApiResponse<ProviderProfilingResponseModel>> GetProviderProfilePeriods(ProviderProfilingRequestModel requestModel)
