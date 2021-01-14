@@ -20,7 +20,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public string ProfilePatternDescription { get; set; }
         public Reference LastUpdatedUser { get; set; }
         public DateTime? LastUpdatedDate { get; set; }
-        public decimal ProfileTotalAmount { get; set; }
+        public decimal? ProfileTotalAmount { get; set; }
         public IEnumerable<ProfileTotal> ProfileTotals { get; set; }
     }
 }
