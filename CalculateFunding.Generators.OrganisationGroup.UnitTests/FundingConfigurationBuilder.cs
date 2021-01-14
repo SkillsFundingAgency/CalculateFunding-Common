@@ -30,6 +30,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             return this;
         }
 
+        public FundingConfigurationBuilder WithFundingStreamId(string fundingStreamId)
+        {
+            _config.FundingStreamId = fundingStreamId;
+            return this;
+        }
+
         public FundingConfiguration Build()
         {
             return _config;

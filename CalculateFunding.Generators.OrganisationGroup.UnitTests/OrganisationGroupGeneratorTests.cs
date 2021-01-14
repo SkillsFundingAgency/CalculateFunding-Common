@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.FundingDataZone;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Providers.Models;
@@ -10,6 +13,8 @@ using CalculateFunding.Generators.OrganisationGroup.Models;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using FdzPaymentOrganisation = CalculateFunding.Common.ApiClient.FundingDataZone.Models.PaymentOrganisation;
+using FdzProviderSnapshot = CalculateFunding.Common.ApiClient.FundingDataZone.Models.ProviderSnapshot;
 
 namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 {
@@ -17,17 +22,21 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
     public class OrganisationGroupGeneratorTests
     {
         private IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
+        private IFundingDataZoneApiClient _fundingDataZoneApiClient;
         private OrganisationGroupGenerator _generator;
         private string _providerVersionId;
         private IEnumerable<Provider> _scopedProviders;
         private FundingConfiguration _fundingConfiguration;
         private IEnumerable<OrganisationGroupResult> _result;
 
+        private const string _fundingStreamId = "funding-stream-id";
+
         [TestInitialize]
         public void Setup()
         {
             _organisationGroupTargetProviderLookup = Substitute.For<IOrganisationGroupTargetProviderLookup>();
-            _generator = new OrganisationGroupGenerator(_organisationGroupTargetProviderLookup);
+            _fundingDataZoneApiClient = Substitute.For<IFundingDataZoneApiClient>();
+            _generator = new OrganisationGroupGenerator(_organisationGroupTargetProviderLookup, _fundingDataZoneApiClient);
             _providerVersionId = "test-providers";
         }
 
@@ -1629,15 +1638,15 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
                 Arg.Is<IEnumerable<Provider>>(_ => _.First().UKPRN == "1002"))
                 .Returns(lac2);
-            
+
             TargetOrganisationGroup lac3 = new TargetOrganisationGroup()
+            {
+                Identifier = "1003",
+                Identifiers = new List<OrganisationIdentifier>()
                 {
-                    Identifier = "1003",
-                    Identifiers = new List<OrganisationIdentifier>()
-                    {
-                    },
-                    Name = "LocalGovernmentGroupTypeName3",
-                };
+                },
+                Name = "LocalGovernmentGroupTypeName3",
+            };
 
             _organisationGroupTargetProviderLookup
                 .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.UKPRN), Arg.Is(GroupingReason.Information),
@@ -2207,7 +2216,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Payment)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2221,6 +2231,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+            int providerSnapshotId = 12345;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2291,7 +2305,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2305,6 +2320,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+            int providerSnapshotId = 12345;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2375,7 +2394,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2388,6 +2408,11 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+
+            int providerSnapshotId = 12345;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2434,7 +2459,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2447,6 +2473,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+            int providerSnapshotId = 12345;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2493,7 +2523,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Payment)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2516,6 +2547,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
 
+            int providerSnapshotId = 12345;
+            int paymentOrganisationIdentifier = 9001;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier);
+
             await WhenGeneratingOrganisationGroups();
 
             _result
@@ -2533,7 +2570,14 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
                     GroupReason = Enums.OrganisationGroupingReason.Payment,
                     IdentifierValue = "9001",
-                    Identifiers = new List<OrganisationIdentifier>(),
+                    Identifiers = new List<OrganisationIdentifier>()
+                    {
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.UKPRN, Value = "Ukprn 9001"},
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode, Value = "TrustCode 9001"},
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.URN, Value = "Urn 9001"},
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.LACode, Value = "LaCode 9001"},
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.CompaniesHouseNumber, Value = "CompanyHouseNumber 9001"},
+                    },
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
                 },
                 new OrganisationGroupResult()
@@ -2609,7 +2653,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             GivenFundingConfiguration(
                   c =>
                   {
-                      c.WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
+                      c.WithFundingStreamId(_fundingStreamId)
+                      .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
@@ -2623,6 +2668,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
+            int providerSnapshotId = 12345;
+
+            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2719,6 +2768,46 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             setup?.Invoke(configBuilder);
 
             return configBuilder.Build();
+        }
+
+        private void AndProviderSnapshotsForFundingStream(string fundingStreamId, int providerSnapshotId)
+        {
+            _fundingDataZoneApiClient.GetProviderSnapshotsForFundingStream(fundingStreamId)
+                .Returns(new ApiResponse<IEnumerable<FdzProviderSnapshot>>(HttpStatusCode.OK,
+                GenerateFdzProviderSnapshotsForFundingStream(fundingStreamId, providerSnapshotId)));
+        }
+
+        private void AndFdzPaymentOrganisationsForProviderSnapshotId(int providerSnapshotId, params int[] paymentOrganisationIds)
+        {
+            _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId)
+                .Returns(new ApiResponse<IEnumerable<FdzPaymentOrganisation>>(HttpStatusCode.OK,
+                GenerateFdzPaymentOrganisations(providerSnapshotId, paymentOrganisationIds)));
+        }
+
+        private IEnumerable<FdzProviderSnapshot> GenerateFdzProviderSnapshotsForFundingStream(string fundingStreamId, int providerSnapshotId)
+        {
+            return new[] {
+                new FdzProviderSnapshot
+                {
+                    FundingStreamName = fundingStreamId,
+                    ProviderSnapshotId = providerSnapshotId
+                }
+            };
+        }
+
+        private IEnumerable<FdzPaymentOrganisation> GenerateFdzPaymentOrganisations(int providerSnapshotId, params int[] paymentOrganisationIds)
+        {
+            return paymentOrganisationIds.Select(x => new FdzPaymentOrganisation
+            {
+                PaymentOrganisationId = x,
+                ProviderSnapshotId = 1,
+                OrganisationType = "Local Authority",
+                LaCode = $"LaCode {x}",
+                Ukprn = $"Ukprn {x}",
+                TrustCode = $"TrustCode {x}",
+                Urn = $"Urn {x}",
+                CompanyHouseNumber = $"CompanyHouseNumber {x}"
+            });
         }
 
         private IEnumerable<Provider> GenerateScopedProviders()

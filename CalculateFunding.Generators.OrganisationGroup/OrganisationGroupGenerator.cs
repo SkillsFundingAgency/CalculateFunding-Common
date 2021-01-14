@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.FundingDataZone;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.ApiClient.Providers.Models;
@@ -11,19 +13,23 @@ using CalculateFunding.Common.Utility;
 using CalculateFunding.Generators.OrganisationGroup.Extensions;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
+using FdzPaymentOrganisation = CalculateFunding.Common.ApiClient.FundingDataZone.Models.PaymentOrganisation;
+using FdzProviderSnapshot = CalculateFunding.Common.ApiClient.FundingDataZone.Models.ProviderSnapshot;
 
 namespace CalculateFunding.Generators.OrganisationGroup
 {
     public class OrganisationGroupGenerator : IOrganisationGroupGenerator
     {
         private readonly IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
+        private readonly IFundingDataZoneApiClient _fundingDataZoneApiClient;
 
-        public OrganisationGroupGenerator(IOrganisationGroupTargetProviderLookup organisationGroupTargetProviderLookup)
+        public OrganisationGroupGenerator(IOrganisationGroupTargetProviderLookup organisationGroupTargetProviderLookup, IFundingDataZoneApiClient fundingDataZoneApiClient)
         {
             _organisationGroupTargetProviderLookup = organisationGroupTargetProviderLookup;
+            _fundingDataZoneApiClient = fundingDataZoneApiClient;
         }
 
-        public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(FundingConfiguration fundingConfiguration, IEnumerable<Provider> scopedProviders, string providerVersionId)
+        public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(FundingConfiguration fundingConfiguration, IEnumerable<Common.ApiClient.Providers.Models.Provider> scopedProviders, string providerVersionId)
         {
             Guard.ArgumentNotNull(fundingConfiguration, nameof(fundingConfiguration));
             Guard.ArgumentNotNull(scopedProviders, nameof(scopedProviders));
@@ -59,17 +65,40 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
                     if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
                         && grouping.GroupingReason.IsForProviderPayment())
-                        // TODO - lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
+                    {
+                        // lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
                         // Will use providerGrouping.Key as the identifier of the PaymentOrganisation
+
+                        IEnumerable<OrganisationIdentifier> identifiers = new List<OrganisationIdentifier>();
+
+                        ApiResponse<IEnumerable<FdzProviderSnapshot>> providerSnapshotsForFundingStreamResponse = await _fundingDataZoneApiClient.GetProviderSnapshotsForFundingStream(fundingConfiguration.FundingStreamId);
+
+                        if(providerSnapshotsForFundingStreamResponse.StatusCode != System.Net.HttpStatusCode.OK 
+                            || providerSnapshotsForFundingStreamResponse.Content?.Any() == false)
+                        {
+                            throw new Exception($"Unable to retrieve the provider snapshots for funding stream '{fundingConfiguration.FundingStreamId}'");
+                        }
+
+                        int providerSnapshotId = providerSnapshotsForFundingStreamResponse.Content.First().ProviderSnapshotId;
+                        ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId);
+                        if(paymentOrganisationsResponse.StatusCode == System.Net.HttpStatusCode.OK && paymentOrganisationsResponse.Content != null)
+                        {
+                            FdzPaymentOrganisation fdzPaymentOrganisation = paymentOrganisationsResponse.Content
+                                    .FirstOrDefault(x => x.PaymentOrganisationId.ToString() == providerGrouping.Key);
+
+                            if (fdzPaymentOrganisation != null)
+                            {
+                                identifiers = GetIdentifiers(fdzPaymentOrganisation);
+                            }
+                        }
 
                         targetOrganisationGroup = new TargetOrganisationGroup()
                         {
                             Identifier = providerGrouping.First().PaymentOrganisationIdentifier,
                             Name = providerGrouping.First().PaymentOrganisationName,
-                            Identifiers = new OrganisationIdentifier[0],
+                            Identifiers = identifiers,
                         };
-
-
+                    }
                     else if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider
                        || (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
                                 && !grouping.GroupingReason.IsForProviderPayment())
@@ -105,7 +134,33 @@ namespace CalculateFunding.Generators.OrganisationGroup
             return results;
         }
 
-        private async Task<TargetOrganisationGroup> ObtainTargetOrganisationGroupFromProviderData(FundingConfiguration fundingConfiguration, string providerVersionId, OrganisationGroupingConfiguration grouping, IGrouping<string, Provider> providerGrouping, TargetOrganisationGroup targetOrganisationGroup)
+        private IEnumerable<OrganisationIdentifier> GetIdentifiers(FdzPaymentOrganisation fdzPaymentOrganisation)
+        {
+            List<OrganisationIdentifier> identifiers = new List<OrganisationIdentifier>();
+            if (!string.IsNullOrWhiteSpace(fdzPaymentOrganisation.Ukprn))
+            {
+                identifiers.Add(new OrganisationIdentifier() { Type = Enums.OrganisationGroupTypeIdentifier.UKPRN, Value = fdzPaymentOrganisation.Ukprn });
+            }
+            if (!string.IsNullOrWhiteSpace(fdzPaymentOrganisation.TrustCode))
+            {
+                identifiers.Add(new OrganisationIdentifier() { Type = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode, Value = fdzPaymentOrganisation.TrustCode });
+            }
+            if (!string.IsNullOrWhiteSpace(fdzPaymentOrganisation.Urn))
+            {
+                identifiers.Add(new OrganisationIdentifier() { Type = Enums.OrganisationGroupTypeIdentifier.URN, Value = fdzPaymentOrganisation.Urn });
+            }
+            if (!string.IsNullOrWhiteSpace(fdzPaymentOrganisation.LaCode))
+            {
+                identifiers.Add(new OrganisationIdentifier() { Type = Enums.OrganisationGroupTypeIdentifier.LACode, Value = fdzPaymentOrganisation.LaCode });
+            }
+            if (!string.IsNullOrWhiteSpace(fdzPaymentOrganisation.CompanyHouseNumber))
+            {
+                identifiers.Add(new OrganisationIdentifier() { Type = Enums.OrganisationGroupTypeIdentifier.CompaniesHouseNumber, Value = fdzPaymentOrganisation.CompanyHouseNumber });
+            }
+
+            return identifiers;
+        }
+        private async Task<TargetOrganisationGroup> ObtainTargetOrganisationGroupFromProviderData(FundingConfiguration fundingConfiguration, string providerVersionId, OrganisationGroupingConfiguration grouping, IGrouping<string, Common.ApiClient.Providers.Models.Provider> providerGrouping, TargetOrganisationGroup targetOrganisationGroup)
         {
             OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
