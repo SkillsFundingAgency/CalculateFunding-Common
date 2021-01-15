@@ -160,5 +160,14 @@ namespace CalculateFunding.Common.ApiClient.FDZ.UnitTests
                 Enumerable.Empty<string>(),
                 () => _client.ListFundingStreamsWithProviderSnapshots());
         }
+
+        [TestMethod]
+        public async Task GetLatestProviderSnapshotsForAllFundingStreams()
+        {
+
+            await AssertGetRequest($"providers/fundingStreams/snapshots/latest",
+                Enumerable.Empty<ProviderSnapshot>(),
+                () => _client.GetLatestProviderSnapshotsForAllFundingStreams());
+        }
     }
 }

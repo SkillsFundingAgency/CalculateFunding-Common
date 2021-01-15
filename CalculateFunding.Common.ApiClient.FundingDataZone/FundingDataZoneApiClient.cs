@@ -108,5 +108,10 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
         {
             return await GetAsync<IEnumerable<string>>($"providers/fundingStreams");
         }
+
+        public async Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreams()
+        {
+            return await GetAsync<IEnumerable<ProviderSnapshot>>($"providers/fundingStreams/snapshots/latest");
+        }
     }
 }

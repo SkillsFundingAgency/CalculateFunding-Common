@@ -26,5 +26,6 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
         Task<ApiResponse<IEnumerable<string>>> ListFundingStreamsWithProviderSnapshots();
         Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetProviderSnapshotsForFundingStream(string fundingStreamId);
         Task<ApiResponse<IEnumerable<Provider>>> GetProviderSnapshotMetadata(int providerSnapshotId);
+        Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreams();
     }
 }
