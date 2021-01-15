@@ -33,7 +33,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// The funding value in pence.
         /// </summary>
         [JsonProperty("value")]
-        public decimal Value { get; set; }
+        public decimal? Value { get; set; }
 
         /// <summary>
         /// A unique ID (in terms of template, not data) for this funding line (e.g. 345).
