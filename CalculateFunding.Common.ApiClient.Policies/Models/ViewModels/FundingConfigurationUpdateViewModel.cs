@@ -15,5 +15,6 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public bool EnableUserEditableCustomProfiles { get; set; }
 
         public bool EnableUserEditableRuleBasedProfiles { get; set; }
+        public bool RunCalculationEngineAfterCoreProviderUpdate { get; set; }
     }
 }
