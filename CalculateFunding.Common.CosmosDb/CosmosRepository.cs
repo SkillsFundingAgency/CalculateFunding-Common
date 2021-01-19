@@ -785,21 +785,55 @@ namespace CalculateFunding.Common.CosmosDb
         public async Task BulkDeleteAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool hardDelete = false) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
+            
+            List<Task> allTasks = new List<Task>(entities.Count());
+            SemaphoreSlim throttler = new SemaphoreSlim(initialCount: degreeOfParallelism);
 
-            await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
+            foreach (KeyValuePair<string, T> entity in entities)
             {
-                Task.WaitAll(DeleteAsync(entity: item.Value, hardDelete: hardDelete, partitionKey: item.Key));
-            }));
+                await throttler.WaitAsync();
+                allTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await DeleteAsync(entity: entity.Value, hardDelete: hardDelete, partitionKey: entity.Key);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
+
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task BulkUpsertAsync<T>(IList<T> entities, int degreeOfParallelism = 5, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entities, nameof(entities));
 
-            await Task.Run(() => Parallel.ForEach(entities, new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism }, (item) =>
+            List<Task> allTasks = new List<Task>(entities.Count());
+            SemaphoreSlim throttler = new SemaphoreSlim(initialCount: degreeOfParallelism);
+
+            foreach (T entity in entities)
             {
-                Task.WaitAll(UpsertAsync(item, item.Id, maintainCreatedDate: maintainCreatedDate, undelete: undelete));
-            }));
+                await throttler.WaitAsync();
+                allTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await UpsertAsync(entity, entity.Id, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
+
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
         public async Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable
