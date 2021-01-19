@@ -26,7 +26,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
         {
             IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLines.json"));
 
-            FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines);
+            FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines, 3);
 
             fundingValue.TotalValue
                 .Should()
@@ -34,7 +34,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
 
             fundingValue.FundingLines.First().Value
                 .Should()
-                .Be(16200.63M);
+                .Be(16200.632M);//showing the configurable rounding dp as this has precision of 5 in the test json
 
             fundingValue.FundingLines.First().FundingLines.First().Value
                 .Should()

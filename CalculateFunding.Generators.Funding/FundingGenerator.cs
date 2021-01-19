@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Generators.Funding.Enums;
+﻿using System;
+using CalculateFunding.Generators.Funding.Enums;
 using CalculateFunding.Generators.Funding.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace CalculateFunding.Generators.Funding
 {
     public class FundingGenerator
     {
-        public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines)
+        public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines, int fundingLineDecimalPlaces = 2)
         {
             List<FundingLine> fundingLinesList = fundingLines.ToList();
 
@@ -15,7 +16,7 @@ namespace CalculateFunding.Generators.Funding
             {
                 TotalValue = fundingLinesList.Sum(fundingLine =>
                 {
-                    GetFundingLinesTotalValueRecursive(fundingLine);
+                    SetFundingLinesTotalValues(fundingLine, fundingLineDecimalPlaces);
                     return CalculateFundingTotal(fundingLine);
                 }),
                 FundingLines = fundingLinesList
@@ -31,14 +32,14 @@ namespace CalculateFunding.Generators.Funding
             return paymentFundingLineValue + nonPaymentFundingLineSubTotal;
         }
 
-        private static decimal? GetFundingLinesTotalValueRecursive(FundingLine fundingLine)
+        private static decimal? SetFundingLinesTotalValues(FundingLine fundingLine, int decimalPlaces)
         {
             decimal? cashCalculationsSum = GetCashCalculationsSum(fundingLine);
 
             decimal? subFundingLinesTotalValue = null;
             if (fundingLine.FundingLines != null)
             {
-                subFundingLinesTotalValue = fundingLine.FundingLines.Select(GetFundingLinesTotalValueRecursive)
+                subFundingLinesTotalValue = fundingLine.FundingLines.Select(SetFundingLinesTotalValues)
                     .Where(fundingLineTotal => fundingLineTotal != null)
                     .Aggregate(
                         subFundingLinesTotalValue, 
@@ -52,7 +53,11 @@ namespace CalculateFunding.Generators.Funding
             else if (cashCalculationsSum != null)
                 fundingLine.Value = cashCalculationsSum + subFundingLinesTotalValue;
 
-            return fundingLine.Value;
+            decimal? fundingLineValue = fundingLine.Value;
+
+            fundingLine.Value = fundingLineValue.HasValue ? Math.Round(fundingLineValue.Value, decimalPlaces, MidpointRounding.AwayFromZero) : fundingLineValue;
+
+            return fundingLineValue;
         }
 
         private static decimal? GetCashCalculationsSum(FundingLine fundingLine)
