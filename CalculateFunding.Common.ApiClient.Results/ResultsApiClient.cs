@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Results.Models;
-using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
@@ -147,33 +145,5 @@ namespace CalculateFunding.Common.ApiClient.Results
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
         }
-
-        [Obsolete]
-        public async Task<ApiResponse<FundingStructure>> GetFundingStructureResults(string fundingStreamId,
-           string fundingPeriodId,
-           string specificationId,
-           string providerId = null,
-           string etag = null)
-        {
-            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
-            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-
-            string url = $"funding-structures/results?fundingStreamId={fundingStreamId}&fundingPeriodId={fundingPeriodId}&specificationId={specificationId}";
-
-            url = providerId.IsNullOrEmpty() ? url : $"{url}&providerId={providerId}";
-
-            return await GetAsync<FundingStructure>(
-                url,
-                customHeaders: EtagHeader(etag));
-        }
-
-        private string[] EtagHeader(string etag)
-           => etag.IsNullOrEmpty()
-               ? null
-               : new[]
-               {
-                    IfNoneMatch, etag
-               };
     }
 }
