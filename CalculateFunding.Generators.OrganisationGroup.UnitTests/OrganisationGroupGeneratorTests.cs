@@ -2234,7 +2234,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
@@ -2324,7 +2324,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
@@ -2414,7 +2414,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             int providerSnapshotId = 12345;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
@@ -2479,7 +2479,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
@@ -2555,7 +2555,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             int providerSnapshotId = 12345;
             int paymentOrganisationIdentifier = 9001;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier);
 
             await WhenGeneratingOrganisationGroups();
@@ -2676,7 +2676,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
 
-            AndProviderSnapshotsForFundingStream(_fundingStreamId, providerSnapshotId);
+            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
@@ -2776,9 +2776,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             return configBuilder.Build();
         }
 
-        private void AndProviderSnapshotsForFundingStream(string fundingStreamId, int providerSnapshotId)
+        private void AndProviderSnapshotsForFundingStreams(string fundingStreamId, int providerSnapshotId)
         {
-            _fundingDataZoneApiClient.GetProviderSnapshotsForFundingStream(fundingStreamId)
+            _fundingDataZoneApiClient.GetLatestProviderSnapshotsForAllFundingStreams()
                 .Returns(new ApiResponse<IEnumerable<FdzProviderSnapshot>>(HttpStatusCode.OK,
                 GenerateFdzProviderSnapshotsForFundingStream(fundingStreamId, providerSnapshotId)));
         }
@@ -2795,7 +2795,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             return new[] {
                 new FdzProviderSnapshot
                 {
-                    FundingStreamName = fundingStreamId,
+                    FundingStreamCode = fundingStreamId,
                     ProviderSnapshotId = providerSnapshotId
                 }
             };

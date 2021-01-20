@@ -71,16 +71,22 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         // lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
                         if (fundingConfiguration.ProviderSource == ProviderSource.FDZ)
                         {
-                            ApiResponse<IEnumerable<FdzProviderSnapshot>> providerSnapshotsForFundingStreamResponse = await _fundingDataZoneApiClient.GetProviderSnapshotsForFundingStream(fundingConfiguration.FundingStreamId);
+                            ApiResponse<IEnumerable<FdzProviderSnapshot>> providerSnapshotsResponse = await _fundingDataZoneApiClient.GetLatestProviderSnapshotsForAllFundingStreams();
 
-                            if (providerSnapshotsForFundingStreamResponse.StatusCode != System.Net.HttpStatusCode.OK
-                                || providerSnapshotsForFundingStreamResponse.Content?.Any() == false)
+                            if (providerSnapshotsResponse.StatusCode != System.Net.HttpStatusCode.OK
+                                || providerSnapshotsResponse.Content?.Any() == false)
                             {
-                                throw new Exception($"Unable to retrieve the provider snapshots for funding stream '{fundingConfiguration.FundingStreamId}'");
+                                throw new Exception("Unable to retrieve latest provider snapshots for funding streams.");
                             }
 
-                            int providerSnapshotId = providerSnapshotsForFundingStreamResponse.Content.First().ProviderSnapshotId;
-                            ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId);
+                            FdzProviderSnapshot providerSnapshot = providerSnapshotsResponse.Content.FirstOrDefault(x => x.FundingStreamCode == fundingConfiguration.FundingStreamId);
+
+                            if (providerSnapshot == null)
+                            {
+                                throw new Exception($"Unable to retrieve latest provider snapshot for funding stream '{fundingConfiguration.FundingStreamId}'");
+                            }
+
+                            ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshot.ProviderSnapshotId);
                             if (paymentOrganisationsResponse.StatusCode == System.Net.HttpStatusCode.OK && paymentOrganisationsResponse.Content != null)
                             {
                                 FdzPaymentOrganisation fdzPaymentOrganisation = paymentOrganisationsResponse.Content
