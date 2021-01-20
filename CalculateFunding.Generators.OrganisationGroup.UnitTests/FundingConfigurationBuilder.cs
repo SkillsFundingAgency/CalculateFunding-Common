@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models;
 using CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig;
 using CalculateFunding.Common.Testing;
@@ -33,6 +34,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         public FundingConfigurationBuilder WithFundingStreamId(string fundingStreamId)
         {
             _config.FundingStreamId = fundingStreamId;
+            return this;
+        }
+
+        public FundingConfigurationBuilder WithProviderSource(ProviderSource providerSource)
+        {
+            _config.ProviderSource = providerSource;
             return this;
         }
 

@@ -2217,6 +2217,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Payment)
@@ -2306,6 +2307,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
@@ -2395,6 +2397,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
@@ -2460,6 +2463,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
@@ -2524,6 +2528,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Payment)
@@ -2654,6 +2659,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
+                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
