@@ -53,7 +53,17 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId.Value);
                 if (paymentOrganisationsResponse.StatusCode == System.Net.HttpStatusCode.OK && paymentOrganisationsResponse.Content != null)
                 {
-                    paymentOrganisations = paymentOrganisationsResponse.Content.ToDictionary(_ => _.PaymentOrganisationId.ToString());
+                    foreach(FdzPaymentOrganisation fdzPaymentOrganisation in paymentOrganisationsResponse.Content)
+                    {
+                        if (paymentOrganisations.ContainsKey(fdzPaymentOrganisation.Ukprn))
+                        {
+                            throw new Exception($"The payment organisation group: '{fdzPaymentOrganisation.Ukprn}' needs to be unique for provider snapshot ID '{providerSnapshotId}'.");
+                        }
+                        else
+                        {
+                            paymentOrganisations.Add(fdzPaymentOrganisation.Ukprn, fdzPaymentOrganisation);
+                        }
+                    }
                 }
                 else
                 {

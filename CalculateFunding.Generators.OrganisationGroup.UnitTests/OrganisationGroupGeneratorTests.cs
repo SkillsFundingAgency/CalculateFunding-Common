@@ -2546,7 +2546,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             int providerSnapshotId = 12345;
             (int, OrganisationGroupTypeIdentifier) paymentOrganisationIdentifier1 = (9001, OrganisationGroupTypeIdentifier.UKPRN);
-            (int, OrganisationGroupTypeIdentifier) paymentOrganisationIdentifier2 = (9003, OrganisationGroupTypeIdentifier.AcademyTrustCode);
+            (int, OrganisationGroupTypeIdentifier) paymentOrganisationIdentifier2 = (9003, OrganisationGroupTypeIdentifier.UKPRN);
 
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier1, paymentOrganisationIdentifier2);
 
@@ -2584,7 +2584,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     IdentifierValue = "9003",
                     Identifiers = new List<OrganisationIdentifier>()
                     {
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode, Value = "9003"}
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.UKPRN, Value = "9003"}
                     },
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
                 },
