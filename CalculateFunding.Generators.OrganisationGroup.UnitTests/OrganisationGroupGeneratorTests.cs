@@ -2233,11 +2233,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
-
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(providerSnapshotId);
 
             _result
                 .Should()
@@ -2323,11 +2321,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
-
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(providerSnapshotId);
 
             _result
                 .Should()
@@ -2413,11 +2409,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
 
             int providerSnapshotId = 12345;
-
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(providerSnapshotId);
 
             _result
                 .Should()
@@ -2478,11 +2472,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
             int providerSnapshotId = 12345;
-
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(providerSnapshotId);
 
             _result
                 .Should()
@@ -2553,12 +2545,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
 
             int providerSnapshotId = 12345;
-            int paymentOrganisationIdentifier = 9001;
+            (int, OrganisationGroupTypeIdentifier) paymentOrganisationIdentifier1 = (9001, OrganisationGroupTypeIdentifier.UKPRN);
+            (int, OrganisationGroupTypeIdentifier) paymentOrganisationIdentifier2 = (9003, OrganisationGroupTypeIdentifier.AcademyTrustCode);
 
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
-            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier);
+            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier1, paymentOrganisationIdentifier2);
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(providerSnapshotId);
 
             _result
                 .Should()
@@ -2577,11 +2569,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     IdentifierValue = "9001",
                     Identifiers = new List<OrganisationIdentifier>()
                     {
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.UKPRN, Value = "Ukprn 9001"},
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode, Value = "TrustCode 9001"},
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.URN, Value = "Urn 9001"},
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.LACode, Value = "LaCode 9001"},
-                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.CompaniesHouseNumber, Value = "CompanyHouseNumber 9001"},
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.UKPRN, Value = "9001"}
                     },
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
                 },
@@ -2594,7 +2582,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
                     GroupReason = Enums.OrganisationGroupingReason.Payment,
                     IdentifierValue = "9003",
-                    Identifiers = new List<OrganisationIdentifier>(),
+                    Identifiers = new List<OrganisationIdentifier>()
+                    {
+                        new OrganisationIdentifier(){Type = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode, Value = "9003"}
+                    },
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
                 },
                 new OrganisationGroupResult()
@@ -2659,7 +2650,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                   c =>
                   {
                       c.WithFundingStreamId(_fundingStreamId)
-                      .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
                             g.WithGroupingReason(GroupingReason.Contracting)
@@ -2674,10 +2664,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             );
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
-            int providerSnapshotId = 12345;
-
-            AndProviderSnapshotsForFundingStreams(_fundingStreamId, providerSnapshotId);
-            AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
             await WhenGeneratingOrganisationGroups();
 
@@ -2742,12 +2728,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .BeEquivalentTo(expectedResult);
         }
 
-        private async Task WhenGeneratingOrganisationGroups()
+        private async Task WhenGeneratingOrganisationGroups(int? providerSnapshotId = null)
         {
             _result = await _generator.GenerateOrganisationGroup(
                 _fundingConfiguration,
                 _scopedProviders,
-                _providerVersionId);
+                _providerVersionId,
+                providerSnapshotId);
         }
 
         private FundingConfiguration GivenFundingConfiguration(Action<FundingConfigurationBuilder> setup = null)
@@ -2776,43 +2763,58 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             return configBuilder.Build();
         }
 
-        private void AndProviderSnapshotsForFundingStreams(string fundingStreamId, int providerSnapshotId)
-        {
-            _fundingDataZoneApiClient.GetLatestProviderSnapshotsForAllFundingStreams()
-                .Returns(new ApiResponse<IEnumerable<FdzProviderSnapshot>>(HttpStatusCode.OK,
-                GenerateFdzProviderSnapshotsForFundingStream(fundingStreamId, providerSnapshotId)));
-        }
-
-        private void AndFdzPaymentOrganisationsForProviderSnapshotId(int providerSnapshotId, params int[] paymentOrganisationIds)
+        private void AndFdzPaymentOrganisationsForProviderSnapshotId(int providerSnapshotId, params (int, OrganisationGroupTypeIdentifier)[] paymentOrganisationIds)
         {
             _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId)
                 .Returns(new ApiResponse<IEnumerable<FdzPaymentOrganisation>>(HttpStatusCode.OK,
                 GenerateFdzPaymentOrganisations(providerSnapshotId, paymentOrganisationIds)));
         }
 
-        private IEnumerable<FdzProviderSnapshot> GenerateFdzProviderSnapshotsForFundingStream(string fundingStreamId, int providerSnapshotId)
+        private IEnumerable<FdzPaymentOrganisation> GenerateFdzPaymentOrganisations(int? providerSnapshotId, params (int, OrganisationGroupTypeIdentifier)[] paymentOrganisationIds)
         {
-            return new[] {
-                new FdzProviderSnapshot
+            return paymentOrganisationIds.Select(x => {
+                FdzPaymentOrganisation fdzPaymentOrganisation = new FdzPaymentOrganisation
                 {
-                    FundingStreamCode = fundingStreamId,
-                    ProviderSnapshotId = providerSnapshotId
-                }
-            };
-        }
+                    PaymentOrganisationId = x.Item1,
+                    ProviderSnapshotId = providerSnapshotId ?? 0,
+                    OrganisationType = "Local Authority"
+                };
 
-        private IEnumerable<FdzPaymentOrganisation> GenerateFdzPaymentOrganisations(int providerSnapshotId, params int[] paymentOrganisationIds)
-        {
-            return paymentOrganisationIds.Select(x => new FdzPaymentOrganisation
-            {
-                PaymentOrganisationId = x,
-                ProviderSnapshotId = 1,
-                OrganisationType = "Local Authority",
-                LaCode = $"LaCode {x}",
-                Ukprn = $"Ukprn {x}",
-                TrustCode = $"TrustCode {x}",
-                Urn = $"Urn {x}",
-                CompanyHouseNumber = $"CompanyHouseNumber {x}"
+                switch (x.Item2)
+                {
+                    case OrganisationGroupTypeIdentifier.UKPRN:
+                        {
+                            fdzPaymentOrganisation.Ukprn = x.Item1.ToString();
+                            break;
+                        }
+                    case OrganisationGroupTypeIdentifier.UPIN:
+                        {
+                            fdzPaymentOrganisation.Upin = x.Item1.ToString();
+                            break;
+                        }
+                    case OrganisationGroupTypeIdentifier.URN:
+                        {
+                            fdzPaymentOrganisation.Urn = x.Item1.ToString();
+                            break;
+                        }
+                    case OrganisationGroupTypeIdentifier.LACode:
+                        {
+                            fdzPaymentOrganisation.LaCode = x.Item1.ToString();
+                            break;
+                        }
+                    case OrganisationGroupTypeIdentifier.AcademyTrustCode:
+                        {
+                            fdzPaymentOrganisation.TrustCode = x.Item1.ToString();
+                            break;
+                        }
+                    case OrganisationGroupTypeIdentifier.CompaniesHouseNumber:
+                        {
+                            fdzPaymentOrganisation.CompanyHouseNumber = x.Item1.ToString();
+                            break;
+                        }
+                }
+
+                return fdzPaymentOrganisation;
             });
         }
 

@@ -8,6 +8,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
 {
     public interface IOrganisationGroupGenerator
     {
-        Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(FundingConfiguration fundingConfiguration, IEnumerable<Provider> scopedProviders, string providerVersionId);
+        Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(
+            FundingConfiguration fundingConfiguration,
+            IEnumerable<Provider> scopedProviders,
+            string providerVersionId,
+            int? providerSnapshotId = null);
     }
 }

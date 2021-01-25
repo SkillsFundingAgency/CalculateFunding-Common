@@ -14,7 +14,6 @@ using CalculateFunding.Generators.OrganisationGroup.Extensions;
 using CalculateFunding.Generators.OrganisationGroup.Interfaces;
 using CalculateFunding.Generators.OrganisationGroup.Models;
 using FdzPaymentOrganisation = CalculateFunding.Common.ApiClient.FundingDataZone.Models.PaymentOrganisation;
-using FdzProviderSnapshot = CalculateFunding.Common.ApiClient.FundingDataZone.Models.ProviderSnapshot;
 
 namespace CalculateFunding.Generators.OrganisationGroup
 {
@@ -29,13 +28,38 @@ namespace CalculateFunding.Generators.OrganisationGroup
             _fundingDataZoneApiClient = fundingDataZoneApiClient;
         }
 
-        public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(FundingConfiguration fundingConfiguration, IEnumerable<Common.ApiClient.Providers.Models.Provider> scopedProviders, string providerVersionId)
+        public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(
+            FundingConfiguration fundingConfiguration,
+            IEnumerable<Provider> scopedProviders,
+            string providerVersionId,
+            int? providerSnapshotId = null)
         {
             Guard.ArgumentNotNull(fundingConfiguration, nameof(fundingConfiguration));
             Guard.ArgumentNotNull(scopedProviders, nameof(scopedProviders));
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
             List<OrganisationGroupResult> results = new List<OrganisationGroupResult>();
+
+            Dictionary<string, FdzPaymentOrganisation> paymentOrganisations = new Dictionary<string, FdzPaymentOrganisation>();
+
+            if (fundingConfiguration.ProviderSource == ProviderSource.FDZ
+                && fundingConfiguration.OrganisationGroupings.Any(g => g.GroupingReason == GroupingReason.Payment || g.GroupingReason == GroupingReason.Contracting))
+            {
+                if (!providerSnapshotId.HasValue)
+                {
+                    throw new InvalidOperationException("No provider snapshot ID provided, but it is required fto lookup Payment Organisations from FDZ");
+                }
+
+                ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshotId.Value);
+                if (paymentOrganisationsResponse.StatusCode == System.Net.HttpStatusCode.OK && paymentOrganisationsResponse.Content != null)
+                {
+                    paymentOrganisations = paymentOrganisationsResponse.Content.ToDictionary(_ => _.PaymentOrganisationId.ToString());
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unable to retreive payment organisations from provider snapshot ID of {providerSnapshotId}");
+                }
+            }
 
             foreach (OrganisationGroupingConfiguration grouping in fundingConfiguration.OrganisationGroupings)
             {
@@ -66,37 +90,17 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
                         && grouping.GroupingReason.IsForProviderPayment())
                     {
-                        IEnumerable<OrganisationIdentifier> identifiers = new List<OrganisationIdentifier>();
+                        IEnumerable<OrganisationIdentifier> identifiers;
 
                         // lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
-                        if (fundingConfiguration.ProviderSource == ProviderSource.FDZ)
+                        if (fundingConfiguration.ProviderSource == ProviderSource.FDZ
+                            && paymentOrganisations.TryGetValue(providerGrouping.Key, out FdzPaymentOrganisation fdzPaymentOrganisation))
                         {
-                            ApiResponse<IEnumerable<FdzProviderSnapshot>> providerSnapshotsResponse = await _fundingDataZoneApiClient.GetLatestProviderSnapshotsForAllFundingStreams();
-
-                            if (providerSnapshotsResponse.StatusCode != System.Net.HttpStatusCode.OK
-                                || providerSnapshotsResponse.Content?.Any() == false)
-                            {
-                                throw new Exception("Unable to retrieve latest provider snapshots for funding streams.");
-                            }
-
-                            FdzProviderSnapshot providerSnapshot = providerSnapshotsResponse.Content.FirstOrDefault(x => x.FundingStreamCode == fundingConfiguration.FundingStreamId);
-
-                            if (providerSnapshot == null)
-                            {
-                                throw new Exception($"Unable to retrieve latest provider snapshot for funding stream '{fundingConfiguration.FundingStreamId}'");
-                            }
-
-                            ApiResponse<IEnumerable<FdzPaymentOrganisation>> paymentOrganisationsResponse = await _fundingDataZoneApiClient.GetAllOrganisations(providerSnapshot.ProviderSnapshotId);
-                            if (paymentOrganisationsResponse.StatusCode == System.Net.HttpStatusCode.OK && paymentOrganisationsResponse.Content != null)
-                            {
-                                FdzPaymentOrganisation fdzPaymentOrganisation = paymentOrganisationsResponse.Content
-                                        .FirstOrDefault(x => x.PaymentOrganisationId.ToString() == providerGrouping.Key);
-
-                                if (fdzPaymentOrganisation != null)
-                                {
-                                    identifiers = GetIdentifiers(fdzPaymentOrganisation);
-                                }
-                            }
+                            identifiers = GetIdentifiers(fdzPaymentOrganisation);
+                        }
+                        else
+                        {
+                            identifiers = new OrganisationIdentifier[0];
                         }
 
                         // Will use providerGrouping.Key as the identifier of the PaymentOrganisation
