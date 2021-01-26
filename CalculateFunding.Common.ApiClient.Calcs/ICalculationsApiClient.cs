@@ -62,5 +62,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<Job>> QueueCodeContextUpdate(string specificationId);
 
         Task<ApiResponse<Job>> QueueApproveAllSpecificationCalculations(string specificationId);
+        Task<ValidatedApiResponse<Calculation>> EditCalculationWithSkipInstruct(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
     }
 }

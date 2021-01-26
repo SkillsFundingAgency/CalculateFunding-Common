@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Calcs.Models;
 using CalculateFunding.Common.ApiClient.Calcs.Models.Code;
-using  CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
 using Serilog;
@@ -18,7 +18,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
          : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
         { }
-        
+
         public async Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
             CalculationType calculationType,
             PublishStatus? status,
@@ -26,21 +26,21 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             int? page = null)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            
+
             string url = $"specifications/{specificationId}/calculations/calculationType/{calculationType}";
             bool hasQueryString = false;
-            
+
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 hasQueryString = true;
-                
+
                 url = $"{url}?searchTerm={ WebUtility.UrlEncode(searchTerm)}";
             }
 
             if (page.HasValue)
             {
                 url = hasQueryString ? $"{url}&page={page}" : $"{url}?page={page}";
-                
+
                 hasQueryString = true;
             }
 
@@ -48,9 +48,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             {
                 url = hasQueryString ? $"{url}&status={status}" : $"{url}?status={status}";
             }
-            
+
             return await GetAsync<SearchResults<CalculationSearchResult>>(url);
-        }	
+        }
 
         public async Task<ApiResponse<IEnumerable<CalculationSummary>>> GetCalculationSummariesForSpecification(string specificationId)
         {
@@ -147,6 +147,17 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             Guard.ArgumentNotNull(calculationEditModel, nameof(calculationEditModel));
 
             string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{calculationId}";
+
+            return await ValidatedPutAsync<Calculation, CalculationEditModel>(url, calculationEditModel);
+        }
+
+        public async Task<ValidatedApiResponse<Calculation>> EditCalculationWithSkipInstruct(string specificationId, string calculationId, CalculationEditModel calculationEditModel)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(calculationEditModel, nameof(calculationEditModel));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{calculationId}/true";
 
             return await ValidatedPutAsync<Calculation, CalculationEditModel>(url, calculationEditModel);
         }

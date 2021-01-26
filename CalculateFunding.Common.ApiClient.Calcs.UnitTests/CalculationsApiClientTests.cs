@@ -200,6 +200,19 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         }
 
         [TestMethod]
+        public async Task EditCalculationWithSkipInstruct()
+        {
+            string specificationId = NewRandomString();
+            string calculationId = NewRandomString();
+            CalculationEditModel calculationEditModel = new CalculationEditModel();
+
+            await AssertPutRequest($"specifications/{specificationId}/calculations/{calculationId}/true",
+                calculationEditModel,
+                new Calculation(),
+                () => _client.EditCalculationWithSkipInstruct(specificationId, calculationId, calculationEditModel));
+        }
+
+        [TestMethod]
         public async Task PreviewCompile()
         {
             await AssertPostRequest("compile-preview",
