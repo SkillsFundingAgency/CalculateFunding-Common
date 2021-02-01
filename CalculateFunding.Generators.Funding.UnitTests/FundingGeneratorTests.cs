@@ -30,7 +30,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
 
             fundingValue.TotalValue
                 .Should()
-                .Be(8200.63M);
+                .Be(8200.632M);
 
             fundingValue.FundingLines.First().Value
                 .Should()
@@ -58,7 +58,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
 
             fundingValue.FundingLines.First().FundingLines.Skip(2).First().Value
                 .Should()
-                .Be(5000.63M);
+                .Be(5000.632M);
 
             fundingValue.FundingLines.First().FundingLines.Skip(3).First().Value
                 .Should()
