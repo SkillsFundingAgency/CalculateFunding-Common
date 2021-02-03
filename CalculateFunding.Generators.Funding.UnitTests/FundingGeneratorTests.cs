@@ -106,6 +106,48 @@ namespace CalculateFunding.Generators.Funding.UnitTests
                 .Be(10M);
         }
 
+        [TestMethod]
+        public void WhenGeneratingFundingLineAllNullValuesForACollectionOfFundingLines_FundingStreamAndLineTotalsAreReturned()
+        {
+            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLinesWithAllNullCalculations.json"));
+
+            FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines);
+
+            // "funding line 4" > "calculation 5" = 10
+            fundingValue.TotalValue
+                .Should()
+                .Be(null);
+
+            fundingValue.FundingLines.First().Value
+                .Should()
+                .Be(null);
+
+            // "funding line 2"
+            fundingValue.FundingLines.First().FundingLines.First().Value
+                .Should()
+                .Be(null);
+
+            // "funding line 3" -> mix of null and 0 in values = 0
+            fundingValue.FundingLines.First().FundingLines.Skip(1).First().Value
+                .Should()
+                .Be(null);
+
+            // "funding line 7"
+            fundingValue.FundingLines.First().FundingLines.Skip(1).First().FundingLines.First().Value
+                .Should()
+                .Be(null);
+
+            // "funding line 8" -> null + 0 = 0
+            fundingValue.FundingLines.First().FundingLines.Skip(1).First().FundingLines.Skip(1).First().Value
+                .Should()
+                .Be(null);
+
+            // "calculation 5"
+            fundingValue.FundingLines.First().FundingLines.Skip(2).First().Value
+                .Should()
+                .Be(null);
+        }
+
         private string GetResourceString(string resourcePath)
         {
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath))

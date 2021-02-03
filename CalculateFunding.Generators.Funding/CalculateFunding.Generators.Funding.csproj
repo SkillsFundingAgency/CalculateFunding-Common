@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>4.0.1</Version>
+    <Version>4.0.2</Version>
     <Description>Common Funding Generator functionality</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
@@ -12,6 +12,10 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
 
 </Project>

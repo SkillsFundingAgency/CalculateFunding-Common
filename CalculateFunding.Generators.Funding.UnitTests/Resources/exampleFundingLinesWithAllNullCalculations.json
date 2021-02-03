@@ -1,0 +1,90 @@
+[
+  {
+    "name": "funding line 1",
+    "type": "Information",
+    "fundinglines": [
+      {
+        "name": "funding line 2",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 6",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 1",
+                "value": null,
+                "type": "Weighting"
+              },
+              {
+                "name": "calculation 8",
+                "value": null,
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 3",
+        "type": "Payment",
+        "calculations": [
+          {
+            "name": "calculation 10",
+            "value": null,
+            "type": "Cash"
+          }
+        ],
+        "fundinglines": [
+          {
+            "name": "funding line 7",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 2",
+                "value": null,
+                "type": "Cash",
+                "calculations": [
+                  {
+                    "name": "calculation 7",
+                    "value": null,
+                    "type": "Rate"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "funding line 8",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 3",
+                "value": null,
+                "type": "Cash",
+                "calculations": [
+                  {
+                    "name": "calculation 9",
+                    "value": null,
+                    "type": "Cash"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 4",
+        "type": "Payment",
+        "calculations": [
+          {
+            "name": "calculation 5",
+            "value": null,
+            "type": "Cash"
+          }
+        ]
+      }
+    ]
+  }
+]
