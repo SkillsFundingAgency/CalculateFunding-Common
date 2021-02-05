@@ -121,6 +121,11 @@ namespace CalculateFunding.Common.Graph.Neo4J
             await ExecuteCypher(cypher);
         }
 
+        public Task DeleteNodes<T>(params GraphInterfaces.IField[] fields) => throw new NotImplementedException();
+        public Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests) => throw new NotImplementedException();
+
+        public Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests) => throw new NotImplementedException();
+
         private async Task ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
         {
             IAsyncSession session = AsyncSession();

@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Graph.Interfaces;
 using CalculateFunding.Common.Graph.Serializer;
-using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Utility;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
+using static CalculateFunding.Common.Graph.Threading.ParallelRunner;
 
 namespace CalculateFunding.Common.Graph.Cosmos
 {
@@ -25,7 +24,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
 
         private readonly IGremlinClientFactory _clientFactory;
         private readonly IPathResultsTransform _pathResultsTransform;
-        private readonly int _degreeOfParallelism = 5;
+        private readonly int _degreeOfParallelism;
 
         public GraphRepository(IGremlinClientFactory clientFactory,
             IPathResultsTransform pathResultsTransform,
@@ -84,33 +83,24 @@ namespace CalculateFunding.Common.Graph.Cosmos
             Guard.Ensure(vertices.First().ContainsKey(property),
                 $"Unable to upsert {vertexLabel} as did not locate index property {property}");
 
-            List<Task> allTasks = new List<Task>(vertices.Count());
-            SemaphoreSlim throttler = new SemaphoreSlim(_degreeOfParallelism);
+            await RunForAllItems(vertices.ToArray(),
+                vertex =>
+                {
+                    string value = vertex[property].ToString();
+                    string query = $"g.{VertexTraversal(vertexLabel, property, value)}.fold()" +
+                                   $".coalesce(unfold(), addV('{vertexLabel}'){ImmutablePropertyProcessors(vertex)})" +
+                                   $".{MutablePropertyProcessors(vertex)}";
 
-            foreach (Dictionary<string, object> vertex in vertices)
-            {
-                await throttler.WaitAsync();
+                    return ExecuteQuery(query);
+                },
+                _degreeOfParallelism);
+        }
 
-                allTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            string value = vertex[property].ToString();
-                            string query = $"g.{VertexTraversal(vertexLabel, property, value)}.fold()" +
-                                           $".coalesce(unfold(), addV('{vertexLabel}'){ImmutablePropertyProcessors(vertex)})" +
-                                           $".{MutablePropertyProcessors(vertex)}";
+        public async Task DeleteNodes<T>(params IField[] fields)
+        {
+            Guard.IsNotEmpty(fields, nameof(fields));
 
-                            await ExecuteQuery(query);
-                        }
-                        finally
-                        {
-                            throttler.Release();
-                        }
-                    }));
-            }
-
-            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
+            await RunForAllItems(fields, DeleteNode<T>);
         }
 
         public async Task DeleteNode<T>(IField field)
@@ -138,6 +128,12 @@ namespace CalculateFunding.Common.Graph.Cosmos
             await ExecuteQuery(query);
         }
 
+        public async Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
+        {
+            await RunForAllItems(amendRelationshipRequests, 
+                relationship => UpsertRelationship<A, B>(relationship.Type, relationship.A, relationship.B));
+        }
+
         public async Task DeleteRelationship<A, B>(string relationShipName,
             IField left,
             IField right)
@@ -150,6 +146,12 @@ namespace CalculateFunding.Common.Graph.Cosmos
                            $".where(otherV().hasLabel('{vertexBLabel}').has('{GetPropertyName(right.Name)}', '{right.Value}')).drop()";
 
             await ExecuteQuery(query);
+        }
+        
+        public async Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
+        {
+            await RunForAllItems(amendRelationshipRequests, 
+                relationship => DeleteRelationship<A, B>(relationship.Type, relationship.A, relationship.B));
         }
 
         private async Task<IEnumerable<Dictionary<string, object>>> ExecuteQuery(string query)

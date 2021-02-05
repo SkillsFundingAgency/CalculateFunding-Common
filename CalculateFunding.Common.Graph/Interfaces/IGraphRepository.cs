@@ -14,5 +14,8 @@ namespace CalculateFunding.Common.Graph.Interfaces
         Task UpsertRelationship<A, B>(string relationShipName, IField left, IField right);
 
         Task DeleteRelationship<A, B>(string relationShipName, IField left, IField right);
+        Task DeleteNodes<T>(params IField[] fields);
+        Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests);
+        Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests);
     }
 }

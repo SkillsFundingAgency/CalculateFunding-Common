@@ -172,6 +172,22 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             ThenTheGremlinQueryWasExecuted(expectedQuery);
             AndTheClientWasDisposed();
         }
+        
+        [TestMethod]
+        public async Task DeleteNodes()
+        {
+            Field fieldOne = NewField();
+            Field fieldTwo = NewField();
+
+            await WhenTheNodesAreDeleted<Model>(fieldOne, fieldTwo);
+
+            string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(fieldOne.Name)}', '{fieldOne.Value}').drop()";
+            string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(fieldTwo.Name)}', '{fieldTwo.Value}').drop()";
+            
+            ThenTheGremlinQueryWasExecuted(expectedQueryOne);
+            AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed(2);
+        }
 
         [TestMethod]
         public async Task UpsertRelationship()
@@ -190,6 +206,38 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQuery);
             AndTheClientWasDisposed();
+        }
+
+        [TestMethod]
+        public async Task UpsertRelationships()
+        {
+            Field left = NewField();
+            Field right = NewField();
+            
+            string relationshipOne = NewRandomString();
+            string relationshipTwo = NewRandomString();
+
+            AmendRelationshipRequest requestOne = NewAmendRelationshipRequest(_ => _.WithA(left)
+                .WithB(right)
+                .WithType(relationshipOne));
+            AmendRelationshipRequest requestTwo = NewAmendRelationshipRequest(_ => _.WithA(left)
+                .WithB(right)
+                .WithType(relationshipTwo));
+
+            await WhenTheRelationshipsAreUpserted<Model, ModelWithImmutableProperties>(requestOne, requestTwo);
+
+            string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').as('A')" +
+                                   $".V().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')" +
+                                   $".coalesce(__.inE('{GremlinName(relationshipOne)}').where(outV().as('A'))," +
+                                   $"addE('{GremlinName(relationshipOne)}').from('A'))";
+            string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').as('A')" +
+                                      $".V().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')" +
+                                      $".coalesce(__.inE('{GremlinName(relationshipTwo)}').where(outV().as('A'))," +
+                                      $"addE('{GremlinName(relationshipTwo)}').from('A'))";
+            
+            ThenTheGremlinQueryWasExecuted(expectedQueryOne);
+            AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed(2);         
         }
         
         [TestMethod]
@@ -210,11 +258,44 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             AndTheClientWasDisposed();
         }
         
+        [TestMethod]
+        public async Task DeleteRelationships()
+        {
+            Field left = NewField();
+            Field right = NewField();
+            
+            string relationshipOne = NewRandomString();
+            string relationshipTwo = NewRandomString();
+
+            AmendRelationshipRequest requestOne = NewAmendRelationshipRequest(_ => _.WithA(left)
+                .WithB(right)
+                .WithType(relationshipOne));
+            AmendRelationshipRequest requestTwo = NewAmendRelationshipRequest(_ => _.WithA(left)
+                .WithB(right)
+                .WithType(relationshipTwo));
+
+            await WhenTheRelationshipsAreDeleted<Model, ModelWithImmutableProperties>(requestOne, requestTwo);
+
+            string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').bothE('{GremlinName(relationshipOne)}')" +
+                                      $".where(otherV().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')).drop()";
+            string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').bothE('{GremlinName(relationshipTwo)}')" +
+                                      $".where(otherV().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')).drop()";
+            
+            ThenTheGremlinQueryWasExecuted(expectedQueryOne);
+            AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed(2);         
+        }
+        
         private async Task WhenTheRelationshipIsDeleted<A, B>(string relationship,
             Field left,
             Field right)
         {
             await _repository.DeleteRelationship<A, B>(relationship, left, right);
+        }
+        
+        private async Task WhenTheRelationshipsAreDeleted<A, B>(params AmendRelationshipRequest[] requests)
+        {
+            await _repository.DeleteRelationships<A, B>(requests);
         }
 
         private async Task WhenTheRelationshipIsUpserted<A, B>(string relationship,
@@ -223,10 +304,20 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             await _repository.UpsertRelationship<A, B>(relationship, left, right);
         }
+        
+        private async Task WhenTheRelationshipsAreUpserted<A, B>(params AmendRelationshipRequest[] requests)
+        {
+            await _repository.UpsertRelationships<A, B>(requests);
+        }
 
         private async Task WhenTheNodeIsDeleted<TNode>(Field field)
         {
             await _repository.DeleteNode<TNode>(field);
+        }
+        
+        private async Task WhenTheNodesAreDeleted<TNode>(params IField[] fields)
+        {
+            await _repository.DeleteNodes<TNode>(fields);
         }
 
         private async Task WhenTheNodesAreUpserted<TNode>(string[] indices,
@@ -333,6 +424,15 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             setUp?.Invoke(modelWithImmutablePropertiesBuilder);
             
             return modelWithImmutablePropertiesBuilder.Build();
+        }
+
+        private AmendRelationshipRequest NewAmendRelationshipRequest(Action<AmendRelationshipRequestBuilder> setUp = null)
+        {
+            AmendRelationshipRequestBuilder amendRelationshipRequestBuilder = new AmendRelationshipRequestBuilder();
+
+            setUp?.Invoke(amendRelationshipRequestBuilder);
+            
+            return amendRelationshipRequestBuilder.Build();
         }
     }
 }
