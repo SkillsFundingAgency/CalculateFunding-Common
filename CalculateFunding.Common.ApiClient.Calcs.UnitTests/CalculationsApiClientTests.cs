@@ -440,5 +440,84 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Should()
                 .BeEquivalentTo(expectedJob);
         }
+
+        [TestMethod]
+        public async Task GetObsoleteItemsForSpecification()
+        {
+            string specificationId = NewRandomString();
+            IEnumerable<ObsoleteItem> expectedObsoleteItems = new List<ObsoleteItem>();
+
+            GivenTheResponse($"obsoleteitems/specifications/{specificationId}", expectedObsoleteItems, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<ObsoleteItem>> apiResponse = await _client.GetObsoleteItemsForSpecification(specificationId);
+
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedObsoleteItems);
+        }
+
+        [TestMethod]
+        public async Task CreateObsoleteItem()
+        {
+            ObsoleteItem expectedObsoleteItem = new ObsoleteItem();
+
+            GivenTheResponse($"obsoleteitems", expectedObsoleteItem, HttpMethod.Post);
+
+            ApiResponse<ObsoleteItem> apiResponse = await _client.CreateObsoleteItem(new ObsoleteItem());
+
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedObsoleteItem);
+        }
+
+        [TestMethod]
+        public async Task GetObsoleteItemsForCalculation()
+        {
+            string calculationId = NewRandomString();
+            IEnumerable<ObsoleteItem> expectedObsoleteItems = new List<ObsoleteItem>();
+
+            GivenTheResponse($"obsoleteitems/calculations/{calculationId}", expectedObsoleteItems, HttpMethod.Get);
+
+            ApiResponse<IEnumerable<ObsoleteItem>> apiResponse = await _client.GetObsoleteItemsForCalculation(calculationId);
+
+            apiResponse?
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedObsoleteItems);
+
+
+        }
+
+        [TestMethod]
+        public async Task RemoveObsoleteItem()
+        {
+            string obsoleteItemId = NewRandomString();
+            string calculationId = NewRandomString();
+
+            GivenTheStatusCode($"obsoleteitems/{obsoleteItemId}/{calculationId}", HttpStatusCode.NoContent, HttpMethod.Delete);
+
+            HttpStatusCode apiResponse = await _client.RemoveObsoleteItem(obsoleteItemId, calculationId);
+
+            apiResponse
+                .Should()
+                .Be(HttpStatusCode.NoContent);
+        }
+
+        [TestMethod]
+        public async Task AddCalculationToObsoleteItem()
+        {
+            string obsoleteItemId = NewRandomString();
+            string calculationId = NewRandomString();
+
+            GivenTheStatusCode($"obsoleteitems/{obsoleteItemId}/{calculationId}", HttpStatusCode.OK, HttpMethod.Patch);
+
+            HttpStatusCode apiResponse = await _client.AddCalculationToObsoleteItem(obsoleteItemId, calculationId);
+
+            apiResponse
+                .Should()
+                .Be(HttpStatusCode.OK);
+        }
     }
 }

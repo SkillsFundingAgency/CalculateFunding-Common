@@ -62,6 +62,15 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<Job>> QueueCodeContextUpdate(string specificationId);
 
         Task<ApiResponse<Job>> QueueApproveAllSpecificationCalculations(string specificationId);
+
+
+        Task<ApiResponse<IEnumerable<ObsoleteItem>>> GetObsoleteItemsForSpecification(string specificationId);
+        Task<ApiResponse<IEnumerable<ObsoleteItem>>> GetObsoleteItemsForCalculation(string calculationId);
+        Task<ApiResponse<ObsoleteItem>> CreateObsoleteItem(ObsoleteItem obsoleteItem);
+        Task<HttpStatusCode> RemoveObsoleteItem(string obsoleteItemId, string calculationId);
+        Task<HttpStatusCode> AddCalculationToObsoleteItem(string obsoleteItemId, string calculationId);
+
         Task<ValidatedApiResponse<Calculation>> EditCalculationWithSkipInstruct(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
+
     }
 }

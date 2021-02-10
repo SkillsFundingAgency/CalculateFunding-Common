@@ -467,6 +467,11 @@ namespace CalculateFunding.Common.ApiClient
             return await ValidatedRequest<TResponse, TRequest>(url, request, HttpMethod.Patch, cancellationToken, timeout);
         }
 
+        public async Task<HttpStatusCode> PatchAsync(string url, CancellationToken cancellationToken = default)
+        {
+            return await StatusCodeRequest(url, HttpMethod.Patch, cancellationToken);
+        }
+
         #endregion
 
         #region DELETE

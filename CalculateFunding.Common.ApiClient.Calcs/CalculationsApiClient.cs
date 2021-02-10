@@ -14,6 +14,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
     public class CalculationsApiClient : BaseApiClient, ICalculationsApiClient
     {
         private const string UrlRoot = "calcs";
+        private const string ObsoleteItemsRoot = "obsoleteitems";
 
         public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
          : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
@@ -295,6 +296,38 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await PostAsync<Job>($"{UrlRoot}/specifications/{specificationId}/approve-all-calculations");
+        }
+
+        public async Task<ApiResponse<IEnumerable<ObsoleteItem>>> GetObsoleteItemsForSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            return await GetAsync<IEnumerable<ObsoleteItem>>($"{ObsoleteItemsRoot}/specifications/{specificationId}");
+        }
+
+        public async Task<ApiResponse<IEnumerable<ObsoleteItem>>> GetObsoleteItemsForCalculation(string calculationId)
+        {
+            Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
+            return await GetAsync<IEnumerable<ObsoleteItem>>($"{ObsoleteItemsRoot}/calculations/{calculationId}");
+        }
+
+        public async Task<ApiResponse<ObsoleteItem>> CreateObsoleteItem(ObsoleteItem obsoleteItem)
+        {
+            Guard.ArgumentNotNull(obsoleteItem, nameof(obsoleteItem));
+            return await PostAsync<ObsoleteItem, ObsoleteItem>($"{ObsoleteItemsRoot}", obsoleteItem);
+        }
+
+        public async Task<HttpStatusCode> RemoveObsoleteItem(string obsoleteItemId, string calculationId)
+        {
+            Guard.IsNullOrWhiteSpace(obsoleteItemId, nameof(obsoleteItemId));
+            Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
+            return await DeleteAsync($"{ObsoleteItemsRoot}/{obsoleteItemId}/{calculationId}");
+        }
+
+        public async Task<HttpStatusCode> AddCalculationToObsoleteItem(string obsoleteItemId, string calculationId)
+        {
+            Guard.IsNullOrWhiteSpace(obsoleteItemId, nameof(obsoleteItemId));
+            Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
+            return await PatchAsync($"{ObsoleteItemsRoot}/{obsoleteItemId}/{calculationId}");
         }
     }
 }
