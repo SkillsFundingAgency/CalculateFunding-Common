@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
@@ -53,6 +54,15 @@ namespace CalculateFunding.Common.Graph.Cosmos
             return _pathResultsTransform.TransformAll<TNode>(results,
                 vertexLabel,
                 field);
+        }
+
+        public async Task<IEnumerable<Entity<TNode>>> GetAllEntitiesForAll<TNode>(IEnumerable<IField> fields,
+            IEnumerable<string> relationships) where TNode : class
+        {
+            return (await RunForAllItemsAndReturn(fields.ToArray(),
+                    field => GetAllEntities<TNode>(field, relationships),
+                    _degreeOfParallelism))
+                .SelectMany(_ => _);
         }
 
         public async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field,
@@ -143,7 +153,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
             string edgeLabel = GetEdgeLabel(relationShipName);
 
             string query = $"g.{VertexTraversal(vertexALabel, left)}.bothE('{edgeLabel}')" +
-                           $".where(otherV().hasLabel('{vertexBLabel}').has('{GetPropertyName(right.Name)}', '{right.Value}')).drop()";
+                           $".where(otherV().hasLabel('{vertexBLabel}').has('{GetPropertyName(right.Name)}', '{GetPropertyValue(right.Value)}')).drop()";
 
             await ExecuteQuery(query);
         }
@@ -173,13 +183,13 @@ namespace CalculateFunding.Common.Graph.Cosmos
         private static string VertexTraversal(string vertexLabel,
             string property,
             string value)
-            => $"V().hasLabel('{vertexLabel}').has('{GetPropertyName(property)}', '{value}')";
+            => $"V().hasLabel('{vertexLabel}').has('{GetPropertyName(property)}', '{GetPropertyValue(value)}')";
 
         private static string VertexTraversal(string vertexLabel,
             IField identifier)
             => VertexTraversal(vertexLabel,
                 identifier.Name,
-                identifier.Value);
+                GetPropertyValue(identifier.Value));
 
         private static string BothEdgeTraversal(params string[] edgeLabels)
             => $"bothE({GetEdgeLabels(edgeLabels)})";
@@ -211,13 +221,18 @@ namespace CalculateFunding.Common.Graph.Cosmos
         private static bool IsNotImmutable(KeyValuePair<string, object> property) => !ImmutableProperties.Contains(property.Key);
 
         private static string PropertyProcessors(IEnumerable<KeyValuePair<string, object>> properties)
-            => properties.Select(_ => $"property(single, '{GetPropertyName(_.Key)}', '{_.Value}')").JoinWith('.');
+            => properties.Select(_ => $"property(single, '{GetPropertyName(_.Key)}', '{GetPropertyValue(_.Value)}')").JoinWith('.');
 
         private static string GetVertexLabel<TVertex>() => GetGremlinName(typeof(TVertex).Name);
 
         private static string GetEdgeLabel(string edgeLabel) => GetGremlinName(edgeLabel);
 
         private static string GetPropertyName(string propertyName) => GetGremlinName(propertyName);
+
+        private static string GetPropertyValue(object propertyValue) 
+            => propertyValue?
+                .ToString()
+                .Replace("\'", "\\\'");
 
         private static string GetGremlinName(string name) => name.ToLowerInvariant();
 

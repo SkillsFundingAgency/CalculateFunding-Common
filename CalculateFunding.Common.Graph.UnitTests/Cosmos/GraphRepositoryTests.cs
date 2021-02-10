@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Graph.Cosmos;
 using CalculateFunding.Common.Graph.Interfaces;
@@ -98,6 +99,51 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                 .BeEquivalentTo(expectedResults);
             
             AndTheClientWasDisposed();
+        }
+        
+        [TestMethod]
+        public async Task GetAllEntitiesForAll()
+        {
+            string relationshipOne = NewRandomString();
+            string relationshipTwo = NewRandomString();
+            string name = NewRandomString();
+            string valueOne = NewRandomString();
+            string valueTwo = NewRandomString();
+
+            Field fieldOne = NewField(_ => _.WithName(name)
+                .WithValue(valueOne));
+            Field fieldTwo = NewField(_ => _.WithName(name)
+                .WithValue(valueTwo));
+            
+            string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{valueOne}')" +
+                                   $".coalesce(bothE('{GremlinName(relationshipOne)}','{GremlinName(relationshipTwo)}').otherV().path(), path())";
+            string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{valueTwo}')" +
+                                      $".coalesce(bothE('{GremlinName(relationshipOne)}','{GremlinName(relationshipTwo)}').otherV().path(), path())";
+
+            Dictionary<string, object>[] queryResponseOne = new Dictionary<string, object>[0];
+            Dictionary<string, object>[] queryResponseTwo = new Dictionary<string, object>[0];
+            IEnumerable<Entity<Model>> expectedResultsOne = new[]
+            {
+                NewModelEntity()
+            };
+            IEnumerable<Entity<Model>> expectedResultsTwo = new[]
+            {
+                NewModelEntity()
+            };
+
+            GivenTheResponseForTheQuery(queryResponseOne, expectedQueryOne);
+            AndTheResponseForTheQuery(queryResponseTwo, expectedQueryTwo);
+            AndTheResultsMatchesTransformation("model", fieldOne, queryResponseOne, expectedResultsOne);
+            AndTheResultsMatchesTransformation("model", fieldTwo, queryResponseTwo, expectedResultsTwo);
+
+            IEnumerable<Entity<Model>> actualResponse = await WhenAllEntitiesForAllAreQueried(new [] { fieldOne, fieldTwo }, relationshipOne, relationshipTwo);
+
+            actualResponse
+                .Should()
+                .BeEquivalentTo(expectedResultsOne
+                    .Concat(expectedResultsTwo));
+            
+            AndTheClientWasDisposed(2);
         }
 
         [TestMethod]
@@ -334,6 +380,11 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             params string[] relationships) =>
             await _repository.GetAllEntities<Model>(field,
                 relationships);
+        
+        private async Task<IEnumerable<Entity<Model>>> WhenAllEntitiesForAllAreQueried(Field[] fields, 
+            params string[] relationships) =>
+            await _repository.GetAllEntitiesForAll<Model>(fields,
+                relationships);
 
         private async Task<IEnumerable<Entity<Model>>> WhenTheCircularDependenciesAreQueried(string relationship,
             Field field) =>
@@ -349,6 +400,12 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         private void AndTheGremlinQueryWasExecuted(string expectedQuery)
         {
             ThenTheGremlinQueryWasExecuted(expectedQuery);
+        }
+
+        private void AndTheResponseForTheQuery(Dictionary<string, object>[] response,
+            string query)
+        {
+            GivenTheResponseForTheQuery(response, query);
         }
 
         private void GivenTheResponseForTheQuery(Dictionary<string, object>[] response,

@@ -126,6 +126,10 @@ namespace CalculateFunding.Common.Graph.Neo4J
 
         public Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests) => throw new NotImplementedException();
 
+        public Task<IEnumerable<Entity<TNode>>> GetAllEntitiesForAll<TNode>(IEnumerable<GraphInterfaces.IField> fields,
+            IEnumerable<string> relationships) where TNode : class =>
+            throw new NotImplementedException();
+
         private async Task ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
         {
             IAsyncSession session = AsyncSession();

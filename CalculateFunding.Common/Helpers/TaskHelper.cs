@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.Helpers
 {
@@ -19,9 +20,9 @@ namespace CalculateFunding.Common.Helpers
             }
         }
 
-        public static async Task WhenAllAndThrow<TResult>(params Task<TResult>[] tasks)
+        public static async Task<TResult[]> WhenAllAndThrow<TResult>(params Task<TResult>[] tasks)
         {
-            if (tasks == null) return;
+            if (tasks == null) return new TResult[0];
 
             await Task.WhenAll(tasks);
 
@@ -32,6 +33,8 @@ namespace CalculateFunding.Common.Helpers
                     throw task.Exception;
                 }
             }
+
+            return tasks.Select(_ => _.Result).ToArray();
         }
     }
 }

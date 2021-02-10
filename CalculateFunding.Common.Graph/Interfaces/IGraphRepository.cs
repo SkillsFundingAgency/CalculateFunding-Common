@@ -17,5 +17,8 @@ namespace CalculateFunding.Common.Graph.Interfaces
         Task DeleteNodes<T>(params IField[] fields);
         Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests);
         Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests);
+
+        Task<IEnumerable<Entity<TNode>>> GetAllEntitiesForAll<TNode>(IEnumerable<IField> fields,
+            IEnumerable<string> relationships) where TNode : class;
     }
 }

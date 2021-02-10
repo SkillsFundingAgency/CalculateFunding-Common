@@ -2,7 +2,6 @@
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Utility;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Collections.Generic;
 using System.Net;
@@ -18,6 +17,13 @@ namespace CalculateFunding.Common.ApiClient.Graph
         public GraphApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
          : base(httpClientFactory, HttpClientKeys.Graph, logger, cancellationTokenProvider)
         { }
+
+        public async Task<HttpStatusCode> DeleteCalculationSpecificationRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/specification/relationships/calculation/delete", relationships);
+        }
 
         public async Task<HttpStatusCode> UpsertDataset(Dataset dataset)
         {
@@ -102,6 +108,13 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PutAsync($"{UrlRoot}/datasetdefinitions/{definitionId}/relationships/datasets/{datasetId}");
         }
         
+        public async Task<HttpStatusCode> UpsertDataDefinitionDatasetRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+            
+            return await PostAsync($"{UrlRoot}/datasetdefinitions/relationships/datasets", relationships);
+        }
+
         public async Task<HttpStatusCode> DeleteDataDefinitionDatasetRelationship(string definitionId, string datasetId)
         {
             Guard.IsNullOrWhiteSpace(datasetId, nameof(datasetId));
@@ -109,13 +122,20 @@ namespace CalculateFunding.Common.ApiClient.Graph
             
             return await DeleteAsync($"{UrlRoot}/datasetdefinitions/{definitionId}/relationships/datasets/{datasetId}");
         }
-        
+
         public async Task<HttpStatusCode> UpsertDatasetDataFieldRelationship(string datasetId, string fieldId)
         {
             Guard.IsNullOrWhiteSpace(datasetId, nameof(datasetId));
             Guard.IsNullOrWhiteSpace(fieldId, nameof(fieldId));
             
             return await PutAsync($"{UrlRoot}/datasets/{datasetId}/relationships/datafields/{fieldId}");
+        }
+        
+        public async Task<HttpStatusCode> UpsertDatasetDataFieldRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+            
+            return await PostAsync($"{UrlRoot}/datasets/relationships/datafields", relationships);
         }
         
         public async Task<HttpStatusCode> DeleteDatasetDataFieldRelationship(string datasetId, string fieldId)
@@ -133,7 +153,14 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
             return await PutAsync($"{UrlRoot}/specifications/{specificationId}/relationships/datasets/{datasetId}");
         }
-        
+
+        public async Task<HttpStatusCode> UpsertSpecificationDatasetRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/specifications/relationships/datasets", relationships);
+        }
+
         public async Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -141,7 +168,21 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
             return await DeleteAsync($"{UrlRoot}/specifications/{specificationId}/relationships/datasets/{datasetId}");
         }
-        
+
+        public async Task<HttpStatusCode> DeleteSpecificationDatasetRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/specifications/relationships/datasets/delete", relationships);
+        }
+
+        public async Task<HttpStatusCode> DeleteCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/calculations/relationships/datafields/delete", relationships);
+        }
+
         public async Task<HttpStatusCode> UpsertCalculationDataFieldRelationship(string calculationId, string fieldId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
@@ -149,7 +190,14 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
             return await PutAsync($"{UrlRoot}/calculations/{calculationId}/relationships/datafields/{fieldId}");
         }
-        
+
+        public async Task<HttpStatusCode> UpsertCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PutAsync($"{UrlRoot}/calculations/relationships/datafields", relationships);
+        }
+
         public async Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
@@ -162,27 +210,28 @@ namespace CalculateFunding.Common.ApiClient.Graph
         {
             Guard.ArgumentNotNull(specifications, nameof(specifications));
 
-            string url = $"{UrlRoot}/specifications";
-
-            return await PostAsync(url, specifications);
+            return await PostAsync($"{UrlRoot}/specifications", specifications);
         }
 
         public async Task<HttpStatusCode> DeleteCalculation(string calculationId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
 
-            string url = $"{UrlRoot}/calculation/{calculationId}";
+            return await DeleteAsync($"{UrlRoot}/calculation/{calculationId}");
+        }
 
-            return await DeleteAsync(url);
+        public async Task<HttpStatusCode> DeleteCalculations(params string[] calculationIds)
+        {
+            Guard.ArgumentNotNull(calculationIds, nameof(calculationIds));
+
+            return await PostAsync($"{UrlRoot}/calculation/delete", calculationIds);
         }
 
         public async Task<HttpStatusCode> DeleteSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            string url = $"{UrlRoot}/specification/{specificationId}";
-
-            return await DeleteAsync(url);
+            return await DeleteAsync($"{UrlRoot}/specification/{specificationId}");
         }
 
         public async Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds)
@@ -210,6 +259,13 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync($"{UrlRoot}/fundingline/{fieldId}");
         }
 
+        public async Task<HttpStatusCode> DeleteFundingLines(params string[] fieldIds)
+        {
+            Guard.ArgumentNotNull(fieldIds, nameof(fieldIds));
+
+            return await PostAsync($"{UrlRoot}/fundingline/delete", fieldIds);
+        }
+
         public async Task<HttpStatusCode> UpsertFundingLineCalculationRelationship(string fundingLineId, string calculationId)
         {
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
@@ -217,12 +273,27 @@ namespace CalculateFunding.Common.ApiClient.Graph
 
             return await PutAsync($"{UrlRoot}/fundingline/{fundingLineId}/relationships/calculation/{calculationId}");
         }
+
+        public async Task<HttpStatusCode> UpsertFundingLineCalculationRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/fundingline/relationships/calculation", relationships);
+        }
+
         public async Task<HttpStatusCode> UpsertCalculationFundingLineRelationship(string calculationId, string fundingLineId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
 
             return await PutAsync($"{UrlRoot}/calculation/{calculationId}/relationships/fundingline/{fundingLineId}");
+        }
+
+        public async Task<HttpStatusCode> UpsertCalculationFundingLineRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/calculation/relationships/fundingline", relationships);
         }
 
         public async Task<HttpStatusCode> DeleteFundingLineCalculationRelationship(string fundingLineId, string calculationId)
@@ -233,6 +304,13 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync($"{UrlRoot}/fundingline/{fundingLineId}/relationships/calculation/{calculationId}");
         }
 
+        public async Task<HttpStatusCode> DeleteFundingLineCalculationRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/fundingline/relationships/calculation/delete", relationships);
+        }
+
         public async Task<HttpStatusCode> DeleteCalculationFundingLineRelationship(string calculationId, string fundingLineId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
@@ -241,44 +319,61 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync($"{UrlRoot}/calculation/{calculationId}/relationships/fundingline/{fundingLineId}");
         }
 
+        public async Task<HttpStatusCode> DeleteCalculationFundingLineRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/calculation/relationships/fundingline/delete", relationships);
+        }
+
         public async Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            string url = $"{UrlRoot}/calculation/circulardependencies/{specificationId}";
 
-            return await GetAsync<IEnumerable<Entity<Calculation>>>(url);
+            return await GetAsync<IEnumerable<Entity<Calculation>>>($"{UrlRoot}/calculation/circulardependencies/{specificationId}");
         }
 
         public async Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntitiesRelatedToSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            string url = $"{UrlRoot}/specification/getallentities/{specificationId}";
 
-            return await GetAsync<IEnumerable<Entity<Specification>>>(url);
+            return await GetAsync<IEnumerable<Entity<Specification>>>($"{UrlRoot}/specification/getallentities/{specificationId}");
         }
 
         public async Task<ApiResponse<IEnumerable<Entity<DataField>>>> GetAllEntitiesRelatedToDataset(string datafieldId)
         {
             Guard.IsNullOrWhiteSpace(datafieldId, nameof(datafieldId));
-            string url = $"{UrlRoot}/dataset/getallentities/{datafieldId}";
 
-            return await GetAsync<IEnumerable<Entity<DataField>>>(url);
+            return await GetAsync<IEnumerable<Entity<DataField>>>($"{UrlRoot}/dataset/getallentities/{datafieldId}");
         }
 
         public async Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLine(string fundingLineId)
         {
             Guard.IsNullOrWhiteSpace(fundingLineId, nameof(fundingLineId));
-            string url = $"{UrlRoot}/fundingline/getallentities/{fundingLineId}";
 
-            return await GetAsync<IEnumerable<Entity<FundingLine>>>(url);
+            return await GetAsync<IEnumerable<Entity<FundingLine>>>($"{UrlRoot}/fundingline/getallentities/{fundingLineId}");
+        }
+        
+        public async Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLines(params string[] fundingLineIds)
+        {
+            Guard.ArgumentNotNull(fundingLineIds, nameof(fundingLineIds));
+
+            return await PostAsync<IEnumerable<Entity<FundingLine>>, IEnumerable<string>>($"{UrlRoot}/fundingline/getallentitiesforall", fundingLineIds);
         }
 
         public async Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculation(string calculationId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
-            string url = $"{UrlRoot}/calculation/getallentities/{calculationId}";
 
-            return await GetAsync<IEnumerable<Entity<Calculation>>>(url);
+            return await GetAsync<IEnumerable<Entity<Calculation>>>($"{UrlRoot}/calculation/getallentities/{calculationId}");
+        }
+        
+        public async Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculations(params string[] calculationIds)
+        {
+            Guard.ArgumentNotNull(calculationIds, nameof(calculationIds));
+            
+            return await PostAsync<IEnumerable<Entity<Calculation>>, IEnumerable<string>>($"{UrlRoot}/calculation/getallentitiesforall",
+                calculationIds);
         }
 
         public async Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB)
@@ -286,9 +381,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationIdA, nameof(calculationIdA));
             Guard.IsNullOrWhiteSpace(calculationIdB, nameof(calculationIdB));
 
-            string url = $"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}";
-
-            return await PutAsync(url);
+            return await PutAsync($"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}");
         }
 
         public async Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId)
@@ -296,9 +389,14 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            string url = $"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}";
+            return await PutAsync($"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}");
+        }
+        
+        public async Task<HttpStatusCode> UpsertCalculationSpecificationRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+           Guard.ArgumentNotNull(relationships, nameof(relationships));
 
-            return await PutAsync(url);
+           return await PostAsync($"{UrlRoot}/specification/relationships/calculation", relationships);
         }
 
         public async Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB)
@@ -306,19 +404,22 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationIdA, nameof(calculationIdA));
             Guard.IsNullOrWhiteSpace(calculationIdB, nameof(calculationIdB));
 
-            string url = $"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}";
+            return await DeleteAsync($"{UrlRoot}/calculation/{calculationIdA}/relationships/calculation/{calculationIdB}");
+        }
 
-            return await DeleteAsync(url);
+        public async Task<HttpStatusCode> DeleteCalculationCalculationRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/", relationships);
         }
 
         public async Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            
-            string url = $"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}";
 
-            return await DeleteAsync(url);
+            return await DeleteAsync($"{UrlRoot}/specification/{specificationId}/relationships/calculation/{calculationId}");
         }
 
         public async Task<HttpStatusCode> UpsertCalculationDataFieldsRelationships(string calculationId, string[] dataFieldIds)
@@ -326,9 +427,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             Guard.ArgumentNotNull(dataFieldIds, nameof(dataFieldIds));
 
-            string url = $"{UrlRoot}/calculation/{calculationId}/relationships/datafields";
-
-            return await PostAsync(url, dataFieldIds);
+            return await PostAsync($"{UrlRoot}/calculation/{calculationId}/relationships/datafields", dataFieldIds);
         }
     }
 }

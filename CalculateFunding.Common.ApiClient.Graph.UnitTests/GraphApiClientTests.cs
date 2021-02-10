@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -324,8 +325,175 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 _client.UpsertDataFields);
         }
+        
+        [TestMethod]
+        public async Task DeleteCalculationSpecificationRelationships()
+        {
+            await AssertPostRequest("/specification/relationships/calculation/delete", 
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculationSpecificationRelationships);
+        }
 
-        private Calculation NewCalculation() => new Calculation();
+        [TestMethod]
+        public async Task UpsertSpecificationDatasetRelationships()
+        {
+            await AssertPostRequest("specifications/relationships/datasets", 
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertSpecificationDatasetRelationships);   
+        }
+
+        [TestMethod]
+        public async Task DeleteSpecificationDatasetRelationships()
+        {
+            await AssertPostRequest("specifications/relationships/datasets/delete", 
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteSpecificationDatasetRelationships);      
+        }
+
+        [TestMethod]
+        public async Task DeleteCalculationDataFieldRelationships()
+        {
+            await AssertPostRequest("calculations/relationships/datafields/delete", 
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculationDataFieldRelationships);         
+        }
+
+        [TestMethod]
+        public async Task UpsertCalculationDataFieldRelationships()
+        {
+            AmendRelationshipRequestModel[] requestModels = NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                NewAmendRelationshipRequestModel());
+            
+            await AssertPutRequest("calculations/relationships/datafields", 
+                requestModels,
+                HttpStatusCode.OK,
+                () => _client.UpsertCalculationDataFieldRelationships(requestModels));
+        }
+        
+        [TestMethod]
+        public async Task DeleteCalculations()
+        {
+            await AssertPostRequest("calculation/delete", 
+                Strings(NewRandomString(), NewRandomString()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculations);         
+        }
+
+        [TestMethod]
+        public async Task UpsertFundingLineCalculationRelationships()
+        {
+            await AssertPostRequest("fundingline/relationships/calculation",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertFundingLineCalculationRelationships);
+        }
+        
+        [TestMethod]
+        public async Task UpsertCalculationFundingLineRelationships()
+        {
+            await AssertPostRequest("calculation/relationships/fundingline",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertCalculationFundingLineRelationships);
+        }
+        
+        [TestMethod]
+        public async Task DeleteFundingLineCalculationRelationships()
+        {
+            await AssertPostRequest("fundingline/relationships/calculation/delete",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteFundingLineCalculationRelationships);
+        }
+        
+        [TestMethod]
+        public async Task DeleteCalculationFundingLineRelationships()
+        {
+            await AssertPostRequest("calculation/relationships/fundingline/delete",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculationFundingLineRelationships);
+        }
+
+        [TestMethod]
+        public async Task UpsertDatasetDataFieldRelationships()
+        {
+            await AssertPostRequest("datasets/relationships/datafields",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertDatasetDataFieldRelationships);
+        }
+        
+        [TestMethod]
+        public async Task UpsertDataDefinitionDatasetRelationships()
+        {
+            await AssertPostRequest("datasetdefinitions/relationships/datasets",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertDataDefinitionDatasetRelationships);
+        }
+        
+        [TestMethod]
+        public async Task UpsertCalculationSpecificationRelationships()
+        {
+            await AssertPostRequest("specification/relationships/calculation",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertCalculationSpecificationRelationships);
+        }
+        
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToCalculations()
+        {
+            await AssertPostRequest("calculation/getallentitiesforall",
+                Strings(NewRandomString(), NewRandomString()),
+                AsEntities(NewCalculation(), NewCalculation())
+                    .AsEnumerable(),
+                _client.GetAllEntitiesRelatedToCalculations);
+        }
+
+        [TestMethod]
+        public async Task DeleteFundingLines()
+        {
+            await AssertPostRequest("fundingline/delete",
+                Strings(NewRandomString(), NewRandomString()),
+                HttpStatusCode.OK,
+                _client.DeleteFundingLines);    
+        }
+        
+        private AmendRelationshipRequestModel NewAmendRelationshipRequestModel() => new AmendRelationshipRequestModel
+        {
+            IdA = NewRandomString()
+        };
+
+        private AmendRelationshipRequestModel[] NewAmendRelationshipRequestModels(params AmendRelationshipRequestModel[] requests) => requests;
+
+        private Entity<TItem>[] AsEntities<TItem>(params TItem[] items)
+            where TItem : class
+            => items.Select(_ => new Entity<TItem>
+            {
+                Node = _
+            }).ToArray();
+
+        private Calculation NewCalculation() => new Calculation
+        {
+            CalculationId = NewRandomString()
+        };
         
         private Specification NewSpecification() => new Specification();
 
