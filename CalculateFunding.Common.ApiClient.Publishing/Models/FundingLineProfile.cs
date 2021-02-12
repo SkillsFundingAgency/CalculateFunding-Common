@@ -22,5 +22,6 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public DateTime? LastUpdatedDate { get; set; }
         public decimal? ProfileTotalAmount { get; set; }
         public IEnumerable<ProfileTotal> ProfileTotals { get; set; }
+        public IEnumerable<PublishedProviderError> Errors { get; set; }
     }
 }
