@@ -32,5 +32,8 @@ namespace CalculateFunding.Common.Models
 
         [JsonProperty("deleted")]
         public bool Deleted { get; set; }
+        
+        [JsonProperty("_etag")]
+        public string ETag { get; set; }
     }
 }

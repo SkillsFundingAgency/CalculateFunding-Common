@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Numerics;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -137,7 +138,7 @@ namespace CalculateFunding.Common.CosmosDb
                 results.AddRange(await query.ReadNextAsync());
             }
 
-            if (results.Count() > 0)
+            if (results.Any())
             {
                 await batchAction(results);
                 results.Clear();
@@ -155,48 +156,69 @@ namespace CalculateFunding.Common.CosmosDb
             }
         }
 
-        private async Task<ItemResponse<DocumentEntity<T>>> HardDeleteAsync<T>(T entity, string partitionKey) where T : IIdentifiable
+        private async Task<ItemResponse<DocumentEntity<T>>> HardDeleteAsync<T>(T entity,
+            string partitionKey,
+            string etag = null) where T : IIdentifiable
         {
-            PartitionKey partitionKeyForCosmos;
-            if (string.IsNullOrWhiteSpace(partitionKey))
+            PartitionKey partitionKeyForCosmos = string.IsNullOrWhiteSpace(partitionKey) ? PartitionKey.None : new PartitionKey(partitionKey);
+
+            if (string.IsNullOrWhiteSpace(etag))
             {
-                partitionKeyForCosmos = PartitionKey.None;
+                return await RepositoryContainer.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos);
             }
             else
             {
-                partitionKeyForCosmos = new PartitionKey(partitionKey);
+                return await RepositoryContainer.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos, new ItemRequestOptions
+                {
+                    IfMatchEtag = etag
+                });
             }
-            return await RepositoryContainer.DeleteItemAsync<DocumentEntity<T>>(id: entity.Id, partitionKey: partitionKeyForCosmos);
         }
 
-        private async Task<ItemResponse<DocumentEntity<T>>> SoftDeleteAsync<T>(T entity, PartitionKey partitionKey) where T : IIdentifiable
+        private async Task<ItemResponse<DocumentEntity<T>>> SoftDeleteAsync<T>(T entity,
+            PartitionKey partitionKey,
+            string etag = null) where T : IIdentifiable
         {
-            DocumentEntity<T> item = new DocumentEntity<T>(entity);
-            item.Deleted = true;
-            item.UpdatedAt = DateTime.UtcNow;
-            item.DocumentType = GetDocumentType<T>();
+            DocumentEntity<T> item = new DocumentEntity<T>(entity)
+            {
+                Deleted = true,
+                UpdatedAt = DateTime.UtcNow,
+                DocumentType = GetDocumentType<T>()
+            };
 
-
-            return await RepositoryContainer.ReplaceItemAsync(item: item, id: entity.Id, partitionKey);
+            if (string.IsNullOrEmpty(etag))
+            {
+                return await RepositoryContainer.ReplaceItemAsync(item: item, id: entity.Id, partitionKey);
+            }
+            else
+            {
+                return await RepositoryContainer.ReplaceItemAsync(item: item, id: entity.Id, partitionKey, new ItemRequestOptions
+                {
+                    IfMatchEtag = etag
+                });
+            }
         }
 
-        private async Task<HttpStatusCode> DeleteAsync<T>(T entity, string partitionKey, bool hardDelete = false) where T : IIdentifiable
+        private async Task<HttpStatusCode> DeleteAsync<T>(T entity,
+            string partitionKey,
+            bool hardDelete = false,
+            string etag = null) where T : IIdentifiable
         {
             ItemResponse<DocumentEntity<T>> response;
 
             if (hardDelete)
             {
-                response = await HardDeleteAsync(entity, partitionKey);
+                response = await HardDeleteAsync(entity, partitionKey, etag);
             }
             else
             {
                 if (string.IsNullOrWhiteSpace(partitionKey))
                 {
-                    response = await SoftDeleteAsync(entity, PartitionKey.None);
+                    response = await SoftDeleteAsync(entity, PartitionKey.None, etag);
                 }
                 else
                 {
-                    response = await SoftDeleteAsync(entity, new PartitionKey(partitionKey));
+                    response = await SoftDeleteAsync(entity, new PartitionKey(partitionKey), etag);
                 }
             }
 
@@ -569,6 +591,15 @@ namespace CalculateFunding.Common.CosmosDb
 
             await ResultsFromQueryAndOptions(cosmosDbQuery, persistBatchToIndex, queryRequestOptions);
         }
+        
+        public IQueryable<DocumentEntity<T>> QueryableDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
+        {
+            QueryRequestOptions queryRequestOptions = GetQueryRequestOptions(GetEffectivePageSize(itemsPerPage, maxItemCount));
+
+            return RepositoryContainer
+                .GetItemLinqQueryable<DocumentEntity<T>>(allowSynchronousQueryExecution: true, requestOptions: queryRequestOptions)
+                .Where(x => x.DocumentType == GetDocumentType<T>() && !x.Deleted);
+        }
 
         public async Task<IEnumerable<DocumentEntity<T>>> QueryDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable
         {
@@ -606,13 +637,16 @@ namespace CalculateFunding.Common.CosmosDb
             return JsonFromDocuments(documents);
         }
 
-        public async Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool hardDelete = false) where T : IIdentifiable
+        public async Task<HttpStatusCode> DeleteAsync<T>(string id,
+            string partitionKey,
+            bool hardDelete = false,
+            string etag = null) where T : IIdentifiable
         {
             Guard.IsNullOrWhiteSpace(id, nameof(id));
 
             DocumentEntity<T> doc = await ReadDocumentByIdAsync<T>(id);
 
-            return await DeleteAsync(doc, partitionKey, hardDelete);
+            return await DeleteAsync(doc, partitionKey, hardDelete, etag);
         }
 
         private DocumentEntity<T> CreateDocumentEntity<T>(T entity) where T : IIdentifiable
@@ -658,13 +692,17 @@ namespace CalculateFunding.Common.CosmosDb
             return response.Resource;
         }
 
-        public async Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable
+        public async Task<HttpStatusCode> UpsertAsync<T>(T entity,
+            string partitionKey = null,
+            bool undelete = false,
+            bool maintainCreatedDate = true,
+            string etag = null) where T : IIdentifiable
         {
             Guard.ArgumentNotNull(entity, nameof(entity));
 
             QueryRequestOptions queryRequestOptions = GetDefaultQueryRequestOptions(partitionKey: partitionKey);
 
-            DocumentEntity<T> doc = new DocumentEntity<T>();
+            DocumentEntity<T> doc;
 
             if (maintainCreatedDate)
             {
@@ -703,8 +741,20 @@ namespace CalculateFunding.Common.CosmosDb
 
             doc.Content = entity;
 
-            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.UpsertItemAsync(doc, requestOptions: _disableContentResponseOnWriteRequestOptions);
-            return response.StatusCode;
+            if (string.IsNullOrWhiteSpace(etag))
+            {
+                ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.UpsertItemAsync(doc, requestOptions: _disableContentResponseOnWriteRequestOptions);
+                return response.StatusCode;
+            }
+            else
+            {
+                ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.UpsertItemAsync(doc, requestOptions: new ItemRequestOptions
+                {
+                    EnableContentResponseOnWrite = false,
+                    IfMatchEtag = etag
+                });
+                return response.StatusCode;   
+            }
         }
 
         public async Task<HttpStatusCode> CreateAsync<T>(KeyValuePair<string, T> entity) where T : IIdentifiable
@@ -797,7 +847,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await DeleteAsync(entity: entity.Value, hardDelete: hardDelete, partitionKey: entity.Key);
+                            await DeleteAsync(entity: entity.Value, partitionKey: entity.Key, hardDelete: hardDelete);
                         }
                         finally
                         {
@@ -824,7 +874,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity, entity.Id, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
+                            await UpsertAsync(entity, entity.Id, undelete: undelete, maintainCreatedDate: maintainCreatedDate);
                         }
                         finally
                         {
@@ -850,7 +900,7 @@ namespace CalculateFunding.Common.CosmosDb
                     {
                         try
                         {
-                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, maintainCreatedDate: maintainCreatedDate, undelete: undelete);
+                            await UpsertAsync(entity: entity.Value, partitionKey: entity.Key, undelete: undelete, maintainCreatedDate: maintainCreatedDate);
                         }
                         finally
                         {
@@ -861,7 +911,9 @@ namespace CalculateFunding.Common.CosmosDb
             await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
         }
 
-        public async Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference
+        public async Task<HttpStatusCode> UpdateAsync<T>(T entity,
+            bool undelete = false,
+            string etag = null) where T : Reference
         {
             Guard.ArgumentNotNull(entity, nameof(entity));
 
@@ -881,8 +933,20 @@ namespace CalculateFunding.Common.CosmosDb
                 doc.Deleted = false;
             }
 
-            ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: _disableContentResponseOnWriteRequestOptions);
-            return response.StatusCode;
+            if (string.IsNullOrWhiteSpace(etag))
+            {
+                ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: _disableContentResponseOnWriteRequestOptions);
+                return response.StatusCode;
+            }
+            else
+            {
+                ItemResponse<DocumentEntity<T>> response = await RepositoryContainer.ReplaceItemAsync(item: doc, id: entity.Id, requestOptions: new ItemRequestOptions
+                {
+                    EnableContentResponseOnWrite = false,
+                    IfMatchEtag = etag
+                });
+                return response.StatusCode;   
+            }
         }
 
         public async Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable

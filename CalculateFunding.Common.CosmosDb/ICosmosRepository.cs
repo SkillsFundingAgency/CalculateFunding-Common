@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
@@ -89,13 +90,20 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task<IEnumerable<string>> QueryAsJsonAsync(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null);
 
-        Task<HttpStatusCode> DeleteAsync<T>(string id, string partitionKey, bool hardDelete = false) where T : IIdentifiable;
+        Task<HttpStatusCode> DeleteAsync<T>(string id,
+            string partitionKey,
+            bool hardDelete = false,
+            string etag = null) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
         Task<DocumentEntity<T>> CreateDocumentAsync<T>(T entity, string partitionKey = null) where T : IIdentifiable;
 
-        Task<HttpStatusCode> UpsertAsync<T>(T entity, string partitionKey = null, bool undelete = false, bool maintainCreatedDate = true) where T : IIdentifiable;
+        Task<HttpStatusCode> UpsertAsync<T>(T entity,
+            string partitionKey = null,
+            bool undelete = false,
+            bool maintainCreatedDate = true,
+            string etag = null) where T : IIdentifiable;
 
         Task<HttpStatusCode> CreateAsync<T>(KeyValuePair<string, T> entity) where T : IIdentifiable;
 
@@ -111,9 +119,12 @@ namespace CalculateFunding.Common.CosmosDb
 
         Task BulkUpsertAsync<T>(IEnumerable<KeyValuePair<string, T>> entities, int degreeOfParallelism = 5, bool maintainCreatedDate = true, bool undelete = false) where T : IIdentifiable;
 
-        Task<HttpStatusCode> UpdateAsync<T>(T entity, bool undelete = false) where T : Reference;
+        Task<HttpStatusCode> UpdateAsync<T>(T entity,
+            bool undelete = false,
+            string etag = null) where T : Reference;
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
         ICosmosDbFeedIterator<T> GetFeedIterator<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
+        IQueryable<DocumentEntity<T>> QueryableDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
     }
 }
