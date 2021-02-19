@@ -21,7 +21,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public string EnumValueName { get; set; }
 
         [JsonProperty("fundingLineId")]
-        public string FundingLineId { get; set; }
+        public uint? FundingLineId { get; set; }
 
         [JsonProperty("templateCalculationId")]
         public uint? TemplateCalculationId { get; set; }
