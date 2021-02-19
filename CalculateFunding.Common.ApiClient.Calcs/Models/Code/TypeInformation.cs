@@ -35,6 +35,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Code
 
         public string Type { get; set; }
 
-        public IEnumerable<string> EnumValues { get; set; }
+        public IEnumerable<EnumValue> EnumValues { get; set; }
     }
 }

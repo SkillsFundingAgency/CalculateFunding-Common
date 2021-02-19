@@ -18,6 +18,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models.Code
 
         public string IsAggregable { get; set; }
 
+        public bool IsObsolete { get; set; }
+
         public IEnumerable<PropertyInformation> Children { get; set; }
     }
 }
