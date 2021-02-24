@@ -65,6 +65,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public string PartitionKey => $"publishedprovider-{FundingStreamId}-{FundingPeriodId}-{ProviderId}";
 
         /// <summary>
+        /// Funding Lines - used to store the profiling result and total for all funding lines.
+        /// The total funding per funding line and distribution periods are stored here.
+        /// This will be consumed from the organisation group aggregator and variations over time.
+        /// </summary>
+        [JsonProperty("fundingLines")]
+        public IEnumerable<FundingLine> FundingLines { get; set; }
+
+        /// <summary>
+        /// Calculations - used to store all calculations.
+        /// </summary>
+        [JsonProperty("calculations")]
+        public IEnumerable<FundingCalculation> Calculations { get; set; }
+
+        /// <summary>
         /// Payment Funding Lines - used to store the profiling result and total for all payment funding lines.
         /// The total funding per funding line and distribution periods are stored here.
         /// </summary>
