@@ -37,5 +37,13 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("configurationType")]
         public ProfileConfigurationType ConfigurationType { get; set; }
+        
+        /// <summary>
+        /// Flag indicating whether the re profiling
+        /// should use a new opener or new allocation strategy 
+        /// </summary>
+        [JsonProperty("midYear")]
+        public bool MidYear { get; set; }
+
     }
 }
