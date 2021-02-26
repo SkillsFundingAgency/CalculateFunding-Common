@@ -44,6 +44,13 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         /// </summary>
         [JsonProperty("midYear")]
         public bool MidYear { get; set; }
+        
+        /// <summary>
+        /// The index into the ordered refresh profile periods
+        /// to start paying from
+        /// </summary>
+        [JsonProperty("variationPointerIndex")]
+        public int? VariationPointerIndex { get; set; }
 
     }
 }
