@@ -22,6 +22,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         [JsonProperty("fundingLineId")]
         public uint? FundingLineId { get; set; }
+        
+        [JsonProperty("fundingStreamId")]
+        public string FundingStreamId { get; set; }
 
         [JsonProperty("templateCalculationId")]
         public uint? TemplateCalculationId { get; set; }
