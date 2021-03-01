@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\template.with.duplicate.calculation.name.json" />
+    <EmbeddedResource Include="Resources\template.perfect.json" />
+    <None Remove="Resources\template.with.invalid.groupRate.numerator.json" />
+    <EmbeddedResource Include="Resources\template.with.invalid.groupRate.numerator.json" />
+    <None Remove="Resources\template.with.enum.type.but.no.allowed.enums.json" />
+    <EmbeddedResource Include="Resources\template.with.enum.type.but.no.allowed.enums.json" />
+    <None Remove="Resources\template.with.empty.allowed.enum.value.json" />
+    <EmbeddedResource Include="Resources\template.with.empty.allowed.enum.value.json" />
+    <None Remove="Resources\template.with.null.allowed.enum.value.json" />
+    <EmbeddedResource Include="Resources\template.with.null.allowed.enum.value.json" />
+    <None Remove="Resources\template.with.groupRate.numerator.same.as.denominator.json" />
+    <EmbeddedResource Include="Resources\template.with.groupRate.numerator.same.as.denominator.json" />
+    <None Remove="Resources\template.with.non.matching.clones.json" />
+    <EmbeddedResource Include="Resources\template.with.non.matching.clones.json" />
+    <None Remove="Resources\template.with.recursive.percentageChange.json" />
+    <EmbeddedResource Include="Resources\template.with.recursive.percentageChange.json" />
+    <None Remove="Resources\template.with.percentageChange.CalculationA.same.as.CalculationB.json" />
+    <EmbeddedResource Include="Resources\template.with.percentageChange.CalculationA.same.as.CalculationB.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema12\CalculateFunding.Common.TemplateMetadata.Schema12.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\template.with.duplicate.allowed.enum.json" />
+    <EmbeddedResource Include="Resources\template.with.duplicate.allowed.enum.json" />
+  </ItemGroup>
+
+</Project>

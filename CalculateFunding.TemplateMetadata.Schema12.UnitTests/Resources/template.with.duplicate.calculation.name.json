@@ -1,0 +1,64 @@
+{
+  "$schema": "https://fundingschemas.blob.core.windows.net/schemas/funding-template-schema-1.1.json",
+  "schemaVersion": "1.1",
+  "fundingTemplate": {
+    "fundingLines": [
+      {
+        "name": "Funding Line 1",
+        "fundingLineCode": "DSG-001",
+        "templateLineId": 1,
+        "type": "Payment",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "name": "Calc 11111",
+            "type": "PupilNumber",
+            "aggregationType": "Average",
+            "templateCalculationId": 2,
+            "formulaText": "1 + 1",
+            "valueFormat": "Percentage",
+            "calculations": [
+              {
+                "name": "Child Calculation 33333",
+                "type": "Rate",
+                "aggregationType": "None",
+                "formulaText": "1 + 1",
+                "templateCalculationId": 4,
+                "valueFormat": "Number",
+                "calculations": [
+                  {
+                    "name": "Calc 11111",
+                    "type": "PupilNumber",
+                    "aggregationType": "Sum",
+                    "formulaText": "1 + 1",
+                    "templateCalculationId": 5,
+                    "valueFormat": "Currency",
+                    "calculations": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Funding Line 2",
+        "fundingLineCode": "DSG-002",
+        "templateLineId": 6,
+        "type": "Payment",
+        "fundingLines": [],
+        "calculations": [
+          {
+            "name": "New Calc 33333",
+            "type": "Weighting",
+            "aggregationType": "Sum",
+            "formulaText": "1 + 1 = 7",
+            "templateCalculationId": 7,
+            "valueFormat": "Percentage",
+            "calculations": []
+          }
+        ]
+      }
+    ]
+  }
+}
