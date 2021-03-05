@@ -9,5 +9,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         Payment,
         Information,
         Contracting,
+        Indicative
     }
 }

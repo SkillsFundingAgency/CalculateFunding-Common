@@ -18,5 +18,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// Information
         /// </summary>
         Information,
+
+        /// <summary>
+        /// Indicative
+        /// </summary>
+        Indicative
     }
 }

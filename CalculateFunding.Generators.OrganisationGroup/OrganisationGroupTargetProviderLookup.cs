@@ -71,7 +71,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
         {
             Guard.ArgumentNotNull(organisationGroupLookupParameters, nameof(organisationGroupLookupParameters));
 
-            if (groupReason == GroupingReason.Payment || groupReason == GroupingReason.Contracting)
+            if (groupReason == GroupingReason.Payment || groupReason == GroupingReason.Contracting || groupReason == GroupingReason.Indicative)
             {
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.IdentifierValue, nameof(organisationGroupLookupParameters.IdentifierValue));
                 Guard.IsNullOrWhiteSpace(organisationGroupLookupParameters.ProviderVersionId, nameof(organisationGroupLookupParameters.ProviderVersionId));

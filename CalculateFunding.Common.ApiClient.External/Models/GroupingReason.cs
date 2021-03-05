@@ -18,5 +18,10 @@ namespace CalculateFunding.Common.ApiClient.External.Models
         /// Informational only.
         /// </summary>
         Information,
+
+        /// <summary>
+        /// Indicative
+        /// </summary>
+        Indicative
     }
 }

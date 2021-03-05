@@ -6,7 +6,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.Extensions
     {
         public static bool IsForProviderPayment(this GroupingReason groupingReason)
         {
-            return groupingReason == GroupingReason.Contracting || groupingReason == GroupingReason.Payment;
+            return groupingReason == GroupingReason.Contracting || groupingReason == GroupingReason.Payment || groupingReason == GroupingReason.Indicative;
         }
     }
 }

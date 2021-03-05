@@ -43,7 +43,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
             Dictionary<string, FdzPaymentOrganisation> paymentOrganisations = new Dictionary<string, FdzPaymentOrganisation>();
 
             if (fundingConfiguration.ProviderSource == ProviderSource.FDZ
-                && fundingConfiguration.OrganisationGroupings.Any(g => g.GroupingReason == GroupingReason.Payment || g.GroupingReason == GroupingReason.Contracting))
+                && fundingConfiguration.OrganisationGroupings.Any(g => g.GroupingReason == GroupingReason.Payment 
+                                                                    || g.GroupingReason == GroupingReason.Contracting
+                                                                    || g.GroupingReason == GroupingReason.Indicative))
             {
                 if (!providerSnapshotId.HasValue)
                 {

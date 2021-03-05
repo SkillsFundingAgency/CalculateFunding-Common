@@ -2299,7 +2299,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingContractingGroupsForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        public async Task WhenProducingGroupsForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2308,7 +2311,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                       .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
-                            g.WithGroupingReason(GroupingReason.Contracting)
+                            g.WithGroupingReason(groupingReason)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
                             .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.AcademyTrustCode)
                             .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.AcademyTrust)
@@ -2338,7 +2341,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9001",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
@@ -2350,7 +2353,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9003",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
@@ -2362,7 +2365,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9004",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
@@ -2374,7 +2377,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9005",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
@@ -2387,7 +2390,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingContractingGroupsForASpecForLocalAuthoritiesSsfWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        public async Task WhenProducingGroupsForASpecForLocalAuthoritiesSsfWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2396,7 +2402,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                       .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
-                            g.WithGroupingReason(GroupingReason.Contracting)
+                            g.WithGroupingReason(groupingReason)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
                             .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
                             .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthoritySsf)
@@ -2426,7 +2432,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthoritySsf,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9013",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
@@ -2438,7 +2444,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthoritySsf,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9006",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
@@ -2451,7 +2457,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingContractingGroupsForASpecForLocalAuthoritiesMssWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        public async Task WhenProducingGroupsForASpecForLocalAuthoritiesMssWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2460,7 +2469,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                       .WithProviderSource(ProviderSource.FDZ)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
-                            g.WithGroupingReason(GroupingReason.Contracting)
+                            g.WithGroupingReason(groupingReason)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
                             .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
                             .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthorityMss)
@@ -2489,7 +2498,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMss,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9013",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
@@ -2501,7 +2510,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthorityMss,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9006",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
@@ -2644,7 +2653,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingContractingForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        public async Task WhenProducingForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2652,7 +2664,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                       c.WithFundingStreamId(_fundingStreamId)
                       .WithPaymentOrganisationSource(PaymentOrganisationSource.PaymentOrganisationFields)
                       .WithOrganisationGroup(NewOrganisationGroupingConfiguration(g =>
-                            g.WithGroupingReason(GroupingReason.Contracting)
+                            g.WithGroupingReason(groupingReason)
                             .WithOrganisationGroupTypeClassification(OrganisationGroupTypeClassification.LegalEntity)
                             .WithGroupTypeIdentifier(OrganisationGroupTypeIdentifier.UKPRN)
                             .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.Provider)
@@ -2680,7 +2692,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9001",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
@@ -2692,7 +2704,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9003",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
@@ -2704,7 +2716,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9004",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
@@ -2716,7 +2728,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
-                    GroupReason = Enums.OrganisationGroupingReason.Contracting,
+                    GroupReason = organisationGroupingReason,
                     IdentifierValue = "9005",
                     Identifiers = new List<OrganisationIdentifier>(),
                     Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),

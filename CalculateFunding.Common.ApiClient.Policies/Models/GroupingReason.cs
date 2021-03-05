@@ -5,5 +5,6 @@
         Payment,
         Information,
         Contracting,
+        Indicative
     }
 }
