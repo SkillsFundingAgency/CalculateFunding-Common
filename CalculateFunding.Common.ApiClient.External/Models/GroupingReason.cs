@@ -22,6 +22,11 @@ namespace CalculateFunding.Common.ApiClient.External.Models
         /// <summary>
         /// Indicative
         /// </summary>
-        Indicative
+        Indicative,
+        
+        /// <summary>
+        /// Contracting (a type of payment reason)
+        /// </summary>
+        Contracting
     }
 }
