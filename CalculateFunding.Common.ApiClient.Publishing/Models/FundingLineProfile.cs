@@ -18,6 +18,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         public string ProfilePatternKey { get; set; }
         public string ProfilePatternName { get; set; }
         public string ProfilePatternDescription { get; set; }
+        public bool IsCustomProfile { get; set; }
         public Reference LastUpdatedUser { get; set; }
         public DateTime? LastUpdatedDate { get; set; }
         public decimal? ProfileTotalAmount { get; set; }
