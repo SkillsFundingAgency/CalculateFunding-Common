@@ -178,6 +178,17 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
                 () => _client.GetLatestSuccessfulJobForSpecification(specificationId, jobDefinitonId));
         }
 
+        [TestMethod]
+        public async Task GetLatestJobByTriggerEntityId()
+        {
+            string specificationId = NewRandomString();
+            string entityId = NewRandomString();
+            JobSummary jobsummary = NewJobSummary();
+            await AssertGetRequest($"jobs/latest-by-entity-id?specificationId={specificationId}&entityId={entityId}",
+                jobsummary,
+                () => _client.GetLatestJobByTriggerEntityId(specificationId, entityId));
+        }
+
         private JobCreateModel NewCreateModel() => new JobCreateModel();
         
         private Job NewJob() => new Job();

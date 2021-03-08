@@ -133,5 +133,15 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
             return await GetAsync<JobSummary>(api);
         }
+
+        public async Task<ApiResponse<JobSummary>> GetLatestJobByTriggerEntityId(string specificationId, string entityId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(entityId, nameof(entityId));
+
+            string api = $"jobs/latest-by-entity-id?specificationId={specificationId}&entityId={entityId}";
+
+            return await GetAsync<JobSummary>(api);
+        }
     }
 }

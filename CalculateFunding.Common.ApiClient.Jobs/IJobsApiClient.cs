@@ -27,5 +27,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         Task<ApiResponse<IEnumerable<JobCreateResult>>> TryCreateJobs(IEnumerable<JobCreateModel> jobCreateModels);
 
         Task<ApiResponse<JobSummary>> GetLatestSuccessfulJobForSpecification(string specificationId, string jobDefinitionId);
+
+        Task<ApiResponse<JobSummary>> GetLatestJobByTriggerEntityId(string specificationId, string entityId);
     }
 }

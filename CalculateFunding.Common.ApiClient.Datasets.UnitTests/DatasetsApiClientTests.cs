@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Datasets.Models;
 using CalculateFunding.Common.ApiClient.DataSets;
 using CalculateFunding.Common.ApiClient.DataSets.Models;
 using CalculateFunding.Common.ApiClient.Models;
@@ -228,7 +229,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             await AssertPostRequest("assign-datasource-to-relationship",
                 new AssignDatasourceModel(),
-                HttpStatusCode.OK,
+                new JobCreationResponse(),
                 _ => _client.AssignDatasourceVersionToRelationship(_));
         }
         

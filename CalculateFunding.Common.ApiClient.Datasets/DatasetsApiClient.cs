@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Datasets.Models;
 using CalculateFunding.Common.ApiClient.DataSets.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Interfaces;
@@ -142,11 +143,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<SelectDatasourceModel>(DataSetsUriFor($"get-datasources-by-relationshipid?relationshipId={relationshipId}"));
         }
 
-        public async Task<HttpStatusCode> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel)
+        public async Task<ApiResponse<JobCreationResponse>> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel)
         {
             Guard.ArgumentNotNull(assignDatasourceModel, nameof(assignDatasourceModel));
 
-            return await PostAsync(DataSetsUriFor("assign-datasource-to-relationship"), assignDatasourceModel);
+            return await PostAsync<JobCreationResponse, AssignDatasourceModel>(
+                DataSetsUriFor("assign-datasource-to-relationship"), 
+                assignDatasourceModel);
         }
 
         public async Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null)
