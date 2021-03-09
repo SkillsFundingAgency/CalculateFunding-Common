@@ -3,7 +3,7 @@ $currDir = Split-Path $MyInvocation.MyCommand.Path
 # To make the script re-useable let’s fetch the project file name automatically
 $files = get-childitem -recurse -Path "$($currDir)\*\*.csproj"
 
-#dotnet nuget locals all --clear
+dotnet nuget locals all --clear
 
 foreach ($file in $files)
 {

@@ -11,11 +11,14 @@ namespace CalculateFunding.Common.ApiClient.Graph
     {
         Task<HttpStatusCode> UpsertCalculations(Calculation[] calculations);
         Task<HttpStatusCode> UpsertSpecifications(Specification[] specifications);
+        Task<HttpStatusCode> UpsertEnums(Enum[] enums);
         Task<HttpStatusCode> DeleteCalculation(string calculationId);
         Task<HttpStatusCode> DeleteCalculations(params string[] calculationIds);
         Task<HttpStatusCode> DeleteSpecification(string specificationId);
         Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds);
         Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
+        Task<HttpStatusCode> UpsertCalculationEnumRelationships(params AmendRelationshipRequestModel[] relationships);
+        Task<HttpStatusCode> UpsertEnumCalculationRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId);
         Task<HttpStatusCode> UpsertCalculationDataFieldsRelationships(string calculationId, string[] dataFieldIds);
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
@@ -41,11 +44,15 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships);
+        Task<HttpStatusCode> UpsertCalculationEnumRelationship(string calculationId, string enumId);
+        Task<HttpStatusCode> UpsertEnumCalculationRelationship(string enumId, string calculationId);
         Task<HttpStatusCode> UpsertCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> UpsertCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertFundingLines(FundingLine[] fundingLines);
         Task<HttpStatusCode> DeleteFundingLine(string fieldId);
+        Task<HttpStatusCode> DeleteEnum(string enumId);
         Task<HttpStatusCode> DeleteFundingLines(params string[] fieldIds);
+        Task<HttpStatusCode> DeleteEnums(string[] fieldIds);
         Task<HttpStatusCode> UpsertFundingLineCalculationRelationship(string fundingLineId, string calculationId);
         Task<HttpStatusCode> UpsertFundingLineCalculationRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertCalculationFundingLineRelationship(string calculationId, string fundingLineId);
@@ -57,6 +64,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetCircularDependencies(string specificationId);
         Task<ApiResponse<IEnumerable<Entity<Specification>>>> GetAllEntitiesRelatedToSpecification(string specificationId);
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculation(string calculationId);
+        Task<ApiResponse<IEnumerable<Entity<Enum>>>> GetAllEntitiesRelatedToEnum(string enumId);
         Task<ApiResponse<IEnumerable<Entity<Calculation>>>> GetAllEntitiesRelatedToCalculations(params string[] calculationIds);
         Task<ApiResponse<IEnumerable<Entity<DataField>>>> GetAllEntitiesRelatedToDataset(string datasetFieldId);
         Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLine(string fundingLineId);

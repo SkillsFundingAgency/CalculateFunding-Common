@@ -33,7 +33,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 _client.UpsertCalculations);
         }
-        
+
+        [TestMethod]
+        public async Task UpsertFundingLines()
+        {
+            await AssertPostRequest("fundinglines",
+                FundingLines(NewFundingLine(), NewFundingLine()),
+                HttpStatusCode.OK,
+                _client.UpsertFundingLines);
+        }
+
         [TestMethod]
         public async Task UpsertSpecifications()
         {
@@ -63,6 +72,28 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 id,
                 HttpStatusCode.OK,
                 _client.DeleteSpecification);
+        }
+
+        [TestMethod]
+        public async Task DeleteFundingLine()
+        {
+            string id = NewRandomString();
+
+            await AssertDeleteRequest($"fundingline/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteFundingLine);
+        }
+
+        [TestMethod]
+        public async Task DeleteEnum()
+        {
+            string id = NewRandomString();
+
+            await AssertDeleteRequest($"enum/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteEnum);
         }
 
         [TestMethod]
@@ -98,6 +129,61 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task UpsertCalculationFundingLineRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"calculation/{idOne}/relationships/fundingline/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.UpsertCalculationFundingLineRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
+        public async Task UpsertFundingLineCalculationRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"fundingline/{idOne}/relationships/calculation/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.UpsertFundingLineCalculationRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
+        public async Task UpsertCalculationSpecificationRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"specification/{idTwo}/relationships/calculation/{idOne}",
+                HttpStatusCode.OK,
+                () => _client.UpsertCalculationSpecificationRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
+        public async Task UpsertCalculationEnumRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"calculation/{idOne}/relationships/enum/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.UpsertCalculationEnumRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
+        public async Task UpsertEnumCalculationRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertPutRequest($"enum/{idOne}/relationships/calculation/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.UpsertEnumCalculationRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
         public async Task DeleteCalculationCalculationRelationship()
         {
             string idOne = NewRandomString();
@@ -107,7 +193,29 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 () => _client.DeleteCalculationCalculationRelationship(idOne, idTwo));    
         }
-        
+
+        [TestMethod]
+        public async Task DeleteCalculationFundingLineRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertDeleteRequest($"calculation/{idOne}/relationships/fundingline/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.DeleteCalculationFundingLineRelationship(idOne, idTwo));
+        }
+
+        [TestMethod]
+        public async Task DeleteFundingLineCalculationRelationship()
+        {
+            string idOne = NewRandomString();
+            string idTwo = NewRandomString();
+
+            await AssertDeleteRequest($"fundingline/{idOne}/relationships/calculation/{idTwo}",
+                HttpStatusCode.OK,
+                () => _client.DeleteFundingLineCalculationRelationship(idOne, idTwo));
+        }
+
         [TestMethod]
         public async Task DeleteCalculationSpecificationRelationship()
         {
@@ -135,6 +243,15 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 new[] { new Dataset(), new Dataset() },
                 HttpStatusCode.OK,
                 _client.UpsertDatasets);
+        }
+
+        [TestMethod]
+        public async Task UpsertEnums()
+        {
+            await AssertPostRequest("enums",
+                new[] { new Enum(), new Enum() },
+                HttpStatusCode.OK,
+                _client.UpsertEnums);
         }
 
         [TestMethod]
@@ -428,6 +545,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task DeleteCalculationCalculationRelationships()
+        {
+            await AssertPostRequest(string.Empty,
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculationCalculationRelationships);
+        }
+
+        [TestMethod]
         public async Task UpsertDatasetDataFieldRelationships()
         {
             await AssertPostRequest("datasets/relationships/datafields",
@@ -448,6 +575,26 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
         
         [TestMethod]
+        public async Task UpsertCalculationEnumRelationships()
+        {
+            await AssertPostRequest("calculation/relationships/enum",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertCalculationEnumRelationships);
+        }
+
+        [TestMethod]
+        public async Task UpsertEnumCalculationRelationships()
+        {
+            await AssertPostRequest("enum/relationships/calculation",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.UpsertEnumCalculationRelationships);
+        }
+
+        [TestMethod]
         public async Task UpsertCalculationSpecificationRelationships()
         {
             await AssertPostRequest("specification/relationships/calculation",
@@ -456,7 +603,103 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 _client.UpsertCalculationSpecificationRelationships);
         }
-        
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToEnum()
+        {
+            string enumId = NewRandomString();
+
+            await AssertGetRequest($"/enum/getallentities/{enumId}",
+                new[]
+                {
+                    new Entity<Enum>
+                    {
+                        Node = NewEnum()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetAllEntitiesRelatedToEnum(enumId));
+        }
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToCalculation()
+        {
+            string calculationId = NewRandomString();
+
+            await AssertGetRequest($"/calculation/getallentities/{calculationId}",
+                new[]
+                {
+                    new Entity<Calculation>
+                    {
+                        Node = NewCalculation()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetAllEntitiesRelatedToCalculation(calculationId));
+        }
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToFundingLine()
+        {
+            string fundingLineId = NewRandomString();
+
+            await AssertGetRequest($"/fundingline/getallentities/{fundingLineId}",
+                new[]
+                {
+                    new Entity<FundingLine>
+                    {
+                        Node = NewFundingLine()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetAllEntitiesRelatedToFundingLine(fundingLineId));
+        }
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToDataset()
+        {
+            string datafieldId = NewRandomString();
+
+            await AssertGetRequest($"/dataset/getallentities/{datafieldId}",
+                new[]
+                {
+                    new Entity<DataField>
+                    {
+                        Node = NewDataField()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetAllEntitiesRelatedToDataset(datafieldId));
+        }
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToSpecification()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"/specification/getallentities/{specificationId}",
+                new[]
+                {
+                    new Entity<Specification>
+                    {
+                        Node = NewSpecification()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetAllEntitiesRelatedToSpecification(specificationId));
+        }
+
+        [TestMethod]
+        public async Task GetCircularDependencies()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"/calculation/circulardependencies/{specificationId}",
+                new[]
+                {
+                    new Entity<Calculation>
+                    {
+                        Node = NewCalculation()
+                    }
+                }.AsEnumerable(),
+                () => _client.GetCircularDependencies(specificationId));
+        }
+
         [TestMethod]
         public async Task GetAllEntitiesRelatedToCalculations()
         {
@@ -468,6 +711,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task GetAllEntitiesRelatedToFundingLines()
+        {
+            await AssertPostRequest("fundingline/getallentitiesforall",
+                Strings(NewRandomString(), NewRandomString()),
+                AsEntities(NewFundingLine(), NewFundingLine())
+                    .AsEnumerable(),
+                _client.GetAllEntitiesRelatedToFundingLines);
+        }
+
+        [TestMethod]
         public async Task DeleteFundingLines()
         {
             await AssertPostRequest("fundingline/delete",
@@ -475,7 +728,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                 HttpStatusCode.OK,
                 _client.DeleteFundingLines);    
         }
-        
+
+        [TestMethod]
+        public async Task DeleteEnums()
+        {
+            await AssertPostRequest("enum/delete",
+                Strings(NewRandomString(), NewRandomString()),
+                HttpStatusCode.OK,
+                _client.DeleteEnums);
+        }
+
         private AmendRelationshipRequestModel NewAmendRelationshipRequestModel() => new AmendRelationshipRequestModel
         {
             IdA = NewRandomString()
@@ -494,12 +756,35 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         {
             CalculationId = NewRandomString()
         };
-        
+
+        private Enum NewEnum() => new Enum
+        {
+            EnumName = NewRandomString(),
+            EnumValue = NewRandomString()
+        };
+
+        private FundingLine NewFundingLine() => new FundingLine
+        {
+            FundingLineId = NewRandomString()
+        };
+
+        private Dataset NewDataset() => new Dataset
+        {
+            DatasetId = NewRandomString()
+        };
+
+        private DataField NewDataField() => new DataField
+        {
+            DataFieldId = NewRandomString()
+        };
+
         private Specification NewSpecification() => new Specification();
 
         private Calculation[] Calculations(params Calculation[] calculations) => calculations;
 
         private Specification[] Specifications(params Specification[] specifications) => specifications;
+
+        private FundingLine[] FundingLines(params FundingLine[] fundingLines) => fundingLines;
 
         private string[] Strings(params string[] ids) => ids;
 
