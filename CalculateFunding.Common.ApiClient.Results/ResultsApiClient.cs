@@ -140,6 +140,12 @@ namespace CalculateFunding.Common.ApiClient.Results
                 $"{UrlRoot}/specifications/{specificationId}/generate-calculation-csv-results", string.Empty);
         }
 
+        public async Task<ApiResponse<SpecificationCalculationResultsMetadata>> GetSpecificationCalculationResultsMetadata(string specificationId)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+            return await GetAsync<SpecificationCalculationResultsMetadata>($"{UrlRoot}/results/specifications/{specificationId}/metadata");
+        }
+
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));

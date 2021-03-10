@@ -64,6 +64,11 @@ namespace CalculateFunding.Common.Testing
             return new RandomString();
         }
 
+        protected DateTime NewRandomDateTime()
+        {
+            return new RandomDateTime();
+        }
+
         protected string NewRandomHeaderValue() => $"\"{NewRandomString().Replace("-", "")}\"";
 
         protected int NewRandomInt()

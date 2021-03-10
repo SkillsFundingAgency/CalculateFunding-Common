@@ -25,7 +25,7 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
             _client = new ResultsApiClient(ClientFactory,
                 Logger.None);
         }
-        
+
         [TestMethod]
         public async Task GetProviderSpecifications()
         {
@@ -56,9 +56,9 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
 
             await AssertGetRequest($"specifications/{specificationId}/provider-result-by-calculationtype/{providerId}/template",
                 new ProviderResult(),
-                () => _client.GetProviderResultByCalculationTypeTemplate(providerId, specificationId));     
+                () => _client.GetProviderResultByCalculationTypeTemplate(providerId, specificationId));
         }
-        
+
         [TestMethod]
         public async Task GetProviderResultByCalculationTypeAdditional()
         {
@@ -67,9 +67,9 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
 
             await AssertGetRequest($"specifications/{specificationId}/provider-result-by-calculationtype/{providerId}/additional",
                 new ProviderResult(),
-                () => _client.GetProviderResultByCalculationTypeAdditional(providerId, specificationId));     
+                () => _client.GetProviderResultByCalculationTypeAdditional(providerId, specificationId));
         }
-        
+
         [TestMethod]
         public async Task GetProviderSourceDataSetsByProviderIdAndSpecificationId()
         {
@@ -78,14 +78,14 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
 
             await AssertGetRequest($"get-provider-source-datasets?providerId={providerId}&specificationId={specificationId}",
                 Enumerable.Empty<ProviderSourceDataset>(),
-                () => _client.GetProviderSourceDataSetsByProviderIdAndSpecificationId(providerId, specificationId));     
+                () => _client.GetProviderSourceDataSetsByProviderIdAndSpecificationId(providerId, specificationId));
         }
 
         [TestMethod]
         public async Task ReIndexCalculationProviderResults()
         {
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            
+
             GivenTheStatusCode("reindex-calc-provider-results", expectedStatusCode, HttpMethod.Get);
 
             HttpStatusCode apiResponse = await _client.ReIndexCalculationProviderResults();
@@ -129,7 +129,7 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
         {
             await AssertPostRequest("get-calculation-result-totals-for-specifications",
                 new SpecificationListModel(),
-                 NewEnumerable( new FundingCalculationResultsTotals()),
+                 NewEnumerable(new FundingCalculationResultsTotals()),
                 _client.GetFundingCalculationResultsForSpecifications);
         }
 
@@ -150,7 +150,7 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
         public async Task HasCalculationResults(bool expectedHasResults)
         {
             string id = NewRandomString();
-            
+
             GivenThePrimitiveResponse($"hasCalculationResults/{id}", expectedHasResults, HttpMethod.Get);
 
             ApiResponse<bool> apiResponse = await _client.HasCalculationResults(id);
@@ -232,6 +232,21 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
                 string.Empty,
                 job,
                 () => _client.RunGenerateCalculationCsvResultsJob(specificationId));
+        }
+
+        [TestMethod]
+        public async Task GetSpecificationCalculationResultsMetadata()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"results/specifications/{specificationId}/metadata",
+                    new SpecificationCalculationResultsMetadata
+                    {
+                        SpecificationId = specificationId,
+                        LastUpdated = NewRandomDateTime()
+                    }
+                ,
+                () => _client.GetSpecificationCalculationResultsMetadata(specificationId));
         }
     }
 }

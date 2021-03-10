@@ -27,5 +27,6 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<IEnumerable<SpecificationInformation>>> GetSpecificationsWithProviderResultsForProviderId(string providerId);
         Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest);
         Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
+        Task<ApiResponse<SpecificationCalculationResultsMetadata>> GetSpecificationCalculationResultsMetadata(string specificationId);
     }
 }
