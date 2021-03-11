@@ -18,7 +18,6 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> UpsertCalculationCalculationsRelationships(string calculationId, string[] calculationIds);
         Task<HttpStatusCode> UpsertCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
         Task<HttpStatusCode> UpsertCalculationEnumRelationships(params AmendRelationshipRequestModel[] relationships);
-        Task<HttpStatusCode> UpsertEnumCalculationRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertCalculationSpecificationRelationship(string calculationId, string specificationId);
         Task<HttpStatusCode> UpsertCalculationDataFieldsRelationships(string calculationId, string[] dataFieldIds);
         Task<HttpStatusCode> DeleteCalculationCalculationRelationship(string calculationIdA, string calculationIdB);
@@ -43,9 +42,10 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationship(string specificationId, string datasetId);
         Task<HttpStatusCode> DeleteSpecificationDatasetRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationship(string calculationId, string fieldId);
+        Task<HttpStatusCode> DeleteCalculationEnumRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> DeleteCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships);
+        Task<HttpStatusCode> DeleteCalculationEnumRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertCalculationEnumRelationship(string calculationId, string enumId);
-        Task<HttpStatusCode> UpsertEnumCalculationRelationship(string enumId, string calculationId);
         Task<HttpStatusCode> UpsertCalculationDataFieldRelationship(string calculationId, string fieldId);
         Task<HttpStatusCode> UpsertCalculationDataFieldRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertFundingLines(FundingLine[] fundingLines);

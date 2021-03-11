@@ -26,7 +26,7 @@ namespace CalculateFunding.Common.ApiClient.Graph.Models
         [JsonProperty("enumvalue")]
         public string EnumValue { get; set; }
 
-        [JsonProperty("enumvaluename")]
+        [JsonIgnore]
         public string EnumValueName { get; set; }
     }
 }

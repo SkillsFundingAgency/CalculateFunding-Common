@@ -173,17 +173,6 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
-        public async Task UpsertEnumCalculationRelationship()
-        {
-            string idOne = NewRandomString();
-            string idTwo = NewRandomString();
-
-            await AssertPutRequest($"enum/{idOne}/relationships/calculation/{idTwo}",
-                HttpStatusCode.OK,
-                () => _client.UpsertEnumCalculationRelationship(idOne, idTwo));
-        }
-
-        [TestMethod]
         public async Task DeleteCalculationCalculationRelationship()
         {
             string idOne = NewRandomString();
@@ -435,6 +424,17 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task DeleteCalculationEnumRelationship()
+        {
+            string calculationId = NewRandomString();
+            string fieldId = NewRandomString();
+
+            await AssertDeleteRequest($"calculations/{calculationId}/relationships/enums/{fieldId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteCalculationEnumRelationship(calculationId, fieldId));
+        }
+
+        [TestMethod]
         public async Task UpsertDatasetFields()
         {
             await AssertPostRequest("datafields",
@@ -481,6 +481,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
                     NewAmendRelationshipRequestModel()),
                 HttpStatusCode.OK,
                 _client.DeleteCalculationDataFieldRelationships);         
+        }
+
+        [TestMethod]
+        public async Task DeleteCalculationEnumRelationships()
+        {
+            await AssertPostRequest("calculations/relationships/enums/delete",
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteCalculationEnumRelationships);
         }
 
         [TestMethod]
