@@ -13,5 +13,11 @@ namespace CalculateFunding.Common.Graph.Cosmos
         public string ContainerPath { get; set; }
 
         public int DegreeOfParallelism { get; set; }
+
+        public int? MaxInProcessPerConnection { get; set; }
+        public int? PoolSize { get; set; }
+        public int? ReconnectionAttempts { get; set; }
+        public int? ReconnectionBaseDelay { get; set; }
+        public int? KeepAliveInterval { get; set; }
     }
 }
