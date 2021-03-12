@@ -1,0 +1,49 @@
+name: $(date:yyyyMMdd)$(rev:.r)
+
+pool:
+  vmImage: windows-2019
+
+trigger: none
+
+variables:
+ - name: BuildConfiguration
+   value: 'release'
+ - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+   value: true
+ - name: BuildPlatform 
+   value: 'any cpu'
+ - name: vstsFeed
+   value: 'ecf37bc0-472b-47bf-91e3-6774809fd194'
+ - group: 'Dotnet Core SDK Version'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk $(DotnetCoreSdkVersion)'
+  inputs:
+    version: '$(DotnetCoreSdkVersion)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet custom'
+  inputs:
+    command: custom
+    custom: '--list-sdks'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+    vstsFeed: '$(vstsFeed)'
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: '**/*UnitTests/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) --collect "Code coverage"'
