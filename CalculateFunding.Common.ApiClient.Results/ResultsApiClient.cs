@@ -143,7 +143,7 @@ namespace CalculateFunding.Common.ApiClient.Results
         public async Task<ApiResponse<SpecificationCalculationResultsMetadata>> GetSpecificationCalculationResultsMetadata(string specificationId)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
-            return await GetAsync<SpecificationCalculationResultsMetadata>($"{UrlRoot}/results/specifications/{specificationId}/metadata");
+            return await GetAsync<SpecificationCalculationResultsMetadata>($"{UrlRoot}/specifications/{specificationId}/metadata");
         }
 
         private void EnsureProviderIdAndSpecificationIdSupplied(string providerId, string specificationId)
