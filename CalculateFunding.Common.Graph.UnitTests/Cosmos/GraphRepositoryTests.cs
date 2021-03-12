@@ -65,8 +65,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             actualResponse
                 .Should()
                 .BeEquivalentTo(expectedResults);
-            
-            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -97,8 +95,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             actualResponse
                 .Should()
                 .BeEquivalentTo(expectedResults);
-            
-            AndTheClientWasDisposed();
         }
         
         [TestMethod]
@@ -142,8 +138,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                 .Should()
                 .BeEquivalentTo(expectedResultsOne
                     .Concat(expectedResultsTwo));
-            
-            AndTheClientWasDisposed(2);
         }
 
         [TestMethod]
@@ -181,7 +175,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQueryForNodeOne);
             AndTheGremlinQueryWasExecuted(expectedQueryForNodeTwo);
-            AndTheClientWasDisposed(2);
         }
         
         [TestMethod]
@@ -203,7 +196,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQueryForNodeOne);
             AndTheGremlinQueryWasExecuted(expectedQueryForNodeTwo);
-            AndTheClientWasDisposed(2);
         }
 
         [TestMethod]
@@ -216,7 +208,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(field.Name)}', '{field.Value}').drop()";
             
             ThenTheGremlinQueryWasExecuted(expectedQuery);
-            AndTheClientWasDisposed();
         }
         
         [TestMethod]
@@ -232,7 +223,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
-            AndTheClientWasDisposed(2);
         }
 
         [TestMethod]
@@ -251,7 +241,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                                    $"addE('{GremlinName(relationship)}').from('A'))";
             
             ThenTheGremlinQueryWasExecuted(expectedQuery);
-            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -283,7 +272,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
-            AndTheClientWasDisposed(2);         
         }
         
         [TestMethod]
@@ -301,7 +289,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
             
             ThenTheGremlinQueryWasExecuted(expectedQuery);
-            AndTheClientWasDisposed();
         }
         
         [TestMethod]
@@ -329,7 +316,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
-            AndTheClientWasDisposed(2);         
         }
         
         private async Task WhenTheRelationshipIsDeleted<A, B>(string relationship,
@@ -437,12 +423,6 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             _resultsTransform.Setup(_ => _.TransformMatches<Model>(response, vertexLabel, identifier))
                 .Returns(transformedResponse);
-        }
-
-        private void AndTheClientWasDisposed(int times = 1)
-        {
-            _client.Verify(_ => _.Dispose(),
-                Times.Exactly(times));
         }
         
         private string NewRandomString() => new RandomString();

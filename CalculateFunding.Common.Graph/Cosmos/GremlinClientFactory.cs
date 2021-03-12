@@ -7,7 +7,7 @@ using System.Net.WebSockets;
 
 namespace CalculateFunding.Common.Graph.Cosmos
 {
-    public class GremlinClientFactory : IGremlinClientFactory
+    public class GremlinClientFactory : IGremlinClientFactory, IDisposable
     {
         private readonly GremlinServer _server;
         private readonly ConnectionPoolSettings _connectionPoolSettings;
@@ -29,8 +29,8 @@ namespace CalculateFunding.Common.Graph.Cosmos
 
             _connectionPoolSettings = new ConnectionPoolSettings()
             {
-                MaxInProcessPerConnection = settings.MaxInProcessPerConnection ?? 10,
-                PoolSize = settings.MaxInProcessPerConnection ?? 30,
+                MaxInProcessPerConnection = settings.MaxInProcessPerConnection ?? 32,
+                PoolSize = settings.PoolSize ?? 30,
                 ReconnectionAttempts = settings.ReconnectionAttempts ?? 3,
                 ReconnectionBaseDelay = TimeSpan.FromMilliseconds(settings.ReconnectionBaseDelay ?? 500)
             };
@@ -42,13 +42,18 @@ namespace CalculateFunding.Common.Graph.Cosmos
                 });
         }
         
-        public IGremlinClient CreateClient() => _gremlinClient ??
+        public IGremlinClient CreateClient() => _gremlinClient ??=
             new GremlinClient(_server,
                 new GraphSON2Reader(),
                 new GraphSON2Writer(),
                 GremlinClient.GraphSON2MimeType,
                 _connectionPoolSettings,
                 _webSocketConfiguration);
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
 
         protected virtual void Dispose(bool disposing)
         {

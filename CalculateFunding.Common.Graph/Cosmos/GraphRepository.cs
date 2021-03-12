@@ -168,9 +168,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
         {
             try
             {
-                using IGremlinClient gremlinClient = NewGremlinClient();
-
-                ResultSet<Dictionary<string, object>> response = await gremlinClient.SubmitAsync<Dictionary<string, object>>(query);
+                ResultSet<Dictionary<string, object>> response = await GremlinClient().SubmitAsync<Dictionary<string, object>>(query);
 
                 return response;
             }
@@ -236,6 +234,6 @@ namespace CalculateFunding.Common.Graph.Cosmos
 
         private static string GetGremlinName(string name) => name.ToLowerInvariant();
 
-        private IGremlinClient NewGremlinClient() => _clientFactory.CreateClient();
+        private IGremlinClient GremlinClient() => _clientFactory.CreateClient();
     }
 }
