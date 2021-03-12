@@ -13,5 +13,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         public OrganisationGroupTypeCode OrganisationGroupTypeCode { get; set; }
 
         public IEnumerable<ProviderTypeMatch> ProviderTypeMatch { get; set; }
+
+        public IEnumerable<string> ProviderStatus { get; set; }
     }
 }

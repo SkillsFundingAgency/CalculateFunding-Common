@@ -81,6 +81,9 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 // Filter providers based on provider type and subtypes
                 IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
 
+                // Filter providers based on provider status
+                providersForGroup = grouping.ProviderStatus.IsNullOrEmpty() ? providersForGroup : providersForGroup.Where(_ => ShouldIncludeProvider(_, grouping.ProviderStatus));
+
                 // Group providers by the fields and discard any providers with null values for that field
                 IEnumerable<IGrouping<string, Provider>> groupedProviders = providersForGroup.GroupBy(providerFilterAttribute);
 
@@ -269,6 +272,19 @@ namespace CalculateFunding.Generators.OrganisationGroup
             foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatches)
             {
                 if (string.Equals(provider.ProviderType, providerTypeMatch.ProviderType, StringComparison.InvariantCultureIgnoreCase) && string.Equals(provider.ProviderSubType, providerTypeMatch.ProviderSubtype, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ShouldIncludeProvider(Provider provider, IEnumerable<string> providerStatus)
+        {
+            foreach (string status in providerStatus)
+            {
+                if (string.Equals(provider.Status, status, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true;
                 }

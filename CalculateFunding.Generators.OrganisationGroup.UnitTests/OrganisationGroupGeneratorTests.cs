@@ -172,6 +172,106 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenProducingIndicativeForASpecForAcademyTrust_ThenOrganisationGroupsAreCreated()
+
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Payment,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.LegalEntity,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.AcademyTrust,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } },
+                        ProviderStatus = new List<string>{ "new opener - Proposed to open", "closed - Proposed to Open"}
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider
+            };
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            TargetOrganisationGroup at1 = new TargetOrganisationGroup()
+            {
+                Identifier = "7777",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Academy Trust 1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+                .Returns(at1);
+
+            TargetOrganisationGroup at2 = new TargetOrganisationGroup()
+            {
+                Identifier = "8888",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Academy Trust 2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+                .Returns(at2);
+
+            TargetOrganisationGroup at3 = new TargetOrganisationGroup()
+            {
+                Identifier = "9999",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Academy Trust 3",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+                .Returns(at3);
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Academy Trust 1",
+                    SearchableName = "Academy_Trust_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.AcademyTrust,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.AcademyTrustCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "7777",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.TrustCode == "101")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.AcademyTrust && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
+        }
+
+        [TestMethod]
         public async Task WhenProducingPaymentForASpecForAcademyTrust_ThenOrganisationGroupsAreCreated()
         {
             // Arrange
@@ -2864,7 +2964,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 ProviderType = "ProviderType",
                 ProviderSubType = "ProviderSubType",
                 LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode1",
-                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1"
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1",
+                Status = "New opener - Proposed to open"
             });
 
             providers.Add(new Provider()
@@ -2897,7 +2998,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 ProviderType = "ProviderType",
                 ProviderSubType = "ProviderSubType",
                 LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode1",
-                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1"
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName1",
+                Status = "Closed - Proposed to Open"
             });
 
             providers.Add(new Provider()
@@ -2930,7 +3032,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 ProviderType = "ProviderType",
                 ProviderSubType = "ProviderSubType",
                 LocalGovernmentGroupTypeCode = "LocalGovernmentGroupTypeCode2",
-                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName2"
+                LocalGovernmentGroupTypeName = "LocalGovernmentGroupTypeName2",
+                Status = "Open"
             });
 
             providers.Add(new Provider()
@@ -2945,7 +3048,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 DistrictCode = "D2",
                 DistrictName = "District 2",
                 ProviderType = "ProviderType",
-                ProviderSubType = "ProviderSubType"
+                ProviderSubType = "ProviderSubType",
+                Status = "Open"
             });
 
             providers.Add(new Provider()
@@ -2960,7 +3064,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 DistrictCode = "D2",
                 DistrictName = "District 2",
                 ProviderType = "ProviderType2",
-                ProviderSubType = "ProviderSubType2"
+                ProviderSubType = "ProviderSubType2",
+                Status = "Open"
             });
 
             return providers;
