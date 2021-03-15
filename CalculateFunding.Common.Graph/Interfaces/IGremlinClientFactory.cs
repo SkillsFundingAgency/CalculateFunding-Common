@@ -4,6 +4,6 @@ namespace CalculateFunding.Common.Graph.Interfaces
 {
     public interface IGremlinClientFactory
     {
-        IGremlinClient CreateClient();
+        IGremlinClient Client { get; }
     }
 }

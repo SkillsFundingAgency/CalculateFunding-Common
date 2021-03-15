@@ -4,15 +4,15 @@ using Gremlin.Net.Driver;
 using Gremlin.Net.Structure.IO.GraphSON;
 using System;
 using System.Net.WebSockets;
+using System.Threading;
 
 namespace CalculateFunding.Common.Graph.Cosmos
 {
-    public class GremlinClientFactory : IGremlinClientFactory, IDisposable
+    public class GremlinClientFactory : IGremlinClientFactory
     {
         private readonly GremlinServer _server;
         private readonly ConnectionPoolSettings _connectionPoolSettings;
         private readonly Action<ClientWebSocketOptions> _webSocketConfiguration;
-        private IGremlinClient _gremlinClient;
 
         public GremlinClientFactory(ICosmosGraphDbSettings settings)
         {
@@ -30,8 +30,8 @@ namespace CalculateFunding.Common.Graph.Cosmos
             _connectionPoolSettings = new ConnectionPoolSettings()
             {
                 MaxInProcessPerConnection = settings.MaxInProcessPerConnection ?? 32,
-                PoolSize = settings.PoolSize ?? 30,
-                ReconnectionAttempts = settings.ReconnectionAttempts ?? 3,
+                PoolSize = settings.PoolSize ?? 4,
+                ReconnectionAttempts = settings.ReconnectionAttempts ?? 4,
                 ReconnectionBaseDelay = TimeSpan.FromMilliseconds(settings.ReconnectionBaseDelay ?? 500)
             };
 
@@ -41,26 +41,12 @@ namespace CalculateFunding.Common.Graph.Cosmos
                     options.KeepAliveInterval = TimeSpan.FromSeconds(settings.KeepAliveInterval ?? 10);
                 });
         }
-        
-        public IGremlinClient CreateClient() => _gremlinClient ??=
-            new GremlinClient(_server,
-                new GraphSON2Reader(),
-                new GraphSON2Writer(),
-                GremlinClient.GraphSON2MimeType,
-                _connectionPoolSettings,
-                _webSocketConfiguration);
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _gremlinClient?.Dispose();
-            }
-        }
+        public IGremlinClient Client => new GremlinClient(_server,
+                    new GraphSON2Reader(),
+                    new GraphSON2Writer(),
+                    GremlinClient.GraphSON2MimeType,
+                    _connectionPoolSettings,
+                    _webSocketConfiguration);
     }
 }

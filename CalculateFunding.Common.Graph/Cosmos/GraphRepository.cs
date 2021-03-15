@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
@@ -59,8 +60,9 @@ namespace CalculateFunding.Common.Graph.Cosmos
         public async Task<IEnumerable<Entity<TNode>>> GetAllEntitiesForAll<TNode>(IEnumerable<IField> fields,
             IEnumerable<string> relationships) where TNode : class
         {
+            using IGremlinClient gremlinClient = GremlinClient();
             return (await RunForAllItemsAndReturn(fields.ToArray(),
-                    field => GetAllEntities<TNode>(field, relationships),
+                    field => GetAllEntities<TNode>(field, relationships, gremlinClient),
                     _degreeOfParallelism))
                 .SelectMany(_ => _);
         }
@@ -68,16 +70,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
         public async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field,
             IEnumerable<string> relationships) where TNode : class
         {
-            string vertexLabel = GetVertexLabel<TNode>();
-
-            string query = $"g.{VertexTraversal(vertexLabel, field)}" +
-                           $".coalesce({BothEdgeTraversal(relationships.ToArray())}.otherV().path(), path())";
-
-            IEnumerable<Dictionary<string, object>> results = await ExecuteQuery(query);
-
-            return _pathResultsTransform.TransformMatches<TNode>(results,
-                vertexLabel,
-                field);
+            return await GetAllEntities<TNode>(field, relationships, null);
         }
 
         public async Task UpsertNodes<TNode>(IEnumerable<TNode> nodes,
@@ -93,6 +86,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
             Guard.Ensure(vertices.First().ContainsKey(property),
                 $"Unable to upsert {vertexLabel} as did not locate index property {property}");
 
+            using IGremlinClient gremlinClient = GremlinClient();
             await RunForAllItems(vertices.ToArray(),
                 vertex =>
                 {
@@ -101,7 +95,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
                                    $".coalesce(unfold(), addV('{vertexLabel}'){ImmutablePropertyProcessors(vertex)})" +
                                    $".{MutablePropertyProcessors(vertex)}";
 
-                    return ExecuteQuery(query);
+                    return ExecuteQuery(query, gremlinClient);
                 },
                 _degreeOfParallelism);
         }
@@ -110,21 +104,62 @@ namespace CalculateFunding.Common.Graph.Cosmos
         {
             Guard.IsNotEmpty(fields, nameof(fields));
 
-            await RunForAllItems(fields, DeleteNode<T>);
+            using IGremlinClient gremlinClient = GremlinClient();
+            await RunForAllItems(fields, field => DeleteNode<T>(field, gremlinClient));
         }
 
         public async Task DeleteNode<T>(IField field)
         {
-            string vertexLabel = GetVertexLabel<T>();
-
-            string query = $"g.{VertexTraversal(vertexLabel, field)}.drop()";
-
-            await ExecuteQuery(query);
+            await DeleteNode<T>(field, null);
         }
 
         public async Task UpsertRelationship<A, B>(string relationShipName,
             IField left,
             IField right)
+        {
+            await UpsertRelationship<A, B>(relationShipName,
+                                            left,
+                                            right,
+                                            null);
+        }
+
+        public async Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
+        {
+            using IGremlinClient gremlinClient = GremlinClient();
+            await RunForAllItems(amendRelationshipRequests, 
+                relationship => UpsertRelationship<A, B>(relationship.Type, relationship.A, relationship.B, gremlinClient));
+        }
+
+        public async Task DeleteRelationship<A, B>(string relationShipName,
+            IField left,
+            IField right)
+        {
+            await DeleteRelationship<A, B>(relationShipName,
+                                            left,
+                                            right,
+                                            null);
+        }
+        
+        public async Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
+        {
+            using IGremlinClient gremlinClient = GremlinClient();
+            await RunForAllItems(amendRelationshipRequests, 
+                relationship => DeleteRelationship<A, B>(relationship.Type, relationship.A, relationship.B, gremlinClient));
+        }
+
+        private async Task DeleteNode<T>(IField field, IGremlinClient gremlinClient)
+        {
+            string vertexLabel = GetVertexLabel<T>();
+
+            string query = $"g.{VertexTraversal(vertexLabel, field)}.drop()";
+
+            await ExecuteQuery(query, gremlinClient);
+        }
+
+        private async Task UpsertRelationship<A, B>(string relationShipName,
+            IField left,
+            IField right,
+            IGremlinClient graphClient)
         {
             string vertexALabel = GetVertexLabel<A>();
             string vertexBLabel = GetVertexLabel<B>();
@@ -135,18 +170,13 @@ namespace CalculateFunding.Common.Graph.Cosmos
                            $".coalesce(__.inE('{edgeLabel}').where(outV().as('A'))," +
                            $"addE('{edgeLabel}').from('A'))";
 
-            await ExecuteQuery(query);
+            await ExecuteQuery(query, graphClient);
         }
 
-        public async Task UpsertRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
-        {
-            await RunForAllItems(amendRelationshipRequests, 
-                relationship => UpsertRelationship<A, B>(relationship.Type, relationship.A, relationship.B));
-        }
-
-        public async Task DeleteRelationship<A, B>(string relationShipName,
+        private async Task DeleteRelationship<A, B>(string relationShipName,
             IField left,
-            IField right)
+            IField right,
+            IGremlinClient gremlinClient)
         {
             string vertexALabel = GetVertexLabel<A>();
             string vertexBLabel = GetVertexLabel<B>();
@@ -155,22 +185,35 @@ namespace CalculateFunding.Common.Graph.Cosmos
             string query = $"g.{VertexTraversal(vertexALabel, left)}.bothE('{edgeLabel}')" +
                            $".where(otherV().hasLabel('{vertexBLabel}').has('{GetPropertyName(right.Name)}', '{GetPropertyValue(right.Value)}')).drop()";
 
-            await ExecuteQuery(query);
-        }
-        
-        public async Task DeleteRelationships<A, B>(params AmendRelationshipRequest[] amendRelationshipRequests)
-        {
-            await RunForAllItems(amendRelationshipRequests, 
-                relationship => DeleteRelationship<A, B>(relationship.Type, relationship.A, relationship.B));
+            await ExecuteQuery(query, gremlinClient);
         }
 
-        private async Task<IEnumerable<Dictionary<string, object>>> ExecuteQuery(string query)
+        private async Task<IEnumerable<Entity<TNode>>> GetAllEntities<TNode>(IField field,
+            IEnumerable<string> relationships, IGremlinClient gremlinClient = null) where TNode : class
+        {
+            string vertexLabel = GetVertexLabel<TNode>();
+
+            string query = $"g.{VertexTraversal(vertexLabel, field)}" +
+                           $".coalesce({BothEdgeTraversal(relationships.ToArray())}.otherV().path(), path())";
+
+            IEnumerable<Dictionary<string, object>> results = await ExecuteQuery(query, gremlinClient);
+
+            return _pathResultsTransform.TransformMatches<TNode>(results,
+                vertexLabel,
+                field);
+        }
+
+        private async Task<IEnumerable<Dictionary<string, object>>> ExecuteQuery(string query, IGremlinClient client = null)
         {
             try
             {
-                ResultSet<Dictionary<string, object>> response = await GremlinClient().SubmitAsync<Dictionary<string, object>>(query);
+                if (client == null)
+                {
+                    using IGremlinClient graphclient = GremlinClient();
+                    return await graphclient.SubmitAsync<Dictionary<string, object>>(query);
+                }
 
-                return response;
+                return await client.SubmitAsync<Dictionary<string, object>>(query);
             }
             catch (ResponseException e)
             {
@@ -234,6 +277,6 @@ namespace CalculateFunding.Common.Graph.Cosmos
 
         private static string GetGremlinName(string name) => name.ToLowerInvariant();
 
-        private IGremlinClient GremlinClient() => _clientFactory.CreateClient();
+        private IGremlinClient GremlinClient() => _clientFactory.Client;
     }
 }

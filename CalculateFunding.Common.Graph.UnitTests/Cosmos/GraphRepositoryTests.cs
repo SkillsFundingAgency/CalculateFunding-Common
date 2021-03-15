@@ -29,9 +29,9 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             _client = new Mock<IGremlinClient>();
             _resultsTransform = new Mock<IPathResultsTransform>();
 
-            _clientFactory.Setup(_ => _.CreateClient())
+            _clientFactory.Setup(_ => _.Client)
                 .Returns(_client.Object);
-            
+
             _repository = new GraphRepository(_clientFactory.Object,
                 _resultsTransform.Object);
         }
@@ -45,7 +45,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
             Field field = NewField(_ => _.WithName(name)
                 .WithValue(value));
-            
+
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{value}').as('A')" +
                                    $".repeat(outE('{GremlinName(relationship)}').inV().simplePath()).emit(loops().is(gte(1)))" +
                                    $".outE('{GremlinName(relationship)}').inV().where(eq('A')).path()" +
@@ -65,6 +65,8 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             actualResponse
                 .Should()
                 .BeEquivalentTo(expectedResults);
+
+            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -77,7 +79,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
             Field field = NewField(_ => _.WithName(name)
                 .WithValue(value));
-            
+
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{value}')" +
                                    $".coalesce(bothE('{GremlinName(relationshipOne)}','{GremlinName(relationshipTwo)}').otherV().path(), path())";
 
@@ -95,8 +97,10 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             actualResponse
                 .Should()
                 .BeEquivalentTo(expectedResults);
+
+            AndTheClientWasDisposed();
         }
-        
+
         [TestMethod]
         public async Task GetAllEntitiesForAll()
         {
@@ -110,7 +114,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                 .WithValue(valueOne));
             Field fieldTwo = NewField(_ => _.WithName(name)
                 .WithValue(valueTwo));
-            
+
             string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{valueOne}')" +
                                    $".coalesce(bothE('{GremlinName(relationshipOne)}','{GremlinName(relationshipTwo)}').otherV().path(), path())";
             string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{valueTwo}')" +
@@ -132,19 +136,21 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             AndTheResultsMatchesTransformation("model", fieldOne, queryResponseOne, expectedResultsOne);
             AndTheResultsMatchesTransformation("model", fieldTwo, queryResponseTwo, expectedResultsTwo);
 
-            IEnumerable<Entity<Model>> actualResponse = await WhenAllEntitiesForAllAreQueried(new [] { fieldOne, fieldTwo }, relationshipOne, relationshipTwo);
+            IEnumerable<Entity<Model>> actualResponse = await WhenAllEntitiesForAllAreQueried(new[] { fieldOne, fieldTwo }, relationshipOne, relationshipTwo);
 
             actualResponse
                 .Should()
                 .BeEquivalentTo(expectedResultsOne
                     .Concat(expectedResultsTwo));
+
+            AndTheClientWasDisposed();
         }
 
         [TestMethod]
         public void UpsertNodesGuardsAgainstInvalidIndex()
         {
             string index = NewRandomString();
-            
+
             Func<Task> invocation = () => WhenTheNodesAreUpserted(AsArray(index), NewModel());
 
             invocation
@@ -160,10 +166,10 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         public async Task UpsertNodesWithNoPartitionKey()
         {
             string index = nameof(Model.AnIdProperty);
-            
+
             Model modelOne = NewModel();
             Model modelTwo = NewModel();
-            
+
             await WhenTheNodesAreUpserted(AsArray(index), modelOne, modelTwo);
 
             string expectedQueryForNodeOne = $"g.V().hasLabel('model').has('{GremlinName(index)}', '{modelOne.AnIdProperty}').fold()" +
@@ -171,12 +177,13 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                                              $".property(single, 'anidproperty', '{modelOne.AnIdProperty}').property(single, 'name', '{modelOne.Name}')";
             string expectedQueryForNodeTwo = $"g.V().hasLabel('model').has('{GremlinName(index)}', '{modelTwo.AnIdProperty}').fold()" +
                                              ".coalesce(unfold(), addV('model').property(single, 'partitionkey', 'FallBackPartitionKey'))" +
-                                             $".property(single, 'anidproperty', '{modelTwo.AnIdProperty}').property(single, 'name', '{modelTwo.Name}')";;
-            
+                                             $".property(single, 'anidproperty', '{modelTwo.AnIdProperty}').property(single, 'name', '{modelTwo.Name}')"; ;
+
             ThenTheGremlinQueryWasExecuted(expectedQueryForNodeOne);
             AndTheGremlinQueryWasExecuted(expectedQueryForNodeTwo);
+            AndTheClientWasDisposed();
         }
-        
+
         [TestMethod]
         public async Task UpsertNodesWithPartitionKey()
         {
@@ -184,7 +191,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
             ModelWithImmutableProperties modelOne = NewModelWithImmutableProperties();
             ModelWithImmutableProperties modelTwo = NewModelWithImmutableProperties();
-            
+
             await WhenTheNodesAreUpserted(AsArray(index), modelOne, modelTwo);
 
             string expectedQueryForNodeOne = $"g.V().hasLabel('modelwithimmutableproperties').has('{GremlinName(index)}', '{modelOne.Id}').fold()" +
@@ -193,9 +200,10 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             string expectedQueryForNodeTwo = $"g.V().hasLabel('modelwithimmutableproperties').has('{GremlinName(index)}', '{modelTwo.Id}').fold()" +
                                              $".coalesce(unfold(), addV('modelwithimmutableproperties').property(single, 'id', '{modelTwo.Id}').property(single, 'partitionkey', '{modelTwo.PartitionKey}'))" +
                                              $".property(single, 'name', '{modelTwo.Name}')";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQueryForNodeOne);
             AndTheGremlinQueryWasExecuted(expectedQueryForNodeTwo);
+            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -206,10 +214,11 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             await WhenTheNodeIsDeleted<Model>(field);
 
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(field.Name)}', '{field.Value}').drop()";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQuery);
+            AndTheClientWasDisposed();
         }
-        
+
         [TestMethod]
         public async Task DeleteNodes()
         {
@@ -220,9 +229,10 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
             string expectedQueryOne = $"g.V().hasLabel('model').has('{GremlinName(fieldOne.Name)}', '{fieldOne.Value}').drop()";
             string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(fieldTwo.Name)}', '{fieldTwo.Value}').drop()";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -230,7 +240,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             Field left = NewField();
             Field right = NewField();
-            
+
             string relationship = NewRandomString();
 
             await WhenTheRelationshipIsUpserted<Model, ModelWithImmutableProperties>(relationship, left, right);
@@ -239,8 +249,9 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                                    $".V().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')" +
                                    $".coalesce(__.inE('{GremlinName(relationship)}').where(outV().as('A'))," +
                                    $"addE('{GremlinName(relationship)}').from('A'))";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQuery);
+            AndTheClientWasDisposed();
         }
 
         [TestMethod]
@@ -248,7 +259,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             Field left = NewField();
             Field right = NewField();
-            
+
             string relationshipOne = NewRandomString();
             string relationshipTwo = NewRandomString();
 
@@ -269,34 +280,36 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                                       $".V().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')" +
                                       $".coalesce(__.inE('{GremlinName(relationshipTwo)}').where(outV().as('A'))," +
                                       $"addE('{GremlinName(relationshipTwo)}').from('A'))";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed();
         }
-        
+
         [TestMethod]
         public async Task DeleteRelationship()
         {
             Field left = NewField();
             Field right = NewField();
-            
+
             string relationship = NewRandomString();
 
             await WhenTheRelationshipIsDeleted<Model, ModelWithImmutableProperties>(relationship, left, right);
 
-            string expectedQuery =  $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').bothE('{GremlinName(relationship)}')" +
+            string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').bothE('{GremlinName(relationship)}')" +
                                    $".where(otherV().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')).drop()";
 
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQuery);
+            AndTheClientWasDisposed();
         }
-        
+
         [TestMethod]
         public async Task DeleteRelationships()
         {
             Field left = NewField();
             Field right = NewField();
-            
+
             string relationshipOne = NewRandomString();
             string relationshipTwo = NewRandomString();
 
@@ -313,18 +326,19 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                                       $".where(otherV().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')).drop()";
             string expectedQueryTwo = $"g.V().hasLabel('model').has('{GremlinName(left.Name)}', '{left.Value}').bothE('{GremlinName(relationshipTwo)}')" +
                                       $".where(otherV().hasLabel('modelwithimmutableproperties').has('{GremlinName(right.Name)}', '{right.Value}')).drop()";
-            
+
             ThenTheGremlinQueryWasExecuted(expectedQueryOne);
             AndTheGremlinQueryWasExecuted(expectedQueryTwo);
+            AndTheClientWasDisposed();
         }
-        
+
         private async Task WhenTheRelationshipIsDeleted<A, B>(string relationship,
             Field left,
             Field right)
         {
             await _repository.DeleteRelationship<A, B>(relationship, left, right);
         }
-        
+
         private async Task WhenTheRelationshipsAreDeleted<A, B>(params AmendRelationshipRequest[] requests)
         {
             await _repository.DeleteRelationships<A, B>(requests);
@@ -336,7 +350,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             await _repository.UpsertRelationship<A, B>(relationship, left, right);
         }
-        
+
         private async Task WhenTheRelationshipsAreUpserted<A, B>(params AmendRelationshipRequest[] requests)
         {
             await _repository.UpsertRelationships<A, B>(requests);
@@ -346,7 +360,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
         {
             await _repository.DeleteNode<TNode>(field);
         }
-        
+
         private async Task WhenTheNodesAreDeleted<TNode>(params IField[] fields)
         {
             await _repository.DeleteNodes<TNode>(fields);
@@ -360,14 +374,14 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
         private string GremlinName(string name) => name.ToLowerInvariant();
 
-        private TItem[] AsArray<TItem>(params TItem[] items) => items; 
+        private TItem[] AsArray<TItem>(params TItem[] items) => items;
 
-        private async Task<IEnumerable<Entity<Model>>> WhenAllEntitiesAreQueried(Field field, 
+        private async Task<IEnumerable<Entity<Model>>> WhenAllEntitiesAreQueried(Field field,
             params string[] relationships) =>
             await _repository.GetAllEntities<Model>(field,
                 relationships);
-        
-        private async Task<IEnumerable<Entity<Model>>> WhenAllEntitiesForAllAreQueried(Field[] fields, 
+
+        private async Task<IEnumerable<Entity<Model>>> WhenAllEntitiesForAllAreQueried(Field[] fields,
             params string[] relationships) =>
             await _repository.GetAllEntitiesForAll<Model>(fields,
                 relationships);
@@ -382,7 +396,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                     It.Is<RequestMessage>(rm => HasGremlinQuery(rm, expectedQuery))),
                 Times.Once);
         }
-        
+
         private void AndTheGremlinQueryWasExecuted(string expectedQuery)
         {
             ThenTheGremlinQueryWasExecuted(expectedQuery);
@@ -404,7 +418,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
 
         private bool HasGremlinQuery(RequestMessage requestMessage,
             string query)
-            => requestMessage.Arguments.TryGetValue(Tokens.ArgsGremlin, out object gremlinQuery) && 
+            => requestMessage.Arguments.TryGetValue(Tokens.ArgsGremlin, out object gremlinQuery) &&
                gremlinQuery?.Equals(query) == true;
 
         private void AndTheResultsAllTransformation(string vertexLabel,
@@ -415,7 +429,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             _resultsTransform.Setup(_ => _.TransformAll<Model>(response, vertexLabel, identifier))
                 .Returns(transformedResponse);
         }
-        
+
         private void AndTheResultsMatchesTransformation(string vertexLabel,
             IField identifier,
             Dictionary<string, object>[] response,
@@ -424,7 +438,13 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             _resultsTransform.Setup(_ => _.TransformMatches<Model>(response, vertexLabel, identifier))
                 .Returns(transformedResponse);
         }
-        
+
+        private void AndTheClientWasDisposed()
+        {
+            _client.Verify(_ => _.Dispose(),
+                Times.Once);
+        }
+
         private string NewRandomString() => new RandomString();
 
         private Model NewModel(Action<ModelBuilder> setUp = null)
@@ -432,7 +452,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             ModelBuilder modelBuilder = new ModelBuilder();
 
             setUp?.Invoke(modelBuilder);
-            
+
             return modelBuilder.Build();
         }
 
@@ -441,7 +461,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             FieldBuilder fieldBuilder = new FieldBuilder();
 
             setUp?.Invoke(fieldBuilder);
-            
+
             return fieldBuilder.Build();
         }
 
@@ -450,7 +470,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             EntityBuilder<Model> entityBuilder = new EntityBuilder<Model>();
 
             setUp?.Invoke(entityBuilder);
-            
+
             return entityBuilder.Build();
         }
 
@@ -459,7 +479,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             ModelWithImmutablePropertiesBuilder modelWithImmutablePropertiesBuilder = new ModelWithImmutablePropertiesBuilder();
 
             setUp?.Invoke(modelWithImmutablePropertiesBuilder);
-            
+
             return modelWithImmutablePropertiesBuilder.Build();
         }
 
@@ -468,7 +488,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
             AmendRelationshipRequestBuilder amendRelationshipRequestBuilder = new AmendRelationshipRequestBuilder();
 
             setUp?.Invoke(amendRelationshipRequestBuilder);
-            
+
             return amendRelationshipRequestBuilder.Build();
         }
     }
