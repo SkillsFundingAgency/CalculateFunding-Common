@@ -23,6 +23,9 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         [JsonProperty("providerIdentifier")]
         public string ProviderIdentifier { get; set; }
 
+        [JsonProperty("version")]
+        public int? Version { get; set; }
+
         [JsonProperty("modelHash")]
         public string ModelHash { get; set; }
 

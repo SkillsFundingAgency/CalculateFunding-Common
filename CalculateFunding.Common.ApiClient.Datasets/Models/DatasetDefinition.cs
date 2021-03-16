@@ -12,6 +12,9 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         [JsonProperty("fundingStreamId")]
         public string FundingStreamId { get; set; }
 
+        [JsonProperty("version")]
+        public int? Version { get; set; }
+
         [JsonProperty("tableDefinitions")]
         public List<TableDefinition> TableDefinitions { get; set; }
     }
