@@ -708,6 +708,44 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
         }
 
         [TestMethod]
+        public void GetLatestJobForSpecification_UnsuccessfulApiResponse_ThrowsJobsNotRetrievedException()
+        {
+            string specificationId = "1234";
+            string jobType = "3456";
+
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
+
+            IEnumerable<string> jobTypes = new List<string>
+            {
+                jobType
+            };
+
+            string message = $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}";
+
+            ApiResponse<IEnumerable<JobSummary>> jobSummaryApiResponse = new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.NotFound);
+
+            jobsApiClient
+                .GetLatestJobsForSpecification(specificationId, jobTypes)
+                .Returns(jobSummaryApiResponse);
+
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+
+            //Act
+            Func<Task> invocation = async () => await jobManagement.GetLatestJobsForSpecification(specificationId, jobTypes);
+
+            //Arrange
+            invocation.Should()
+                .Throw<JobsNotRetrievedException>()
+                .WithMessage(message);
+        }
+
+        [TestMethod]
         public async Task AddJobLog_Called_ReturnsJobLog()
         {
             string jobId = "5678";

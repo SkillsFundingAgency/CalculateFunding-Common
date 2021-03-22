@@ -252,9 +252,15 @@ namespace CalculateFunding.Common.JobManagement
         {
             ApiResponse<IEnumerable<JobSummary>> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes));
 
-            IEnumerable<JobSummary> jobSummary = jobSummaryResponse?.Content;
-
-            return jobSummary;
+            if ((int?)jobSummaryResponse?.StatusCode >= 200 && (int?)jobSummaryResponse?.StatusCode <= 299)
+            {
+                return jobSummaryResponse?.Content;
+            }
+            else
+            {
+                string message = $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}";
+                throw new JobsNotRetrievedException(message, specificationId, jobTypes);
+            }
         }
 
         public async Task<JobLog> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel)

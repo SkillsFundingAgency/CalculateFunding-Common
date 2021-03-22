@@ -5,10 +5,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>   
     <ApplicationIcon />
     <StartupObject />
-    <Version>5.1.1</Version>
+    <Version>6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    
-   
   </PropertyGroup>
 
   <ItemGroup>
