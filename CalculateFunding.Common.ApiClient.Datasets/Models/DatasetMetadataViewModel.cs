@@ -11,5 +11,6 @@
         public string AuthorName { get; set; }
         public string Filename { get; set; }
         public byte[] Stream { get; set; }
+        public bool ConverterWizard { get; set; }
     }
 }
