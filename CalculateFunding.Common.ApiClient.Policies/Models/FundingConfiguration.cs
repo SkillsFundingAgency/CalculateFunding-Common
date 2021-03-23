@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CalculateFunding.Common.ApiClient.Models;
 using Newtonsoft.Json;
 
@@ -49,5 +48,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("runCalculationEngineAfterCoreProviderUpdate")]
         public bool RunCalculationEngineAfterCoreProviderUpdate { get; set; }
+
+        [JsonProperty("enableConverterDataMerge")]
+        public bool EnableConverterDataMerge { get; set; }
+
+        [JsonProperty("indicativeOpenerProviderStatus")]
+        public IEnumerable<string> IndicativeOpenerProviderStatus { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Providers.Models
@@ -79,6 +80,9 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("successor")]
         public string Successor { get; set; }
+
+        [JsonProperty("predecessors")]
+        public IEnumerable<string> Predecessors { get; set; }
 
         [JsonProperty("trustName")]
         public string TrustName { get; set; }
