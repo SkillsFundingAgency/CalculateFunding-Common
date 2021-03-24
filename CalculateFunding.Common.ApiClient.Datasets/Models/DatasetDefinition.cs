@@ -17,5 +17,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("tableDefinitions")]
         public List<TableDefinition> TableDefinitions { get; set; }
+
+        [JsonProperty("converterEnabled")]
+        public bool ConverterEnabled { get; set; }
     }
 }
