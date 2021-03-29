@@ -22,6 +22,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [JsonProperty("author")]
         public Reference Author { get; set; }
 
+        [JsonProperty("variationReasons")]
+        public string[] VariationReasons { get; set; }
+
         [JsonProperty("fundingLines")]
         public IEnumerable<FundingLine> FundingLines { get; set; }
 
