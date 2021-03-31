@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
 {
@@ -149,5 +150,7 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
         public string PreviousLaName { get; set; }
 
         public string PreviousEstablishmentNumber { get; set; }
+
+        public IEnumerable<string> Predecessors { get; set; }
     }
 }
