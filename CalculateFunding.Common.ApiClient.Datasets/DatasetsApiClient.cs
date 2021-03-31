@@ -163,6 +163,15 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<DatasetDownloadModel>(uri);
         }
 
+        public async Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetMergeFile(string datasetId, string datasetVersion)
+        {
+            Guard.IsNullOrWhiteSpace(datasetId, nameof(datasetId));
+
+            string uri = DataSetsUriFor($"download-dataset-merge-file?datasetId={datasetId}&datasetVersion={datasetVersion}");
+ 
+            return await GetAsync<DatasetDownloadModel>(uri);
+        }
+
         public async Task<ApiResponse<string>> Reindex()
         {
             return await GetAsync<string>(DataSetsUriFor("reindex"));

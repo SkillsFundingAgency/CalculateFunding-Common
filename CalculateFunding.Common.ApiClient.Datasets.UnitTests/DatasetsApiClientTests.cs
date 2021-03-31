@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -245,6 +246,17 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                     $"download-dataset-file?datasetId={id}&datasetVersion={version}",
                 new DatasetDownloadModel(),
                 () => _client.DownloadDatasetFile(id, version));  
+        }
+        
+        [TestMethod]
+        public async Task DownloadDatasetMergeFileMakesGetCallWithSuppliedId()
+        {
+            string id = NewRandomString();
+            string version = Guid.NewGuid().ToString();
+
+            await AssertGetRequest($"download-dataset-merge-file?datasetId={id}&datasetVersion={version}",
+                new DatasetDownloadModel(),
+                () => _client.DownloadDatasetMergeFile(id, version));  
         }
 
         [TestMethod]

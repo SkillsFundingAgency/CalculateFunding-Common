@@ -20,6 +20,9 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         [JsonProperty("changeNote")]
         public string ChangeNote { get; set; }
 
+        [JsonProperty("changeType")]
+        public string ChangeType { get; set; }
+
         [JsonProperty("version")]
         public int Version { get; set; }
 
