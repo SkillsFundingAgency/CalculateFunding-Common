@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace CalculateFunding.Common.ApiClient.Graph.Models
 {
     [Serializable]
-    public class DatasetDefinition
+    public class DatasetDefinition : SpecificationNode
     {
         [JsonProperty("datasetdefinitionid")]
         public string DatasetDefinitionId { get; set; }

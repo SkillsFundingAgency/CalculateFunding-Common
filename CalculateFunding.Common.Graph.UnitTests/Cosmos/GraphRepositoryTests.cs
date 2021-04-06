@@ -47,7 +47,7 @@ namespace CalculateFunding.Common.Graph.UnitTests.Cosmos
                 .WithValue(value));
 
             string expectedQuery = $"g.V().hasLabel('model').has('{GremlinName(name)}', '{value}').as('A')" +
-                                   $".repeat(outE('{GremlinName(relationship)}').inV().simplePath()).emit(loops().is(gte(1)))" +
+                                   $".repeat(outE('{GremlinName(relationship)}').inV().simplePath()).times(31).emit(loops().is(gte(1)))" +
                                    $".outE('{GremlinName(relationship)}').inV().where(eq('A')).path()" +
                                    ".dedup().by(unfold().order().by(id).dedup().fold())";
 

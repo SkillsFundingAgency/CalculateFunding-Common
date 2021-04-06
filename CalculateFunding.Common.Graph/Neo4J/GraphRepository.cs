@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Graph.Interfaces;
 using CalculateFunding.Common.Graph.Serializer;
 using CalculateFunding.Common.Utility;
 using Neo4j.Driver;
@@ -30,6 +31,7 @@ namespace CalculateFunding.Common.Graph.Neo4J
         }
 
         private IAsyncSession AsyncSession() => _driver.AsyncSession();
+        public Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, IEnumerable<IField> fields) where TNode : class => throw new NotImplementedException();
 
         public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship, GraphInterfaces.IField field)
             where TNode : class

@@ -2,13 +2,11 @@
 
 namespace CalculateFunding.Common.ApiClient.Graph.Models
 {
-    public class DataField
+    public class DataField : SpecificationNode
     {
 
         [JsonProperty("datafieldrelationshipname")]
         public string DataFieldRelationshipName { get; set; }
-        [JsonProperty("specificationid")]
-        public string SpecificationId { get; set; }
 
         [JsonProperty("calculationid")]
         public string CalculationId { get; set; }

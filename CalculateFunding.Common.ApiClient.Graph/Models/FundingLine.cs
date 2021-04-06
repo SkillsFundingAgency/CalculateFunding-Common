@@ -6,7 +6,7 @@ using System.Text;
 namespace CalculateFunding.Common.ApiClient.Graph.Models
 {
     [Serializable]
-    public class FundingLine
+    public class FundingLine : SpecificationNode
     {
         [JsonProperty("fundinglineid")]
         public string FundingLineId { get; set; }

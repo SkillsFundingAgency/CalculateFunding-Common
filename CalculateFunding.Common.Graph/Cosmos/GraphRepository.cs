@@ -41,16 +41,33 @@ namespace CalculateFunding.Common.Graph.Cosmos
         }
 
         public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship,
+            IEnumerable<IField> fields) where TNode : class
+        {
+            using IGremlinClient gremlinClient = GremlinClient();
+            return (await RunForAllItemsAndReturn(fields.ToArray(),
+                    field => GetCircularDependencies<TNode>(relationship, field, gremlinClient),
+                    _degreeOfParallelism))
+                .SelectMany(_ => _);
+        }
+
+        public async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship,
             IField field) where TNode : class
         {
+            return await GetCircularDependencies<TNode>(relationship, field, null);
+        }
+
+        private async Task<IEnumerable<Entity<TNode>>> GetCircularDependencies<TNode>(string relationship,
+            IField field,
+            IGremlinClient client) where TNode : class
+        {
             string vertexLabel = GetVertexLabel<TNode>();
-            
+
             string query = $"g.{VertexTraversal(vertexLabel, field)}.as('A')" +
-                           $".repeat({OutEdgeTraversal(relationship)}.inV().simplePath()).emit(loops().is(gte(1)))" +
+                           $".repeat({OutEdgeTraversal(relationship)}.inV().simplePath()).times(31).emit(loops().is(gte(1)))" +
                            $".{OutEdgeTraversal(relationship)}.inV().where(eq('A')).path()" +
                            ".dedup().by(unfold().order().by(id).dedup().fold())";
 
-            IEnumerable<Dictionary<string, object>> results = await ExecuteQuery(query);
+            IEnumerable<Dictionary<string, object>> results = await ExecuteQuery(query, client);
 
             return _pathResultsTransform.TransformAll<TNode>(results,
                 vertexLabel,

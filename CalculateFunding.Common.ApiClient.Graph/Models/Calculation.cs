@@ -4,13 +4,10 @@ using System;
 namespace CalculateFunding.Common.ApiClient.Graph.Models
 {
     [Serializable]
-    public class Calculation
+    public class Calculation : SpecificationNode
     {
         [JsonProperty("calculationid")]
         public string CalculationId { get; set; }
-
-        [JsonProperty("specificationid")]
-        public string SpecificationId { get; set; }
 
         [JsonProperty("calculationname")]
         public string CalculationName { get; set; }
