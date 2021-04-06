@@ -20,5 +20,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("converterEnabled")]
         public bool ConverterEnabled { get; set; }
+
+        [JsonProperty("validateProviders")]
+        public bool ValidateProviders{ get; set; }
     }
 }

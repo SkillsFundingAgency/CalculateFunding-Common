@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class CreateNewDatasetModel
@@ -13,6 +11,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string Description { get; set; }
 
         public string FundingStreamId { get; set; }
+
         public bool ConverterWizard { get; set; }
     }
 }
