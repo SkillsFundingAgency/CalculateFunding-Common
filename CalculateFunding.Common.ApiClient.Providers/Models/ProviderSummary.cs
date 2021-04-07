@@ -179,5 +179,8 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("predecessors")]
         public IEnumerable<string> Predecessors { get; set; }
+
+        [JsonProperty("successors")]
+        public IEnumerable<string> Successors { get; set; }
     }
 }
