@@ -35,5 +35,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         [JsonProperty("calculationIds")]
         public IEnumerable<string> CalculationIds { get; set; }
 
+        [JsonProperty("fundingLineName")]
+        public string FundingLineName { get; set; }
     }
 }
