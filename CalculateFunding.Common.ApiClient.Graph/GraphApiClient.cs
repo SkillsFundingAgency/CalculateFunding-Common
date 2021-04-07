@@ -476,7 +476,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
         {
             Guard.ArgumentNotNull(relationships, nameof(relationships));
 
-            return await PostAsync($"{UrlRoot}/", relationships);
+            return await PostAsync($"{UrlRoot}/calculation/relationships/calculation/delete", relationships);
         }
 
         public async Task<HttpStatusCode> DeleteCalculationSpecificationRelationship(string calculationId, string specificationId)
