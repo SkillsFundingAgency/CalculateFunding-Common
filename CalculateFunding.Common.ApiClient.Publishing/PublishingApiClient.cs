@@ -185,11 +185,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await ValidatedPostAsync<JobCreationResponse, PublishedProviderIdsRequest>($"specifications/{specificationId}/publish-providers", publishProvidersRequest);
         }
 
-        public async Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId, string providerType = null, string localAuthority = null, string status = null)
+        public async Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId,
+            string providerType = null,
+            string localAuthority = null,
+            string status = null,
+            bool? isIndicative = null)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             string url = $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}";
+
+            if (isIndicative.HasValue)
+            {
+                url += $"&isIndicative={isIndicative.Value}";
+            }
 
             return await GetAsync<IEnumerable<ProviderFundingStreamStatusResponse>>(url);
         }

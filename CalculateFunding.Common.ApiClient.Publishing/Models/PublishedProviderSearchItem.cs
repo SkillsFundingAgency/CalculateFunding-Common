@@ -43,6 +43,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("fundingPeriodId")]
         public string FundingPeriodId { get; set; }
+        
+        [JsonProperty("indicative")]
+        public string Indicative { get; set; }
 
         [JsonProperty("hasErrors")]
         public bool HasErrors { get; set; }

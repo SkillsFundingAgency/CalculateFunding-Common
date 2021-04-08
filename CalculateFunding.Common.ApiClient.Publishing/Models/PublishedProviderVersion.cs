@@ -167,6 +167,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// </summary>
         [JsonProperty("carryOvers")]
         public ICollection<ProfilingCarryOver> CarryOvers { get; set; }
+        
+        /// <summary>
+        /// Indicates whether the allocations for this version
+        /// are indicative of payment if the provider converts
+        /// </summary>
+        [JsonProperty("isIndicative")]
+        public bool IsIndicative { get; set; }
 
         /// <summary>
         /// Collection of profiling audits for each funding line profile updates

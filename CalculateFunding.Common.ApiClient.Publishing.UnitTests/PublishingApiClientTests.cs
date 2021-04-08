@@ -335,7 +335,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
-        public async Task GetProviderStatusCounts()
+        public async Task GetProviderStatusCountsForNullIsIndicativeFlag()
         {
             string specificationId = NewRandomString();
             string providerType = NewRandomString();
@@ -346,6 +346,21 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}",
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
                 () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status));
+        }
+        
+        [TestMethod]
+        public async Task GetProviderStatusCountsForIsIndicativeFlagWithValue()
+        {
+            string specificationId = NewRandomString();
+            string providerType = NewRandomString();
+            string localAuthority = NewRandomString();
+            string status = NewRandomString();
+            bool? isIndicative = NewRandomBoolean();
+
+            await AssertGetRequest(
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&isIndicative={isIndicative.Value}",
+                Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
+                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status, isIndicative));
         }
 
         [TestMethod]
