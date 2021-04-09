@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         CurrentOrganisationGroupValues,
         HistoryOrganisationGroupValues,
         HistoryPublishedProviderEstate,
-        CalcResult
+        CalcResult,
+        PublishedGroups
     }
 }
