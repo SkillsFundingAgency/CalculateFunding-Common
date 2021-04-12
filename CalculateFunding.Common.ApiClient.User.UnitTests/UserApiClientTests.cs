@@ -77,5 +77,15 @@ namespace CalculateFunding.Common.ApiClient.User.UnitTests
                 new FundingStreamPermission(),
                 () => _client.UpdateFundingStreamPermission(userId, fundingStreamId, model));
         }
+
+        [TestMethod]
+        public async Task DownloadEffectivePermissionsForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"effectivepermissions/generate-report/{fundingStreamId}",
+                new FundingStreamPermissionCurrentDownloadModel(),
+                () => _client.DownloadEffectivePermissionsForFundingStream(fundingStreamId));
+        }
     }
 }

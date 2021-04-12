@@ -54,5 +54,12 @@ namespace CalculateFunding.Common.ApiClient.Users
 
             return await ValidatedPutAsync<FundingStreamPermission, FundingStreamPermissionUpdateModel>($"api/users/{userId}/permissions/{fundingStreamId}", permissions);
         }
+
+        public async Task<ApiResponse<FundingStreamPermissionCurrentDownloadModel>> DownloadEffectivePermissionsForFundingStream(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<FundingStreamPermissionCurrentDownloadModel>($"effectivepermissions/generate-report/{fundingStreamId}");
+        }
     }
 }
