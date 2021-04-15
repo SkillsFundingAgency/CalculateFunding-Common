@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Interfaces;
+using CalculateFunding.Common.ApiClient.Users;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.Identity.Authorization;

@@ -177,6 +177,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Tem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.TemplateMetadata.Schema12.UnitTests", "CalculateFunding.TemplateMetadata.Schema12.UnitTests\CalculateFunding.TemplateMetadata.Schema12.UnitTests.csproj", "{D1FD25EF-90EB-4ACD-986C-608F589E423B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.Users", "CalculateFunding.Common.Config.ApiClient.Users\CalculateFunding.Common.Config.ApiClient.Users.csproj", "{1E2F427E-C0CA-49DE-9D76-CB8013487810}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -503,6 +505,10 @@ Global
 		{D1FD25EF-90EB-4ACD-986C-608F589E423B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1FD25EF-90EB-4ACD-986C-608F589E423B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1FD25EF-90EB-4ACD-986C-608F589E423B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E2F427E-C0CA-49DE-9D76-CB8013487810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E2F427E-C0CA-49DE-9D76-CB8013487810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E2F427E-C0CA-49DE-9D76-CB8013487810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E2F427E-C0CA-49DE-9D76-CB8013487810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -583,6 +589,7 @@ Global
 		{557A65C0-4C83-4DFF-BD3C-B89E3EAA4792} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{A4CB4165-3ADF-4F2C-852A-4EAED20EF33B} = {AEA90448-BEDF-4B72-AFE6-948D33C774CC}
 		{D1FD25EF-90EB-4ACD-986C-608F589E423B} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
+		{1E2F427E-C0CA-49DE-9D76-CB8013487810} = {3C915407-BA45-48DC-B772-ACF460B7AD0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8C279D5-2730-46F6-A117-F8B33435997D}

@@ -127,6 +127,16 @@ namespace CalculateFunding.Common.Testing
                 customHeaders);
         }
 
+        protected async Task AssertGetRequest(string expectedUri,
+            HttpStatusCode expectedStatusCode,
+            Func<Task<HttpStatusCode>> action)
+        {
+            await AssertRequest(expectedUri,
+                expectedStatusCode,
+                action,
+                HttpMethod.Get);
+        }
+
         protected async Task AssertPostRequest<TRequest, TResponse, TApiResponse>(string expectedUri,
             TRequest request,
             TResponse expectedResponse,

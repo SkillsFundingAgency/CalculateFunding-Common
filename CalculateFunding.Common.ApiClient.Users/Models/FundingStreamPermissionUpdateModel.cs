@@ -50,7 +50,7 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
         public bool CanDeleteQaTests { get; set; }
 
         [JsonProperty("canCreateTemplates")]
-        public bool CanCreateTemplate { get; set; }
+        public bool CanCreateTemplates { get; set; }
 
         [JsonProperty("canEditTemplates")]
         public bool CanEditTemplates { get; set; }

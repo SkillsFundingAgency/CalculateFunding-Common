@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Users;
 using CalculateFunding.Common.ApiClient.Users.Models;
@@ -76,6 +77,14 @@ namespace CalculateFunding.Common.ApiClient.User.UnitTests
                 model,
                 new FundingStreamPermission(),
                 () => _client.UpdateFundingStreamPermission(userId, fundingStreamId, model));
+        }
+
+        [TestMethod]
+        public async Task ReIndex()
+        {
+            await AssertGetRequest($"users/reindex",
+                HttpStatusCode.NoContent,
+                () => _client.ReIndex());
         }
 
         [TestMethod]

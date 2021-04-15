@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Interfaces;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.Interfaces;
@@ -55,10 +55,15 @@ namespace CalculateFunding.Common.ApiClient.Users
             return await ValidatedPutAsync<FundingStreamPermission, FundingStreamPermissionUpdateModel>($"api/users/{userId}/permissions/{fundingStreamId}", permissions);
         }
 
+
+        public async Task<HttpStatusCode> ReIndex()
+        {
+            return await GetAsync($"users/reindex");
+        }
+
         public async Task<ApiResponse<FundingStreamPermissionCurrentDownloadModel>> DownloadEffectivePermissionsForFundingStream(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-
             return await GetAsync<FundingStreamPermissionCurrentDownloadModel>($"effectivepermissions/generate-report/{fundingStreamId}");
         }
     }
