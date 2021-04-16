@@ -311,14 +311,16 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
             _container.Setup(c => c.GetItemLinqQueryable<DocumentEntity<CosmosDbTestIdentifiable>>(
                     true,
                     null,
-                    It.IsAny<QueryRequestOptions>()))
+                    It.IsAny<QueryRequestOptions>(),
+                    null))
                 .Returns(new EnumerableQuery<DocumentEntity<CosmosDbTestIdentifiable>>(_cosmosDbTestIdentifiableEntities));
 
         private void GivenGetItemLinqQueryableReturnsMultipleMatchingRecords() =>
             _container.Setup(c => c.GetItemLinqQueryable<DocumentEntity<CosmosDbTestIdentifiable>>(
                     true,
                     null,
-                    It.IsAny<QueryRequestOptions>()))
+                    It.IsAny<QueryRequestOptions>(),
+                    null))
                 .Returns(new EnumerableQuery<DocumentEntity<CosmosDbTestIdentifiable>>(
                     new List<DocumentEntity<CosmosDbTestIdentifiable>>
                     {
