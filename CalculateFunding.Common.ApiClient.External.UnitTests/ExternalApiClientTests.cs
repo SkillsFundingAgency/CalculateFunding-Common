@@ -33,11 +33,11 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         {
             string providerFundingVersion = NewRandomString();
 
-            AtomFeed<object> expectedAtomFeed = NewAtomFeed();
+            string expectedAtomFeed = NewRandomString();
 
             GivenTheResponse($"v3/funding/provider/{providerFundingVersion}", expectedAtomFeed, HttpMethod.Get);
 
-            ApiResponse<AtomFeed<object>> actualFeed =
+            ApiResponse<object> actualFeed =
                 await WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(providerFundingVersion);
 
             ThenTheResponseContentIs(actualFeed, expectedAtomFeed);
@@ -49,7 +49,7 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
         [DataRow("")]
         public void GetProviderFundingVersionThrowsExceptionIfNoSuppliedProviderFundingVersion(string providerFundingVersion)
         {
-            Func<Task<ApiResponse<AtomFeed<object>>>> invocation =
+            Func<Task<ApiResponse<object>>> invocation =
                 () => WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(providerFundingVersion);
 
             invocation
@@ -428,7 +428,7 @@ namespace CalculateFunding.Common.ApiClient.External.UnitTests
             return await _client.GetFundingTemplateSourceFile(fundingStreamId, fundingPeriodId, majorVersion, minorVersion);
         }
 
-        private async Task<ApiResponse<AtomFeed<object>>> WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)
+        private async Task<ApiResponse<object>> WhenTheProviderFundingVersionIsQueriedByIdWithTheSuppliedProviderFundingVersion(string providerFundingVersion)
         {
             return await _client.GetProviderFundingVersion(providerFundingVersion);
         }

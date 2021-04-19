@@ -28,11 +28,11 @@ namespace CalculateFunding.Common.ApiClient.External
         {
         }
 
-        public async Task<ApiResponse<AtomFeed<object>>> GetProviderFundingVersion(string providerFundingVersion)
+        public async Task<ApiResponse<object>>GetProviderFundingVersion(string providerFundingVersion)
         {
             Guard.IsNullOrWhiteSpace(providerFundingVersion, nameof(providerFundingVersion));
 
-            return await GetAsync<AtomFeed<object>>($"{Version}/{FundingBaseUri}/provider/{providerFundingVersion}");
+            return await GetAsync<object>($"{Version}/{FundingBaseUri}/provider/{providerFundingVersion}");
         }
 
         public async Task<ApiResponse<IEnumerable<dynamic>>> GetFundings(string publishedProviderVersion)

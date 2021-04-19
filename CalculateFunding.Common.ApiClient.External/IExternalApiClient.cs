@@ -15,7 +15,7 @@ namespace CalculateFunding.Common.ApiClient.External
             int? pageRef = null);
 
         Task<ApiResponse<string>> GetFundingById(string id);
-        Task<ApiResponse<AtomFeed<object>>> GetProviderFundingVersion(string providerFundingVersion);
+        Task<ApiResponse<object>> GetProviderFundingVersion(string providerFundingVersion);
         Task<ApiResponse<IEnumerable<dynamic>>> GetFundings(string publishedProviderVersion);
         Task<(bool Ok, string Message)> IsHealthOk();
 
