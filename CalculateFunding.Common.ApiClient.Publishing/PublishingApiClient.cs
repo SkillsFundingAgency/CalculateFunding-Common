@@ -189,11 +189,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string providerType = null,
             string localAuthority = null,
             string status = null,
-            bool? isIndicative = null)
+            bool? isIndicative = null,
+            string monthYearOpened = null)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            string url = $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}";
+            string url = $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened={monthYearOpened}";
 
             if (isIndicative.HasValue)
             {

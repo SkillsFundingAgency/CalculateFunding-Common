@@ -343,7 +343,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string status = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}",
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened=",
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
                 () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status));
         }
@@ -356,11 +356,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string localAuthority = NewRandomString();
             string status = NewRandomString();
             bool? isIndicative = NewRandomBoolean();
+            string monthYearOpened = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&isIndicative={isIndicative.Value}",
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened={monthYearOpened}&isIndicative={isIndicative.Value}",
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
-                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status, isIndicative));
+                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status, isIndicative, monthYearOpened));
         }
 
         [TestMethod]

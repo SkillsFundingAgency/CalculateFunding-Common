@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
@@ -52,5 +53,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("errors")]
         public string[] Errors { get; set; }
+        
+        [JsonProperty("dateOpened")]
+        public DateTimeOffset? DateOpened { get; set; }
     }
 }
