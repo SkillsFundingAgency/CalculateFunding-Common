@@ -66,5 +66,12 @@ namespace CalculateFunding.Common.ApiClient.Users
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             return await GetAsync<FundingStreamPermissionCurrentDownloadModel>($"effectivepermissions/generate-report/{fundingStreamId}");
         }
+
+        public async Task<ApiResponse<IEnumerable<User>>> GetAdminUsersForFundingStream(string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<IEnumerable<User>>($"permissions/{fundingStreamId}/admin");
+        }
     }
 }

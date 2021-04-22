@@ -19,7 +19,9 @@ namespace CalculateFunding.Common.ApiClient.Users
         Task<ValidatedApiResponse<FundingStreamPermission>> UpdateFundingStreamPermission(string userId, string fundingStreamId, FundingStreamPermissionUpdateModel permissions);
         
         Task<HttpStatusCode> ReIndex();
+
         Task<ApiResponse<FundingStreamPermissionCurrentDownloadModel>> DownloadEffectivePermissionsForFundingStream(string fundingStreamId);
 
+        Task<ApiResponse<IEnumerable<User>>> GetAdminUsersForFundingStream(string fundingStreamId);
     }
 }

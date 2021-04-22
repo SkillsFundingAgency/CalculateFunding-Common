@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -95,6 +96,16 @@ namespace CalculateFunding.Common.ApiClient.User.UnitTests
             await AssertGetRequest($"effectivepermissions/generate-report/{fundingStreamId}",
                 new FundingStreamPermissionCurrentDownloadModel(),
                 () => _client.DownloadEffectivePermissionsForFundingStream(fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task GetAdminUsersForFundingStream()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"permissions/{fundingStreamId}/admin",
+                (new List<ApiUser>()) as IEnumerable<ApiUser>,
+                () => _client.GetAdminUsersForFundingStream(fundingStreamId));
         }
     }
 }
