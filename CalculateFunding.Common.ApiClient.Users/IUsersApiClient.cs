@@ -3,12 +3,15 @@ using System.Net;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
+using CalculateFunding.Common.Models.Search;
 
 namespace CalculateFunding.Common.ApiClient.Users
 {
     public interface IUsersApiClient
     {
         Task<ApiResponse<User>> GetUserByUserId(string userId);
+
+        Task<ApiResponse<SearchResults<UserIndex>>> SearchUsers(SearchModel searchModel);
 
         Task<ValidatedApiResponse<User>> ConfirmSkills(string userId, UserConfirmModel userConfirmModel);
 

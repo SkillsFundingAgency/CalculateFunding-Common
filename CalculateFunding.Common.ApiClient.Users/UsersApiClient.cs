@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users.Models;
 using CalculateFunding.Common.Interfaces;
+using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
 
@@ -22,6 +23,13 @@ namespace CalculateFunding.Common.ApiClient.Users
             Guard.IsNullOrWhiteSpace(userId, nameof(userId));
 
             return await GetAsync<User>($"get-user-by-userid?userId={userId}");
+        }
+
+        public async Task<ApiResponse<SearchResults<UserIndex>>> SearchUsers(SearchModel searchModel)
+        {
+            Guard.ArgumentNotNull(searchModel, nameof(searchModel));
+
+            return await PostAsync<SearchResults<UserIndex>, SearchModel>("users-search", searchModel);
         }
 
         public async Task<ValidatedApiResponse<User>> ConfirmSkills(string userId, UserConfirmModel userConfirmModel)

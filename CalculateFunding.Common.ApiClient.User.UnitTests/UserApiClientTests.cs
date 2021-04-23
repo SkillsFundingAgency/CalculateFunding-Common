@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Users;
 using CalculateFunding.Common.ApiClient.Users.Models;
+using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Core;
@@ -44,6 +46,18 @@ namespace CalculateFunding.Common.ApiClient.User.UnitTests
                 model,
                 new ApiUser(),
                 () => _client.ConfirmSkills(id, model));
+        }
+
+        [TestMethod]
+        public async Task SearchUsers()
+        {
+            string id = NewRandomString();
+            SearchModel model = new SearchModel();
+
+            await AssertPostRequest("users-search",
+                model,
+                new SearchResults<UserIndex>(),
+                () => _client.SearchUsers(model));
         }
 
         [TestMethod]
