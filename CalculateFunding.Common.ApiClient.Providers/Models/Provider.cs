@@ -194,5 +194,8 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
 
         [JsonProperty("previousEstablishmentNumber")]
         public string PreviousEstablishmentNumber { get; set; }
+
+        [JsonProperty("indicative")]
+        public bool Indicative { get; set; }
     }
 }
