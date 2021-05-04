@@ -167,8 +167,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             var jobId = "3456";
             IEnumerable<Job> jobApiResponse = new List<Job> { new Job { Id = jobId } };
             jobsApiClient
-                .GetLatestJobsForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Succeeded, JobId = jobId } }));
+                .GetLatestJobsForSpecification("specificationId", Arg.Is<string[]>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.OK, new Dictionary<string, JobSummary> { { string.Empty, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Succeeded, JobId = jobId } } }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000))
@@ -195,7 +195,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             {
                 await jobsApiClient
                     .Received(2)
-                    .GetLatestJobsForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"));
+                    .GetLatestJobsForSpecification("specificationId", Arg.Is<string[]>(_ => _.Single() == "PopulateScopedProviders"));
             }
 
             jobsComplete
@@ -232,8 +232,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "3456";
 
             jobsApiClient
-                .GetLatestJobsForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.InProgress, JobId = jobId } }));
+                .GetLatestJobsForSpecification("specificationId", Arg.Is<string[]>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.OK, new Dictionary<string, JobSummary> { { string.Empty, new JobSummary { RunningStatus = RunningStatus.InProgress, JobId = jobId } } }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(1000))
@@ -279,8 +279,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             jobsApiClient
-                .GetLatestJobsForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.NoContent));
+                .GetLatestJobsForSpecification("specificationId", Arg.Is<string[]>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.NoContent));
 
             //Act
             bool jobsComplete = await jobManagement.QueueJobAndWait(async () => await Task.Run(() => { return true; }), "PopulateScopedProviders", "specificationId", "correlationId", "topic");
@@ -320,8 +320,8 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             string jobId = "3456";
 
             jobsApiClient
-                .GetLatestJobsForSpecification("specificationId", Arg.Is<IEnumerable<string>>(_ => _.Single() == "PopulateScopedProviders"))
-                .Returns(new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, new List<JobSummary> { new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Failed, JobId = jobId } }));
+                .GetLatestJobsForSpecification("specificationId", Arg.Is<string[]>(_ => _.Single() == "PopulateScopedProviders"))
+                .Returns(new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.OK, new Dictionary<string, JobSummary> { { string.Empty, new JobSummary { RunningStatus = RunningStatus.Completed, CompletionStatus = CompletionStatus.Failed, JobId = jobId } } }));
 
             messengerService
                 .ReceiveMessage("topic/Subscriptions/correlationId", Arg.Any<Predicate<JobSummary>>(), TimeSpan.FromMilliseconds(600000))
@@ -683,13 +683,13 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            IEnumerable<string> jobTypes = new List<string>
+            string[] jobTypes = new string[]
             {
                 jobType
             };
 
-            IEnumerable<JobSummary> jobSummary = new List<JobSummary> {new JobSummary { JobId = jobId }};
-            ApiResponse<IEnumerable<JobSummary>> jobSummaryApiResponse = new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.OK, jobSummary);
+            IDictionary<string, JobSummary> jobSummary = new Dictionary<string, JobSummary> { { string.Empty, new JobSummary { JobId = jobId } } };
+            ApiResponse<IDictionary<string, JobSummary>> jobSummaryApiResponse = new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.OK, jobSummary);
 
             jobsApiClient
                 .GetLatestJobsForSpecification(specificationId, jobTypes)
@@ -698,7 +698,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
 
             //Act
-            IEnumerable<JobSummary> result = await jobManagement.GetLatestJobsForSpecification(specificationId, jobTypes);
+            IDictionary<string, JobSummary> result = await jobManagement.GetLatestJobsForSpecification(specificationId, jobTypes);
 
             Assert.AreEqual(result, jobSummary);
 
@@ -721,14 +721,14 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             IMessengerService messengerService = Substitute.For<IMessengerService>();
             ILogger logger = Substitute.For<ILogger>();
 
-            IEnumerable<string> jobTypes = new List<string>
+            string[] jobTypes = new string[]
             {
                 jobType
             };
 
             string message = $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}";
 
-            ApiResponse<IEnumerable<JobSummary>> jobSummaryApiResponse = new ApiResponse<IEnumerable<JobSummary>>(HttpStatusCode.NotFound);
+            ApiResponse<IDictionary<string, JobSummary>> jobSummaryApiResponse = new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.NotFound);
 
             jobsApiClient
                 .GetLatestJobsForSpecification(specificationId, jobTypes)

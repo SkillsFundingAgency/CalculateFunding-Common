@@ -108,14 +108,14 @@ namespace CalculateFunding.Common.JobManagement
 
         private async Task<bool> CheckAllJobs(string jobType, string specificationId, Predicate<JobSummary> predicate)
         {
-            ApiResponse<IEnumerable<JobSummary>> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() =>
+            ApiResponse<IDictionary<string, JobSummary>> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(() =>
             {
-                return _jobsApiClient.GetLatestJobsForSpecification(specificationId, new string[] { jobType });
+                return _jobsApiClient.GetLatestJobsForSpecification(specificationId, new string[] { jobType } );
             });
 
             if ((int?)jobResponse?.StatusCode >= 200 && (int?)jobResponse?.StatusCode <= 299)
             {
-                JobSummary summary = jobResponse.Content?.FirstOrDefault();
+                JobSummary summary = jobResponse.Content?.Values.FirstOrDefault();
 
                 return predicate(summary);
             }
@@ -248,9 +248,10 @@ namespace CalculateFunding.Common.JobManagement
 
         public async Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels) => await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.CreateJobs(jobCreateModels));
 
-        public async Task<IEnumerable<JobSummary>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes)
+        public async Task<IDictionary<string, JobSummary>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes)
         {
-            ApiResponse<IEnumerable<JobSummary>> jobSummaryResponse = await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes));
+            ApiResponse<IDictionary<string, JobSummary>> jobSummaryResponse = 
+                await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes.ToArray() ));
 
             if ((int?)jobSummaryResponse?.StatusCode >= 200 && (int?)jobSummaryResponse?.StatusCode <= 299)
             {

@@ -12,7 +12,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         Task<ApiResponse<JobViewModel>> GetJobById(string jobId);
 
-        Task<ApiResponse<IEnumerable<JobSummary>>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes);
+        Task<ApiResponse<IDictionary<string, JobSummary>>> GetLatestJobsForSpecification(string specificationId, params string[] jobDefinitionIds);
 
         Task<Job> CreateJob(JobCreateModel jobCreateModel);
 
@@ -23,7 +23,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         Task<ApiResponse<JobDefinition>> GetJobDefinition(string jobDefinitionId);
 
         Task<ApiResponse<IEnumerable<JobSummary>>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
+
         Task<ApiResponse<JobCreateResult>> TryCreateJob(JobCreateModel jobCreateModel);
+
         Task<ApiResponse<IEnumerable<JobCreateResult>>> TryCreateJobs(IEnumerable<JobCreateModel> jobCreateModels);
 
         Task<ApiResponse<JobSummary>> GetLatestSuccessfulJobForSpecification(string specificationId, string jobDefinitionId);

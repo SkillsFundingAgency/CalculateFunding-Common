@@ -53,12 +53,12 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
         [TestMethod]
         [DataRow(null, null)]
         [DataRow(new string[0], null)]
-        [DataRow(new [] {"one", "two"}, "&jobTypes=one,two")]
+        [DataRow(new [] {"one", "two"}, "&jobDefinitionIds=one&jobDefinitionIds=two")]
         public async Task GetLatestJobForSpecification(string[] jobTypes,
             string expectedJobsParameters)
         {
             string specificationId = NewRandomString();
-            IEnumerable<JobSummary> jobsummaries = NewEnumerable(NewJobSummary());
+            IDictionary<string, JobSummary> jobsummaries = new Dictionary<string, JobSummary> { { "", NewJobSummary() } };
             await AssertGetRequest($"jobs/latest?specificationId={specificationId}{expectedJobsParameters}",
                 jobsummaries,
                 () => _client.GetLatestJobsForSpecification(specificationId, jobTypes));

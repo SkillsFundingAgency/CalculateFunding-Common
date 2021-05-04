@@ -360,7 +360,7 @@ namespace CalculateFunding.Common.Testing
         }
 
         protected IEnumerable<TItem> NewEnumerable<TItem>(params TItem[] items) => items;
-        
+
         protected TModel NewModel<TModel>() where TModel : new() => new TModel();
 
         protected SearchModel NewRandomSearch() => new SearchModel
