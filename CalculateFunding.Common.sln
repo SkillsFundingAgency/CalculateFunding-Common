@@ -83,8 +83,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Datasets.UnitTests", "CalculateFunding.Common.ApiClient.Datasets.UnitTests\CalculateFunding.Common.ApiClient.Datasets.UnitTests.csproj", "{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.TestEngine", "CalculateFunding.Common.ApiClient.TestEngine\CalculateFunding.Common.ApiClient.TestEngine.csproj", "{8F4F6210-893A-49C2-B37E-45EB04420D61}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement", "CalculateFunding.Common.JobManagement\CalculateFunding.Common.JobManagement.csproj", "{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.JobManagement.UnitTests", "CalculateFunding.Common.JobManagement.UnitTests\CalculateFunding.Common.JobManagement.UnitTests.csproj", "{3904659A-09D5-40F5-94BA-48BE37EAAC01}"
@@ -128,8 +126,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Profiling.UnitTests", "CalculateFunding.Common.ApiClient.Profiling.UnitTests\CalculateFunding.Common.ApiClient.Profiling.UnitTests.csproj", "{81E0CA7B-D8E0-49D8-975D-1AAF3182E574}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Scenarios.UnitTests", "CalculateFunding.Common.ApiClient.Scenarios.UnitTests\CalculateFunding.Common.ApiClient.Scenarios.UnitTests.csproj", "{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.TestEngine.UnitTests", "CalculateFunding.Common.ApiClient.TestEngine.UnitTests\CalculateFunding.Common.ApiClient.TestEngine.UnitTests.csproj", "{C403A1AA-B264-43CB-8405-D05883F2B22F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.ApiClient.Results.UnitTests", "CalculateFunding.Common.ApiClient.Results.UnitTests\CalculateFunding.Common.ApiClient.Results.UnitTests.csproj", "{5A2510EA-E01D-417B-819C-5C61DBDF21A0}"
 EndProject
@@ -177,7 +173,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Tem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.TemplateMetadata.Schema12.UnitTests", "CalculateFunding.TemplateMetadata.Schema12.UnitTests\CalculateFunding.TemplateMetadata.Schema12.UnitTests.csproj", "{D1FD25EF-90EB-4ACD-986C-608F589E423B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculateFunding.Common.Config.ApiClient.Users", "CalculateFunding.Common.Config.ApiClient.Users\CalculateFunding.Common.Config.ApiClient.Users.csproj", "{1E2F427E-C0CA-49DE-9D76-CB8013487810}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculateFunding.Common.Config.ApiClient.Users", "CalculateFunding.Common.Config.ApiClient.Users\CalculateFunding.Common.Config.ApiClient.Users.csproj", "{1E2F427E-C0CA-49DE-9D76-CB8013487810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -321,10 +317,6 @@ Global
 		{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F4F6210-893A-49C2-B37E-45EB04420D61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61B1314C-1B1E-4B86-ACA6-95E357ADE89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -409,10 +401,6 @@ Global
 		{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C403A1AA-B264-43CB-8405-D05883F2B22F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C403A1AA-B264-43CB-8405-D05883F2B22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C403A1AA-B264-43CB-8405-D05883F2B22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C403A1AA-B264-43CB-8405-D05883F2B22F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A2510EA-E01D-417B-819C-5C61DBDF21A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A2510EA-E01D-417B-819C-5C61DBDF21A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A2510EA-E01D-417B-819C-5C61DBDF21A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -545,7 +533,6 @@ Global
 		{89D527A9-CECC-4AAD-8C48-67CB786DA574} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{16DF9330-7E73-48A7-967B-AA13C5B5EAE7} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{BDD01CF8-3D2E-4AAE-9DC1-DC7B21849770} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
-		{8F4F6210-893A-49C2-B37E-45EB04420D61} = {D073E35E-C8A8-4EF4-881C-D826024C4237}
 		{3904659A-09D5-40F5-94BA-48BE37EAAC01} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{56630C84-BB09-4D19-96EB-783FCA101C20} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{F52F22F2-BCEE-40C8-9F8D-E756865017D1} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
@@ -566,7 +553,6 @@ Global
 		{38F368BB-69B1-45A6-BA23-B0F41088C0D6} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{81E0CA7B-D8E0-49D8-975D-1AAF3182E574} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{4AF4DB58-4533-4C9D-B176-3BD72DC5AADB} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
-		{C403A1AA-B264-43CB-8405-D05883F2B22F} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{5A2510EA-E01D-417B-819C-5C61DBDF21A0} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{ACE78391-8852-4794-B9B1-0F149BC30751} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
 		{05B787F6-FAA3-404D-812E-F682F5E8B4D9} = {D157E40D-6E6C-4147-B3DB-F8D5A7D9A563}
