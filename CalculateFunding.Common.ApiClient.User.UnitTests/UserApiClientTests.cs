@@ -88,7 +88,7 @@ namespace CalculateFunding.Common.ApiClient.User.UnitTests
             string fundingStreamId = NewRandomString();
             FundingStreamPermissionUpdateModel model = new FundingStreamPermissionUpdateModel();
 
-            await AssertPutRequest($"api/users/{userId}/permissions/{fundingStreamId}",
+            await AssertPutRequest($"{userId}/permissions/{fundingStreamId}",
                 model,
                 new FundingStreamPermission(),
                 () => _client.UpdateFundingStreamPermission(userId, fundingStreamId, model));

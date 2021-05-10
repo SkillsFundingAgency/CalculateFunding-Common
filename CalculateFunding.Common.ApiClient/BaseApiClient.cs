@@ -67,6 +67,7 @@ namespace CalculateFunding.Common.ApiClient
         private async Task<HttpClient> PrepareRequest(string url, TimeSpan? timeout, string logMessage, params object[] logParameters)
         {
             if (url == null) throw new ArgumentNullException(nameof(url));
+            if (url.StartsWith("api/")) throw new ArgumentException("Invalid route - api is in base URL", nameof(url));
 
             HttpClient httpClient = await GetHttpClient();
             if (timeout != null) httpClient.Timeout = timeout.Value;

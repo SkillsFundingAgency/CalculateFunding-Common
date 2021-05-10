@@ -60,9 +60,8 @@ namespace CalculateFunding.Common.ApiClient.Users
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.ArgumentNotNull(permissions, nameof(permissions));
 
-            return await ValidatedPutAsync<FundingStreamPermission, FundingStreamPermissionUpdateModel>($"api/users/{userId}/permissions/{fundingStreamId}", permissions);
+            return await ValidatedPutAsync<FundingStreamPermission, FundingStreamPermissionUpdateModel>($"{userId}/permissions/{fundingStreamId}", permissions);
         }
-
 
         public async Task<HttpStatusCode> ReIndex()
         {
