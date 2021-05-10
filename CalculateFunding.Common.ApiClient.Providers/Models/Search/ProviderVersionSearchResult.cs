@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
@@ -95,5 +96,9 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
         public string PreviousLAName { get; set; }
 
         public string PreviousEstablishmentNumber { get; set; }
+
+        public IEnumerable<string> Predecessors { get; set; }
+
+        public IEnumerable<string> Successors { get; set; }
     }
 }
