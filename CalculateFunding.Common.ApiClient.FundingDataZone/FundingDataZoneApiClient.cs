@@ -82,12 +82,12 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
             return await GetAsync<IEnumerable<Provider>>($"providers/snapshots/{providerSnapshotId}/providers");
         }
 
-        public async Task<ApiResponse<IEnumerable<Provider>>> GetProvidersInSnapshot(
+        public async Task<ApiResponse<Provider>> GetProviderInSnapshot(
             int providerSnapshotId, string providerId)
         {
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
 
-            return await GetAsync<IEnumerable<Provider>>(
+            return await GetAsync<Provider>(
                 $"providers/snapshots/{providerSnapshotId}/providers/{providerId}");
         }
 

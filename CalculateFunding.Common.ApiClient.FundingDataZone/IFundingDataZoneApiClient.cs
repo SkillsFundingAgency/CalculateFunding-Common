@@ -17,7 +17,7 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
             string fundingStreamId, string datasetCode, int versionNumber);
         Task<ApiResponse<IEnumerable<Provider>>> GetProvidersInSnapshot(
             int providerSnapshotId);
-        Task<ApiResponse<IEnumerable<Provider>>> GetProvidersInSnapshot(
+        Task<ApiResponse<Provider>> GetProviderInSnapshot(
             int providerSnapshotId, string providerId);
         Task<ApiResponse<IEnumerable<PaymentOrganisation>>> GetLocalAuthorities(
             int providerSnapshotId);

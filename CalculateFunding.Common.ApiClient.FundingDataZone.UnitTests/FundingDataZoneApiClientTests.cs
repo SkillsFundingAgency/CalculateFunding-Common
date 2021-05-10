@@ -123,14 +123,14 @@ namespace CalculateFunding.Common.ApiClient.FDZ.UnitTests
         }
 
         [TestMethod]
-        public async Task GetProvidersInSnapshotForGivenProviderId()
+        public async Task GetProviderInSnapshotForGivenProviderId()
         {
             int providerSnapshotId = NewRandomInt();
             string providerId = NewRandomString();
 
             await AssertGetRequest($"providers/snapshots/{providerSnapshotId}/providers/{providerId}",
-                Enumerable.Empty<Provider>(),
-                () => _client.GetProvidersInSnapshot(providerSnapshotId, providerId));
+                new Provider(),
+                () => _client.GetProviderInSnapshot(providerSnapshotId, providerId));
         }
 
         [TestMethod]
