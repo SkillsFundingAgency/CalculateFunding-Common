@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.Sql.Interfaces;
 using CalculateFunding.Common.Utility;
 using Dapper;
+using Dapper.Contrib.Extensions;
 using Polly;
 
 namespace CalculateFunding.Common.Sql
@@ -55,6 +56,27 @@ namespace CalculateFunding.Common.Sql
                 CommandType.Text,
                 parameters);
 
+        protected async Task<int> Insert<TEntity>(TEntity entity) where TEntity : class
+        {
+            using IDbConnection connection = NewOpenConnection();
+
+            return await connection.InsertAsync(entity);
+        }
+
+        protected async Task<bool> Update<TEntity>(TEntity entity) where TEntity : class
+        {
+            using IDbConnection connection = NewOpenConnection();
+
+            return await connection.UpdateAsync(entity);
+        }
+
+        protected async Task<bool> Delete<TEntity>(TEntity entity) where TEntity : class
+        {
+            using IDbConnection connection = NewOpenConnection();
+
+            return await connection.DeleteAsync(entity);
+        }
+
         private async Task<TEntity> QuerySingle<TEntity>(string sql,
             CommandType commandType,
             object parameters)
@@ -84,7 +106,7 @@ namespace CalculateFunding.Common.Sql
         {
             using IDbConnection connection = NewOpenConnection();
             using IDbCommand command = connection.CreateCommand();
-            
+
             command.CommandText = sql;
             command.CommandType = CommandType.Text;
 
