@@ -272,5 +272,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync<DatasetValidationErrorSasUrlResponseModel, DatasetValidationErrorRequestModel>(
                 DataSetsUriFor("get-validate-dataset-error-url"), requestModel);
         }
+
+        public async Task<ApiResponse<DatasetDownloadModel>> DownloadConverterWizardReportFile(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string uri = DataSetsUriFor($"reports/{specificationId}/report-metadata");
+
+            return await GetAsync<DatasetDownloadModel>(uri);
+        }
     }
 }

@@ -385,5 +385,16 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 _ => _client.GetDatasetDefinitionsByFundingStreamId(_));
         }
 
+        [TestMethod]
+        public async Task DownloadConverterWizardReportFileMakesGetCallWithSuppliedSpecificationId()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"reports/{specificationId}/report-metadata",
+                specificationId,
+                 new DatasetDownloadModel(),
+                _ => _client.DownloadConverterWizardReportFile(_));
+        }
+
     }
 }
