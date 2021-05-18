@@ -49,8 +49,6 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
 
         public string ReasonEstablishmentClosed { get; set; }
 
-        public string Successor { get; set; }
-
         public string Town { get; set; }
 
         public string Postcode { get; set; }
@@ -58,8 +56,6 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
         public string TrustName { get; set; }
 
         public string TrustCode { get; set; }
-
-        public string LocalAuthorityName { get; set; }
 
         public string CompaniesHouseNumber { get; set; }
 
