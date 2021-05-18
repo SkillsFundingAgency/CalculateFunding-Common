@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Datasets.Models;
 using CalculateFunding.Common.ApiClient.DataSets;
+using CalculateFunding.Common.ApiClient.Datasets.Models;
 using CalculateFunding.Common.ApiClient.DataSets.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Extensions;
@@ -15,6 +15,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
+
 // ReSharper disable HeapView.CanAvoidClosure
 
 namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
@@ -49,7 +50,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
-        [DataRow((string) null, "regenerate-providersourcedatasets")]
+        [DataRow(null, "regenerate-providersourcedatasets")]
         [DataRow("spec1", "regenerate-providersourcedatasets?specificationId=spec1")]
         public async Task RegenerateProviderSourceDatasetsMakesPostCallWithSpecificationIdIfSupplied(string specificationId,
             string expectedCallUri)
@@ -79,7 +80,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 Enumerable.Empty<DatasetDefinition>(),
                 _client.GetDatasetDefinitions);
         }
-        
+
         [TestMethod]
         public async Task GetDatasetDefinitionsByIdMakesGetCallWithSuppliedId()
         {
@@ -90,12 +91,12 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new DatasetDefinition(),
                 _ => _client.GetDatasetDefinitionById(_));
         }
-        
+
         [TestMethod]
         public async Task GetDatasetDefinitionsByIdsMakesPostCallWithSuppliedIdsInBody()
         {
             await AssertPostRequest("get-dataset-definitions-by-ids",
-                new string []
+                new[]
                 {
                     NewRandomString(),
                     NewRandomString(),
@@ -113,7 +114,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new NewDatasetVersionResponseModel(),
                 _ => _client.CreateNewDataset(_));
         }
-        
+
         [TestMethod]
         public async Task DatasetVersionUpdatePostsSuppliedModel()
         {
@@ -122,7 +123,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new NewDatasetVersionResponseModel(),
                 _ => _client.DatasetVersionUpdate(_));
         }
-        
+
         [TestMethod]
         public async Task SearchDatasetVersionPostsSuppliedModel()
         {
@@ -131,7 +132,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new SearchResults<DatasetVersionIndex>(),
                 _ => _client.SearchDatasetVersion(_));
         }
-        
+
         [TestMethod]
         public async Task SearchDatasetDefinitionsPostsSuppliedModel()
         {
@@ -140,7 +141,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new SearchResults<DatasetDefinitionIndex>(),
                 _ => _client.SearchDatasetDefinitions(_));
         }
-        
+
         [TestMethod]
         public async Task ValidateDatasetPostsSuppliedModel()
         {
@@ -149,7 +150,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new DatasetValidationStatusModel(),
                 _ => _client.ValidateDataset(_));
         }
-        
+
         [TestMethod]
         public async Task CreateRelationshipPostsSuppliedModel()
         {
@@ -169,7 +170,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 Enumerable.Empty<DatasetSpecificationRelationshipViewModel>(),
                 _ => _client.GetRelationshipsBySpecificationId(_));
         }
-        
+
         [TestMethod]
         public async Task GetRelationshipsBySpecificationIdAndNameMakesGetCallWithSuppliedIdAndName()
         {
@@ -211,9 +212,9 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
             await AssertGetRequest($"get-relationships-by-specificationId?specificationId={id}",
                 id,
                 Enumerable.Empty<DatasetSpecificationRelationshipViewModel>(),
-                _ => _client.GetCurrentRelationshipsBySpecificationId(_));  
+                _ => _client.GetCurrentRelationshipsBySpecificationId(_));
         }
-        
+
         [TestMethod]
         public async Task GetDataSourcesByRelationshipIdMakesGetCallWithSuppliedId()
         {
@@ -222,9 +223,9 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
             await AssertGetRequest($"get-datasources-by-relationshipid?relationshipId={id}",
                 id,
                 new SelectDatasourceModel(),
-                _ => _client.GetDataSourcesByRelationshipId(_));  
+                _ => _client.GetDataSourcesByRelationshipId(_));
         }
-        
+
         [TestMethod]
         public async Task AssignDatasourceVersionToRelationshipMakesPostCallWithSuppliedModel()
         {
@@ -233,21 +234,19 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new JobCreationResponse(),
                 _ => _client.AssignDatasourceVersionToRelationship(_));
         }
-        
+
         [TestMethod]
-        [DataRow((string)null)]
+        [DataRow(null)]
         [DataRow("version")]
         public async Task DownloadDatasetFileMakesGetCallWithSuppliedId(string version)
         {
             string id = NewRandomString();
 
-            await AssertGetRequest(version.IsNullOrEmpty() ? 
-                    $"download-dataset-file?datasetId={id}" :
-                    $"download-dataset-file?datasetId={id}&datasetVersion={version}",
+            await AssertGetRequest(version.IsNullOrEmpty() ? $"download-dataset-file?datasetId={id}" : $"download-dataset-file?datasetId={id}&datasetVersion={version}",
                 new DatasetDownloadModel(),
-                () => _client.DownloadDatasetFile(id, version));  
+                () => _client.DownloadDatasetFile(id, version));
         }
-        
+
         [TestMethod]
         public async Task DownloadDatasetMergeFileMakesGetCallWithSuppliedId()
         {
@@ -256,7 +255,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
 
             await AssertGetRequest($"download-dataset-merge-file?datasetId={id}&datasetVersion={version}",
                 new DatasetDownloadModel(),
-                () => _client.DownloadDatasetMergeFile(id, version));  
+                () => _client.DownloadDatasetMergeFile(id, version));
         }
 
         [TestMethod]
@@ -266,7 +265,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 NewRandomString(),
                 _client.Reindex);
         }
-        
+
         [TestMethod]
         public async Task ReindexDatasetVersionsMakesGetCall()
         {
@@ -313,7 +312,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new DatasetValidationStatusModel(),
                 () => _client.GetValidateDatasetStatus(id));
         }
-        
+
         [TestMethod]
         public async Task GetDatasetAggregationsBySpecificationId()
         {
@@ -331,7 +330,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
 
             await AssertGetRequest($"{id}/relationshipSpecificationIds",
                 Enumerable.Empty<string>(),
-                () => _client.GetSpecificationIdsForRelationshipDefinitionId(id));     
+                () => _client.GetSpecificationIdsForRelationshipDefinitionId(id));
         }
 
         [TestMethod]
@@ -344,14 +343,14 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 Enumerable.Empty<DatasetSpecificationRelationshipViewModel>(),
                 () => _client.GetCurrentRelationshipsBySpecificationIdAndDatasetDefinitionId(specificationId, datasetDefinitionId));
         }
-        
+
         [TestMethod]
         public async Task UploadDatasetFile()
         {
             string fileName = NewRandomString();
             DatasetMetadataViewModel model = new DatasetMetadataViewModel();
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            
+
             GivenTheStatusCode($"upload-dataset-file/{fileName}", expectedStatusCode, HttpMethod.Post);
 
             HttpStatusCode apiResponse = await _client.UploadDatasetFile(fileName, model);
@@ -359,7 +358,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
             apiResponse
                 .Should()
                 .Be(expectedStatusCode);
-            
+
             AndTheRequestContentsShouldHaveBeen(model.AsJson());
         }
 
@@ -367,7 +366,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         public async Task GetDatasetSchemaRelationshipModelsForSpecificationId()
         {
             string specificationId = NewRandomString();
-            
+
 
             await AssertGetRequest($"{specificationId}/schemaRelationshipFields",
                 Enumerable.Empty<DatasetSchemaRelationshipModel>(),
@@ -381,10 +380,18 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
 
             await AssertGetRequest($"get-data-definitions/{fundingStreamId}",
                 fundingStreamId,
-                 Enumerable.Empty<DatasetDefinationByFundingStream>(),
+                Enumerable.Empty<DatasetDefinationByFundingStream>(),
                 _ => _client.GetDatasetDefinitionsByFundingStreamId(_));
         }
 
+        [TestMethod]
+        public async Task QueueSpecificationConverterMergeJob()
+        {
+            await AssertPostRequest("specifications/datasets/converter/merge",
+                new SpecificationConverterMergeRequest(),
+                new JobCreationResponse(),
+                _client.QueueSpecificationConverterMergeJob);
+        }
         [TestMethod]
         public async Task DownloadConverterWizardReportFileMakesGetCallWithSuppliedSpecificationId()
         {

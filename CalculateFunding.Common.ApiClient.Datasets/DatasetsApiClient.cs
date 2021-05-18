@@ -259,6 +259,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetDefinationByFundingStream>>(DataSetsUriFor($"get-data-definitions/{fundingStreamId}"));
         }
 
+        public async Task<ApiResponse<JobCreationResponse>> QueueSpecificationConverterMergeJob(SpecificationConverterMergeRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<JobCreationResponse, SpecificationConverterMergeRequest>(
+                "specifications/datasets/converter/merge", request);
+        }
+
         private string DataSetsUriFor(string relativeUri)
         {
             return $"datasets/{relativeUri}";
