@@ -12,10 +12,6 @@
 
         public const string Datasets = "Datasets";
 
-        public const string Scenarios = "Scenarios";
-
-        public const string TestEngine = "TestEngine";
-
         public const string Users = "Users";
 
         public const string Jobs = "Jobs";
