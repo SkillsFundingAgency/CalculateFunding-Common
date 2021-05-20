@@ -2795,51 +2795,111 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             {
                 new OrganisationGroupResult()
                 {
-                    Name = "Payment Organisation - Multi academy trust 1",
-                    SearchableName = "Payment_Organisation_Multi_academy_trust_1",
+                    Name = "Provider 1",
+                    SearchableName = "Provider_1",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
                     GroupReason = organisationGroupingReason,
-                    IdentifierValue = "9001",
+                    IdentifierValue = "1001",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "101")),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1001")),
                 },
                 new OrganisationGroupResult()
                 {
-                    Name = "Payment Organisation - Multi academy trust 2",
-                    SearchableName = "Payment_Organisation_Multi_academy_trust_2",
+                    Name = "Provider 2",
+                    SearchableName = "Provider_2",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
                     GroupReason = organisationGroupingReason,
-                    IdentifierValue = "9003",
+                    IdentifierValue = "1002",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "106")),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1002")),
                 },
                 new OrganisationGroupResult()
                 {
-                    Name = "Payment Organisation - Multi academy trust 3",
-                    SearchableName = "Payment_Organisation_Multi_academy_trust_3",
+                    Name = "Provider 6 - Academy",
+                    SearchableName = "Provider_6_Academy",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
                     GroupReason = organisationGroupingReason,
-                    IdentifierValue = "9004",
+                    IdentifierValue = "1006",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "107")),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1006")),
                 },
                 new OrganisationGroupResult()
                 {
-                    Name = "Payment Organisation - Multi academy trust 4",
-                    SearchableName = "Payment_Organisation_Multi_academy_trust_4",
+                    Name = "Provider 7 - Academy",
+                    SearchableName = "Provider_7_Academy",
                     GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
                     GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
                     GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
                     GroupReason = organisationGroupingReason,
-                    IdentifierValue = "9005",
+                    IdentifierValue = "1007",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.TrustCode == "108")),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1007")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Provider 8 - Academy",
+                    SearchableName = "Provider_8_Academy",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = organisationGroupingReason,
+                    IdentifierValue = "1008",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1008")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Provider 9 - Academy",
+                    SearchableName = "Provider_9_Academy",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = organisationGroupingReason,
+                    IdentifierValue = "1009",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1009")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Provider 10 - Academy",
+                    SearchableName = "Provider_10_Academy",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = organisationGroupingReason,
+                    IdentifierValue = "1010",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1010")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Provider 11 - Academy",
+                    SearchableName = "Provider_11_Academy",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = organisationGroupingReason,
+                    IdentifierValue = "1011",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1011")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Provider 12 - Academy",
+                    SearchableName = "Provider_12_Academy",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.Provider,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = organisationGroupingReason,
+                    IdentifierValue = "1012",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.UKPRN == "1012")),
                 }
             };
 
@@ -2944,7 +3004,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             providers.Add(new Provider()
             {
-                ProviderId = "provider1",
+                ProviderId = "1001",
                 Name = "Provider 1",
                 UKPRN = "1001",
                 LACode = "101",
@@ -2978,7 +3038,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             providers.Add(new Provider()
             {
-                ProviderId = "provider2",
+                ProviderId = "1002",
                 Name = "Provider 2",
                 UKPRN = "1002",
                 LACode = "101",
@@ -3012,7 +3072,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             providers.Add(new Provider()
             {
-                ProviderId = "provider3",
+                ProviderId = "1003",
                 Name = "Provider 3",
                 UKPRN = "1003",
                 LACode = "102",
@@ -3046,8 +3106,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             providers.Add(new Provider()
             {
-                ProviderId = "provider4",
-                Name = "Provider 3",
+                ProviderId = "1004",
+                Name = "Provider 4",
                 UKPRN = "1004",
                 LACode = "103",
                 TrustCode = "103",
@@ -3062,9 +3122,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             providers.Add(new Provider()
             {
-                ProviderId = "provider5",
+                ProviderId = "1005",
                 Name = "Provider 5",
-                UKPRN = "1004",
+                UKPRN = "1005",
                 LACode = "103",
                 TrustCode = "103",
                 TrustName = "Academy Trust 3",
@@ -3350,9 +3410,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "1010",
-                    UKPRN = "1010",
-                    Name = "Provider 10 - Academy",
+                    ProviderId = "1013",
+                    UKPRN = "1013",
+                    Name = "Provider 13 - Academy",
                     LACode = "800",
                     Authority = "Local authority 2",
                     TrustCode = null,
@@ -3366,9 +3426,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 },
                 new Provider()
                 {
-                    ProviderId = "1011",
-                    UKPRN = "1011",
-                    Name = "Provider 11 - Academy",
+                    ProviderId = "1014",
+                    UKPRN = "1014",
+                    Name = "Provider 14 - Academy",
                     LACode = "800",
                     Authority = "Local authority 2",
                     TrustCode = null,

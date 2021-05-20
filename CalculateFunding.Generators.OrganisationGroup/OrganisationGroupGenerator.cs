@@ -121,8 +121,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         // Will use providerGrouping.Key as the identifier of the PaymentOrganisation
                         targetOrganisationGroup = new TargetOrganisationGroup()
                         {
-                            Identifier = providerGrouping.First().PaymentOrganisationIdentifier,
-                            Name = providerGrouping.First().PaymentOrganisationName,
+                            Identifier = grouping.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider ? providerGrouping.First().ProviderId : providerGrouping.First().PaymentOrganisationIdentifier,
+                            Name = grouping.OrganisationGroupTypeCode == OrganisationGroupTypeCode.Provider ? providerGrouping.First().Name : providerGrouping.First().PaymentOrganisationName,
                             Identifiers = identifiers,
                         };
                     }
@@ -131,7 +131,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                                 && !grouping.GroupingReason.IsForProviderPayment())
                        )
                     {
-                        targetOrganisationGroup = await ObtainTargetOrganisationGroupFromProviderData(fundingConfiguration, providerVersionId, grouping, providerGrouping, targetOrganisationGroup);
+                        targetOrganisationGroup = await ObtainTargetOrganisationGroupFromProviderData(providerVersionId, grouping, providerGrouping);
                     }
 
 
@@ -187,7 +187,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
             return identifiers;
         }
-        private async Task<TargetOrganisationGroup> ObtainTargetOrganisationGroupFromProviderData(FundingConfiguration fundingConfiguration, string providerVersionId, OrganisationGroupingConfiguration grouping, IGrouping<string, Common.ApiClient.Providers.Models.Provider> providerGrouping, TargetOrganisationGroup targetOrganisationGroup)
+
+        private async Task<TargetOrganisationGroup> ObtainTargetOrganisationGroupFromProviderData(string providerVersionId, OrganisationGroupingConfiguration grouping, IGrouping<string, Provider> providerGrouping)
         {
             OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
             {
@@ -197,7 +198,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 GroupTypeIdentifier = grouping.GroupTypeIdentifier
             };
 
-            targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);
+            TargetOrganisationGroup targetOrganisationGroup = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters, grouping.GroupingReason, providerGrouping);
 
             return targetOrganisationGroup;
         }
@@ -206,6 +207,11 @@ namespace CalculateFunding.Generators.OrganisationGroup
         {
             if (groupingReason.IsForProviderPayment())
             {
+                if (organisationGroupTypeCode == OrganisationGroupTypeCode.Provider)
+                {
+                    return c => c.ProviderId;
+                }
+
                 if (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider)
                 {
                     // If the grouping reason is for payment, then the organisation identifier needs to be returned as a UKPRN, but grouped on the type code
