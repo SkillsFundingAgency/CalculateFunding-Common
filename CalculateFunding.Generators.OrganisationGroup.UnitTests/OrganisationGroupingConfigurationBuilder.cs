@@ -61,5 +61,16 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             return this;
         }
 
+        public OrganisationGroupingConfigurationBuilder WithProviderStatusMatch(params string[] providerStatuses)
+        {
+            if (_config.ProviderStatus == null)
+            {
+                _config.ProviderStatus = new string[0];
+            }
+
+            _config.ProviderStatus = _config.ProviderStatus.Concat(providerStatuses);
+
+            return this;
+        }
     }
 }

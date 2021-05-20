@@ -2490,11 +2490,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
-        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, "Open;Open, but proposed to close;Closed")]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, "Proposed to open")]
         public async Task WhenProducingGroupsForASpecForLocalAuthoritiesSsfWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
-            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, string providerStatusesIn)
         {
+            string[] providerStatuses = providerStatusesIn.Split(';');
             GivenFundingConfiguration(
                   c =>
                   {
@@ -2508,6 +2509,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                             .WithOrganisationGroupTypeCode(OrganisationGroupTypeCode.LocalAuthoritySsf)
                             .WithProviderTypeMatch("Maintained schools", "Local authority school")
                             .WithProviderTypeMatch("Local authority maintained schools", "Community school")
+                            .WithProviderStatusMatch(providerStatuses)
                             ));
                   }
             );
@@ -2523,9 +2525,11 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .Should()
                 .NotBeNull();
 
-            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>();
+
+            if(_scopedProviders.Any(p => p.PaymentOrganisationIdentifier == "9013" && providerStatuses.Contains(p.Status)))
             {
-                new OrganisationGroupResult()
+                expectedResult.Add(new OrganisationGroupResult()
                 {
                     Name = "Payment Org - LA 1",
                     SearchableName = "Payment_Org_LA_1",
@@ -2535,9 +2539,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupReason = organisationGroupingReason,
                     IdentifierValue = "9013",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9013")),
-                },
-                new OrganisationGroupResult()
+                    Providers = new List<Provider>(_scopedProviders.Where(p => p.PaymentOrganisationIdentifier == "9013" && providerStatuses.Contains(p.Status))),
+                });
+            }
+
+            if (_scopedProviders.Any(p => p.PaymentOrganisationIdentifier == "9006" && providerStatuses.Contains(p.Status)))
+            {
+                expectedResult.Add(new OrganisationGroupResult()
                 {
                     Name = "Payment Organisation - Local authority 2",
                     SearchableName = "Payment_Organisation_Local_authority_2",
@@ -2547,9 +2555,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     GroupReason = organisationGroupingReason,
                     IdentifierValue = "9006",
                     Identifiers = new List<OrganisationIdentifier>(),
-                    Providers = new List<Provider>(_scopedProviders.Where(p=>p.PaymentOrganisationIdentifier == "9006")),
-                },
-            };
+                    Providers = new List<Provider>(_scopedProviders.Where(p => p.PaymentOrganisationIdentifier == "9006" && providerStatuses.Contains(p.Status))),
+                });
+            }
 
             _result
                 .Should()
@@ -3115,6 +3123,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9001",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 1",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open"
                 },
                 new Provider()
                 {
@@ -3150,6 +3159,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9001",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 1",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3185,6 +3195,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     LocalGovernmentGroupTypeName = "Local Government Group Type Name 1",
                     PaymentOrganisationIdentifier = "9002",
                     PaymentOrganisationName = "Payment Organisation - Single academy trust 1",
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3204,6 +3215,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9013",
                     PaymentOrganisationName = "Payment Org - LA 1",
                     TrustStatus = TrustStatus.NotSupportedByATrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3223,6 +3235,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9013",
                     PaymentOrganisationName = "Payment Org - LA 1",
                     TrustStatus = TrustStatus.NotSupportedByATrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3238,6 +3251,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9003",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 2",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3268,6 +3282,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9003",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 2",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3283,6 +3298,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9004",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 3",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3298,6 +3314,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9005",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3313,6 +3330,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9005",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3328,6 +3346,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9005",
                     PaymentOrganisationName = "Payment Organisation - Multi academy trust 4",
                     TrustStatus = TrustStatus.SupportedByAMultiAcademyTrust,
+                    Status = "Open",
                 },
                 new Provider()
                 {
@@ -3343,6 +3362,23 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     PaymentOrganisationIdentifier = "9006",
                     PaymentOrganisationName = "Payment Organisation - Local authority 2",
                     TrustStatus = TrustStatus.NotSupportedByATrust,
+                    Status = "Open",
+                },
+                new Provider()
+                {
+                    ProviderId = "1011",
+                    UKPRN = "1011",
+                    Name = "Provider 11 - Academy",
+                    LACode = "800",
+                    Authority = "Local authority 2",
+                    TrustCode = null,
+                    TrustName = null,
+                    ProviderType = "Local authority maintained schools",
+                    ProviderSubType = "Community school",
+                    PaymentOrganisationIdentifier = "9006",
+                    PaymentOrganisationName = "Payment Organisation - Local authority 2",
+                    TrustStatus = TrustStatus.NotSupportedByATrust,
+                    Status = "Proposed to open",
                 },
 
             };
