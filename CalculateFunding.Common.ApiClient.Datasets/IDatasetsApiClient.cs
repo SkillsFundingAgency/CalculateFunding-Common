@@ -54,5 +54,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationConverterMergeJob(SpecificationConverterMergeRequest request);
 
         Task<ApiResponse<DatasetDownloadModel>> DownloadConverterWizardReportFile(string specificationId);
+        Task<ApiResponse<ConverterDataMergeLog>> GetConverterDataMergeLog(string id);
     }
 }

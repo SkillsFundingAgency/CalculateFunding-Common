@@ -289,5 +289,12 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 
             return await GetAsync<DatasetDownloadModel>(uri);
         }
+
+        public async Task<ApiResponse<ConverterDataMergeLog>> GetConverterDataMergeLog(string id)
+        {
+            Guard.IsNullOrWhiteSpace(id, nameof(id));
+
+            return await GetAsync<ConverterDataMergeLog>($"reports/converter-data-merge-log/{id}");
+        }
     }
 }

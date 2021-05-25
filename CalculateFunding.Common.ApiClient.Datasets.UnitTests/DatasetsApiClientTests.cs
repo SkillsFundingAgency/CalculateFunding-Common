@@ -392,6 +392,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new JobCreationResponse(),
                 _client.QueueSpecificationConverterMergeJob);
         }
+        
         [TestMethod]
         public async Task DownloadConverterWizardReportFileMakesGetCallWithSuppliedSpecificationId()
         {
@@ -403,5 +404,18 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 _ => _client.DownloadConverterWizardReportFile(_));
         }
 
+        [TestMethod]
+        public async Task GetConverterDataMergeLog()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"reports/converter-data-merge-log/{id}",
+                id,
+                new ConverterDataMergeLog
+                {
+                    Id = NewRandomString()
+                },
+                _ => _client.GetConverterDataMergeLog(_));
+        }
     }
 }
