@@ -12,6 +12,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Models
         Number,
         Weighting,
         Boolean,
-        Enum
+        Enum,
+        Adjustment
     }
 }

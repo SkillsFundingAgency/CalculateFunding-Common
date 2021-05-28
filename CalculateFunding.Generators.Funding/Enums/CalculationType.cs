@@ -52,5 +52,11 @@ namespace CalculateFunding.Generators.Funding.Enums
         /// </summary>
         [EnumMember(Value = "Enum")]
         Enum,
+        
+        /// <summary>
+        /// Adjustment
+        /// </summary>
+        [EnumMember(Value = "Adjustment")]
+        Adjustment
     }
 }

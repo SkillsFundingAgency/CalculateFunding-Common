@@ -66,6 +66,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Enums
         
         Boolean,
         
-        Enum
+        Enum,
+
+        Adjustment
     }
 }
