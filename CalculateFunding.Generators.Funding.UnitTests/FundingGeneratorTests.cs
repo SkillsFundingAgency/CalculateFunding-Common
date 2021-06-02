@@ -2,55 +2,59 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
+using CalculateFunding.Common.Extensions;
+using CalculateFunding.Common.Testing;
 
 namespace CalculateFunding.Generators.Funding.UnitTests
 {
     [TestClass]
     public class FundingGeneratorTests
     {
+        private Assembly _resourceAssembly;
+        
         private FundingGenerator _generator;
 
         [TestInitialize]
         public void Setup()
         {
+            _resourceAssembly = typeof(FundingGeneratorTests).Assembly;
+            
             _generator = new FundingGenerator();
         }
 
         [TestMethod]
         public void WhenGeneratingFundingLineValuesForACollectionOfFundingLines_FundingStreamAndLineTotalsAreReturned()
         {
-            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLines.json"));
+            IEnumerable<FundingLine> fundingLines = GetEmbeddedFundingLines("CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLines.json");
 
             FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines, 3);
 
             fundingValue.TotalValue
                 .Should()
-                .Be(8200.632M);
+                .Be(8100.632M);
 
             fundingValue.FundingLines.First().Value
                 .Should()
-                .Be(16200.632M);//showing the configurable rounding dp as this has precision of 5 in the test json
+                .Be(15900.632M);//showing the configurable rounding dp as this has precision of 5 in the test json
 
             fundingValue.FundingLines.First().FundingLines.First().Value
                 .Should()
-                .Be(8000M);
+                .Be(7800M);
 
             fundingValue.FundingLines.First().FundingLines.First().FundingLines.First().Value
                 .Should()
-                .Be(8000M);
+                .Be(7800M);
 
             fundingValue.FundingLines.First().FundingLines.Skip(1).First().Value
                 .Should()
-                .Be(3200M);
+                .Be(3100M);
 
             fundingValue.FundingLines.First().FundingLines.Skip(1).First().FundingLines.First().Value
                 .Should()
-                .Be(500M);
+                .Be(400M);
 
             fundingValue.FundingLines.First().FundingLines.Skip(1).First().FundingLines.Skip(1).First().Value
                 .Should()
@@ -68,7 +72,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
         [TestMethod]
         public void WhenGeneratingFundingLineWithMixOfNullAndValuesForACollectionOfFundingLines_FundingStreamAndLineTotalsAreReturned()
         {
-            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLinesWithNullCalculation.json"));
+            IEnumerable<FundingLine> fundingLines = GetEmbeddedFundingLines("CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLinesWithNullCalculation.json");
 
             FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines);
 
@@ -109,7 +113,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
         [TestMethod]
         public void WhenGeneratingFundingLineAllNullValuesForACollectionOfFundingLines_FundingStreamAndLineTotalsAreReturned()
         {
-            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLinesWithAllNullCalculations.json"));
+            IEnumerable<FundingLine> fundingLines = GetEmbeddedFundingLines("CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLinesWithAllNullCalculations.json");
 
             FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines);
 
@@ -148,19 +152,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
                 .Be(null);
         }
 
-        private string GetResourceString(string resourcePath)
-        {
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath))
-            {
-                if (stream == null)
-                    throw new InvalidOperationException(
-                        $"Could not load manifest resource stream from {Assembly.GetExecutingAssembly().FullName} at requested path {resourcePath}");
-
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-        }
+        private IEnumerable<FundingLine> GetEmbeddedFundingLines(string resourceName)
+            => _resourceAssembly.GetEmbeddedResourceFileContents(resourceName).AsPoco<IEnumerable<FundingLine>>();
     }
 }

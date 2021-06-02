@@ -20,6 +20,11 @@
                 "name": "calculation 8",
                 "value": "8000",
                 "type": "Cash"
+              },
+              {
+                "name": "calculation adjustment 8",
+                "value": "-200",
+                "type": "Adjustment"
               }
             ]
           }
@@ -51,6 +56,11 @@
                     "type": "Rate"
                   }
                 ]
+              },
+              {
+                "name": "calculation 8",
+                "value": "-100",
+                "type": "Adjustment"
               }
             ]
           },
