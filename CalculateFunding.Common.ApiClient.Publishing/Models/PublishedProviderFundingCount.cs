@@ -8,6 +8,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [JsonProperty("count")]
         public int Count { get; set; }
 
+        [JsonProperty("paidProviderCount")]
+        public int PaidProviderCount { get; set; }
+        
+        [JsonProperty("indicativeProviderCount")]
+        public int IndicativeProviderCount { get; set; }
+
         [JsonProperty("providerTypes")]
         public IEnumerable<ProviderTypeSubType> ProviderTypes { get; set; }
         
@@ -25,5 +31,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("totalFunding")]
         public decimal? TotalFunding { get; set; }
+
+        [JsonProperty("paidProvidersTotalFunding")]
+        public decimal? PaidProvidersTotalFunding { get; set; }
+
+        [JsonProperty("indicativeProviderTotalFunding")]
+        public decimal? IndicativeProviderTotalFunding { get; set; }
     }
 }

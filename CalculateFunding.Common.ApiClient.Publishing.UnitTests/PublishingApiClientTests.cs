@@ -441,7 +441,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new PublishedProviderFundingCount
                 {
                     Count = NewRandomInt(),
-                    TotalFunding = NewRandomInt()
+                    PaidProviderCount = NewRandomInt(),
+                    IndicativeProviderCount = NewRandomInt(),
+                    TotalFunding = NewRandomInt(),
+                    PaidProvidersTotalFunding = NewRandomInt(),
+                    IndicativeProviderTotalFunding = NewRandomInt()
                 }, 
                 () =>_client.GetProviderBatchForApprovalCount(publishProvidersRequest, specificationId));    
         }
@@ -458,7 +462,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new PublishedProviderFundingCount
                 {
                     Count = NewRandomInt(),
-                    TotalFunding = NewRandomInt()
+                    PaidProviderCount = NewRandomInt(),
+                    IndicativeProviderCount = NewRandomInt(),
+                    TotalFunding = NewRandomInt(),
+                    PaidProvidersTotalFunding = NewRandomInt(),
+                    IndicativeProviderTotalFunding = NewRandomInt()
                 }, 
                 () =>_client.GetProviderBatchForReleaseCount(publishProvidersRequest, specificationId));    
         }
