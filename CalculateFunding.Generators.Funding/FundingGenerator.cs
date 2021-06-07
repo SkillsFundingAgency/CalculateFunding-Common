@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CalculateFunding.Common.Extensions;
 using CalculateFunding.Generators.Funding.Enums;
 using CalculateFunding.Generators.Funding.Models;
+using CalculateFunding.Common.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CalculateFunding.Generators.Funding
 {
     public class FundingGenerator
     {
-        public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines,
-            int fundingLineDecimalPlaces = 2)
+        public FundingValue GenerateFundingValue(IEnumerable<FundingLine> fundingLines, int fundingLineDecimalPlaces = 2)
         {
             List<FundingLine> fundingLinesList = fundingLines.ToList();
 
@@ -29,13 +28,12 @@ namespace CalculateFunding.Generators.Funding
         {
             decimal? paymentFundingLineValue = fundingLine.Type == FundingLineType.Payment ? fundingLine.Value : null;
             decimal? subFundingLinesTotal = fundingLine.FundingLines?.NullableSum(CalculateFundingTotal);
-            decimal? nonPaymentFundingLineSubTotal = fundingLine.Type != FundingLineType.Payment ? subFundingLinesTotal : null;
+            decimal? nonPaymentFundingLineSubTotal = fundingLine.Type != FundingLineType.Payment ? (subFundingLinesTotal) : null;
 
             return paymentFundingLineValue.AddValueIfNotNull(nonPaymentFundingLineSubTotal);
         }
 
-        private static decimal? SetFundingLinesTotalValues(FundingLine fundingLine,
-            int decimalPlaces)
+        private static decimal? SetFundingLinesTotalValues(FundingLine fundingLine, int decimalPlaces)
         {
             decimal? cashCalculationsSum = GetCashCalculationsSum(fundingLine);
 
@@ -45,14 +43,13 @@ namespace CalculateFunding.Generators.Funding
                 subFundingLinesTotalValue = fundingLine.FundingLines.Select(_ => SetFundingLinesTotalValues(_, decimalPlaces))
                     .Where(fundingLineTotal => fundingLineTotal != null)
                     .Aggregate(
-                        (decimal?) null,
-                        (current,
-                            fundingLineTotal) => current.AddValueIfNotNull(fundingLineTotal));
+                        subFundingLinesTotalValue, 
+                        (current, fundingLineTotal) => current.AddValueIfNotNull(fundingLineTotal));
             }
 
             decimal? fundingLineValue = cashCalculationsSum.AddValueIfNotNull(subFundingLinesTotalValue);
 
-            fundingLine.Value = fundingLineValue.HasValue ? Math.Round(fundingLineValue.Value, decimalPlaces, MidpointRounding.AwayFromZero) : (decimal?)null;
+            fundingLine.Value = fundingLineValue.HasValue ? Math.Round(fundingLineValue.Value, decimalPlaces, MidpointRounding.AwayFromZero) : fundingLineValue;
 
             return fundingLine.Value;
         }
@@ -60,7 +57,7 @@ namespace CalculateFunding.Generators.Funding
         private static decimal? GetCashCalculationsSum(FundingLine fundingLine)
         {
             List<Calculation> cashCalculations = fundingLine.Calculations?
-                .Where(IsCountedAsCash)
+                .Where(calculation => calculation.Type == CalculationType.Cash)
                 .ToList();
 
             decimal? cashCalculationsSum = null;
@@ -73,20 +70,18 @@ namespace CalculateFunding.Generators.Funding
 
         private static decimal? GetCalculationsTotalRecursive(Calculation calculation)
         {
-            if (IsCountedAsCash(calculation))
+            if(calculation.Type == CalculationType.Cash)
             {
                 return calculation.GetValueAsNullableDecimal();
             }
+            else
+            {
+                decimal? calculationSum = calculation.Calculations?
+                    .Where(subCalculation => subCalculation.Type == CalculationType.Cash)
+                    .NullableSum(GetCalculationsTotalRecursive);
 
-            decimal? calculationSum = calculation.Calculations?
-                .Where(IsCountedAsCash)
-                .NullableSum(GetCalculationsTotalRecursive);
-
-            return calculation.GetValueAsNullableDecimal().AddValueIfNotNull(calculationSum);
+                return calculation.GetValueAsNullableDecimal().AddValueIfNotNull(calculationSum);
+            }
         }
-
-        private static bool IsCountedAsCash(Calculation calculation)
-            => calculation.Type == CalculationType.Cash ||
-               calculation.Type == CalculationType.Adjustment;
     }
 }

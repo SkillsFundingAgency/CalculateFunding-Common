@@ -345,6 +345,16 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task ToggleDatasetRelationship()
+        {
+            string relationshipId = NewRandomString();
+
+            await AssertPutRequest($"toggleDatasetSchema/{relationshipId}",
+                HttpStatusCode.OK,
+                () => _client.ToggleDatasetRelationship(relationshipId, true));
+        }
+
+        [TestMethod]
         public async Task UploadDatasetFile()
         {
             string fileName = NewRandomString();
@@ -380,7 +390,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
 
             await AssertGetRequest($"get-data-definitions/{fundingStreamId}",
                 fundingStreamId,
-                Enumerable.Empty<DatasetDefinationByFundingStream>(),
+                Enumerable.Empty<DatasetDefinitionByFundingStream>(),
                 _ => _client.GetDatasetDefinitionsByFundingStreamId(_));
         }
 

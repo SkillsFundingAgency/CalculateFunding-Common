@@ -245,6 +245,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync($"upload-dataset-file/{filename}", datasetMetadataViewModel);
         }
 
+        public async Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled)
+        {
+            Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
+
+            return await PutAsync(DataSetsUriFor($"toggleDatasetSchema/{relationshipId}"), converterEnabled);
+        }
+
         public async Task<ApiResponse<IEnumerable<DatasetSchemaRelationshipModel>>> GetDatasetSchemaRelationshipModelsForSpecificationId(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -252,11 +259,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetSchemaRelationshipModel>>(DataSetsUriFor($"{specificationId}/schemaRelationshipFields"));
         }
 
-        public async Task<ApiResponse<IEnumerable<DatasetDefinationByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId)
+        public async Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-            return await GetAsync<IEnumerable<DatasetDefinationByFundingStream>>(DataSetsUriFor($"get-data-definitions/{fundingStreamId}"));
+            return await GetAsync<IEnumerable<DatasetDefinitionByFundingStream>>(DataSetsUriFor($"get-data-definitions/{fundingStreamId}"));
         }
 
         public async Task<ApiResponse<JobCreationResponse>> QueueSpecificationConverterMergeJob(SpecificationConverterMergeRequest request)

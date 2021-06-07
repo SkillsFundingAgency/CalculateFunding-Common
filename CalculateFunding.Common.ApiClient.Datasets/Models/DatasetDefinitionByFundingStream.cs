@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
-    public class DatasetDefinationByFundingStream
+    public class DatasetDefinitionByFundingStream
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -15,5 +12,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("converterEligible")]
+        public bool ConverterEligible { get; set; }
     }
 }

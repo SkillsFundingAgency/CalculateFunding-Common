@@ -16,7 +16,11 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string RelationshipDescription { get; set; }
 
         public bool IsProviderData { get; set; }
-        
+
+        public bool ConverterEnabled { get; set; }
+
+        public bool ConverterEligible { get; set; }
+
         public bool IsLatestVersion { get; set; }
         
         public DateTimeOffset? LastUpdatedDate { get; set; }

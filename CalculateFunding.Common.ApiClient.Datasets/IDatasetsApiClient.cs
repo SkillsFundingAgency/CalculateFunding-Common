@@ -48,12 +48,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             string specificationId, 
             string datasetDefinitionId);
 
-        Task<ApiResponse<IEnumerable<DatasetDefinationByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId);
+        Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetDefinitionsByFundingStreamId(string fundingStreamId);
 
         Task<ApiResponse<DatasetValidationErrorSasUrlResponseModel>> GetValidateDatasetValidationErrorSasUrl(DatasetValidationErrorRequestModel requestModel);
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationConverterMergeJob(SpecificationConverterMergeRequest request);
 
         Task<ApiResponse<DatasetDownloadModel>> DownloadConverterWizardReportFile(string specificationId);
         Task<ApiResponse<ConverterDataMergeLog>> GetConverterDataMergeLog(string id);
+
+        Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled);
     }
 }

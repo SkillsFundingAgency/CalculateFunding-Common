@@ -58,8 +58,5 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("fundingStreamName")]
         public string FundingStreamName { get; set; }
-
-        [JsonProperty("converterWizard")]
-        public bool ConverterWizard { get; set; }
     }
 }

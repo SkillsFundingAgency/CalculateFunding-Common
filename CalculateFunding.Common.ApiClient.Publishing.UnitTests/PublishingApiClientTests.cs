@@ -50,7 +50,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string fundingPeriodId = NewRandomString();
 
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            
+
             GivenTheStatusCode($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates",
                 expectedStatusCode, HttpMethod.Post);
 
@@ -59,7 +59,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             actualStatusCode
                 .Should()
                 .Be(expectedStatusCode);
-            
+
             AndTheRequestContentsShouldHaveBeen(csv);
         }
 
@@ -80,14 +80,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string fundingStreamId = NewRandomString();
             string fundingPeriodId = NewRandomString();
             string providerId = NewRandomString();
-            
+
             string expectedUri = $"publishedproviders/{fundingStreamId}/{fundingPeriodId}/{providerId}/profileTotals";
-            
+
             IEnumerable<ProfileTotal> expectedTotals = new[]
             {
                 new ProfileTotal(),
             };
-            
+
             GivenTheResponse(expectedUri, expectedTotals, HttpMethod.Get);
 
             ApiResponse<IEnumerable<ProfileTotal>> response = await _client.GetLatestProfileTotals(fundingStreamId,
@@ -115,10 +115,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new ProfileTotal(),
             };
 
-            IDictionary<int, ProfilingVersion> expectedProfiling = new Dictionary<int, ProfilingVersion>(new[] { new KeyValuePair<int, 
-                ProfilingVersion>(publishedProviderVersion.Version, 
-                new ProfilingVersion { Date = publishedProviderVersion.Date, 
-                    Version = publishedProviderVersion.Version, 
+            IDictionary<int, ProfilingVersion> expectedProfiling = new Dictionary<int, ProfilingVersion>(new[] { new KeyValuePair<int,
+                ProfilingVersion>(publishedProviderVersion.Version,
+                new ProfilingVersion { Date = publishedProviderVersion.Date,
+                    Version = publishedProviderVersion.Version,
                     ProfileTotals = expectedTotals }) });
 
             GivenTheResponse(expectedUri, expectedProfiling, HttpMethod.Get);
@@ -235,7 +235,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertGetRequest($"specifications/{id}/funding/canChoose",
                 id,
                 new SpecificationCheckChooseForFundingResult(),
-                _client.CanChooseForFunding);    
+                _client.CanChooseForFunding);
         }
 
         [TestMethod]
@@ -285,9 +285,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertPostRequest($"specifications/{id}/refresh",
                 id,
                 new JobCreationResponse(),
-                _client.RefreshFundingForSpecification);        
+                _client.RefreshFundingForSpecification);
         }
-     
+
         [TestMethod]
         public async Task ApproveFundingForSpecification()
         {
@@ -296,7 +296,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertPostRequest($"specifications/{id}/approve",
                 id,
                 new JobCreationResponse(),
-                _client.ApproveFundingForSpecification);        
+                _client.ApproveFundingForSpecification);
         }
 
         [TestMethod]
@@ -319,7 +319,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertPostRequest($"specifications/{id}/publish",
                 id,
                 new JobCreationResponse(),
-                _client.PublishFundingForSpecification);        
+                _client.PublishFundingForSpecification);
         }
 
         [TestMethod]
@@ -331,7 +331,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertPostRequest($"specifications/{id}/publish-providers",
                 publishProvidersRequest,
                 new JobCreationResponse(),
-                () =>_client.PublishFundingForBatchProviders(id, publishProvidersRequest));
+                () => _client.PublishFundingForBatchProviders(id, publishProvidersRequest));
         }
 
         [TestMethod]
@@ -347,7 +347,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
                 () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status));
         }
-        
+
         [TestMethod]
         public async Task GetProviderStatusCountsForIsIndicativeFlagWithValue()
         {
@@ -414,7 +414,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 FundingStreamId = NewRandomString(),
                 FundingLineCode = NewRandomString()
             };
-            
+
             NoValidatedContentApiResponse response = await _client.ApplyCustomProfilePattern(request);
 
             response
@@ -424,8 +424,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             response
                 .StatusCode
                 .Should()
-                .Be(expectedStatusCode);    
-            
+                .Be(expectedStatusCode);
+
             AndTheRequestContentsShouldHaveBeen(request.AsJson());
         }
 
@@ -433,7 +433,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         public async Task GetProviderBatchForApprovalCount()
         {
             string specificationId = NewRandomString();
-            
+
             PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-approval",
@@ -446,15 +446,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                     TotalFunding = NewRandomInt(),
                     PaidProvidersTotalFunding = NewRandomInt(),
                     IndicativeProviderTotalFunding = NewRandomInt()
-                }, 
-                () =>_client.GetProviderBatchForApprovalCount(publishProvidersRequest, specificationId));    
+                },
+                () => _client.GetProviderBatchForApprovalCount(publishProvidersRequest, specificationId));
         }
-        
+
         [TestMethod]
         public async Task GetProviderBatchForReleaseCount()
         {
             string specificationId = NewRandomString();
-            
+
             PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
 
             await AssertPostRequest($"specifications/{specificationId}/publishedproviders/publishingstatus-for-release",
@@ -467,8 +467,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                     TotalFunding = NewRandomInt(),
                     PaidProvidersTotalFunding = NewRandomInt(),
                     IndicativeProviderTotalFunding = NewRandomInt()
-                }, 
-                () =>_client.GetProviderBatchForReleaseCount(publishProvidersRequest, specificationId));    
+                },
+                () => _client.GetProviderBatchForReleaseCount(publishProvidersRequest, specificationId));
         }
 
         [TestMethod]
@@ -532,9 +532,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 $"publishedproviderfundinglinedetails/{specificationId}/{providerId}/{fundingStreamId}/{fundingLineCode}/changes",
                 Enumerable.Empty<FundingLineChange>(),
                 () => _client.GetPreviousProfilesForSpecificationForProviderForFundingLine(
-                    specificationId, 
-                    providerId, 
-                    fundingStreamId, 
+                    specificationId,
+                    providerId,
+                    fundingStreamId,
                     fundingLineCode));
         }
 
@@ -556,7 +556,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
         [TestMethod]
         public async Task GetCurrentPublishedProviderFundingStructure()
-        {           
+        {
             string fundingStreamId = NewRandomString();
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
@@ -569,8 +569,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
         [TestMethod]
         public async Task GetPublishedProviderFundingStructure()
-        {           
-            string publishedProviderVersionId = NewRandomString();            
+        {
+            string publishedProviderVersionId = NewRandomString();
 
             await AssertGetRequest(
                 $"publishedproviderfundingstructure/{publishedProviderVersionId}",
@@ -578,7 +578,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 () => _client.GetPublishedProviderFundingStructure(
                     publishedProviderVersionId));
         }
-        
+
         [TestMethod]
         public async Task PreviewProfileChange()
         {
@@ -586,15 +586,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
             await AssertPostRequest("publishedproviderfundinglinepreview",
                 publishProvidersRequest,
-               new []
+               new[]
                {
                    NewRandomProfileTotal(),
                    NewRandomProfileTotal(),
                    NewRandomProfileTotal(),
                    NewRandomProfileTotal(),
                    NewRandomProfileTotal()
-               }.AsEnumerable(), 
-                () =>_client.PreviewProfileChange(publishProvidersRequest));    
+               }.AsEnumerable(),
+                () => _client.PreviewProfileChange(publishProvidersRequest));
         }
 
         [TestMethod]
@@ -607,7 +607,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new JobCreationResponse(),
                 () => _client.QueueSpecificationFundingStreamSqlImport(specificationId, fundingStreamId));
         }
-        
+
         [TestMethod]
         public async Task GetLatestPublishedDate()
         {
@@ -615,7 +615,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string fundingStreamId = NewRandomString();
 
             await AssertGetRequest($"publishedproviders/{fundingStreamId}/{fundingPeriodId}/lastupdated",
-                new LatestPublishedDate(), 
+                new LatestPublishedDate(),
                 () => _client.GetLatestPublishedDate(fundingStreamId, fundingPeriodId));
         }
 
@@ -692,8 +692,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 {
                     BatchId = NewRandomString(),
                     Url = NewRandomString()
-                }, 
-                () =>_client.UploadBatch(batchUploadRequest));     
+                },
+                () => _client.UploadBatch(batchUploadRequest));
         }
 
         [TestMethod]
@@ -706,8 +706,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 new JobCreationResponse
                 {
                     JobId = NewRandomString()
-                }, 
-                () =>_client.QueueBatchUploadValidation(uploadValidationRequest));     
+                },
+                () => _client.QueueBatchUploadValidation(uploadValidationRequest));
         }
 
         [TestMethod]
@@ -717,16 +717,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
 
             await AssertGetRequest($"publishedproviderbatch/{batchId}/publishedProviders",
                 batchId,
-                new []
+                new[]
                 {
                     NewRandomString(),
                     NewRandomString(),
                     NewRandomString(),
                     NewRandomString(),
-                }.AsEnumerable(), 
-                _client.GetBatchPublishedProviderIds);            
+                }.AsEnumerable(),
+                _client.GetBatchPublishedProviderIds);
         }
-        
+
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {
             Value = new RandomNumberBetween(999, int.MaxValue)

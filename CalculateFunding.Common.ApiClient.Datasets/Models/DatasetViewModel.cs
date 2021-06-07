@@ -10,6 +10,5 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public string Description { get; set; }
 
         public IEnumerable<DatasetVersionViewModel> History { get; set; }
-        public bool ConverterWizard { get; set; }
     }
 }

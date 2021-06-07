@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
     <ProjectReference Include="..\CalculateFunding.Generators.Funding\CalculateFunding.Generators.Funding.csproj" />
   </ItemGroup>
 

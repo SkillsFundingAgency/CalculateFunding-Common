@@ -13,5 +13,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public bool IsSetAsProviderData { get; set; }
 
         public bool UsedInDataAggregations { get; set; }
+
+        public bool ConverterEnabled { get; set; }
     }
 }

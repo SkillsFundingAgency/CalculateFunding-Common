@@ -10,16 +10,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("paidProviderCount")]
         public int PaidProviderCount { get; set; }
-        
+
         [JsonProperty("indicativeProviderCount")]
         public int IndicativeProviderCount { get; set; }
 
         [JsonProperty("providerTypes")]
         public IEnumerable<ProviderTypeSubType> ProviderTypes { get; set; }
-        
+
         [JsonProperty("providerTypesCount")]
         public int ProviderTypesCount { get; set; }
-        
+
         [JsonProperty("localAuthorities")]
         public IEnumerable<string> LocalAuthorities { get; set; }
 

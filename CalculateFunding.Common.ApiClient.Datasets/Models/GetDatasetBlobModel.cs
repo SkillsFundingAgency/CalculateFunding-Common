@@ -22,8 +22,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public bool MergeExistingVersion { get; set; }
 
-        public bool ConverterWizard { get; set; }
-
         public DatasetEmptyFieldEvaluationOptions EmptyFieldEvaluationOption { get; set; }
 
         public override string ToString()

@@ -20,6 +20,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("fundingPeriodName")]
         public string FundingPeriodName { get; set; }
 
+        [JsonProperty("converterEnabled")]
+        public bool ConverterEnabled { get; set; }
+
+        [JsonProperty("converterEligible")]
+        public bool ConverterEligible { get; set; }
+
         [JsonProperty("mapDatasetLastUpdated")]
         public DateTimeOffset? MapDatasetLastUpdated { get; set; }
         
