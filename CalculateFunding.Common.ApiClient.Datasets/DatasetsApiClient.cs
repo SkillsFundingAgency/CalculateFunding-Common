@@ -303,5 +303,12 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 
             return await GetAsync<ConverterDataMergeLog>($"reports/converter-data-merge-log/{id}");
         }
+
+        public async Task<ApiResponse<IEnumerable<EligibleSpecificationReference>>> GetEligibleSpecificationsToReference(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<EligibleSpecificationReference>>($"specifications/{specificationId}/eligible-specification-references");
+        }
     }
 }

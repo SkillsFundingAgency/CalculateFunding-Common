@@ -57,5 +57,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<ConverterDataMergeLog>> GetConverterDataMergeLog(string id);
 
         Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled);
+
+        Task<ApiResponse<IEnumerable<EligibleSpecificationReference>>> GetEligibleSpecificationsToReference(string specificationId);
     }
 }

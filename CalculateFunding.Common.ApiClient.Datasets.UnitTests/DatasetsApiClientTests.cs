@@ -427,5 +427,19 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 },
                 _ => _client.GetConverterDataMergeLog(_));
         }
+
+        [TestMethod]
+        public async Task GetEligibleSpecificationsToReference()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"specifications/{specificationId}/eligible-specification-references",
+                specificationId,
+                new List<EligibleSpecificationReference>
+                { 
+                    new EligibleSpecificationReference()
+                }.AsEnumerable(),
+                _ => _client.GetEligibleSpecificationsToReference(_));
+        }
     }
 }
