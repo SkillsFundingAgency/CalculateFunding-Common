@@ -4,6 +4,8 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
 {
     public class ProviderSnapshot
     {
+        public string ProviderVersionId => $"{FundingStreamCode}-{TargetDate:yyyy}-{TargetDate:MM}-{TargetDate:dd}-{ProviderSnapshotId}";
+
         public int ProviderSnapshotId { get; set; }
 
         public string Name { get; set; }
