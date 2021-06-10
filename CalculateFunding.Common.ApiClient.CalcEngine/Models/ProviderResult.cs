@@ -23,5 +23,8 @@ namespace CalculateFunding.Common.ApiClient.CalcEngine.Models
 
         [JsonProperty("fundingLineResults")]
         public List<FundingLineResult> FundingLineResults { get; set; }
+
+        [JsonProperty("isIndicativeProvider")]
+        public bool IsIndicativeProvider { get; set; }
     }
 }
