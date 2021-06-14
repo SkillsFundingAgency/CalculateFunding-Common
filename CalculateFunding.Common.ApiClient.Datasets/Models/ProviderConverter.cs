@@ -1,8 +1,8 @@
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
-    public class EligibleConverter
+    public class ProviderConverter
     {
-        public string ProviderId { get; set; }
+        public string TargetProviderId { get; set; }
 
         public string PreviousProviderIdentifier { get; set; }
     }

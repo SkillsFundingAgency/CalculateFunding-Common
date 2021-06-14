@@ -274,6 +274,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 "specifications/datasets/converter/merge", request);
         }
 
+        public async Task<ApiResponse<JobCreationResponse>> QueueConverterMergeJob(ConverterMergeRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<JobCreationResponse, ConverterMergeRequest>(
+                "datasets/converter/merge", request);
+        }
+
         private string DataSetsUriFor(string relativeUri)
         {
             return $"datasets/{relativeUri}";

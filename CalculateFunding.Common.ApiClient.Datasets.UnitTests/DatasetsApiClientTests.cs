@@ -402,7 +402,16 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 new JobCreationResponse(),
                 _client.QueueSpecificationConverterMergeJob);
         }
-        
+
+        [TestMethod]
+        public async Task QueueConverterMergeJob()
+        {
+            await AssertPostRequest("datasets/converter/merge",
+                new ConverterMergeRequest(),
+                new JobCreationResponse(),
+                _client.QueueConverterMergeJob);
+        }
+
         [TestMethod]
         public async Task DownloadConverterWizardReportFileMakesGetCallWithSuppliedSpecificationId()
         {
