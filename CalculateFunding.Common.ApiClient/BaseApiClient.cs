@@ -265,13 +265,14 @@ namespace CalculateFunding.Common.ApiClient
         {
             HandleNullResponse(url, response, httpClient);
 
+            string bodyContent = response.Content == null ? null: await response.Content.ReadAsStringAsync();
+            
             if (response.IsSuccessStatusCode)
             {
-                string bodyContent = await response.Content.ReadAsStringAsync();
                 return new ApiResponse<T>(response.StatusCode, response.Headers, JsonConvert.DeserializeObject<T>(bodyContent, _serializerSettings));
             }
 
-            return new ApiResponse<T>(response.StatusCode);
+            return new ApiResponse<T>(response.StatusCode, message: bodyContent);
         }
 
         private async Task<ValidatedApiResponse<TResponse>> ValidatedApiResponse<TResponse>(string url, HttpResponseMessage response, HttpClient httpClient)
