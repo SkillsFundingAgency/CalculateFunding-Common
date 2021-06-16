@@ -96,5 +96,50 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [EnumMember(Value = "CountryNameFieldUpdated")]
         CountryNameFieldUpdated,
+
+        [EnumMember(Value = nameof(PaymentOrganisationIdentifierFieldUpdated))]
+        PaymentOrganisationIdentifierFieldUpdated,
+
+        [EnumMember(Value = nameof(PaymentOrganisationNameFieldUpdated))]
+        PaymentOrganisationNameFieldUpdated,
+
+        [EnumMember(Value = nameof(DateOpenedFieldUpdated))]
+        DateOpenedFieldUpdated,
+
+        [EnumMember(Value = nameof(DateClosedFieldUpdated))]
+        DateClosedFieldUpdated,
+
+        [EnumMember(Value = nameof(ProviderStatusFieldUpdated))]
+        ProviderStatusFieldUpdated,
+
+        [EnumMember(Value = nameof(PhaseOfEducationFieldUpdated))]
+        PhaseOfEducationFieldUpdated,
+
+        [EnumMember(Value = nameof(ReasonEstablishmentOpenedFieldUpdated))]
+        ReasonEstablishmentOpenedFieldUpdated,
+
+        [EnumMember(Value = nameof(ReasonEstablishmentClosedFieldUpdated))]
+        ReasonEstablishmentClosedFieldUpdated,
+
+        [EnumMember(Value = nameof(TrustStatusFieldUpdated))]
+        TrustStatusFieldUpdated,
+
+        [EnumMember(Value = nameof(TownFieldUpdated))]
+        TownFieldUpdated,
+
+        [EnumMember(Value = nameof(PostcodeFieldUpdated))]
+        PostcodeFieldUpdated,
+
+        [EnumMember(Value = nameof(TemplateUpdated))]
+        TemplateUpdated,
+
+        [EnumMember(Value = nameof(FundingSchemaUpdated))]
+        FundingSchemaUpdated,
+
+        [EnumMember(Value = nameof(DistributionProfileUpdated))]
+        DistributionProfileUpdated,
+
+        [EnumMember(Value = nameof(IndicativeToLive))]
+        IndicativeToLive,
     }
 }
