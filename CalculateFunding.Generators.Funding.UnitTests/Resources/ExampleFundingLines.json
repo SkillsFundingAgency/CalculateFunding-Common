@@ -80,8 +80,21 @@
         "calculations": [
           {
             "name": "calculation 5",
-            "value": "5000.63226",
+            "value": "5000.63255",
             "type": "Cash"
+          }
+        ],
+        "fundinglines": [
+          {
+            "name": "funding line 9",
+            "type": "Payment",
+            "calculations": [
+              {
+                "name": "calculation 11",
+                "value": "2000.00055",
+                "type": "Cash"
+              }
+            ]
           }
         ]
       },
