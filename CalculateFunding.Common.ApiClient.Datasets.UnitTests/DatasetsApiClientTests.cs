@@ -161,6 +161,15 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task ValidateRelationshipPostsSuppliedModel()
+        {
+            await AssertPostRequest("validate-definitionspecification-relationship",
+                new ValidateDefinitionSpecificationRelationshipModel(),
+                HttpStatusCode.OK,
+                _ => _client.ValidateDefinitionSpecificationRelationship(_));
+        }
+
+        [TestMethod]
         public async Task GetRelationshipsBySpecificationIdMakesGetCallWithSuppliedId()
         {
             string id = NewRandomString();
@@ -449,6 +458,20 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                     new EligibleSpecificationReference()
                 }.AsEnumerable(),
                 _ => _client.GetEligibleSpecificationsToReference(_));
+        }
+
+        [TestMethod]
+        public async Task GetPublishedSpecificationTemplateMetadata()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"specifications/{specificationId}/published-specification-template-metadata",
+                specificationId,
+                new List<PublishedSpecificationTemplateMetadata>
+                {
+                    new PublishedSpecificationTemplateMetadata()
+                }.AsEnumerable(),
+                _ => _client.GetPublishedSpecificationTemplateMetadata(_));
         }
     }
 }

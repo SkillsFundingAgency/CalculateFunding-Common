@@ -106,6 +106,16 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 createDefinitionSpecificationRelationshipModel);
         }
 
+        public async Task<HttpStatusCode> ValidateDefinitionSpecificationRelationship(
+            ValidateDefinitionSpecificationRelationshipModel validateDefinitionSpecificationRelationshipModel)
+        {
+            Guard.ArgumentNotNull(validateDefinitionSpecificationRelationshipModel, nameof(validateDefinitionSpecificationRelationshipModel));
+
+            return await PostAsync<ValidateDefinitionSpecificationRelationshipModel>(
+                DataSetsUriFor("validate-definitionspecification-relationship"),
+                validateDefinitionSpecificationRelationshipModel);
+        }
+
         public async Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetRelationshipsBySpecificationId(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -317,6 +327,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
             return await GetAsync<IEnumerable<EligibleSpecificationReference>>($"specifications/{specificationId}/eligible-specification-references");
+        }
+
+        public async Task<ApiResponse<IEnumerable<PublishedSpecificationTemplateMetadata>>> GetPublishedSpecificationTemplateMetadata(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<PublishedSpecificationTemplateMetadata>>($"specifications/{specificationId}/published-specification-template-metadata");
         }
     }
 }

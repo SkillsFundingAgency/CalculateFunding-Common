@@ -24,6 +24,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 
         Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(
             CreateDefinitionSpecificationRelationshipModel createDefinitionSpecificationRelationshipModel);
+        Task<HttpStatusCode> ValidateDefinitionSpecificationRelationship(
+            ValidateDefinitionSpecificationRelationshipModel validateDefinitionSpecificationRelationshipModel);
 
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetRelationshipsBySpecificationId(string specificationId);
         Task<ApiResponse<DefinitionSpecificationRelationship>> GetRelationshipBySpecificationIdAndName(string specificationId, string name);
@@ -59,5 +61,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled);
 
         Task<ApiResponse<IEnumerable<EligibleSpecificationReference>>> GetEligibleSpecificationsToReference(string specificationId);
+        Task<ApiResponse<IEnumerable<PublishedSpecificationTemplateMetadata>>> GetPublishedSpecificationTemplateMetadata(string specificationId);
     }
 }

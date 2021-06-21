@@ -26,5 +26,9 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public DateTimeOffset? LastUpdatedDate { get; set; }
         
         public Reference LastUpdatedAuthor { get; set; }
+
+        public DatasetRelationshipType RelationshipType { get; set; }
+
+        public PublishedSpecificationConfiguration PublishedSpecificationConfiguration { get; set; }
     }
 }

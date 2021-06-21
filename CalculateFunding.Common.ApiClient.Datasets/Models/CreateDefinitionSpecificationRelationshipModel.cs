@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class CreateDefinitionSpecificationRelationshipModel
@@ -15,5 +17,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public bool UsedInDataAggregations { get; set; }
 
         public bool ConverterEnabled { get; set; }
+
+        public DatasetRelationshipType RelationshipType { get; set; }
+
+        public string TargetSpecificationId { get; set; }
+
+        public IEnumerable<uint> FundingLineIds { get; set; }
+
+        public IEnumerable<uint> CalculationIds { get; set; }
     }
 }
