@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Models;
 using Microsoft.Azure.Cosmos.Scripts;
+using System.IO;
+using System.Text.Json;
 
 namespace CalculateFunding.Common.CosmosDb.UnitTests
 {
@@ -164,9 +166,9 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         [TestMethod]
         public async Task DeleteAsync_SoftDeletesAnItemFromAzureCosmos_GivenHardDeleteIsSetToFalse()
         {
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse =
+            Mock<ResponseMessage> mockedFeedResponse =
                 SetupFeedResponseOfIdentifiableEntity(_cosmosDbTestIdentifiableEntities);
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator =
+            Mock<FeedIterator> mockedFeedIterator =
                 SetupFeedIterator(mockedFeedResponse);
             Mock<ItemResponse<DocumentEntity<DocumentEntity<CosmosDbTestIdentifiable>>>> mockResponse =
                 SetupItemResponseOfIdentifiableEntity();
@@ -188,9 +190,9 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         [DataRow(null)]
         public async Task DeleteAsync_SoftDeletesAnItemFromAzureCosmosWithoutPartitionKey_GivenNoPartitionKey(string partitionKey)
         {
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse =
+            Mock<ResponseMessage> mockedFeedResponse =
                 SetupFeedResponseOfIdentifiableEntity(_cosmosDbTestIdentifiableEntities);
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator =
+            Mock<FeedIterator> mockedFeedIterator =
                 SetupFeedIterator(mockedFeedResponse);
             Mock<ItemResponse<DocumentEntity<DocumentEntity<CosmosDbTestIdentifiable>>>> mockResponse =
                 SetupItemResponseOfIdentifiableEntity();
@@ -209,9 +211,9 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         [TestMethod]
         public async Task DeleteAsync_HardDeletesAnItemFromAzureCosmos_GivenHardDeleteIsSetToTrue()
         {
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse =
+            Mock<ResponseMessage> mockedFeedResponse =
                 SetupFeedResponseOfIdentifiableEntity(_cosmosDbTestIdentifiableEntities);
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator =
+            Mock<FeedIterator> mockedFeedIterator =
                 SetupFeedIterator(mockedFeedResponse);
             Mock<ItemResponse<DocumentEntity<DocumentEntity<CosmosDbTestIdentifiable>>>> mockResponse =
                 SetupItemResponseOfIdentifiableEntity();
@@ -231,9 +233,9 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         [DataRow(null)]
         public async Task DeleteAsync_HardDeletesAnItemFromAzureCosmosWithoutPartitionKey_GivenNoPartitionKey(string partitionKey)
         {
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse =
+            Mock<ResponseMessage> mockedFeedResponse =
                 SetupFeedResponseOfIdentifiableEntity(_cosmosDbTestIdentifiableEntities);
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator =
+            Mock<FeedIterator> mockedFeedIterator =
                 SetupFeedIterator(mockedFeedResponse);
             Mock<ItemResponse<DocumentEntity<DocumentEntity<CosmosDbTestIdentifiable>>>> mockResponse =
                 SetupItemResponseOfIdentifiableEntity();
@@ -378,28 +380,40 @@ namespace CalculateFunding.Common.CosmosDb.UnitTests
         }
 
         private void GivenGetItemQueryIteratorReturnsAValidFeedIterator(
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator) =>
-            _container.Setup(c => c.GetItemQueryIterator<DocumentEntity<CosmosDbTestIdentifiable>>(
+            Mock<FeedIterator> mockedFeedIterator) =>
+            _container.Setup(c => c.GetItemQueryStreamIterator(
                     It.IsAny<QueryDefinition>(), null, null))
                 .Returns(mockedFeedIterator.Object);
 
-        private static Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> SetupFeedIterator(
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse)
+        private static Mock<FeedIterator> SetupFeedIterator(
+            Mock<ResponseMessage> mockedFeedResponse)
         {
-            Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedIterator =
-                new Mock<FeedIterator<DocumentEntity<CosmosDbTestIdentifiable>>>();
+            Mock<FeedIterator> mockedFeedIterator =
+                new Mock<FeedIterator>();
             mockedFeedIterator.SetupSequence(c => c.HasMoreResults).Returns(true).Returns(false);
             mockedFeedIterator.Setup(c => c.ReadNextAsync(default)).ReturnsAsync(
                 mockedFeedResponse.Object);
             return mockedFeedIterator;
         }
 
-        private static Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> SetupFeedResponseOfIdentifiableEntity(
+        private static Mock<ResponseMessage> SetupFeedResponseOfIdentifiableEntity(
             IEnumerable<DocumentEntity<CosmosDbTestIdentifiable>> items)
         {
-            Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>> mockedFeedResponse =
-                new Mock<FeedResponse<DocumentEntity<CosmosDbTestIdentifiable>>>();
-            mockedFeedResponse.Setup(f => f.GetEnumerator()).Returns(items.GetEnumerator);
+            Mock<ResponseMessage> mockedFeedResponse =
+                new Mock<ResponseMessage>();
+
+            MemoryStream stream = new MemoryStream(
+                System.Text.Encoding.UTF8.GetBytes(
+                    JsonSerializer.Serialize(
+                        new QueryStream<DocumentEntity<CosmosDbTestIdentifiable>> 
+                        {  
+                            Documents = items 
+                        }
+                    )
+                )
+            );
+
+            mockedFeedResponse.Setup(f => f.Content).Returns(stream);
             return mockedFeedResponse;
         }
 

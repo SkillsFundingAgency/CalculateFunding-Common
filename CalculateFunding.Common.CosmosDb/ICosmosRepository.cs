@@ -124,7 +124,7 @@ namespace CalculateFunding.Common.CosmosDb
             string etag = null) where T : Reference;
 
         Task<HttpStatusCode> BulkUpdateAsync<T>(IEnumerable<T> entities, string storedProcedureName) where T : IIdentifiable;
-        ICosmosDbFeedIterator<T> GetFeedIterator<T>(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
+        ICosmosDbFeedIterator GetFeedIterator(CosmosDbQuery cosmosDbQuery, int itemsPerPage = -1, int? maxItemCount = null);
         IQueryable<DocumentEntity<T>> QueryableDocuments<T>(int itemsPerPage = -1, int? maxItemCount = null) where T : IIdentifiable;
     }
 }
