@@ -54,7 +54,7 @@ namespace CalculateFunding.Generators.Funding
 
             fundingLine.Value = fundingLineValue.HasValue ? Math.Round(fundingLineValue.Value, decimalPlaces, MidpointRounding.AwayFromZero) : (decimal?)null;
 
-            return fundingLineValue;
+            return fundingLine.Value;
         }
 
         private static decimal? GetCashCalculationsSum(FundingLine fundingLine)

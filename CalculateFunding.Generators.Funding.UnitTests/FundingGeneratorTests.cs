@@ -30,11 +30,11 @@ namespace CalculateFunding.Generators.Funding.UnitTests
 
             fundingValue.TotalValue
                 .Should()
-                .Be(10200.633M);
+                .Be(10200.634M);
 
             fundingValue.FundingLines.First().Value
                 .Should()
-                .Be(18200.633M);//showing the configurable rounding dp as this has precision of 5 in the test json
+                .Be(18200.634M);//showing the configurable rounding dp as this has precision of 5 in the test json
 
             fundingValue.FundingLines.First().FundingLines.First().Value
                 .Should()
@@ -58,7 +58,7 @@ namespace CalculateFunding.Generators.Funding.UnitTests
 
             fundingValue.FundingLines.First().FundingLines.Skip(2).First().Value
                 .Should()
-                .Be(7000.633M);
+                .Be(7000.634M);
 
             fundingValue.FundingLines.First().FundingLines.Skip(2).First().FundingLines.First().Value
                 .Should()
