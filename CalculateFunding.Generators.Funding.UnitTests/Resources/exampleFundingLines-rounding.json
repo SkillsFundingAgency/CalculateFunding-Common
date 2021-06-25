@@ -1,0 +1,94 @@
+[
+  {
+    "name": "aggregate funding line",
+    "type": "Payment",
+    "fundinglines": [
+      {
+        "name": "funding line 1",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 2",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 1",
+                "value": "10.001",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 3",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 4",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 2",
+                "value": "11.001",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 5",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 6",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 3",
+                "value": "12.001",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 7",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 8",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 4",
+                "value": "13.001",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "funding line 9",
+        "type": "Information",
+        "fundinglines": [
+          {
+            "name": "funding line 10",
+            "type": "Information",
+            "calculations": [
+              {
+                "name": "calculation 5",
+                "value": "14.001",
+                "type": "Cash"
+              }
+            ]
+          }
+        ]
+      }
+
+    ]
+  }
+]

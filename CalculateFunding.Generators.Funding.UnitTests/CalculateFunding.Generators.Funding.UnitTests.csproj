@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\exampleFundingLines-rounding-adjustment.json" />
+    <None Remove="Resources\exampleFundingLines-rounding.json" />
     <None Remove="Resources\ExampleFundingLines.json" />
     <None Remove="Resources\exampleFundingLinesWithAllNullCalculations.json" />
     <None Remove="Resources\exampleFundingLinesWithNullCalculation.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\exampleFundingLines-rounding-adjustment.json" />
+    <EmbeddedResource Include="Resources\exampleFundingLines-rounding.json" />
     <EmbeddedResource Include="Resources\exampleFundingLinesWithAllNullCalculations.json" />
     <EmbeddedResource Include="Resources\exampleFundingLinesWithNullCalculation.json" />
     <EmbeddedResource Include="Resources\exampleFundingLines.json" />
@@ -27,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
     <ProjectReference Include="..\CalculateFunding.Generators.Funding\CalculateFunding.Generators.Funding.csproj" />
   </ItemGroup>
 

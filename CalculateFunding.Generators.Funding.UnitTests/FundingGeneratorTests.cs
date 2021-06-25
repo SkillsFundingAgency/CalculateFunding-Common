@@ -1,12 +1,13 @@
-﻿using CalculateFunding.Generators.Funding.Models;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CalculateFunding.Common.Testing;
+using CalculateFunding.Generators.Funding.Models;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace CalculateFunding.Generators.Funding.UnitTests
 {
@@ -150,6 +151,106 @@ namespace CalculateFunding.Generators.Funding.UnitTests
             fundingValue.FundingLines.First().FundingLines.Skip(2).First().Value
                 .Should()
                 .Be(null);
+        }
+
+        [TestMethod]
+        public void WhenGeneratingFundingLineValuesForACollectionOfFundingLinesUsingAdjustmentCalculations_ExpectedRoundingInHierachyBasedOnFundingLineTotals()
+        {
+            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLines-rounding-adjustment.json"));
+
+            FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines, 2);
+
+            fundingValue.TotalValue.Should().Be(60M);
+
+            IEnumerable<FundingLine> allFundingLines = fundingValue.FundingLines.Flatten(_ => _.FundingLines);
+
+            FundingLine aggregateFundingLine = allFundingLines.Single(_ => _.Name == "aggregate funding line");
+
+            // This is important to check the total is rounded to sub funding lines, then the aggregate funding lines are summed.
+            // If just the adjustment calculations are summed, then the aggregate would be 60.01, instead of 60.00.
+            // This is because the adjustment calculations would be 5 lots of xx.001, which would equals xx.01, instead of the funding lines summed from xx.00
+            aggregateFundingLine.Value.Should()
+                .Be(60M);
+
+            FundingLine fundingLine1 = allFundingLines.Single(_ => _.Name == "funding line 1");
+            fundingLine1.Value.Should().Be(10M);
+
+            FundingLine fundingLine2 = allFundingLines.Single(_ => _.Name == "funding line 2");
+            fundingLine2.Value.Should().Be(10M);
+
+            FundingLine fundingLine3 = allFundingLines.Single(_ => _.Name == "funding line 3");
+            fundingLine3.Value.Should().Be(11M);
+
+            FundingLine fundingLine4 = allFundingLines.Single(_ => _.Name == "funding line 4");
+            fundingLine4.Value.Should().Be(11M);
+
+            FundingLine fundingLine5 = allFundingLines.Single(_ => _.Name == "funding line 5");
+            fundingLine5.Value.Should().Be(12M);
+
+            FundingLine fundingLine6 = allFundingLines.Single(_ => _.Name == "funding line 6");
+            fundingLine6.Value.Should().Be(12M);
+
+            FundingLine fundingLine7 = allFundingLines.Single(_ => _.Name == "funding line 7");
+            fundingLine7.Value.Should().Be(13M);
+
+            FundingLine fundingLine8 = allFundingLines.Single(_ => _.Name == "funding line 8");
+            fundingLine8.Value.Should().Be(13M);
+
+            FundingLine fundingLine9 = allFundingLines.Single(_ => _.Name == "funding line 9");
+            fundingLine9.Value.Should().Be(14M);
+
+            FundingLine fundingLine10 = allFundingLines.Single(_ => _.Name == "funding line 10");
+            fundingLine10.Value.Should().Be(14M);
+        }
+
+        [TestMethod]
+        public void WhenGeneratingFundingLineValuesForACollectionOfFundingLinesUsingCashCalculations_ExpectedRoundingInHierachyBasedOnFundingLineTotals()
+        {
+            IEnumerable<FundingLine> fundingLines = JsonConvert.DeserializeObject<IEnumerable<FundingLine>>(GetResourceString($"CalculateFunding.Generators.Funding.UnitTests.Resources.exampleFundingLines-rounding.json"));
+
+            FundingValue fundingValue = _generator.GenerateFundingValue(fundingLines, 2);
+
+            fundingValue.TotalValue.Should().Be(60M);
+
+            IEnumerable<FundingLine> allFundingLines = fundingValue.FundingLines.Flatten(_ => _.FundingLines);
+
+            FundingLine aggregateFundingLine = allFundingLines.Single(_ => _.Name == "aggregate funding line");
+
+            // This is important to check the total is rounded to sub funding lines, then the aggregate funding lines are summed.
+            // If just the cash calculations are summed, then the aggregate would be 60.01, instead of 60.00.
+            // This is because the cash calculations would be 5 lots of xx.001, which would equals xx.01, instead of the funding lines summed from xx.00
+            aggregateFundingLine.Value.Should()
+                .Be(60M);
+
+            FundingLine fundingLine1 = allFundingLines.Single(_ => _.Name == "funding line 1");
+            fundingLine1.Value.Should().Be(10M);
+
+            FundingLine fundingLine2 = allFundingLines.Single(_ => _.Name == "funding line 2");
+            fundingLine2.Value.Should().Be(10M);
+
+            FundingLine fundingLine3 = allFundingLines.Single(_ => _.Name == "funding line 3");
+            fundingLine3.Value.Should().Be(11M);
+
+            FundingLine fundingLine4 = allFundingLines.Single(_ => _.Name == "funding line 4");
+            fundingLine4.Value.Should().Be(11M);
+
+            FundingLine fundingLine5 = allFundingLines.Single(_ => _.Name == "funding line 5");
+            fundingLine5.Value.Should().Be(12M);
+
+            FundingLine fundingLine6 = allFundingLines.Single(_ => _.Name == "funding line 6");
+            fundingLine6.Value.Should().Be(12M);
+
+            FundingLine fundingLine7 = allFundingLines.Single(_ => _.Name == "funding line 7");
+            fundingLine7.Value.Should().Be(13M);
+
+            FundingLine fundingLine8 = allFundingLines.Single(_ => _.Name == "funding line 8");
+            fundingLine8.Value.Should().Be(13M);
+
+            FundingLine fundingLine9 = allFundingLines.Single(_ => _.Name == "funding line 9");
+            fundingLine9.Value.Should().Be(14M);
+
+            FundingLine fundingLine10 = allFundingLines.Single(_ => _.Name == "funding line 10");
+            fundingLine10.Value.Should().Be(14M);
         }
 
         private string GetResourceString(string resourcePath)
