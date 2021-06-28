@@ -2,8 +2,10 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading.Tasks;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
 	using Common.Extensions;
 	using Microsoft.AspNetCore.Http;
 	using Models.HealthCheck;
@@ -21,7 +23,10 @@
         {
             if(context.Request.Path == "/healthcheck")
             {
-                OverallHealth overallHealth = new OverallHealth { OverallHealthOk = true };
+                OverallHealth overallHealth = new OverallHealth { 
+                    OverallHealthOk = true,
+                    BuildNumber = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion
+                };
 
                 if (_healthCheckers != null)
                 {
