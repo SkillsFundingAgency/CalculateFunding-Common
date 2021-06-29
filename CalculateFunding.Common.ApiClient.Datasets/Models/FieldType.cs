@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         DateTime,
         String,
         NullableOfInteger,
-        NullableOfDecimal
+        NullableOfDecimal,
+        NullableOfBoolean
     }
 }
