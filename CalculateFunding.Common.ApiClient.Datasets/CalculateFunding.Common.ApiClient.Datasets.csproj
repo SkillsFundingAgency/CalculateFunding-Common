@@ -5,7 +5,7 @@
         <RootNamespace>CalculateFunding.Common.ApiClient.DataSets</RootNamespace>
         <Description>Datasets microservice client</Description>
 
-        <Version>6.18.1</Version>
+        <Version>6.18.2</Version>
 
         <Authors>Calculate Funding Service</Authors>
         <Company>Department for Education</Company>

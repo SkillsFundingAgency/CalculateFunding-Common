@@ -4,6 +4,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class DefinitionSpecificationRelationship : Reference
     {
+        public string RelationshipId { get; set; }
+		
         public Reference DatasetDefinition { get; set; }
 
         public Reference Specification { get; set; }
