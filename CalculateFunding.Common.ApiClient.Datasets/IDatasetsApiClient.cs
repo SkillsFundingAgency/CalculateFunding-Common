@@ -34,6 +34,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId);
         Task<ApiResponse<JobCreationResponse>> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel);
         Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null);
+        Task<HttpStatusCode> UploadDatasetFile(string filename, DatasetMetadataViewModel datasetMetadataViewModel);
         Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetMergeFile(string datasetId, string datasetVersion);
         Task<ApiResponse<string>> Reindex();
         Task<ApiResponse<string>> ReindexDatasetVersions();
