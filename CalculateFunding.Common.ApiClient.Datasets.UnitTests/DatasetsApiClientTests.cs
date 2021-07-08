@@ -473,5 +473,31 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 }.AsEnumerable(),
                 _ => _client.GetPublishedSpecificationTemplateMetadata(_));
         }
+
+        [TestMethod]
+        public async Task UpdateDefinitionSpecificationRelationship()
+        {
+            string relationshipId = NewRandomString();
+            string specificationId = NewRandomString();
+            UpdateDefinitionSpecificationRelationshipModel model = new UpdateDefinitionSpecificationRelationshipModel();
+
+            await AssertPutRequest($"specifications/{specificationId}/datasets/edit-definition-specification-relationship/{relationshipId}",
+                model,
+                new DefinitionSpecificationRelationshipVersion(),
+                () => _client.UpdateDefinitionSpecificationRelationship(model, specificationId, relationshipId));
+        }
+
+        [TestMethod]
+        public async Task GetFundingLinesCalculations()
+        {
+            string relationshipId = NewRandomString();
+
+            await AssertGetRequest($"datasets/definition-relationships/{relationshipId}/get-funding-line-calculations",
+                relationshipId,
+                new PublishedSpecificationConfiguration
+                {
+                },
+                _ => _client.GetFundingLinesCalculations(_));
+        }
     }
 }

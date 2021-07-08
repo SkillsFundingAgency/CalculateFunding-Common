@@ -9,5 +9,9 @@
         public string SourceCodeName { get; set; }
 
         public FieldType FieldType { get; set; }
+
+        public bool IsObsolete { get; set; }
+
+        public bool IsSelected { get; set; }
     }
 }

@@ -335,5 +335,21 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 
             return await GetAsync<IEnumerable<PublishedSpecificationTemplateMetadata>>($"specifications/{specificationId}/published-specification-template-metadata");
         }
+
+        public async Task<ValidatedApiResponse<DefinitionSpecificationRelationshipVersion>> UpdateDefinitionSpecificationRelationship(UpdateDefinitionSpecificationRelationshipModel model, string specificationId, string relationshipId)
+        {
+            Guard.ArgumentNotNull(model, nameof(model));
+            Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await ValidatedPutAsync<DefinitionSpecificationRelationshipVersion, UpdateDefinitionSpecificationRelationshipModel>($"specifications/{specificationId}/datasets/edit-definition-specification-relationship/{relationshipId}", model);
+        }
+
+        public async Task<ApiResponse<PublishedSpecificationConfiguration>> GetFundingLinesCalculations(string relationshipId)
+        {
+            Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
+
+            return await GetAsync<PublishedSpecificationConfiguration>($"datasets/definition-relationships/{relationshipId}/get-funding-line-calculations");
+        }
     }
 }
