@@ -1,6 +1,7 @@
 ﻿using CalculateFunding.Common.ServiceBus.Interfaces;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
+using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -59,13 +60,20 @@ namespace CalculateFunding.Common.ServiceBus
             await queue.DeleteMessageAsync(message);
         }
 
-        public async Task AddMessage(string entityPath, CloudQueueMessage message)
+        public async Task AddMessage(string entityPath, CloudQueueMessage message, TimeSpan? timeSpan = null)
         {
             CloudQueue queue = GetQueueClient(entityPath).GetQueueReference(entityPath);
 
             await queue.CreateIfNotExistsAsync();
 
-            await queue.AddMessageAsync(message);
+            if (timeSpan.HasValue)
+            {
+                await queue.AddMessageAsync(message, null, timeSpan.Value, null, null);
+            }
+            else
+            {
+                await queue.AddMessageAsync(message);
+            }
         }
 
         public void TimedOut()

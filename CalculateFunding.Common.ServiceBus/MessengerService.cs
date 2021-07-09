@@ -23,7 +23,7 @@ namespace CalculateFunding.Common.ServiceBus
 
         private IMessageReceiverFactory _messageReceiverFactory;
 
-        public MessengerService(ServiceBusSettings settings, IManagementClient managementClient, IMessageReceiverFactory messageReceiverFactory, string serviceName = null)
+        public MessengerService(IManagementClient managementClient, IMessageReceiverFactory messageReceiverFactory, string serviceName = null)
         {
             _managementClient = managementClient;
             _messageReceiverFactory = messageReceiverFactory;
@@ -86,18 +86,20 @@ namespace CalculateFunding.Common.ServiceBus
             T data,
             IDictionary<string, string> properties,
             bool compressData = false,
-            string sessionId = null) where T : class
+            string sessionId = null,
+            int? processingDelay = null) where T : class
         {
             string json = JsonConvert.SerializeObject(data);
 
-            await SendToQueueAsJson(queueName, json, properties, compressData, sessionId);
+            await SendToQueueAsJson(queueName, json, properties, compressData, sessionId, processingDelay);
         }
 
         public async Task SendToQueueAsJson(string queueName,
             string data,
             IDictionary<string, string> properties,
             bool compressData = false,
-            string sessionId = null)
+            string sessionId = null,
+            int? processingDelay = null)
         {
             Guard.IsNullOrWhiteSpace(queueName, nameof(queueName));
 
@@ -106,6 +108,11 @@ namespace CalculateFunding.Common.ServiceBus
             foreach (KeyValuePair<string, string> property in properties)
             {
                 message.UserProperties.Add(property.Key, property.Value);
+            }
+
+            if (processingDelay.HasValue)
+            {
+                message.ScheduledEnqueueTimeUtc = DateTime.UtcNow.AddMinutes(processingDelay.Value);
             }
 
             AzureServiceBus.IQueueClient queueClient = _managementClient.GetQueueClient(queueName);
@@ -117,18 +124,20 @@ namespace CalculateFunding.Common.ServiceBus
             T data,
             IDictionary<string, string> properties,
             bool compressData = false,
-            string sessionId = null) where T : class
+            string sessionId = null,
+            int? processingDelay = null) where T : class
         {
             string json = JsonConvert.SerializeObject(data);
 
-            await SendToTopicAsJson(topicName, json, properties, compressData, sessionId);
+            await SendToTopicAsJson(topicName, json, properties, compressData, sessionId, processingDelay);
         }
 
         public async Task SendToTopicAsJson(string topicName,
             string data,
             IDictionary<string, string> properties,
             bool compressData = false,
-            string sessionId = null)
+            string sessionId = null,
+            int? processingDelay = null)
         {
             Guard.IsNullOrWhiteSpace(topicName, nameof(topicName));
 
@@ -137,6 +146,11 @@ namespace CalculateFunding.Common.ServiceBus
             foreach (KeyValuePair<string, string> property in properties)
             {
                 message.UserProperties.Add(property.Key, property.Value);
+            }
+
+            if (processingDelay.HasValue)
+            {
+                message.ScheduledEnqueueTimeUtc = DateTime.UtcNow.AddMinutes(processingDelay.Value);
             }
 
             ITopicClient topicClient = _managementClient.GetTopicClient(topicName);

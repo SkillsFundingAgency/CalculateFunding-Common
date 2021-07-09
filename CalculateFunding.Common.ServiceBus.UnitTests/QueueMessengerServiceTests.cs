@@ -88,7 +88,9 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
         }
 
         [TestMethod]
-        public async Task SendToQueue_MessageSentToQueue()
+        [DataRow(null)]
+        [DataRow(5)]
+        public async Task SendToQueue_MessageSentToQueue(int? processingDelay = null)
         {
             string sessionId = Guid.NewGuid().ToString();
             Job job = new Job { JobDefinitionId = JobDefinitionId };
@@ -102,9 +104,10 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             await WhenMessageSentToQueue(QueueName,
                 job,
                 null,
-                sessionId: sessionId);
+                sessionId: sessionId,
+                processingDelay: processingDelay);
 
-            ThenMessageSentToQueue(QueueName, message);
+            ThenMessageSentToQueue(QueueName, message, processingDelay);
         }
 
         [TestMethod]
@@ -251,14 +254,15 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
                 compressData: compression);
         }
 
-        private async Task WhenMessageSentToQueue<T>(string queueName, T data, IDictionary<string, string> properties, string sessionId, bool compression = false)
+        private async Task WhenMessageSentToQueue<T>(string queueName, T data, IDictionary<string, string> properties, string sessionId, bool compression = false, int? processingDelay = null)
             where T:class
         {
             await _messengerService.SendToQueue(queueName,
                 data,
                 properties,
                 sessionId: sessionId,
-                compressData: compression);
+                compressData: compression,
+                processingDelay: processingDelay);
         }
 
         private async Task WhenMessageSentToQueueAsJson(string queueName, string data, IDictionary<string, string> properties, string sessionId, bool compression = false)
@@ -282,14 +286,21 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             _queueClient.Verify(_ => _.TimedOut());
         }
 
-        private void ThenMessageSentToQueue(string queueName, CloudQueueMessage message)
+        private void ThenMessageSentToQueue(string queueName, CloudQueueMessage message, int? processingDelay = null)
         {
-            _queueClient.Verify(_ => _.AddMessage(queueName, It.Is<CloudQueueMessage>(_ => _.AsString == message.AsString)));
+            if (processingDelay.HasValue)
+            {
+                _queueClient.Verify(_ => _.AddMessage(queueName, It.Is<CloudQueueMessage>(_ => _.AsString == message.AsString), It.Is<TimeSpan?>(_ => _.Value.Minutes == processingDelay.Value)));
+            }
+            else
+            {
+                _queueClient.Verify(_ => _.AddMessage(queueName, It.Is<CloudQueueMessage>(_ => _.AsString == message.AsString), It.IsAny<TimeSpan?>()));
+            }
         }
 
         private void ThenMessageSentToQueueWithCompression(string queueName)
         {
-            _queueClient.Verify(_ => _.AddMessage(queueName, It.IsAny<CloudQueueMessage>()));
+            _queueClient.Verify(_ => _.AddMessage(queueName, It.IsAny<CloudQueueMessage>(), It.IsAny<TimeSpan?>()));
         }
 
         private void ThenServiceIsHealthy(bool isHealthy)

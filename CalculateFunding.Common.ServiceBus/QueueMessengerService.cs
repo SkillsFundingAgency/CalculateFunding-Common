@@ -96,7 +96,8 @@ namespace CalculateFunding.Common.ServiceBus
             T data, 
             IDictionary<string, string> properties, 
             bool compressData = false, 
-            string sessionId = null) where T : class
+            string sessionId = null,
+            int? processingDelay = null) where T : class
         {
             Guard.IsNullOrWhiteSpace(queueName, nameof(queueName));
 
@@ -119,14 +120,17 @@ namespace CalculateFunding.Common.ServiceBus
                 message = new CloudQueueMessage(CompressData(queueMessageJson));
             }
 
-            await _client.AddMessage(queueName, message);
+            await _client.AddMessage(queueName,
+                message,
+                processingDelay.HasValue ? (TimeSpan?)new TimeSpan(0, processingDelay.Value, 0) : null);
         }
 
         public async Task SendToQueueAsJson(string queueName, 
             string data, 
             IDictionary<string, string> properties, 
             bool compressData = false, 
-            string sessionId = null)
+            string sessionId = null,
+            int? processingDelay = null)
         {
             Guard.IsNullOrWhiteSpace(queueName, nameof(queueName));
 
@@ -141,21 +145,29 @@ namespace CalculateFunding.Common.ServiceBus
 
             CloudQueueMessage message = compressData ? new CloudQueueMessage(CompressData(queueMessageJson)) : new CloudQueueMessage(queueMessageJson);
 
-            await _client.AddMessage(queueName, message);
+            await _client.AddMessage(queueName, 
+                message, 
+                processingDelay.HasValue ? (TimeSpan?)new TimeSpan(0, processingDelay.Value, 0) : null);
         }
 
         public async Task SendToTopic<T>(string topicName, 
             T data, 
             IDictionary<string, string> properties, 
             bool compressData = false, 
-            string sessionId = null) where T : class
+            string sessionId = null,
+            int? processingDelay = null) where T : class
         {
-            await SendToQueue(topicName, data, properties, compressData);
+            await SendToQueue(topicName, data, properties, compressData, processingDelay: processingDelay);
         }
 
-        public async Task SendToTopicAsJson(string topicName, string data, IDictionary<string, string> properties, bool compressData = false, string sessionId = null)
+        public async Task SendToTopicAsJson(string topicName,
+            string data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
+            string sessionId = null,
+            int? processingDelay = null)
         {
-            await SendToQueueAsJson(topicName, data, properties, compressData);
+            await SendToQueueAsJson(topicName, data, properties, compressData, processingDelay: processingDelay);
         }
 
         private string CompressData(string body)

@@ -13,7 +13,7 @@ namespace CalculateFunding.Common.ServiceBus.Interfaces
         Task DeleteQueue(string entityPath);
         Task<CloudQueueMessage> GetMessage(string entityPath);
         Task DeleteMessage(string entityPath, CloudQueueMessage message);
-        Task AddMessage(string entityPath, CloudQueueMessage message);
+        Task AddMessage(string entityPath, CloudQueueMessage message, TimeSpan? timeSpan = null);
         Task<bool> Exists(string entityPath);
         void TimedOut();
     }

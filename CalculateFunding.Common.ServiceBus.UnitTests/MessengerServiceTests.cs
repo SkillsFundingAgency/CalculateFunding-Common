@@ -38,8 +38,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             _messageReceiverFactory = new Mock<IMessageReceiverFactory>();
             _topicClient = new Mock<ITopicClient>();
             _queueClient = new Mock<AzureServiceBus.IQueueClient>();
-            _messengerService = new MessengerService(new ServiceBusSettings { ConnectionString = "ConnectionString" },
-                _managementClient.Object,
+            _messengerService = new MessengerService(_managementClient.Object,
                 _messageReceiverFactory.Object);
         }
 
@@ -158,9 +157,10 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         }
 
         [TestMethod]
-        [DataRow(true)]
-        [DataRow(false)]
-        public async Task SendToTopic_MessageSentToTopic(bool compressData)
+        [DataRow(true, null)]
+        [DataRow(false, null)]
+        [DataRow(false, 5)]
+        public async Task SendToTopic_MessageSentToTopic(bool compressData, int? processingDelay)
         {
             string sessionId = Guid.NewGuid().ToString();
             Job job = new Job { JobDefinitionId = JobDefinitionId };
@@ -172,9 +172,10 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                 job,
                 message.UserProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
                 sessionId: sessionId,
-                compressData: compressData);
+                compressData: compressData,
+                processingDelay: processingDelay);
 
-            ThenMessageSentToTopic(sessionId, compressData);
+            ThenMessageSentToTopic(sessionId, compressData, processingDelay);
             _managementClient.VerifyAll();
         }
 
@@ -244,14 +245,15 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             return await _messengerService.ReceiveMessage(entityPath, predicate, TimeSpan.FromMilliseconds(1));
         }
 
-        private async Task WhenMessageSentToTopic<T>(string topicName, T data, IDictionary<string, string> properties, string sessionId, bool compressData = false)
+        private async Task WhenMessageSentToTopic<T>(string topicName, T data, IDictionary<string, string> properties, string sessionId, bool compressData = false, int? processingDelay = null)
             where T:class
         {
             await _messengerService.SendToTopic<T>(topicName,
                 data,
                 properties,
                 sessionId: sessionId,
-                compressData: compressData);
+                compressData: compressData,
+                processingDelay: processingDelay);
         }
 
         private async Task WhenMessageSentToQueue<T>(string queueName, T data, IDictionary<string, string> properties, string sessionId)
@@ -263,7 +265,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                 sessionId: sessionId);
         }
 
-        private void ThenMessageSentToTopic(string sessionId, bool compressData = false)
+        private void ThenMessageSentToTopic(string sessionId, bool compressData = false, int? processingDelay = null)
         {
             if (compressData)
             {
@@ -271,7 +273,14 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             }
             else
             {
-                _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+                if (processingDelay.HasValue)
+                {
+                    _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId && _.ScheduledEnqueueTimeUtc.ToString("g") == DateTime.UtcNow.AddMinutes(processingDelay.Value).ToString("g"))));
+                }
+                else
+                {
+                    _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+                }
             }
         }
 

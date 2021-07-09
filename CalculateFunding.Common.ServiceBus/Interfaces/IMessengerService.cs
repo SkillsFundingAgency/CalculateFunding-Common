@@ -14,12 +14,32 @@ namespace CalculateFunding.Common.ServiceBus.Interfaces
 
         Task<T> ReceiveMessage<T>(string entityPath, Predicate<T> predicate, TimeSpan timeout) where T : class;
 
-        Task SendToQueue<T>(string queueName, T data, IDictionary<string, string> properties, bool compressData = false, string sessionId = null) where T : class;
+        Task SendToQueue<T>(string queueName,
+            T data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
+            string sessionId = null,
+            int? processingDelay = null) where T : class;
 
-        Task SendToQueueAsJson(string queueName, string data, IDictionary<string, string> properties, bool compressData = false, string sessionId = null);
+        Task SendToQueueAsJson(string queueName,
+            string data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
+            string sessionId = null,
+            int? processingDelay = null);
 
-        Task SendToTopic<T>(string topicName, T data, IDictionary<string, string> properties, bool compressData = false, string sessionId = null) where T : class;
+        Task SendToTopic<T>(string topicName,
+            T data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
+            string sessionId = null,
+            int? processingDelay = null) where T : class;
 
-        Task SendToTopicAsJson(string topicName, string data, IDictionary<string, string> properties, bool compressData = false, string sessionId = null);
+        Task SendToTopicAsJson(string topicName,
+            string data,
+            IDictionary<string, string> properties,
+            bool compressData = false,
+            string sessionId = null,
+            int? processingDelay = null);
     }
 }
