@@ -26,6 +26,8 @@ namespace CalculateFunding.Common.ApiClient.Graph.Models
         public string DataFieldId { get; set; }
         [JsonProperty("datafieldisaggregable")]
         public bool DataFieldIsAggregable { get; set; }
+        [JsonProperty("sourceCodeName")]
+        public string SourceCodeName { get; set; }
 
     }
 }

@@ -1,6 +1,5 @@
 ﻿using CalculateFunding.Common.ApiClient.Graph.Models;
 using CalculateFunding.Common.ApiClient.Models;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -72,5 +71,12 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<HttpStatusCode> UpsertDataDefinitionDatasetRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<HttpStatusCode> UpsertCalculationSpecificationRelationships(params AmendRelationshipRequestModel[] relationships);
         Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLines(params string[] fundingLineIds);
+        Task<HttpStatusCode> DeleteDatasetRelationship(string relationshipId);
+        Task<HttpStatusCode> UpsertDatasetRelationships(params DatasetRelationship[] datasetRelationships);
+        Task<HttpStatusCode> DeleteDatasetRelationships(params string[] relationshipIds);
+        Task<ApiResponse<IEnumerable<Entity<DatasetRelationship>>>> GetAllEntitiesRelatedToDatasetRelationships(params string[] relationshipIds);
+        Task<HttpStatusCode> DeleteDatasetRelationshipDataFieldRelationship(string datasetRelationshipId, string dataFieldUniqueId);
+        Task<HttpStatusCode> UpsertDatasetRelationshipDataFieldRelationships(string datasetRelationshipId, string[] dataFieldUniqueIds);
+        Task<HttpStatusCode> DeleteDatasetRelationshipDataFieldRelationships(params AmendRelationshipRequestModel[] relationships);
     }
 }

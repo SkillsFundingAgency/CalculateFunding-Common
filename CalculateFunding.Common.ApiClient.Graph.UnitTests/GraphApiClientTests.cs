@@ -44,6 +44,87 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task UpsertDatasetRelationships()
+        {
+            await AssertPostRequest("datasetrelationships",
+                DatasetRelationships(NewDatasetRelationship(), NewDatasetRelationship()),
+                HttpStatusCode.OK,
+                _client.UpsertDatasetRelationships);
+        }
+
+        [TestMethod]
+        public async Task DeleteDatasetRelationship()
+        {
+            string id = NewRandomString();
+
+            await AssertDeleteRequest($"datasetrelationship/{id}",
+                id,
+                HttpStatusCode.OK,
+                _client.DeleteDatasetRelationship);
+        }
+
+        [TestMethod]
+        public async Task DeleteDatasetRelationships()
+        {
+            await AssertPostRequest("datasetrelationship/delete",
+                Strings(NewRandomString(), NewRandomString()),
+                HttpStatusCode.OK,
+                _client.DeleteDatasetRelationships);
+        }
+
+        [TestMethod]
+        public async Task GetAllEntitiesRelatedToDatasetRelationships()
+        {
+            await AssertPostRequest("datasetrelationship/getallentitiesforall",
+                Strings(NewRandomString(), NewRandomString()),
+                AsEntities(NewDatasetRelationship(), NewDatasetRelationship())
+                    .AsEnumerable(),
+                _client.GetAllEntitiesRelatedToDatasetRelationships);
+        }
+
+        [TestMethod]
+        public async Task DeleteDatasetRelationshipDataFieldRelationship()
+        {
+            string datasetRelationshipId = NewRandomString();
+            string dataFieldUniqueId = NewRandomString();
+
+            await AssertDeleteRequest($"datasetrelationship/{datasetRelationshipId}/relationships/datafields/{dataFieldUniqueId}",
+                HttpStatusCode.OK,
+                () => _client.DeleteDatasetRelationshipDataFieldRelationship(datasetRelationshipId, dataFieldUniqueId));
+        }
+
+        [TestMethod]
+        public async Task UpsertDatasetRelationshipDataFieldRelationships()
+        {
+            string id = NewRandomString();
+            string[] ids = Strings(NewRandomString(), NewRandomString());
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            GivenTheStatusCode($"datasetrelationship/{id}/relationships/datafields",
+                expectedStatusCode,
+                HttpMethod.Post);
+
+            HttpStatusCode apiResponse = await _client.UpsertDatasetRelationshipDataFieldRelationships(id, ids);
+
+            apiResponse
+                .Should()
+                .Be(expectedStatusCode);
+
+            AndTheRequestContentsShouldHaveBeen(ids.AsJson());
+        }
+
+        [TestMethod]
+        public async Task DeleteDatasetRelationshipDataFieldRelationships()
+        {
+            await AssertPostRequest(string.Empty,
+                NewAmendRelationshipRequestModels(NewAmendRelationshipRequestModel(),
+                    NewAmendRelationshipRequestModel()),
+                HttpStatusCode.OK,
+                _client.DeleteDatasetRelationshipDataFieldRelationships);
+        }
+
+        [TestMethod]
         public async Task UpsertSpecifications()
         {
             await AssertPostRequest("specifications",
@@ -778,6 +859,11 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
             FundingLineId = NewRandomString()
         };
 
+        private DatasetRelationship NewDatasetRelationship() => new DatasetRelationship
+        {
+            DatasetRelationshipId = NewRandomString()
+        };
+
         private Dataset NewDataset() => new Dataset
         {
             DatasetId = NewRandomString()
@@ -800,5 +886,6 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
 
         private DataField NewDatasetField() => new DataField();
         private DataField[] DatasetFields(params DataField[] datasetFields) => datasetFields;
+        private DatasetRelationship[] DatasetRelationships(params DatasetRelationship[] datasetRelationships) => datasetRelationships;
     }
 }

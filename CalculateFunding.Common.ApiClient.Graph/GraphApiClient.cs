@@ -296,6 +296,60 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await DeleteAsync($"{UrlRoot}/fundingline/{fieldId}");
         }
 
+        public async Task<HttpStatusCode> UpsertDatasetRelationships(params DatasetRelationship[] datasetRelationships)
+        {
+            Guard.ArgumentNotNull(datasetRelationships, nameof(datasetRelationships));
+
+            string url = $"{UrlRoot}/datasetrelationships";
+
+            return await PostAsync(url, datasetRelationships);
+        }
+
+        public async Task<HttpStatusCode> DeleteDatasetRelationship(string relationshipId)
+        {
+            Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
+
+            return await DeleteAsync($"{UrlRoot}/datasetrelationship/{relationshipId}");
+        }
+
+        public async Task<HttpStatusCode> DeleteDatasetRelationships(string[] relationshipIds)
+        {
+            Guard.ArgumentNotNull(relationshipIds, nameof(relationshipIds));
+
+            return await PostAsync($"{UrlRoot}/datasetrelationship/delete", relationshipIds);
+        }
+
+        public async Task<ApiResponse<IEnumerable<Entity<DatasetRelationship>>>> GetAllEntitiesRelatedToDatasetRelationships(params string[] relationshipIds)
+        {
+            Guard.ArgumentNotNull(relationshipIds, nameof(relationshipIds));
+
+            return await PostAsync<IEnumerable<Entity<DatasetRelationship>>, IEnumerable<string>>
+                ($"{UrlRoot}/datasetrelationship/getallentitiesforall", relationshipIds);
+        }
+
+        public async Task<HttpStatusCode> UpsertDatasetRelationshipDataFieldRelationships(string datasetRelationshipId, string[] dataFieldUniqueIds)
+        {
+            Guard.IsNullOrWhiteSpace(datasetRelationshipId, nameof(datasetRelationshipId));
+            Guard.ArgumentNotNull(dataFieldUniqueIds, nameof(dataFieldUniqueIds));
+
+            return await PostAsync($"{UrlRoot}/datasetrelationship/{datasetRelationshipId}/relationships/datafields", dataFieldUniqueIds);
+        }
+
+        public async Task<HttpStatusCode> DeleteDatasetRelationshipDataFieldRelationship(string datasetRelationshipId, string dataFieldUniqueId)
+        {
+            Guard.IsNullOrWhiteSpace(datasetRelationshipId, nameof(datasetRelationshipId));
+            Guard.IsNullOrWhiteSpace(dataFieldUniqueId, nameof(dataFieldUniqueId));
+
+            return await DeleteAsync($"{UrlRoot}/datasetrelationship/{datasetRelationshipId}/relationships/datafields/{dataFieldUniqueId}");
+        }
+
+        public async Task<HttpStatusCode> DeleteDatasetRelationshipDataFieldRelationships(params AmendRelationshipRequestModel[] relationships)
+        {
+            Guard.ArgumentNotNull(relationships, nameof(relationships));
+
+            return await PostAsync($"{UrlRoot}/datasetrelationship/relationships/datafields/delete", relationships);
+        }
+
         public async Task<HttpStatusCode> DeleteEnums(string[] fieldIds)
         {
             Guard.ArgumentNotNull(fieldIds, nameof(fieldIds));
