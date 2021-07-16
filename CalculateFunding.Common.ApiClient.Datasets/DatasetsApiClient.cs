@@ -139,6 +139,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetViewModel>>(DataSetsUriFor($"get-datasets-by-definitionid?definitionId={definitionId}"));
         }
 
+        public async Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetReferenceRelationshipsBySpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<DatasetSpecificationRelationshipViewModel>>(DataSetsUriFor($"get-reference-relationships-by-specificationId?specificationId={specificationId}"));
+        }
+        
         public async Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetCurrentRelationshipsBySpecificationId(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
