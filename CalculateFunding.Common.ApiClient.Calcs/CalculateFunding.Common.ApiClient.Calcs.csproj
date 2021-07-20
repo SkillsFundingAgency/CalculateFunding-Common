@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Calculations microservice client</Description>
-    <Version>7.2.0</Version>
+    <Version>7.2.1</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <RepositoryUrl>https://dfe-gov-uk.visualstudio.com/Calculate%20Funding%20Service/_git/CalculateFunding-Common</RepositoryUrl>
