@@ -63,5 +63,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// Number
         /// </summary>
         Number,
+
+        Adjustment
     }
 }
