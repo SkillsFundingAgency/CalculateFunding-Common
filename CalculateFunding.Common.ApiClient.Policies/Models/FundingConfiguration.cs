@@ -52,6 +52,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("enableConverterDataMerge")]
         public bool EnableConverterDataMerge { get; set; }
 
+        [JsonProperty("successorCheck")]
+        public bool SuccessorCheck { get; set; }
+
         [JsonProperty("indicativeOpenerProviderStatus")]
         public IEnumerable<string> IndicativeOpenerProviderStatus { get; set; }
 

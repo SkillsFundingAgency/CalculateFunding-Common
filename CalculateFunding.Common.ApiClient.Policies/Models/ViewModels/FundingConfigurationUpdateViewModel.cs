@@ -21,6 +21,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
 
         public bool EnableConverterDataMerge { get; set; }
 
+        public bool SuccessorCheck { get; set; }
+
         public IEnumerable<string> IndicativeOpenerProviderStatus { get; set; }
 
         public IEnumerable<string> AllowedPublishedFundingStreamsIdsToReference { get; set; }
