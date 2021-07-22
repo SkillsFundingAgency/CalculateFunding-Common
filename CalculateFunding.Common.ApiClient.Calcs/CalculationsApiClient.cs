@@ -329,5 +329,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             Guard.IsNullOrWhiteSpace(calculationId, nameof(calculationId));
             return await PatchAsync($"{ObsoleteItemsRoot}/{obsoleteItemId}/{calculationId}");
         }
+
+        public async Task<ApiResponse<IEnumerable<Job>>> ReMapSpecification(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<IEnumerable<Job>>($"{UrlRoot}/{specificationId}/remap");
+        }
     }
 }

@@ -519,5 +519,22 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Should()
                 .Be(HttpStatusCode.OK);
         }
+
+        [TestMethod]
+        public async Task ReMapSpecification()
+        {
+            string specificationId = NewRandomString();
+
+            IEnumerable<Job> expectedJobs = new List<Job>();
+
+            GivenTheResponse($"calcs/{specificationId}/remap", expectedJobs, HttpMethod.Post);
+
+            ApiResponse<IEnumerable<Job>> apiResponse = await _client.ReMapSpecification(specificationId);
+
+            apiResponse
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedJobs);
+        }
     }
 }

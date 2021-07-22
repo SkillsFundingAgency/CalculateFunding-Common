@@ -163,10 +163,18 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         [TestMethod]
         public async Task ValidateRelationshipPostsSuppliedModel()
         {
-            await AssertPostRequest("validate-definitionspecification-relationship",
-                new ValidateDefinitionSpecificationRelationshipModel(),
-                HttpStatusCode.OK,
-                _ => _client.ValidateDefinitionSpecificationRelationship(_));
+            ValidateDefinitionSpecificationRelationshipModel validateDefinitionSpecificationRelationshipModel = new ValidateDefinitionSpecificationRelationshipModel();
+
+            GivenTheStatusCode("datasets/validate-definitionspecification-relationship", HttpStatusCode.OK, HttpMethod.Post);
+
+            NoValidatedContentApiResponse apiResponse = await _client.ValidateDefinitionSpecificationRelationship(validateDefinitionSpecificationRelationshipModel);
+
+            apiResponse?
+                .StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            AndTheRequestContentsShouldHaveBeen(validateDefinitionSpecificationRelationshipModel.AsJson());
         }
 
         [TestMethod]

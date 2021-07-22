@@ -24,7 +24,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 
         Task<ApiResponse<DefinitionSpecificationRelationship>> CreateRelationship(
             CreateDefinitionSpecificationRelationshipModel createDefinitionSpecificationRelationshipModel);
-        Task<HttpStatusCode> ValidateDefinitionSpecificationRelationship(
+        Task<NoValidatedContentApiResponse> ValidateDefinitionSpecificationRelationship(
             ValidateDefinitionSpecificationRelationshipModel validateDefinitionSpecificationRelationshipModel);
 
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetRelationshipsBySpecificationId(string specificationId);
