@@ -70,6 +70,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<HttpStatusCode> RemoveObsoleteItem(string obsoleteItemId, string calculationId);
         Task<HttpStatusCode> AddCalculationToObsoleteItem(string obsoleteItemId, string calculationId);
         Task<ValidatedApiResponse<Calculation>> EditCalculationWithSkipInstruct(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
-        Task<ApiResponse<IEnumerable<Job>>> ReMapSpecification(string specificationId);
+        Task<ApiResponse<Job>> ReMapSpecificationReference(string specificationId, string datasetDefinitionRelationshipId);
     }
 }

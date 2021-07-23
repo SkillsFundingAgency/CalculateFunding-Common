@@ -330,11 +330,11 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             return await PatchAsync($"{ObsoleteItemsRoot}/{obsoleteItemId}/{calculationId}");
         }
 
-        public async Task<ApiResponse<IEnumerable<Job>>> ReMapSpecification(string specificationId)
+        public async Task<ApiResponse<Job>> ReMapSpecificationReference(string specificationId, string datasetDefinitionRelationshipId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await PostAsync<IEnumerable<Job>>($"{UrlRoot}/{specificationId}/remap");
+            return await PostAsync<Job>($"{UrlRoot}/{specificationId}/{datasetDefinitionRelationshipId}/remap");
         }
     }
 }

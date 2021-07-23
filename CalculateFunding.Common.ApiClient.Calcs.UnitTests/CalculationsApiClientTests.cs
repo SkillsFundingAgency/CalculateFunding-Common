@@ -524,17 +524,18 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         public async Task ReMapSpecification()
         {
             string specificationId = NewRandomString();
+            string datasetRelationshipId = NewRandomString();
 
-            IEnumerable<Job> expectedJobs = new List<Job>();
+            Job expectedJob = new Job();
 
-            GivenTheResponse($"calcs/{specificationId}/remap", expectedJobs, HttpMethod.Post);
+            GivenTheResponse($"calcs/{specificationId}/{datasetRelationshipId}/remap", expectedJob, HttpMethod.Post);
 
-            ApiResponse<IEnumerable<Job>> apiResponse = await _client.ReMapSpecification(specificationId);
+            ApiResponse<Job> apiResponse = await _client.ReMapSpecificationReference(specificationId, datasetRelationshipId);
 
             apiResponse
                 .Content
                 .Should()
-                .BeEquivalentTo(expectedJobs);
+                .BeEquivalentTo(expectedJob);
         }
     }
 }
