@@ -13,24 +13,25 @@ namespace CalculateFunding.Common.Config.ApiClient.Specifications
         private const string ClientName = "specificationsClient";
 
         public static IServiceCollection AddSpecificationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default,
+            string clientKey = null, string clientName = null)
         {
             if (retryTimeSpans == null)
             {
                 retryTimeSpans = new[] { TimeSpan.FromMilliseconds(500), TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5) };
             }
 
-            if (circuitBreakerFailurePeriod == default(TimeSpan))
+            if (circuitBreakerFailurePeriod == default)
             {
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Specifications,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(clientKey ?? HttpClientKeys.Specifications,
                     (httpClient) =>
                     {
                         ApiOptions apiOptions = new ApiOptions();
 
-                        config.Bind(ClientName, apiOptions);
+                        config.Bind(clientName ?? ClientName, apiOptions);
 
                         ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(httpClient, apiOptions);
                     })

@@ -13,7 +13,8 @@ namespace CalculateFunding.Common.Config.ApiClient.Policies
         private const string ClientName = "policiesClient";
 
         public static IServiceCollection AddPoliciesInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default,
+            string clientKey = null, string clientName = null)
         {
             if (retryTimeSpans == null)
             {
@@ -26,12 +27,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Policies
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Policies,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(clientKey ?? HttpClientKeys.Policies,
                (httpClient) =>
                {
                    ApiOptions apiOptions = new ApiOptions();
 
-                   config.Bind(ClientName, apiOptions);
+                   config.Bind(clientName ?? ClientName, apiOptions);
 
                    ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(httpClient, apiOptions);
                })

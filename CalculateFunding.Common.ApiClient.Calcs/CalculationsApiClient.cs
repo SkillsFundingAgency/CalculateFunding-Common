@@ -16,8 +16,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         private const string UrlRoot = "calcs";
         private const string ObsoleteItemsRoot = "obsoleteitems";
 
-        public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null)
-         : base(httpClientFactory, HttpClientKeys.Calculations, logger, cancellationTokenProvider)
+        public CalculationsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null, string clientKey = null)
+         : base(httpClientFactory, clientKey ?? HttpClientKeys.Calculations, logger, cancellationTokenProvider)
         { }
 
         public async Task<ApiResponse<SearchResults<CalculationSearchResult>>> SearchCalculationsForSpecification(string specificationId,
@@ -139,6 +139,26 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             string url = $"{UrlRoot}/specifications/{specificationId}/calculations";
 
             return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
+        }
+
+        public async Task<ValidatedApiResponse<Calculation>> CreateCalculationBatchOperation(string specificationId, CalculationCreateModel calculationCreateModel)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(calculationCreateModel, nameof(calculationCreateModel));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/batch";
+
+            return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
+        }
+
+        public async Task<ApiResponse<Job>> QueueCalculationRun(string specificationId, QueueCalculationRunModel queueCalculationRunModel)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(queueCalculationRunModel, nameof(queueCalculationRunModel));
+
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/queue-calculation-run";
+
+            return await PostAsync<Job, QueueCalculationRunModel>(url, queueCalculationRunModel);
         }
 
         public async Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel)

@@ -19,8 +19,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications
 
         public SpecificationsApiClient(IHttpClientFactory httpClientFactory,
             ILogger logger,
-            ICancellationTokenProvider cancellationTokenProvider = null)
-            : base(httpClientFactory, HttpClientKeys.Specifications, logger, cancellationTokenProvider)
+            ICancellationTokenProvider cancellationTokenProvider = null,
+            string clientKey = null)
+            : base(httpClientFactory, clientKey ?? HttpClientKeys.Specifications, logger, cancellationTokenProvider)
         {
         }
 

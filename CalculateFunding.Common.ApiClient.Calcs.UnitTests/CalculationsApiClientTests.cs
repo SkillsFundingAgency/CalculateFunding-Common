@@ -187,6 +187,32 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         }
 
         [TestMethod]
+        public async Task CreateCalculationBatchOperation()
+        {
+            string id = NewRandomString();
+
+            CalculationCreateModel calculationCreateModel = new CalculationCreateModel();
+
+            await AssertPostRequest($"specifications/{id}/calculations/batch",
+                calculationCreateModel,
+                new Calculation(),
+                () => _client.CreateCalculationBatchOperation(id, calculationCreateModel));
+        }
+
+        [TestMethod]
+        public async Task QueueCalculationRun()
+        {
+            string id = NewRandomString();
+
+            QueueCalculationRunModel queueCalculationRunModel = new QueueCalculationRunModel();
+
+            await AssertPostRequest($"specifications/{id}/calculations/queue-calculation-run",
+                queueCalculationRunModel,
+                new Job(),
+                () => _client.QueueCalculationRun(id, queueCalculationRunModel));
+        }
+
+        [TestMethod]
         public async Task EditCalculation()
         {
             string specificationId = NewRandomString();

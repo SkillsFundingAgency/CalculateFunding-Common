@@ -1,14 +1,9 @@
 ﻿using CalculateFunding.Common.ApiClient;
 using CalculateFunding.Common.ApiClient.Calcs;
-using CalculateFunding.Common.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 
 namespace CalculateFunding.Common.Config.ApiClient.Calcs
@@ -18,7 +13,8 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
         private const string ClientName = "calcsClient";
 
         public static IServiceCollection AddCalculationsInterServiceClient(this IServiceCollection builder, IConfiguration config,
-            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default)
+            TimeSpan[] retryTimeSpans = null, int numberOfExceptionsBeforeCircuitBreaker = 100, TimeSpan circuitBreakerFailurePeriod = default, TimeSpan handlerLifetime = default,
+            string clientKey = null, string clientName = null)
         {
             if (retryTimeSpans == null)
             {
@@ -30,12 +26,12 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
                 circuitBreakerFailurePeriod = TimeSpan.FromMinutes(1);
             }
 
-            IHttpClientBuilder httpBuilder = builder.AddHttpClient(HttpClientKeys.Calculations,
+            IHttpClientBuilder httpBuilder = builder.AddHttpClient(clientKey ?? HttpClientKeys.Calculations,
                (httpClient) =>
                {
                    ApiOptions apiOptions = new ApiOptions();
 
-                   config.Bind(ClientName, apiOptions);
+                   config.Bind(clientName ?? ClientName, apiOptions);
 
                    ApiClientConfigurationOptions.SetDefaultApiClientConfigurationOptions(httpClient, apiOptions);
                })
@@ -56,7 +52,5 @@ namespace CalculateFunding.Common.Config.ApiClient.Calcs
 
             return builder;
         }
-
-       
     }
 }

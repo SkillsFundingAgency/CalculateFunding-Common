@@ -15,8 +15,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets
 {
     public class DatasetsApiClient : BaseApiClient, IDatasetsApiClient
     {
-        public DatasetsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null) 
-            : base(httpClientFactory, HttpClientKeys.Datasets, logger, cancellationTokenProvider)
+        public DatasetsApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null, string clientKey = null) 
+            : base(httpClientFactory, clientKey ?? HttpClientKeys.Datasets, logger, cancellationTokenProvider)
         {
         }
 

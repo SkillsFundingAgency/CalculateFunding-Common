@@ -16,8 +16,8 @@ namespace CalculateFunding.Common.ApiClient.Jobs
     {
         public JobsApiClient(IHttpClientFactory httpClientFactory,
             ILogger logger,
-            ICancellationTokenProvider cancellationTokenProvider = null)
-            : base(httpClientFactory, HttpClientKeys.Jobs, logger, cancellationTokenProvider)
+            ICancellationTokenProvider cancellationTokenProvider = null, string clientKey = null)
+            : base(httpClientFactory, clientKey ?? HttpClientKeys.Jobs, logger, cancellationTokenProvider)
         {
         }
 

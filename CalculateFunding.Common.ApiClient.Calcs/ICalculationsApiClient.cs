@@ -26,6 +26,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<bool>> IsCalculationNameValid(string specificationId, string calculationName, string existingCalculationId = null);
 
         Task<ValidatedApiResponse<Calculation>> CreateCalculation(string specificationId, CalculationCreateModel calculationCreateModel);
+        
+        Task<ValidatedApiResponse<Calculation>> CreateCalculationBatchOperation(string specificationId, CalculationCreateModel calculationCreateModel);
 
         Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
 
@@ -71,5 +73,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<HttpStatusCode> AddCalculationToObsoleteItem(string obsoleteItemId, string calculationId);
         Task<ValidatedApiResponse<Calculation>> EditCalculationWithSkipInstruct(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
         Task<ApiResponse<Job>> ReMapSpecificationReference(string specificationId, string datasetDefinitionRelationshipId);
+        Task<ApiResponse<Job>> QueueCalculationRun(string specificationId, QueueCalculationRunModel model);
     }
 }

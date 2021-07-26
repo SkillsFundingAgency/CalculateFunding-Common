@@ -6,7 +6,7 @@
     <Product>Calculate Funding Service</Product>
     <Company>Calculate Funding Service</Company>
     <Description>Common API Client functionality</Description>
-    <Version>4.8.1</Version>
+    <Version>4.9.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
   </PropertyGroup>

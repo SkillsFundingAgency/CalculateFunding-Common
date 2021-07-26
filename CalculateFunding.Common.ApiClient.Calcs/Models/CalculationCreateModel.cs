@@ -1,4 +1,6 @@
-﻿namespace CalculateFunding.Common.ApiClient.Calcs.Models
+﻿using CalculateFunding.Common.Models;
+
+namespace CalculateFunding.Common.ApiClient.Calcs.Models
 {
     public class CalculationCreateModel
     {
@@ -13,5 +15,7 @@
         public string SourceCode { get; set; }
 
         public string Description { get; set; }
+
+        public Reference Author { get; set; }
     }
 }
