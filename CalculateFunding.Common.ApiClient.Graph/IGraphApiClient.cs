@@ -73,6 +73,7 @@ namespace CalculateFunding.Common.ApiClient.Graph
         Task<ApiResponse<IEnumerable<Entity<FundingLine>>>> GetAllEntitiesRelatedToFundingLines(params string[] fundingLineIds);
         Task<HttpStatusCode> DeleteDatasetRelationship(string relationshipId);
         Task<HttpStatusCode> UpsertDatasetRelationships(params DatasetRelationship[] datasetRelationships);
+        Task<HttpStatusCode> UpsertDatasetRelationship(DatasetRelationship datasetRelationship);
         Task<HttpStatusCode> DeleteDatasetRelationships(params string[] relationshipIds);
         Task<ApiResponse<IEnumerable<Entity<DatasetRelationship>>>> GetAllEntitiesRelatedToDatasetRelationships(params string[] relationshipIds);
         Task<HttpStatusCode> DeleteDatasetRelationshipDataFieldRelationship(string datasetRelationshipId, string dataFieldUniqueId);

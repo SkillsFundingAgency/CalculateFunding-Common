@@ -53,6 +53,16 @@ namespace CalculateFunding.Common.ApiClient.Graph.UnitTests
         }
 
         [TestMethod]
+        public async Task UpsertDatasetRelationship()
+        {
+            DatasetRelationship datasetRelationship = NewDatasetRelationship();
+            await AssertPutRequest("datasetrelationship",
+                datasetRelationship,
+                HttpStatusCode.OK,
+                () => _client.UpsertDatasetRelationship(datasetRelationship));
+        }
+
+        [TestMethod]
         public async Task DeleteDatasetRelationship()
         {
             string id = NewRandomString();

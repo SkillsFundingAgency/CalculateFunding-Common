@@ -305,6 +305,15 @@ namespace CalculateFunding.Common.ApiClient.Graph
             return await PostAsync(url, datasetRelationships);
         }
 
+        public async Task<HttpStatusCode> UpsertDatasetRelationship(DatasetRelationship datasetRelationship)
+        {
+            Guard.ArgumentNotNull(datasetRelationship, nameof(datasetRelationship));
+
+            string url = $"{UrlRoot}/datasetrelationship";
+
+            return await PutAsync(url, datasetRelationship);
+        }
+
         public async Task<HttpStatusCode> DeleteDatasetRelationship(string relationshipId)
         {
             Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));

@@ -4,7 +4,7 @@ using System;
 namespace CalculateFunding.Common.ApiClient.Graph.Models
 {
     [Serializable]
-    public class DatasetRelationship
+    public class DatasetRelationship : SpecificationNode
     {
         [JsonProperty("datasetRelationshipId")]
         public string DatasetRelationshipId { get; set; }
