@@ -187,16 +187,20 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
         }
 
         [TestMethod]
-        public async Task CreateCalculationBatchOperation()
+        public async Task CreateCalculationWithSkipParameters()
         {
             string id = NewRandomString();
 
             CalculationCreateModel calculationCreateModel = new CalculationCreateModel();
 
-            await AssertPostRequest($"specifications/{id}/calculations/batch",
+            bool skipCalcRun = NewRandomBoolean();
+            bool skipQueueCodeContextCacheUpdate = NewRandomBoolean();
+            bool overrideCreateModelAuthor = NewRandomBoolean();
+
+            await AssertPostRequest($"specifications/{id}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}",
                 calculationCreateModel,
                 new Calculation(),
-                () => _client.CreateCalculationBatchOperation(id, calculationCreateModel));
+                () => _client.CreateCalculation(id, calculationCreateModel, skipCalcRun, skipQueueCodeContextCacheUpdate, overrideCreateModelAuthor));
         }
 
         [TestMethod]

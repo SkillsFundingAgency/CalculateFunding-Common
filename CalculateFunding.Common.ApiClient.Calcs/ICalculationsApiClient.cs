@@ -26,8 +26,13 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<bool>> IsCalculationNameValid(string specificationId, string calculationName, string existingCalculationId = null);
 
         Task<ValidatedApiResponse<Calculation>> CreateCalculation(string specificationId, CalculationCreateModel calculationCreateModel);
-        
-        Task<ValidatedApiResponse<Calculation>> CreateCalculationBatchOperation(string specificationId, CalculationCreateModel calculationCreateModel);
+
+        Task<ValidatedApiResponse<Calculation>> CreateCalculation(
+            string specificationId,
+            CalculationCreateModel calculationCreateModel,
+            bool skipCalcRun,
+            bool skipQueueCodeContextCacheUpdate,
+            bool overrideCreateModelAuthor);
 
         Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
 

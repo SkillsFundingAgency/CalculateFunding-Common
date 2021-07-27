@@ -141,12 +141,17 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
         }
 
-        public async Task<ValidatedApiResponse<Calculation>> CreateCalculationBatchOperation(string specificationId, CalculationCreateModel calculationCreateModel)
+        public async Task<ValidatedApiResponse<Calculation>> CreateCalculation(
+            string specificationId, 
+            CalculationCreateModel calculationCreateModel,
+            bool skipCalcRun,
+            bool skipQueueCodeContextCacheUpdate,
+            bool overrideCreateModelAuthor)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(calculationCreateModel, nameof(calculationCreateModel));
 
-            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/batch";
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}";
 
             return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
         }
