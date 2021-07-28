@@ -581,6 +581,17 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 () => _client.SetProfileVariationPointers(specificationId, model));
         }
 
+        [TestMethod]
+        public async Task MergeProfileVariationPointers()
+        {
+            string specificationId = NewRandomString();
+            IEnumerable<ProfileVariationPointer> model = new List<ProfileVariationPointer>();
+
+            await AssertPatchRequest($"{specificationId}/mergeprofilevariationpointers",
+                HttpStatusCode.OK,
+                () => _client.MergeProfileVariationPointers(specificationId, model));
+        }
+
         [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
         [TestMethod]
         public async Task SetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(string specificationId)
@@ -596,6 +607,26 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         public async Task SetProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointersMissing()
         {
             Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersSet(NewRandomString(), null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>();
+        }
+
+        [DynamicData(nameof(MissingIdExamples), DynamicDataSourceType.Method)]
+        [TestMethod]
+        public async Task MergeProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationIdMissing(string specificationId)
+
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersMerged(specificationId, null);
+
+            await invocation.Should()
+                .ThrowExactlyAsync<ArgumentNullException>(specificationId);
+        }
+
+        [TestMethod]
+        public async Task MergeProfileVariationPointersAsyncThrowsExceptionIfSuppliedSpecificationProfileVariationPointersMissing()
+        {
+            Func<Task> invocation = () => WhenTheSpecificationProfileVariationPointersMerged(NewRandomString(), null);
 
             await invocation.Should()
                 .ThrowExactlyAsync<ArgumentNullException>();
@@ -766,6 +797,11 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersSet(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             return await _client.SetProfileVariationPointers(specificationId, profileVariationPointers);
+        }
+
+        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersMerged(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        {
+            return await _client.MergeProfileVariationPointers(specificationId, profileVariationPointers);
         }
 
         private async Task<ApiResponse<IEnumerable<SpecificationSummary>>> WhenTheSpecificationSummaryIsQueriedForFundingByPeriod(

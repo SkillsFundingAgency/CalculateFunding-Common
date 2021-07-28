@@ -274,12 +274,20 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointer", profileVariationPointer);
         }
 
-        public async Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointer)
+        public async Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
-            Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
+            Guard.ArgumentNotNull(profileVariationPointers, nameof(profileVariationPointers));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointer);
+            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointers);
+        }
+
+        public async Task<HttpStatusCode> MergeProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(profileVariationPointers, nameof(profileVariationPointers));
+
+            return await PatchAsync($"{UrlRoot}/{specificationId}/mergeprofilevariationpointers", profileVariationPointers);
         }
 
         public async Task<ApiResponse<JobModel>> ReIndexSpecification(string specificationId)
