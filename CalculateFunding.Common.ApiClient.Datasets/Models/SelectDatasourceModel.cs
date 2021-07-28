@@ -10,12 +10,18 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public string DefinitionId { get; set; }
 
-        public string DefinitionName{ get; set; }
+        public string DefinitionName { get; set; }
 
         public string RelationshipId { get; set; }
 
         public string RelationshipName { get; set; }
 
         public IEnumerable<DatasetVersions> Datasets { get; set; }
+
+        public DatasetRelationshipType RelationshipType { get; set; }
+
+        public string SourceSpecificationId { get; set; }
+
+        public string SourceSpecificationName { get; set; }
     }
 }
