@@ -61,6 +61,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await ValidatedPostAsync<NewDatasetVersionResponseModel, CreateNewDatasetModel>(DataSetsUriFor("create-new-dataset"), createNewDatasetModel);
         }
 
+        public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateAndPersistNewDataset(CreateNewDatasetModel createNewDatasetModel)
+        {
+            Guard.ArgumentNotNull(createNewDatasetModel, nameof(createNewDatasetModel));
+
+            return await ValidatedPostAsync<NewDatasetVersionResponseModel, CreateNewDatasetModel>(DataSetsUriFor("create-persist-new-dataset"), createNewDatasetModel);
+        }
+
         public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdate(DatasetVersionUpdateModel datasetVersionUpdateModel)
         {
             Guard.ArgumentNotNull(datasetVersionUpdateModel, nameof(datasetVersionUpdateModel));
