@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 
-namespace CalculateFunding.Common.ApiClient.Calcs.Models
+namespace CalculateFunding.Common.ApiClient.Calcs.Models.ObsoleteItems
 {
     public class ObsoleteItem : IIdentifiable
     {
@@ -12,6 +12,25 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         [JsonProperty("specificationId")]
         public string SpecificationId { get; set; }
+
+        [JsonProperty("datasetRelationshipId")]
+        public string DatasetRelationshipId { get; set; }
+
+        [JsonProperty("datasetRelationshipName")]
+        public string DatasetRelationshipName { get; set; }
+
+        [JsonProperty("datasetFieldId")]
+        public string DatasetFieldId { get; set; }
+
+        [JsonProperty("datasetFieldName")]
+        public string DatasetFieldName { get; set; }
+
+        [JsonProperty("datasetDatatype")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public DatasetFieldType DatasetDatatype { get; set; }
+
+        [JsonProperty("IsReleasedData")]
+        public bool IsReleasedData { get; set; }
 
         [JsonProperty("itemType")]
         [JsonConverter(typeof(StringEnumConverter))]

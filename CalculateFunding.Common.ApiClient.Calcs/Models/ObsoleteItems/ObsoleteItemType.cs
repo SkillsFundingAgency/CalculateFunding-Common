@@ -1,4 +1,4 @@
-﻿namespace CalculateFunding.Common.ApiClient.Calcs.Models
+﻿namespace CalculateFunding.Common.ApiClient.Calcs.Models.ObsoleteItems
 {
     public enum ObsoleteItemType
     {
