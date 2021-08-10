@@ -1,10 +1,9 @@
-﻿using System;
+﻿using CalculateFunding.Common.ApiClient.Models;
+using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.Models.Search;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Models;
-using CalculateFunding.Common.ApiClient.Publishing.Models;
-using CalculateFunding.Common.Models.Search;
 
 namespace CalculateFunding.Common.ApiClient.Publishing
 {
@@ -25,17 +24,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ValidatedApiResponse<JobCreationResponse>> RefreshFundingForSpecification(string specificationId);
 
         Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForSpecification(string specificationId);
-        
+
         Task<ValidatedApiResponse<JobCreationResponse>> ApproveFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest approveProvidersRequest);
 
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForSpecification(string specificationId);
-        
+
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest publishProvidersRequest);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
 
         Task<ApiResponse<IEnumerable<string>>> SearchPublishedProviderIds(PublishedProviderIdSearchModel searchModel);
-        
+
         Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId,
             string providerType = null,
             string localAuthority = null,
@@ -98,7 +97,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string fundingStreamId,
             string providerId,
             string etag = null);
-        
+
         Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
            string publishedProviderVersionId, string etag = null);
 
@@ -127,5 +126,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<BatchUploadResponse>> UploadBatch(BatchUploadRequest request);
         Task<ValidatedApiResponse<JobCreationResponse>> QueueBatchUploadValidation(BatchUploadValidationRequest request);
         Task<ApiResponse<IEnumerable<string>>> GetBatchPublishedProviderIds(string batchId);
+
+        Task<ApiResponse<IEnumerable<AvailableVariationPointerFundingLine>>> GetAvailableFundingLineProfilePeriodsForVariationPointers(string specificationId);
     }
 }

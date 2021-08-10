@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using CalculateFunding.Common.ApiClient.Models;
+﻿using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.Publishing
 {
@@ -36,26 +35,26 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(paymentDatesCsv, nameof(paymentDatesCsv));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            
-            return await PostAsync($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates", 
-                default, 
+
+            return await PostAsync($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates",
+                default,
                 paymentDatesCsv);
         }
-        
+
         public async Task<ApiResponse<FundingStreamPaymentDates>> GetPaymentDates(string fundingStreamId, string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
-            
+
             return await GetAsync<FundingStreamPaymentDates>($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/paymentdates");
         }
-        
+
         public async Task<ApiResponse<IEnumerable<ProfileTotal>>> GetLatestProfileTotals(string fundingStreamId, string fundingPeriodId, string providerId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
             Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
-            
+
             string url = $"publishedproviders/{fundingStreamId}/{fundingPeriodId}/{providerId}/profileTotals";
 
             return await GetAsync<IEnumerable<ProfileTotal>>(url);
@@ -145,8 +144,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await ValidatedPostAsync<IEnumerable<string>, string> (
-                $"specifications/{specificationId}/validate-specification-for-refresh", 
+            return await ValidatedPostAsync<IEnumerable<string>, string>(
+                $"specifications/{specificationId}/validate-specification-for-refresh",
                 specificationId);
         }
 
@@ -259,9 +258,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         }
 
         public async Task<ApiResponse<FundingLineProfile>> GetFundingLinePublishedProviderDetails(
-            string specificationId, 
-            string providerId, 
-            string fundingStreamId, 
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
             string fundingLineId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -274,9 +273,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         }
 
         public async Task<ApiResponse<bool>> PreviousProfileExistsForSpecificationForProviderForFundingLine(
-            string specificationId, 
-            string providerId, 
-            string fundingStreamId, 
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
             string fundingLineCode)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -289,9 +288,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         }
 
         public async Task<ApiResponse<IEnumerable<FundingLineChange>>> GetPreviousProfilesForSpecificationForProviderForFundingLine(
-            string specificationId, 
-            string providerId, 
-            string fundingStreamId, 
+            string specificationId,
+            string providerId,
+            string fundingStreamId,
             string fundingLineCode)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
@@ -315,8 +314,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         }
 
         public async Task<ApiResponse<PublishedProviderFundingStructure>> GetCurrentPublishedProviderFundingStructure(
-            string specificationId, 
-            string fundingStreamId, 
+            string specificationId,
+            string fundingStreamId,
             string providerId,
             string etag = null)
         {
@@ -332,7 +331,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         public async Task<ApiResponse<PublishedProviderFundingStructure>> GetPublishedProviderFundingStructure(
             string publishedProviderVersionId,
             string etag = null)
-        {           
+        {
             Guard.IsNullOrWhiteSpace(publishedProviderVersionId, nameof(publishedProviderVersionId));
 
             return await GetAsync<PublishedProviderFundingStructure>(
@@ -356,7 +355,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                };
 
         public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForRelease(
-            PublishedProviderIdsRequest providerIds, 
+            PublishedProviderIdsRequest providerIds,
             string specificationId)
         {
             Guard.ArgumentNotNull(providerIds, nameof(providerIds));
@@ -368,7 +367,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         }
 
         public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForBatchPublishedProvidersForApproval(
-            PublishedProviderIdsRequest providerIds, 
+            PublishedProviderIdsRequest providerIds,
             string specificationId)
         {
             Guard.ArgumentNotNull(providerIds, nameof(providerIds));
@@ -436,6 +435,13 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             Guard.IsNullOrWhiteSpace(batchId, nameof(batchId));
 
             return await GetAsync<IEnumerable<string>>($"publishedproviderbatch/{batchId}/publishedProviders");
+        }
+
+        public async Task<ApiResponse<IEnumerable<AvailableVariationPointerFundingLine>>> GetAvailableFundingLineProfilePeriodsForVariationPointers(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<IEnumerable<AvailableVariationPointerFundingLine>>($"api/specifcations/{specificationId}/availablePeriodsForVariationPointers");
         }
     }
 }
