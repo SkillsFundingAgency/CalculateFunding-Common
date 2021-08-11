@@ -57,6 +57,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<DatasetValidationErrorSasUrlResponseModel>> GetValidateDatasetValidationErrorSasUrl(DatasetValidationErrorRequestModel requestModel);
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationConverterMergeJob(SpecificationConverterMergeRequest request);
         Task<ApiResponse<JobCreationResponse>> QueueConverterMergeJob(ConverterMergeRequest request);
+        Task<ApiResponse<JobCreationResponse>> QueueProcessDatasetObsoleteItemsJob(string specificationId);
         Task<ApiResponse<DatasetDownloadModel>> DownloadConverterWizardReportFile(string specificationId);
         Task<ApiResponse<ConverterDataMergeLog>> GetConverterDataMergeLog(string id);
 

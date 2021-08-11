@@ -306,6 +306,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 "datasets/converter/merge", request);
         }
 
+        public async Task<ApiResponse<JobCreationResponse>> QueueProcessDatasetObsoleteItemsJob(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<JobCreationResponse>(
+                DataSetsUriFor($"queue-process-dataset-obsolete-items-job/{specificationId}"));
+        }
+
         private string DataSetsUriFor(string relativeUri)
         {
             return $"datasets/{relativeUri}";

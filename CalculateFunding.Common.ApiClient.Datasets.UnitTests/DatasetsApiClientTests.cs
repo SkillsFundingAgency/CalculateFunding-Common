@@ -439,6 +439,17 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task QueueProcessDatasetObsoleteItemsJob()
+        {
+            string specificationId = NewRandomString();
+            
+            await AssertGetRequest($"queue-process-dataset-obsolete-items-job/{specificationId}",
+                specificationId,
+                new JobCreationResponse(),
+                _ => _client.QueueProcessDatasetObsoleteItemsJob(_));
+        }
+
+        [TestMethod]
         public async Task DownloadConverterWizardReportFileMakesGetCallWithSuppliedSpecificationId()
         {
             string specificationId = NewRandomString();
