@@ -48,6 +48,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [JsonProperty("indicative")]
         public string Indicative { get; set; }
 
+        [JsonProperty("isIndicative")]
+        public bool IsIndicative { get; set; }
+
         [JsonProperty("hasErrors")]
         public bool HasErrors { get; set; }
         
