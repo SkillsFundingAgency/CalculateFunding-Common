@@ -1,4 +1,6 @@
-﻿namespace CalculateFunding.Common.ApiClient.DataSets.Models
+﻿using System.Collections.Generic;
+
+namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class DatasetMetadataViewModel
     {
@@ -10,6 +12,7 @@
         public string AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string Filename { get; set; }
-        public byte[] Stream { get; set; }
+        public int? Version { get; set; }
+        public IEnumerable<RelationshipDataSetExcelData> ExcelData { get; set; }
     }
 }

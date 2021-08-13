@@ -134,6 +134,15 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task DatasetVersionUpdateAndPersistPostsSuppliedModel()
+        {
+            await AssertPostRequest("dataset-version-update-and-persist",
+                new DatasetVersionUpdateModel(),
+                new NewDatasetVersionResponseModel(),
+                _ => _client.DatasetVersionUpdateAndPersist(_));
+        }
+
+        [TestMethod]
         public async Task SearchDatasetVersionPostsSuppliedModel()
         {
             await AssertPostRequest("datasets-version-search",

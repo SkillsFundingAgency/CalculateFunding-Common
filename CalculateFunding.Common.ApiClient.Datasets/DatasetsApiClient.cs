@@ -75,6 +75,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await ValidatedPostAsync<NewDatasetVersionResponseModel, DatasetVersionUpdateModel>(DataSetsUriFor("dataset-version-update"), datasetVersionUpdateModel);
         }
 
+        public async Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> DatasetVersionUpdateAndPersist(DatasetVersionUpdateModel datasetVersionUpdateModel)
+        {
+            Guard.ArgumentNotNull(datasetVersionUpdateModel, nameof(datasetVersionUpdateModel));
+
+            return await ValidatedPostAsync<NewDatasetVersionResponseModel, DatasetVersionUpdateModel>(DataSetsUriFor("dataset-version-update-and-persist"), datasetVersionUpdateModel);
+        }
+
         public async Task<ApiResponse<SearchResults<DatasetIndex>>> SearchDatasets(SearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
@@ -266,7 +273,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             Guard.IsNullOrWhiteSpace(filename, nameof(filename));
             Guard.ArgumentNotNull(datasetMetadataViewModel, nameof(datasetMetadataViewModel));
 
-            return await PostAsync($"upload-dataset-file/{filename}", datasetMetadataViewModel);
+            return await PostAsync(DataSetsUriFor($"upload-dataset-file/{filename}"), datasetMetadataViewModel);
         }
 
         public async Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled)

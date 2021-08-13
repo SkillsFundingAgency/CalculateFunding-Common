@@ -26,5 +26,11 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
 
         [JsonProperty("datasetName")]
         public string DatasetName { get; set; }
+
+        [JsonProperty("relationshipType")]
+        public DatasetRelationshipType RelationshipType { get; set; }
+
+        [JsonProperty("publishedSpecificationConfiguration")]
+        public PublishedSpecificationConfiguration PublishedSpecificationConfiguration { get; set; }
     }
 }
