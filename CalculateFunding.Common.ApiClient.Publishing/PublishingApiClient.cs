@@ -441,7 +441,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            return await GetAsync<IEnumerable<AvailableVariationPointerFundingLine>>($"api/specifcations/{specificationId}/availablePeriodsForVariationPointers");
+            return await GetAsync<IEnumerable<AvailableVariationPointerFundingLine>>($"specifications/{specificationId}/availablePeriodsForVariationPointers");
         }
     }
 }

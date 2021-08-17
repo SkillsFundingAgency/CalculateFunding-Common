@@ -727,6 +727,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 _client.GetBatchPublishedProviderIds);
         }
 
+        [TestMethod]
+        public async Task GetAvailableFundingLineProfilePeriodsForVariationPointers()
+        {
+            string specificationId = NewRandomString();
+            IEnumerable<AvailableVariationPointerFundingLine> availableVariationPointerFundingLines = new List<AvailableVariationPointerFundingLine>();
+
+            await AssertGetRequest($"specifications/{specificationId}/availablePeriodsForVariationPointers",
+                specificationId,
+                availableVariationPointerFundingLines,
+                _client.GetAvailableFundingLineProfilePeriodsForVariationPointers);
+        }
+
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {
             Value = new RandomNumberBetween(999, int.MaxValue)
