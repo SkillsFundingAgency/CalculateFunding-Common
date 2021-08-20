@@ -13,5 +13,8 @@
         public bool IsObsolete { get; set; }
 
         public bool IsSelected { get; set; }
+
+        public bool IsUsedInCalculation { get; set; }
+
     }
 }
