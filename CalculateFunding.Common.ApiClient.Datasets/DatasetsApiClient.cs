@@ -276,6 +276,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await PostAsync(DataSetsUriFor($"upload-dataset-file/{filename}"), datasetMetadataViewModel);
         }
 
+        public async Task<HttpStatusCode> UploadDatasetFileRaw(string filename, DatasetMetadataViewModelRaw datasetMetadataViewModelRaw)
+        {
+            Guard.IsNullOrWhiteSpace(filename, nameof(filename));
+            Guard.ArgumentNotNull(datasetMetadataViewModelRaw, nameof(datasetMetadataViewModelRaw));
+
+            return await PostAsync(DataSetsUriFor($"upload-raw-dataset-file/{filename}"), datasetMetadataViewModelRaw);
+        }
+
         public async Task<HttpStatusCode> ToggleDatasetRelationship(string relationshipId, bool converterEnabled)
         {
             Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));

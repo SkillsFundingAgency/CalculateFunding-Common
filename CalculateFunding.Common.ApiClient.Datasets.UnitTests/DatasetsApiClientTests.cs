@@ -408,6 +408,24 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task UploadDatasetFileRaw()
+        {
+            string fileName = NewRandomString();
+            DatasetMetadataViewModelRaw model = new DatasetMetadataViewModelRaw();
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            GivenTheStatusCode($"upload-raw-dataset-file/{fileName}", expectedStatusCode, HttpMethod.Post);
+
+            HttpStatusCode apiResponse = await _client.UploadDatasetFileRaw(fileName, model);
+
+            apiResponse
+                .Should()
+                .Be(expectedStatusCode);
+
+            AndTheRequestContentsShouldHaveBeen(model.AsJson());
+        }
+
+        [TestMethod]
         public async Task GetDatasetSchemaRelationshipModelsForSpecificationId()
         {
             string specificationId = NewRandomString();
