@@ -17,5 +17,7 @@
         public int FacetCount { get; set; }
 
         public SearchMode SearchMode { get; set; }
+
+        public IEnumerable<string> OrderBy { get; set; }
     }
 }

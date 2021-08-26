@@ -21,6 +21,8 @@
 
         public SearchMode SearchMode { get; set; }
 
+        public IEnumerable<string> OrderBy { get; set; }
+
         public static SearchQueryRequest FromSearchFilterRequest(SearchFilterRequest filterOptions)
         {
             Guard.ArgumentNotNull(filterOptions, nameof(filterOptions));
@@ -34,7 +36,8 @@
                 Filters = filterOptions.Filters,
                 FacetCount = filterOptions.FacetCount,
                 SearchMode = filterOptions.SearchMode,
-                ErrorToggle = filterOptions.ErrorToggle
+                ErrorToggle = filterOptions.ErrorToggle,
+                OrderBy = filterOptions.OrderBy
             };
 
             return result;
