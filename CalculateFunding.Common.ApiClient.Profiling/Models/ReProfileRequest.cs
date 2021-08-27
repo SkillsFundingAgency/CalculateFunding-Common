@@ -40,10 +40,10 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         
         /// <summary>
         /// Flag indicating whether the re profiling
-        /// should use a new opener or new allocation strategy 
+        /// should use a new opener or new opener with catch up if blank then new allocation strategy 
         /// </summary>
-        [JsonProperty("midYear")]
-        public bool MidYear { get; set; }
+        [JsonProperty("midYearCatchup")]
+        public bool? MidYearCatchup { get; set; }
         
         /// <summary>
         /// The index into the ordered refresh profile periods
