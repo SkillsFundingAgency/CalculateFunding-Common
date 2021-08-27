@@ -33,6 +33,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
         [JsonProperty("parentJobId")]
         public string ParentJobId { get; set; }
 
+        [JsonProperty("properties")]
+        public IDictionary<string, string> Properties { get; set; }
+
         [JsonProperty("lastUpdated")]
         public DateTimeOffset LastUpdated { get; set; }
 
