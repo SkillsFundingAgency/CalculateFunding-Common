@@ -15,5 +15,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public int? SelectedVersion { get; set; }
 
         public IEnumerable<DatasetVersionModel> Versions { get; set; }
+
+        public int? TotalCount { get; set; }
     }
 }

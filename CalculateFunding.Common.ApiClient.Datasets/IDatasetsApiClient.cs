@@ -33,7 +33,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<IEnumerable<DatasetViewModel>>> GetDatasetsByDefinitionId(string definitionId);
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetReferenceRelationshipsBySpecificationId(string specificationId);
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetCurrentRelationshipsBySpecificationId(string specificationId);
-        Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId);
+        Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId, int? top, int? pageNumber);
         Task<ApiResponse<JobCreationResponse>> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel);
         Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null);
         Task<HttpStatusCode> UploadDatasetFileRaw(string filename, DatasetMetadataViewModelRaw datasetMetadataViewModelRaw);

@@ -167,11 +167,23 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             return await GetAsync<IEnumerable<DatasetSpecificationRelationshipViewModel>>(DataSetsUriFor($"get-relationships-by-specificationId?specificationId={specificationId}"));
         }
 
-        public async Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId)
+        public async Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId, int? top, int? pageNumber)
         {
             Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
 
-            return await GetAsync<SelectDatasourceModel>(DataSetsUriFor($"get-datasources-by-relationshipid?relationshipId={relationshipId}"));
+            string dataSourcesQueryUri = $"get-datasources-by-relationshipid?relationshipId={relationshipId}";
+
+            if (top.HasValue)
+            {
+                dataSourcesQueryUri += $"&top={top}";
+            }
+
+            if (pageNumber.HasValue)
+            {
+                dataSourcesQueryUri += $"&pageNumber={pageNumber}";
+            }
+
+            return await GetAsync<SelectDatasourceModel>(DataSetsUriFor(dataSourcesQueryUri));
         }
 
         public async Task<ApiResponse<JobCreationResponse>> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel)

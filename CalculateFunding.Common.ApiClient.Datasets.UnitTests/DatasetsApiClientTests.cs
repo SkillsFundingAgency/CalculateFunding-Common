@@ -251,14 +251,29 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
-        public async Task GetDataSourcesByRelationshipIdMakesGetCallWithSuppliedId()
+        [DataRow(null, null)]
+        [DataRow(1, null)]
+        [DataRow(null, 2)]
+        [DataRow(1, 2)]
+        public async Task GetDataSourcesByRelationshipIdMakesGetCallWithSuppliedId(int? top, int? pageNumber)
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"get-datasources-by-relationshipid?relationshipId={id}",
+            string dataSourcesQueryUri = $"get-datasources-by-relationshipid?relationshipId={id}";
+            if (top.HasValue)
+            {
+                dataSourcesQueryUri += $"&top={top}";
+            }
+
+            if (pageNumber.HasValue)
+            {
+                dataSourcesQueryUri += $"&pageNumber={pageNumber}";
+            }
+
+            await AssertGetRequest(dataSourcesQueryUri,
                 id,
                 new SelectDatasourceModel(),
-                _ => _client.GetDataSourcesByRelationshipId(_));
+                _ => _client.GetDataSourcesByRelationshipId(_, top, pageNumber));
         }
 
         [TestMethod]
