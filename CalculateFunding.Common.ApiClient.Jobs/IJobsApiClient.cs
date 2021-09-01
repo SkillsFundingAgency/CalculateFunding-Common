@@ -14,6 +14,8 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
         Task<ApiResponse<IDictionary<string, JobSummary>>> GetLatestJobsForSpecification(string specificationId, params string[] jobDefinitionIds);
 
+        Task<ApiResponse<IDictionary<string, JobViewModel>>> GetLatestJobsByJobDefinitionIds(params string[] jobDefinitionIds);
+
         Task<Job> CreateJob(JobCreateModel jobCreateModel);
 
         Task<IEnumerable<Job>> CreateJobs(IEnumerable<JobCreateModel> jobCreateModels);

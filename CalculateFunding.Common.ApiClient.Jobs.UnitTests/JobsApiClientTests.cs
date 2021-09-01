@@ -106,7 +106,20 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
                 Enumerable.Empty<JobDefinition>(),
                 _client.GetJobDefinitions);
         }
-        
+
+        [TestMethod]
+        [DataRow(null, null)]
+        [DataRow(new string[0], null)]
+        [DataRow(new[] { "one", "two" }, "&jobDefinitionIds=one&jobDefinitionIds=two")]
+        public async Task GetLatestJobByJobDefinitionIds(string[] jobTypes,
+            string expectedJobsParameters)
+        {
+            IDictionary<string, JobViewModel> jobsummaries = new Dictionary<string, JobViewModel> { { "", NewJobViewModel() } };
+            await AssertGetRequest($"jobs/latest-by-job-definition-ids{expectedJobsParameters}",
+                jobsummaries,
+                () => _client.GetLatestJobsByJobDefinitionIds(jobTypes));
+        }
+
         [TestMethod]
         public async Task GetJobDefinition()
         {
@@ -194,7 +207,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
         private Job NewJob() => new Job();
 
         private JobSummary NewJobSummary() => new JobSummary();
-        
+
+        private JobViewModel NewJobViewModel() => new JobViewModel();
+
         private JobCreateResult NewCreateResult() => new JobCreateResult();
     }
 }
