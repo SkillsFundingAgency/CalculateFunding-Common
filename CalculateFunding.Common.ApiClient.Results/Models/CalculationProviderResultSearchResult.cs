@@ -51,5 +51,7 @@ namespace CalculateFunding.Common.ApiClient.Results.Models
         public string FundingLineExceptionType { get; set; }
 
         public string FundingLineExceptionMessage { get; set; }
+
+        public bool IsIndicativeProvider { get; set; }
     }
 }
