@@ -8,8 +8,8 @@ namespace CalculateFunding.Common.JobManagement
     {
         public JobsNotRetrievedException(
             string message, 
-            string specificationId,
-            IEnumerable<string> jobDefinitionIds)
+            IEnumerable<string> jobDefinitionIds,
+            string specificationId = null)
             : base(message)
         {
             JobDefinitionIds = jobDefinitionIds.ToArray();

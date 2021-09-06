@@ -16,6 +16,7 @@ namespace CalculateFunding.Common.JobManagement
         Task<Job> QueueJob(JobCreateModel jobCreateModel);
         Task<IEnumerable<Job>> QueueJobs(IEnumerable<JobCreateModel> jobCreateModels);
         Task<IDictionary<string, JobSummary>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes);
+        Task<IDictionary<string, JobSummary>> GetLatestJobs(IEnumerable<string> jobTypes, string specificationId = null);
         Task<JobLog> AddJobLog(string jobId, JobLogUpdateModel jobLogUpdateModel);
         Task<IEnumerable<JobSummary>> GetNonCompletedJobsWithinTimeFrame(DateTimeOffset dateTimeFrom, DateTimeOffset dateTimeTo);
 

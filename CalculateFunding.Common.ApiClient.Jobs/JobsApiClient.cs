@@ -54,7 +54,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
             return await GetAsync<IDictionary<string, JobSummary>>(api);
         }
 
-        public async Task<ApiResponse<IDictionary<string, JobViewModel>>> GetLatestJobsByJobDefinitionIds(params string[] jobDefinitionIds)
+        public async Task<ApiResponse<IDictionary<string, JobSummary>>> GetLatestJobsByJobDefinitionIds(params string[] jobDefinitionIds)
         {
             string api = $"jobs/latest-by-job-definition-ids";
 
@@ -66,7 +66,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
                 }
             }
 
-            return await GetAsync<IDictionary<string, JobViewModel>>(api);
+            return await GetAsync<IDictionary<string, JobSummary>>(api);
         }
 
         public async Task<Job> CreateJob(JobCreateModel jobCreateModel)

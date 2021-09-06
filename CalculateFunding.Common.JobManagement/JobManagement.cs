@@ -250,8 +250,15 @@ namespace CalculateFunding.Common.JobManagement
 
         public async Task<IDictionary<string, JobSummary>> GetLatestJobsForSpecification(string specificationId, IEnumerable<string> jobTypes)
         {
-            ApiResponse<IDictionary<string, JobSummary>> jobSummaryResponse = 
-                await _jobsApiClientPolicy.ExecuteAsync(() => _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes.ToArray() ));
+            return await GetLatestJobs(jobTypes, specificationId);
+        }
+
+        public async Task<IDictionary<string, JobSummary>> GetLatestJobs(IEnumerable<string> jobTypes, string specificationId = null)
+        {
+            ApiResponse<IDictionary<string, JobSummary>> jobSummaryResponse =
+                await _jobsApiClientPolicy.ExecuteAsync(() => specificationId != null ?
+                    _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes.ToArray()) :
+                    _jobsApiClient.GetLatestJobsByJobDefinitionIds(jobTypes.ToArray()));
 
             if ((int?)jobSummaryResponse?.StatusCode >= 200 && (int?)jobSummaryResponse?.StatusCode <= 299)
             {
@@ -259,8 +266,10 @@ namespace CalculateFunding.Common.JobManagement
             }
             else
             {
-                string message = $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}";
-                throw new JobsNotRetrievedException(message, specificationId, jobTypes);
+                string message = specificationId != null ?
+                    $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}" :
+                    $"Error while retrieving latest jobs for JobTypes: {string.Join(',', jobTypes)}";
+                throw new JobsNotRetrievedException(message, jobTypes, specificationId);
             }
         }
 
@@ -290,5 +299,6 @@ namespace CalculateFunding.Common.JobManagement
 
             return jobViewModel;
         }
+
     }
 }

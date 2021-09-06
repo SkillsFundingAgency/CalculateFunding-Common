@@ -6,6 +6,15 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
 {
     public class JobSummary
     {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("correlationId")]
+        public string CorrelationId { get; set; }
+
+        [JsonProperty("jobDefinitionId")]
+        public string JobDefinitionId { get; set; }
+
         [JsonProperty("jobId")]
         public string JobId { get; set; }
 
@@ -35,6 +44,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
 
         [JsonProperty("properties")]
         public IDictionary<string, string> Properties { get; set; }
+
+        [JsonProperty("messageBody")]
+        public string MessageBody { get; set; }
 
         [JsonProperty("lastUpdated")]
         public DateTimeOffset LastUpdated { get; set; }
@@ -78,5 +90,11 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
 
         [JsonProperty("outcomeType")]
         public OutcomeType? OutcomeType { get; set; }
+
+        [JsonProperty("childJobs")]
+        public ICollection<JobViewModel> ChildJobs { get; } = new List<JobViewModel>();
+
+        [JsonProperty("completed")]
+        public DateTimeOffset? Completed { get; set; }
     }
 }

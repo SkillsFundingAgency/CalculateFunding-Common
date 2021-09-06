@@ -114,7 +114,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
         public async Task GetLatestJobByJobDefinitionIds(string[] jobTypes,
             string expectedJobsParameters)
         {
-            IDictionary<string, JobViewModel> jobsummaries = new Dictionary<string, JobViewModel> { { "", NewJobViewModel() } };
+            IDictionary<string, JobSummary> jobsummaries = new Dictionary<string, JobSummary> { { "", NewJobSummary() } };
             await AssertGetRequest($"jobs/latest-by-job-definition-ids{expectedJobsParameters}",
                 jobsummaries,
                 () => _client.GetLatestJobsByJobDefinitionIds(jobTypes));
@@ -181,12 +181,12 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
         }
 
         [TestMethod]
-        public async Task GetLatestJobForSpecification()
+        public async Task GetLatestSuccessfulJobForSpecification()
         {
             string specificationId = NewRandomString();
             string jobDefinitonId = NewRandomString();
             JobSummary jobsummary = NewJobSummary();
-            await AssertGetRequest($"jobs/latest-success?specificationId={specificationId}&jobDefinitonId={jobDefinitonId}",
+            await AssertGetRequest($"jobs/latest-success?specificationId={specificationId}&jobDefinitionId={jobDefinitonId}",
                 jobsummary,
                 () => _client.GetLatestSuccessfulJobForSpecification(specificationId, jobDefinitonId));
         }
