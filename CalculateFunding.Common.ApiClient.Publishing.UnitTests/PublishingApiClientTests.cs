@@ -739,6 +739,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 _client.GetAvailableFundingLineProfilePeriodsForVariationPointers);
         }
 
+        [TestMethod]
+        public async Task QueueReleaseProviderVersions()
+        {
+            ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest = new ReleaseProvidersToChannelRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest($"specifications/{specificationId}/releaseProvidersToChannels",
+                releaseProvidersToChannelRequest,
+                new JobCreationResponse
+                {
+                },
+                () => _client.QueueReleaseProviderVersions(specificationId, releaseProvidersToChannelRequest));
+        }
+
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {
             Value = new RandomNumberBetween(999, int.MaxValue)

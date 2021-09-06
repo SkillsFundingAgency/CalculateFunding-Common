@@ -128,5 +128,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<string>>> GetBatchPublishedProviderIds(string batchId);
 
         Task<ApiResponse<IEnumerable<AvailableVariationPointerFundingLine>>> GetAvailableFundingLineProfilePeriodsForVariationPointers(string specificationId);
+
+        Task<ApiResponse<JobCreationResponse>> QueueReleaseProviderVersions(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest);
     }
 }
