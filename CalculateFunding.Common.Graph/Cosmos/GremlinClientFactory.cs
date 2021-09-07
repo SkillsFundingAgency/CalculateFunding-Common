@@ -10,9 +10,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
 {
     public class GremlinClientFactory : IGremlinClientFactory
     {
-        private readonly GremlinServer _server;
-        private readonly ConnectionPoolSettings _connectionPoolSettings;
-        private readonly Action<ClientWebSocketOptions> _webSocketConfiguration;
+        private readonly IGremlinClient _client;
 
         public GremlinClientFactory(ICosmosGraphDbSettings settings)
         {
@@ -21,32 +19,34 @@ namespace CalculateFunding.Common.Graph.Cosmos
             Guard.IsNullOrWhiteSpace(settings.ApiKey, nameof(settings.ApiKey));
             Guard.IsNullOrWhiteSpace(settings.ContainerPath, nameof(settings.ContainerPath));
 
-            _server = new GremlinServer(settings.EndPointUrl,
+            GremlinServer server = new GremlinServer(settings.EndPointUrl,
                 settings.Port,
                 true,
                 settings.ContainerPath,
                 settings.ApiKey);
 
-            _connectionPoolSettings = new ConnectionPoolSettings()
+            ConnectionPoolSettings connectionPoolSettings = new ConnectionPoolSettings()
             {
-                MaxInProcessPerConnection = settings.MaxInProcessPerConnection ?? 32,
+                MaxInProcessPerConnection = settings.MaxInProcessPerConnection ?? 128,
                 PoolSize = settings.PoolSize ?? 4,
                 ReconnectionAttempts = settings.ReconnectionAttempts ?? 4,
                 ReconnectionBaseDelay = TimeSpan.FromMilliseconds(settings.ReconnectionBaseDelay ?? 500)
             };
 
-            _webSocketConfiguration =
+            Action<ClientWebSocketOptions> webSocketConfiguration =
                 new Action<ClientWebSocketOptions>(options =>
                 {
                     options.KeepAliveInterval = TimeSpan.FromSeconds(settings.KeepAliveInterval ?? 10);
                 });
-        }
 
-        public IGremlinClient Client => new GremlinClient(_server,
+            _client = new GremlinClient(server,
                     new GraphSON2Reader(),
                     new GraphSON2Writer(),
                     GremlinClient.GraphSON2MimeType,
-                    _connectionPoolSettings,
-                    _webSocketConfiguration);
+                    connectionPoolSettings,
+                    webSocketConfiguration);
+        }
+
+        public IGremlinClient Client => _client;
     }
 }
