@@ -452,5 +452,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<JobCreationResponse, ReleaseProvidersToChannelRequest>(
                 $"specifications/{specificationId}/releaseProvidersToChannels", releaseProvidersToChannelRequest);
         }
+
+        public async Task<ApiResponse<IEnumerable<Channel>>> GetAllChannels()
+        {
+            return await GetAsync<IEnumerable<Channel>>("releasemanagement/channels");
+        }
+
+        public async Task<ValidatedApiResponse<Channel>> UpsertChannel(ChannelRequest request)
+        {
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await ValidatedPostAsync<Channel, ChannelRequest>(
+                "releasemanagement/channels", request);
+        }
     }
 }

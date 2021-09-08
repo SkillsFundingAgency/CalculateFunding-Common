@@ -753,6 +753,45 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                 () => _client.QueueReleaseProviderVersions(specificationId, releaseProvidersToChannelRequest));
         }
 
+        [TestMethod]
+        public async Task GetAllChannels()
+        {
+            IEnumerable<Channel> channels = new List<Channel>();
+
+            await AssertGetRequest("releasemanagement/channels",
+                channels,
+                _client.GetAllChannels);
+        }
+
+        [TestMethod]
+        [DataRow(HttpStatusCode.OK)]
+        [DataRow(HttpStatusCode.BadRequest)]
+        [DataRow(HttpStatusCode.InternalServerError)]
+        public async Task UpsertChannel(HttpStatusCode expectedStatusCode)
+        {
+            ChannelRequest request = new ChannelRequest
+            {
+                ChannelCode = "ABC",
+                ChannelName = "ABC",
+                UrlKey = "abc"
+            };
+
+            string expectedUri = "releasemanagement/channels";
+
+            GivenTheStatusCode(expectedUri, expectedStatusCode, HttpMethod.Post);
+
+            ValidatedApiResponse<Channel> response = await _client.UpsertChannel(request);
+
+            response
+                .Should()
+                .NotBeNull();
+
+            response
+                .StatusCode
+                .Should()
+                .Be(expectedStatusCode);
+        }
+
         private ProfileTotal NewRandomProfileTotal() => new ProfileTotal
         {
             Value = new RandomNumberBetween(999, int.MaxValue)
