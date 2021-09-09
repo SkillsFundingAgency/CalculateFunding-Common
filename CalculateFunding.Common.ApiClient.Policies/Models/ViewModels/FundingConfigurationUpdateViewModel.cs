@@ -26,5 +26,10 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public IEnumerable<string> IndicativeOpenerProviderStatus { get; set; }
 
         public IEnumerable<string> AllowedPublishedFundingStreamsIdsToReference { get; set; }
+
+        public IEnumerable<FundingVariation> ReleaseManagementVariations { get; set; }
+
+        public IEnumerable<FundingConfigurationChannel> ReleaseChannels { get; set; }
+
     }
 }

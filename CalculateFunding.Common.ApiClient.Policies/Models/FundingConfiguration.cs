@@ -60,5 +60,14 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("allowedPublishedFundingStreamsIdsToReference")]
         public IEnumerable<string> AllowedPublishedFundingStreamsIdsToReference { get; set; }
+
+        /// <summary>
+        /// Variations to run during release management
+        /// </summary>
+        [JsonProperty("releaseManagementVariations")]
+        public IEnumerable<FundingVariation> ReleaseManagementVariations { get; set; }
+
+        [JsonProperty("releaseChannels")]
+        public IEnumerable<FundingConfigurationChannel> ReleaseChannels { get; set; }
     }    
 }
