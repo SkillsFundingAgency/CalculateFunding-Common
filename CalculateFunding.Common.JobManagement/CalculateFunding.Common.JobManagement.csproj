@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>   
     <ApplicationIcon />
     <StartupObject />
-    <Version>7.1.0</Version>
+    <Version>7.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

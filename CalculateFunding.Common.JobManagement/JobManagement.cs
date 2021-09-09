@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs;
@@ -260,7 +261,7 @@ namespace CalculateFunding.Common.JobManagement
                     _jobsApiClient.GetLatestJobsForSpecification(specificationId, jobTypes.ToArray()) :
                     _jobsApiClient.GetLatestJobsByJobDefinitionIds(jobTypes.ToArray()));
 
-            if ((int?)jobSummaryResponse?.StatusCode >= 200 && (int?)jobSummaryResponse?.StatusCode <= 299)
+            if (jobSummaryResponse?.StatusCode == HttpStatusCode.NotFound || ((int?)jobSummaryResponse?.StatusCode >= 200 && (int?)jobSummaryResponse?.StatusCode <= 299))
             {
                 return jobSummaryResponse?.Content;
             }

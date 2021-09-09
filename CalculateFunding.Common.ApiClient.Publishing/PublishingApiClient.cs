@@ -453,6 +453,21 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                 $"specifications/{specificationId}/releaseProvidersToChannels", releaseProvidersToChannelRequest);
         }
 
+        public async Task<ApiResponse<JobCreationResponse>> QueueReleaseManagementDataMigrationJob(params string[] fundingStreamIds)
+        {
+            string queryString = AddQueryStringParametersIfSupplied("", nameof(fundingStreamIds), fundingStreamIds);
+
+            return await GetAsync<JobCreationResponse>(
+                $"releasemanagement/queuereleasemanagementdatamigrationjob?{queryString}");
+        }
+
+        public async Task<HttpStatusCode> PopulateReferenceData(params string[] fundingStreamIds)
+        {
+            string queryString = AddQueryStringParametersIfSupplied("", nameof(fundingStreamIds), fundingStreamIds);
+
+            return await GetAsync($"releasemanagement/populatereferencedata?{queryString}");
+        }
+
         public async Task<ApiResponse<IEnumerable<Channel>>> GetAllChannels()
         {
             return await GetAsync<IEnumerable<Channel>>("releasemanagement/channels");
@@ -464,6 +479,19 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await ValidatedPostAsync<Channel, ChannelRequest>(
                 "releasemanagement/channels", request);
+        }
+
+        private string AddQueryStringParametersIfSupplied<T>(string queryString, string parameterName, T[] parameters)
+        {
+            if (parameters.IsNullOrEmpty())
+            {
+                return queryString;
+            }
+
+            string queryStringParameters = string.Join($"&{parameterName}=", parameters);
+            string queryStringParameter = $"{parameterName}={queryStringParameters}";
+
+            return queryString.Length == 0 ? queryStringParameter : $"{queryString}&{queryStringParameter}";
         }
     }
 }

@@ -754,6 +754,26 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task QueueReleaseManagementDataMigrationJob()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"releasemanagement/queuereleasemanagementdatamigrationjob?fundingStreamIds={fundingStreamId}",
+                new JobCreationResponse(),
+                () => _client.QueueReleaseManagementDataMigrationJob(fundingStreamId));
+        }
+
+        [TestMethod]
+        public async Task PopulateReferenceData()
+        {
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"releasemanagement/populatereferencedata?fundingStreamIds={fundingStreamId}",
+                HttpStatusCode.OK,
+                () =>_client.PopulateReferenceData(fundingStreamId));
+        }
+
+        [TestMethod]
         public async Task GetAllChannels()
         {
             IEnumerable<Channel> channels = new List<Channel>();

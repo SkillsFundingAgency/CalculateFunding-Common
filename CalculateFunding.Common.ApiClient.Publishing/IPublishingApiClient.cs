@@ -134,5 +134,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<Channel>>> GetAllChannels();
 
         Task<ValidatedApiResponse<Channel>> UpsertChannel(ChannelRequest request);
+
+        Task<ApiResponse<JobCreationResponse>> QueueReleaseManagementDataMigrationJob(params string[] fundingStreamIds);
+
+        Task<HttpStatusCode> PopulateReferenceData(params string[] fundingStreamIds);
     }
 }

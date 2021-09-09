@@ -728,7 +728,7 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
 
             string message = $"Error while retrieving latest jobs for Specifiation: {specificationId} and JobTypes: {string.Join(',', jobTypes)}";
 
-            ApiResponse<IDictionary<string, JobSummary>> jobSummaryApiResponse = new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.NotFound);
+            ApiResponse<IDictionary<string, JobSummary>> jobSummaryApiResponse = new ApiResponse<IDictionary<string, JobSummary>>(HttpStatusCode.BadRequest);
 
             jobsApiClient
                 .GetLatestJobsForSpecification(specificationId, jobTypes)
