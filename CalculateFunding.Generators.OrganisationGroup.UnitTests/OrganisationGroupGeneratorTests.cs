@@ -14,7 +14,6 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using FdzPaymentOrganisation = CalculateFunding.Common.ApiClient.FundingDataZone.Models.PaymentOrganisation;
-using FdzProviderSnapshot = CalculateFunding.Common.ApiClient.FundingDataZone.Models.ProviderSnapshot;
 
 namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 {
@@ -36,7 +35,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         {
             _organisationGroupTargetProviderLookup = Substitute.For<IOrganisationGroupTargetProviderLookup>();
             _fundingDataZoneApiClient = Substitute.For<IFundingDataZoneApiClient>();
-            _generator = new OrganisationGroupGenerator(_organisationGroupTargetProviderLookup, _fundingDataZoneApiClient);
+            ProviderFilter providerFilter = new ProviderFilter();
+            _generator = new OrganisationGroupGenerator(_organisationGroupTargetProviderLookup, _fundingDataZoneApiClient, providerFilter);
             _providerVersionId = "test-providers";
         }
 

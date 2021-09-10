@@ -21,11 +21,16 @@ namespace CalculateFunding.Generators.OrganisationGroup
     {
         private readonly IOrganisationGroupTargetProviderLookup _organisationGroupTargetProviderLookup;
         private readonly IFundingDataZoneApiClient _fundingDataZoneApiClient;
+        private readonly IProviderFilter _providerFilter;
 
-        public OrganisationGroupGenerator(IOrganisationGroupTargetProviderLookup organisationGroupTargetProviderLookup, IFundingDataZoneApiClient fundingDataZoneApiClient)
+        public OrganisationGroupGenerator(
+            IOrganisationGroupTargetProviderLookup organisationGroupTargetProviderLookup, 
+            IFundingDataZoneApiClient fundingDataZoneApiClient,
+            IProviderFilter providerFilter)
         {
             _organisationGroupTargetProviderLookup = organisationGroupTargetProviderLookup;
             _fundingDataZoneApiClient = fundingDataZoneApiClient;
+            _providerFilter = providerFilter;
         }
 
         public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(
@@ -79,10 +84,10 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason, fundingConfiguration.PaymentOrganisationSource);
 
                 // Filter providers based on provider type and subtypes
-                IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
+                IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => _providerFilter.ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
 
                 // Filter providers based on provider status
-                providersForGroup = grouping.ProviderStatus.IsNullOrEmpty() ? providersForGroup : providersForGroup.Where(_ => ShouldIncludeProvider(_, grouping.ProviderStatus));
+                providersForGroup = grouping.ProviderStatus.IsNullOrEmpty() ? providersForGroup : providersForGroup.Where(_ => _providerFilter.ShouldIncludeProvider(_, grouping.ProviderStatus));
 
                 // Group providers by the fields and discard any providers with null values for that field
                 IEnumerable<IGrouping<string, Provider>> groupedProviders = providersForGroup.GroupBy(providerFilterAttribute);
@@ -115,7 +120,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         }
                         else
                         {
-                            identifiers = new OrganisationIdentifier[0];
+                            identifiers = Array.Empty<OrganisationIdentifier>();
                         }
 
                         // Will use providerGrouping.Key as the identifier of the PaymentOrganisation
@@ -271,32 +276,6 @@ namespace CalculateFunding.Generators.OrganisationGroup
             }
 
             throw new Exception("Unknown OrganisationGroupTypeIdentifier for provider ID");
-        }
-
-        private bool ShouldIncludeProvider(Provider provider, IEnumerable<ProviderTypeMatch> providerTypeMatches)
-        {
-            foreach (ProviderTypeMatch providerTypeMatch in providerTypeMatches)
-            {
-                if (string.Equals(provider.ProviderType, providerTypeMatch.ProviderType, StringComparison.InvariantCultureIgnoreCase) && string.Equals(provider.ProviderSubType, providerTypeMatch.ProviderSubtype, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool ShouldIncludeProvider(Provider provider, IEnumerable<string> providerStatus)
-        {
-            foreach (string status in providerStatus)
-            {
-                if (string.Equals(provider.Status, status, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
