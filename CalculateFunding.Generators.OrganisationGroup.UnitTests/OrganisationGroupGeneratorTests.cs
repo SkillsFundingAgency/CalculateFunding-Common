@@ -27,7 +27,6 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         private IEnumerable<Provider> _scopedProviders;
         private FundingConfiguration _fundingConfiguration;
         private IEnumerable<OrganisationGroupResult> _result;
-
         private const string _fundingStreamId = "funding-stream-id";
 
         [TestInitialize]
@@ -105,6 +104,142 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             // Act
             IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 1",
+                    SearchableName = "Local_Authority_1",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "7777",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "101")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 2",
+                    SearchableName = "Local_Authority_2",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "8888",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "102")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Local Authority 3",
+                    SearchableName = "Local_Authority_3",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.LegalEntity,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LocalAuthority,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                    GroupReason = Enums.OrganisationGroupingReason.Payment,
+                    IdentifierValue = "9999",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LACode == "103")),
+                },
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>());
+        }
+
+        [TestMethod]
+        public async Task WhenProducingPaymentForASpecForLocalAuthorityUsingOrganisationGroupingConfiguration_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Payment,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.LegalEntity,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.UKPRN,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LocalAuthority,
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider
+            };
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            TargetOrganisationGroup la1 = new TargetOrganisationGroup()
+            {
+                Identifier = "7777",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 1",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "101" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+                .Returns(la1);
+
+            TargetOrganisationGroup la2 = new TargetOrganisationGroup()
+            {
+                Identifier = "8888",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 2",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "102" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+                Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+                .Returns(la2);
+
+            TargetOrganisationGroup la3 = new TargetOrganisationGroup()
+            {
+                Identifier = "9999",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Local Authority 3",
+            };
+
+            _organisationGroupTargetProviderLookup
+               .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.IdentifierValue == "103" && _.OrganisationGroupTypeCode == OrganisationGroupTypeCode.LocalAuthority && _.ProviderVersionId == _providerVersionId),
+               Arg.Is(GroupingReason.Payment), Arg.Any<IEnumerable<Provider>>())
+               .Returns(la3);
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(
+                fundingConfiguration.OrganisationGroupings,
+                fundingConfiguration.ProviderSource,
+                fundingConfiguration.PaymentOrganisationSource,
+                scopedProviders,
+                _providerVersionId);
 
             // Assert
             result
@@ -2311,7 +2446,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingPaymentForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task WhenProducingPaymentForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(bool useFundingConfiguration)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2335,7 +2472,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             int providerSnapshotId = 12345;
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups(providerSnapshotId);
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration, providerSnapshotId);
 
             _result
                 .Should()
@@ -2399,10 +2536,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
-        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, true)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, true)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, false)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, false)]
         public async Task WhenProducingGroupsForASpecForAcademysWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
-            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, bool useFundingConfiguration)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2426,7 +2565,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             int providerSnapshotId = 12345;
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups(providerSnapshotId);
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration, providerSnapshotId);
 
             _result
                 .Should()
@@ -2490,10 +2629,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, "Open;Open, but proposed to close;Closed")]
-        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, "Proposed to open")]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, "Open;Open, but proposed to close;Closed", true)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, "Proposed to open", true)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, "Open;Open, but proposed to close;Closed", false)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, "Proposed to open", false)]
         public async Task WhenProducingGroupsForASpecForLocalAuthoritiesSsfWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
-            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, string providerStatusesIn)
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, string providerStatusesIn, bool useFundingConfiguration)
         {
             string[] providerStatuses = providerStatusesIn.Split(';');
             GivenFundingConfiguration(
@@ -2519,7 +2660,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             int providerSnapshotId = 12345;
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups(providerSnapshotId);
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration, providerSnapshotId);
 
             _result
                 .Should()
@@ -2527,7 +2668,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>();
 
-            if(_scopedProviders.Any(p => p.PaymentOrganisationIdentifier == "9013" && providerStatuses.Contains(p.Status)))
+            if (_scopedProviders.Any(p => p.PaymentOrganisationIdentifier == "9013" && providerStatuses.Contains(p.Status)))
             {
                 expectedResult.Add(new OrganisationGroupResult()
                 {
@@ -2565,10 +2706,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
-        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, true)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, true)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, false)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, false)]
         public async Task WhenProducingGroupsForASpecForLocalAuthoritiesMssWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
-            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, bool useFundingConfiguration)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2591,7 +2734,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             int providerSnapshotId = 12345;
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId);
 
-            await WhenGeneratingOrganisationGroups(providerSnapshotId);
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration, providerSnapshotId);
 
             _result
                 .Should()
@@ -2631,7 +2774,10 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenProducingPaymentForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated()
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task WhenProducingPaymentForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
+            bool useFundingConfiguration)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2667,7 +2813,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndFdzPaymentOrganisationsForProviderSnapshotId(providerSnapshotId, paymentOrganisationIdentifier1, paymentOrganisationIdentifier2);
 
-            await WhenGeneratingOrganisationGroups(providerSnapshotId);
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration, providerSnapshotId);
 
             _result
                 .Should()
@@ -2761,10 +2907,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
-        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting)]
-        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, true)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, true)]
+        [DataRow(GroupingReason.Contracting, Enums.OrganisationGroupingReason.Contracting, false)]
+        [DataRow(GroupingReason.Indicative, Enums.OrganisationGroupingReason.Indicative, false)]
         public async Task WhenProducingForASpecForAllProviderTypesWithPaymentOrganisationFieldsAsPaymentOrganisationFields_ThenOrganisationGroupsAreCreated(
-            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason)
+            GroupingReason groupingReason, Enums.OrganisationGroupingReason organisationGroupingReason, bool useFundingConfiguration)
         {
             GivenFundingConfiguration(
                   c =>
@@ -2785,7 +2933,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             AndScopedProvidersWithPaymentOrganisationSourceIsSet();
 
-            await WhenGeneratingOrganisationGroups();
+            await WhenGeneratingOrganisationGroups(useFundingConfiguration);
 
             _result
                 .Should()
@@ -2908,10 +3056,33 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 .BeEquivalentTo(expectedResult);
         }
 
-        private async Task WhenGeneratingOrganisationGroups(int? providerSnapshotId = null)
+        private async Task WhenGeneratingOrganisationGroups(bool useFundingConfiguration, int? providerSnapshotId = null)
+        {
+            if (useFundingConfiguration)
+            {
+                await WhenGeneratingOrganisationGroupsUsingFundingConfiguration(providerSnapshotId);
+            }
+            else
+            {
+                await WhenGeneratingOrganisationGroupsUsingGroupingConfiguration(providerSnapshotId);
+            }
+        }
+
+        private async Task WhenGeneratingOrganisationGroupsUsingFundingConfiguration(int? providerSnapshotId = null)
         {
             _result = await _generator.GenerateOrganisationGroup(
                 _fundingConfiguration,
+                _scopedProviders,
+                _providerVersionId,
+                providerSnapshotId);
+        }
+
+        private async Task WhenGeneratingOrganisationGroupsUsingGroupingConfiguration(int? providerSnapshotId = null)
+        {
+            _result = await _generator.GenerateOrganisationGroup(
+                _fundingConfiguration.OrganisationGroupings,
+                _fundingConfiguration.ProviderSource,
+                _fundingConfiguration.PaymentOrganisationSource,
                 _scopedProviders,
                 _providerVersionId,
                 providerSnapshotId);
@@ -2952,7 +3123,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
         private IEnumerable<FdzPaymentOrganisation> GenerateFdzPaymentOrganisations(int? providerSnapshotId, params (int, OrganisationGroupTypeIdentifier)[] paymentOrganisationIds)
         {
-            return paymentOrganisationIds.Select(x => {
+            return paymentOrganisationIds.Select(x =>
+            {
                 FdzPaymentOrganisation fdzPaymentOrganisation = new FdzPaymentOrganisation
                 {
                     PaymentOrganisationId = x.Item1,

@@ -39,7 +39,21 @@ namespace CalculateFunding.Generators.OrganisationGroup
             string providerVersionId,
             int? providerSnapshotId = null)
         {
-            Guard.ArgumentNotNull(fundingConfiguration, nameof(fundingConfiguration));
+            return await GenerateOrganisationGroup(fundingConfiguration.OrganisationGroupings, fundingConfiguration.ProviderSource,
+                fundingConfiguration.PaymentOrganisationSource, scopedProviders, providerVersionId, providerSnapshotId);
+        }
+
+        public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(
+            IEnumerable<OrganisationGroupingConfiguration> organisationGroupingConfigurations,
+            ProviderSource providerSource,
+            PaymentOrganisationSource paymentOrganisationSource,
+            IEnumerable<Provider> scopedProviders,
+            string providerVersionId,
+            int? providerSnapshotId = null)
+        {
+            Guard.ArgumentNotNull(organisationGroupingConfigurations, nameof(organisationGroupingConfigurations));
+            Guard.ArgumentNotNull(providerSource, nameof(providerSource));
+            Guard.ArgumentNotNull(paymentOrganisationSource, nameof(paymentOrganisationSource));
             Guard.ArgumentNotNull(scopedProviders, nameof(scopedProviders));
             Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
 
@@ -47,8 +61,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
             Dictionary<string, FdzPaymentOrganisation> paymentOrganisations = new Dictionary<string, FdzPaymentOrganisation>();
 
-            if (fundingConfiguration.ProviderSource == ProviderSource.FDZ
-                && fundingConfiguration.OrganisationGroupings.Any(g => g.GroupingReason == GroupingReason.Payment 
+            if (providerSource == ProviderSource.FDZ
+                && organisationGroupingConfigurations.Any(g => g.GroupingReason == GroupingReason.Payment 
                                                                     || g.GroupingReason == GroupingReason.Contracting
                                                                     || g.GroupingReason == GroupingReason.Indicative))
             {
@@ -78,10 +92,11 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 }
             }
 
-            foreach (OrganisationGroupingConfiguration grouping in fundingConfiguration.OrganisationGroupings)
+            foreach (OrganisationGroupingConfiguration grouping in organisationGroupingConfigurations)
             {
                 // Get the provider attribute required to group
-                Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason, fundingConfiguration.PaymentOrganisationSource);
+                Func<Provider, string> providerFilterAttribute = GetProviderFieldForGrouping(
+                    grouping.GroupTypeIdentifier, grouping.OrganisationGroupTypeCode, grouping.GroupingReason, paymentOrganisationSource);
 
                 // Filter providers based on provider type and subtypes
                 IEnumerable<Provider> providersForGroup = grouping.ProviderTypeMatch.IsNullOrEmpty() ? scopedProviders : scopedProviders.Where(_ => _providerFilter.ShouldIncludeProvider(_, grouping.ProviderTypeMatch));
@@ -107,13 +122,13 @@ namespace CalculateFunding.Generators.OrganisationGroup
 
                     TargetOrganisationGroup targetOrganisationGroup = null;
 
-                    if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
+                    if (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
                         && grouping.GroupingReason.IsForProviderPayment())
                     {
                         IEnumerable<OrganisationIdentifier> identifiers;
 
                         // lookup alternative identifier and name from FDZ's PaymentOrganisation table via FDZ service
-                        if (fundingConfiguration.ProviderSource == ProviderSource.FDZ
+                        if (providerSource == ProviderSource.FDZ
                             && paymentOrganisations.TryGetValue(providerGrouping.Key, out FdzPaymentOrganisation fdzPaymentOrganisation))
                         {
                             identifiers = GetIdentifiers(fdzPaymentOrganisation);
@@ -131,8 +146,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                             Identifiers = identifiers,
                         };
                     }
-                    else if (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider
-                       || (fundingConfiguration.PaymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
+                    else if (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationAsProvider
+                       || (paymentOrganisationSource == PaymentOrganisationSource.PaymentOrganisationFields
                                 && !grouping.GroupingReason.IsForProviderPayment())
                        )
                     {
