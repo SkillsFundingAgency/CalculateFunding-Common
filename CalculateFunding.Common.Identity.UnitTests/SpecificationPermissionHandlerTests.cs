@@ -118,18 +118,16 @@ namespace CalculateFunding.Common.Identity.UnitTests
         }
 
         [TestMethod]
-        public async Task WhenUserCanEditSpecification_ShouldSucceed()
+        [DynamicData(nameof(EffectiveSpecificationPermissionExamples), DynamicDataSourceType.Method)]
+        public async Task WhenUserWithSpecificPermission_ShouldSucceed(
+            EffectiveSpecificationPermission actualPermission,
+            SpecificationActionTypes specificationActionTypes)
         {
             // Arrange
             string userId = Guid.NewGuid().ToString();
             ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
             string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanEditSpecification, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
-            {
-                CanEditSpecification = true
-            };
+            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, specificationActionTypes, specification);
 
             IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
             usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
@@ -146,323 +144,73 @@ namespace CalculateFunding.Common.Identity.UnitTests
             authContext.HasSucceeded.Should().BeTrue();
         }
 
-        [TestMethod]
-        public async Task WhenUserCanEditCalculations_ShouldSucceed()
+        private static IEnumerable<object[]> EffectiveSpecificationPermissionExamples()
         {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanEditCalculations, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanEditCalculations = true
+                new EffectiveSpecificationPermission { CanAdministerFundingStream = true },
+                SpecificationActionTypes.CanAdministerFundingStream
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanMapDatasets_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanMapDatasets, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanMapDatasets = true
+                new EffectiveSpecificationPermission { CanEditSpecification = true },
+                SpecificationActionTypes.CanEditSpecification
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanChooseFunding_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanChooseFunding, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanChooseFunding = true
+                new EffectiveSpecificationPermission { CanApproveSpecification = true },
+                SpecificationActionTypes.CanApproveSpecification
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanApproveFunding_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveFunding, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanApproveFunding = true
+                new EffectiveSpecificationPermission { CanEditCalculations = true },
+                SpecificationActionTypes.CanEditCalculations
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanReleaseFunding_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanReleaseFunding, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanReleaseFunding = true
+                new EffectiveSpecificationPermission { CanApproveCalculations = true },
+                SpecificationActionTypes.CanApproveCalculations
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanRefreshFunding_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanRefreshFunding, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanRefreshFunding = true
+                new EffectiveSpecificationPermission { CanApproveAnyCalculations = true },
+                SpecificationActionTypes.CanApproveAnyCalculations
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanCreateQaTests_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanCreateQaTests, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanCreateQaTests = true
+                new EffectiveSpecificationPermission { CanMapDatasets = true },
+                SpecificationActionTypes.CanMapDatasets
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanEditQaTests_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanEditQaTests, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanEditQaTests = true
+                new EffectiveSpecificationPermission { CanChooseFunding = true },
+                SpecificationActionTypes.CanChooseFunding
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanApproveSpecification_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanApproveSpecification, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanApproveSpecification = true
+                new EffectiveSpecificationPermission { CanRefreshFunding = true },
+                SpecificationActionTypes.CanRefreshFunding
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public async Task WhenUserCanAdministerFundingStream_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanAdministerFundingStream, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanAdministerFundingStream = true
+                new EffectiveSpecificationPermission { CanApproveFunding = true },
+                SpecificationActionTypes.CanApproveFunding
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
-        }
-        
-        [TestMethod]
-        public async Task WhenUserCanRefreshPublishedQaForSpecification_ShouldSucceed()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(Constants.ObjectIdentifierClaimType, userId) }));
-            string specification = WellKnownSpecificationId;
-            AuthorizationHandlerContext authContext = CreateAuthenticationContext(principal, SpecificationActionTypes.CanRefreshPublishedQa, specification);
-
-            EffectiveSpecificationPermission actualPermission = new EffectiveSpecificationPermission
+            yield return new object[]
             {
-                CanRefreshPublishedQa = true
+                new EffectiveSpecificationPermission { CanReleaseFunding = true },
+                SpecificationActionTypes.CanReleaseFunding
             };
-
-            IUsersApiClient usersApiClient = Substitute.For<IUsersApiClient>();
-            usersApiClient.GetEffectivePermissionsForUser(Arg.Is(userId), Arg.Is(WellKnownSpecificationId)).Returns(new ApiResponse<EffectiveSpecificationPermission>(HttpStatusCode.OK, actualPermission));
-
-            IOptions<PermissionOptions> options = Substitute.For<IOptions<PermissionOptions>>();
-            options.Value.Returns(actualOptions);
-
-            SpecificationPermissionHandler authHandler = new SpecificationPermissionHandler(usersApiClient, options);
-
-            // Act
-            await authHandler.HandleAsync(authContext);
-
-            // Assert
-            authContext.HasSucceeded.Should().BeTrue();
+            yield return new object[]
+            {
+                new EffectiveSpecificationPermission { CanApproveAllCalculations = true },
+                SpecificationActionTypes.CanApproveAllCalculations
+            };
+            yield return new object[]
+            {
+                new EffectiveSpecificationPermission { CanRefreshPublishedQa = true },
+                SpecificationActionTypes.CanRefreshPublishedQa
+            };
         }
 
         private AuthorizationHandlerContext CreateAuthenticationContext(ClaimsPrincipal principal, SpecificationActionTypes permissionRequired, string resource)
