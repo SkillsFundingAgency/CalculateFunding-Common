@@ -185,7 +185,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
 
             GivenTheStatusCode("datasets/validate-definitionspecification-relationship", HttpStatusCode.OK, HttpMethod.Post);
 
-            NoValidatedContentApiResponse apiResponse = await _client.ValidateDefinitionSpecificationRelationship(validateDefinitionSpecificationRelationshipModel);
+            ValidatedApiResponse<bool> apiResponse = await _client.ValidateDefinitionSpecificationRelationship(validateDefinitionSpecificationRelationshipModel);
 
             apiResponse?
                 .StatusCode

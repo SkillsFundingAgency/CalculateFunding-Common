@@ -120,12 +120,12 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 createDefinitionSpecificationRelationshipModel);
         }
 
-        public async Task<NoValidatedContentApiResponse> ValidateDefinitionSpecificationRelationship(
+        public async Task<ValidatedApiResponse<bool>> ValidateDefinitionSpecificationRelationship(
             ValidateDefinitionSpecificationRelationshipModel validateDefinitionSpecificationRelationshipModel)
         {
             Guard.ArgumentNotNull(validateDefinitionSpecificationRelationshipModel, nameof(validateDefinitionSpecificationRelationshipModel));
 
-            return await ValidatedPostAsync(
+            return await ValidatedPostAsync<bool, ValidateDefinitionSpecificationRelationshipModel>(
                 DataSetsUriFor("validate-definitionspecification-relationship"),
                 validateDefinitionSpecificationRelationshipModel);
         }
