@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Sql.Interfaces;
 using CalculateFunding.Common.Utility;
 using Dapper;
@@ -55,6 +58,144 @@ namespace CalculateFunding.Common.Sql
             await QuerySingle<TEntity>(sql,
                 CommandType.Text,
                 parameters);
+
+        protected async Task<bool> BulkDelete<TEntity>(IList<TEntity> entities,
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation((entity, connection, transaction) =>
+                connection.DeleteAsync(entity, transaction),
+                entities,
+                degreeOfParallelism);
+        }
+
+        protected async Task<bool> BulkDelete<TEntity>(IList<TEntity> entities,
+            IDbConnection connection,
+            IDbTransaction transaction,
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation((entity, connection, transaction) =>
+                connection.DeleteAsync(entity, transaction),
+                connection,
+                transaction,
+                entities,
+                degreeOfParallelism);
+        }
+
+        protected async Task<bool> BulkUpdate<TEntity>(IList<TEntity> entities,
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation((entity, connection, transaction) => 
+                connection.UpdateAsync(entity, transaction),
+                entities,
+                degreeOfParallelism);
+        }
+
+        protected async Task<bool> BulkUpdate<TEntity>(IList<TEntity> entities, 
+            IDbConnection connection, 
+            IDbTransaction transaction, 
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation((entity, connection, transaction) => 
+                connection.UpdateAsync(entity, transaction), 
+                connection, 
+                transaction, 
+                entities, 
+                degreeOfParallelism);
+        }
+
+        protected async Task<bool> BulkInsert<TEntity>(IList<TEntity> entities, 
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation(async(entity, connection, transaction) => 
+                (await connection.InsertAsync(entity, transaction)) > 0,
+                entities,
+                degreeOfParallelism);
+        }
+
+        protected async Task<bool> BulkInsert<TEntity>(IList<TEntity> entities, 
+            IDbConnection connection, 
+            IDbTransaction transaction, 
+            int degreeOfParallelism = 5) where TEntity : class
+        {
+            return await BulkOperation(async(entity, connection, transaction) =>
+                (await connection.InsertAsync(entity, transaction)) > 0,
+                connection,
+                transaction,
+                entities,
+                degreeOfParallelism);
+        }
+
+        private async Task<bool> BulkOperation<TEntity>(Func<TEntity, IDbConnection, IDbTransaction, Task<bool>> action, 
+            IList<TEntity> entities, 
+            int degreeOfParallelism) where TEntity : class
+        {
+            using IDbConnection connection = NewOpenConnection();
+
+            using IDbTransaction transaction = BeginTransaction(connection);
+
+            try
+            {
+                bool success = await BulkOperation(action, connection, transaction, entities, degreeOfParallelism);
+
+                if (success)
+                {
+                    transaction.Commit();
+                }
+                else
+                {
+                    transaction.Rollback();
+                }
+
+                return success;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        private async Task<bool> BulkOperation<TEntity>(Func<TEntity, IDbConnection, IDbTransaction, Task<bool>> action, 
+            IDbConnection connection, 
+            IDbTransaction transaction, 
+            IList<TEntity> entities, 
+            int degreeOfParallelism) where TEntity : class
+        {
+            List<Task<bool>> allTasks = new List<Task<bool>>(entities.Count);
+            SemaphoreSlim throttler = new SemaphoreSlim(degreeOfParallelism);
+
+            foreach (TEntity entity in entities)
+            {
+                await throttler.WaitAsync();
+
+                allTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            return await action(entity, connection, transaction);
+                        }
+                        finally
+                        {
+                            throttler.Release();
+                        }
+                    }));
+            }
+
+            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
+
+            return allTasks.Select(_ => _.Result).All(_ => _ == true);
+        }
+
+        protected IDbTransaction BeginTransaction(IDbConnection connection)
+        {
+            return connection.BeginTransaction();
+        }
+
+        protected void CommitTransaction(IDbTransaction transaction)
+        {
+            transaction.Commit();
+        }
 
         protected async Task<int> Insert<TEntity>(TEntity entity) where TEntity : class
         {
@@ -128,7 +269,7 @@ namespace CalculateFunding.Common.Sql
                 .ToArray();
         }
 
-        private IDbConnection NewOpenConnection()
+        protected IDbConnection NewOpenConnection()
         {
             IDbConnection connection = _connectionFactory.CreateConnection();
 
