@@ -11,9 +11,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-        <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
-      </AssemblyAttribute>
       <PackageReference Include="Dapper" Version="2.0.90" />
       <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
       <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

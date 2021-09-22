@@ -14,52 +14,78 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
         }
 
-        public async Task<IEnumerable<TestEntity>> InsertAll(IEnumerable<TestEntity> testEntities)
+        public async Task<IEnumerable<TestEntity>> InsertAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
         {
-            await BulkInsert(testEntities.ToList());
+            if (transaction)
+            {
+                await BulkInsert(testEntities.ToList(), BeginTransaction());
+            }
+            else
+            {
+                await BulkInsert(testEntities.ToList());
+            }
 
             return testEntities;
         }
 
-        public async Task<IEnumerable<TestEntity>> InsertAll(IEnumerable<TestEntity> testEntities, ISqlTransaction transaction)
+        public async Task<int> InsertOne(TestEntity testEnty, bool transaction = false)
         {
-            await BulkInsert(testEntities.ToList(), transaction);
-
-            return testEntities;
+            if (transaction)
+            {
+                return await Insert(testEnty, BeginTransaction());
+            }
+            else
+            {
+                return await Insert(testEnty);
+            }
         }
 
-        public async Task<int> InsertOne(TestEntity testEnty, ISqlTransaction transaction = null)
+        public async Task<bool> UpdateAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
         {
-            return await Insert(testEnty, transaction);
+            if (transaction)
+            {
+                return await BulkUpdate(testEntities.ToList(), BeginTransaction());
+            }
+            else
+            {
+                return await BulkUpdate(testEntities.ToList());
+            }
         }
 
-        public async Task<bool> UpdateAll(IEnumerable<TestEntity> testEntities)
+        public async Task<bool> UpdateOne(TestEntity testEnty, bool transaction = false)
         {
-            return await BulkUpdate(testEntities.ToList());
+            if (transaction)
+            {
+                return await Update(testEnty, BeginTransaction());
+            }
+            else
+            {
+                return await Update(testEnty);
+            }
         }
 
-        public async Task<bool> UpdateAll(IEnumerable<TestEntity> testEntities, ISqlTransaction transaction)
+        public async Task<bool> DeleteAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
         {
-            return await BulkUpdate(testEntities.ToList(), transaction);
-        }
-        public async Task<bool> UpdateOne(TestEntity testEnty, ISqlTransaction transaction = null)
-        {
-            return await Update(testEnty, transaction);
-        }
-
-        public async Task<bool> DeleteAll(IEnumerable<TestEntity> testEntities)
-        {
-            return await BulkDelete(testEntities.ToList());
+            if (transaction)
+            {
+                return await BulkDelete(testEntities.ToList(), BeginTransaction());
+            }
+            else
+            {
+                return await BulkDelete(testEntities.ToList());
+            }
         }
 
-        public async Task<bool> DeleteAll(IEnumerable<TestEntity> testEntities, ISqlTransaction transaction)
+        public async Task<bool> DeleteOne(TestEntity testEnty, bool transaction = false)
         {
-            return await BulkDelete(testEntities.ToList(), transaction);
-        }
-
-        public async Task<bool> DeleteOne(TestEntity testEnty, ISqlTransaction transaction = null)
-        {
-            return await Delete(testEnty, transaction);
+            if (transaction)
+            {
+                return await Delete(testEnty, BeginTransaction());
+            }
+            else
+            {
+                return await Delete(testEnty);
+            }
         }
     }
 }

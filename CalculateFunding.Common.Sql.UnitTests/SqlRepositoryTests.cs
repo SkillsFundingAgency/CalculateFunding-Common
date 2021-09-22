@@ -1,17 +1,12 @@
 ﻿using CalculateFunding.Common.Sql.Interfaces;
-using Dapper;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Moq.Language.Flow;
 using Moq.Protected;
 using Polly;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +19,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
         private Mock<ISqlConnectionFactory> _connectionFactory;
         private Mock<IDbConnection> _connection;
         private Mock<DbTransaction> _transaction;
-        private Mock<SqlTransaction> _sqlTransaction;
         private Mock<DbCommand> _command;
         private Mock<ISqlPolicyFactory> _sqlPolicyFactory;
 
@@ -35,7 +29,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
             _connection = new Mock<IDbConnection>();
             _command = new Mock<DbCommand>();
             _transaction = new Mock<DbTransaction>();
-            _sqlTransaction = new Mock<SqlTransaction>(_connection.Object);
             _sqlPolicyFactory = new Mock<ISqlPolicyFactory>();
             _sqlPolicyFactory.Setup(_ => _.CreateConnectionOpenPolicy()).Returns(Policy.NoOp);
         }
@@ -65,28 +58,13 @@ namespace CalculateFunding.Common.Sql.UnitTests
             IEnumerable<TestEntity> entities = null;
             int retValue = 0;
 
-            if (supplyTransactions)
+            if (useBulkOperation)
             {
-                if (useBulkOperation)
-                {
-                    entities = await sqlRepository.InsertAll(new[] { testEntity }, _sqlTransaction.Object);
-                }
-                else
-                {
-                    retValue = await sqlRepository.InsertOne(testEntity, _sqlTransaction.Object);
-                }
-
+                entities = await sqlRepository.InsertAll(new[] { testEntity }, supplyTransactions);
             }
             else
             {
-                if (useBulkOperation)
-                {
-                    entities = await sqlRepository.InsertAll(new[] { testEntity });
-                }
-                else
-                {
-                    retValue = await sqlRepository.InsertOne(testEntity);
-                }
+                retValue = await sqlRepository.InsertOne(testEntity, supplyTransactions);
             }
 
             if (rollback)
@@ -130,14 +108,7 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             bool success;
 
-            if (supplyTransactions)
-            {
-                success = useBulkOperation ? await sqlRepository.DeleteAll(new[] { testEntity }, _sqlTransaction.Object) : await sqlRepository.DeleteOne(testEntity, _sqlTransaction.Object);
-            }
-            else
-            {
-                success = useBulkOperation ? await sqlRepository.DeleteAll(new[] { testEntity }) : await sqlRepository.DeleteOne(testEntity);
-            }
+            success = useBulkOperation ? await sqlRepository.DeleteAll(new[] { testEntity }, supplyTransactions) : await sqlRepository.DeleteOne(testEntity, supplyTransactions);
 
             if (rollback)
             {
@@ -169,14 +140,7 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             bool success;
 
-            if (supplyTransactions)
-            {
-                success = useBulkOperation ? await sqlRepository.UpdateAll(new[] { testEntity }, _sqlTransaction.Object) : await sqlRepository.UpdateOne(testEntity, _sqlTransaction.Object);
-            }
-            else
-            {
-                success = useBulkOperation ? await sqlRepository.UpdateAll(new[] { testEntity }) : await sqlRepository.UpdateOne(testEntity);
-            }
+            success = useBulkOperation ? await sqlRepository.UpdateAll(new[] { testEntity }, supplyTransactions) : await sqlRepository.UpdateOne(testEntity, supplyTransactions);
 
             if (rollback)
             {
@@ -222,14 +186,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             _connectionFactory.Setup(m => m.CreateConnection())
                             .Returns(iDbConnectionMock.Object);
-
-            _sqlTransaction.Protected()
-                .SetupGet<IDbConnection>("InternalConnection")
-                .Returns(iDbConnectionMock.Object);
-
-            _sqlTransaction.Protected()
-                .SetupGet<IDbTransaction>("InternalTransaction")
-                .Returns(_transaction.Object);
         }
     }
 }
