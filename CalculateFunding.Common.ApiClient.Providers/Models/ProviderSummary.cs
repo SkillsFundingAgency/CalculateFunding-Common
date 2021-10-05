@@ -177,6 +177,12 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
         [JsonProperty("previousEstablishmentNumber")]
         public string PreviousEstablishmentNumber { get; set; }
 
+        [JsonProperty("furtherEducationTypeCode")]
+        public string FurtherEducationTypeCode { get; set; }
+
+        [JsonProperty("furtherEducationTypeName")]
+        public string FurtherEducationTypeName { get; set; }
+
         [JsonProperty("predecessors")]
         public IEnumerable<string> Predecessors { get; set; }
 

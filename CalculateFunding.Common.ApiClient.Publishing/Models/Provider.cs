@@ -106,5 +106,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [JsonProperty("paymentOrganisationName")]
         public string PaymentOrganisationName { get; set; }
+
+        [JsonProperty("furtherEducationTypeCode")]
+        public string FurtherEducationTypeCode { get; set; }
+
+        [JsonProperty("furtherEducationTypeName")]
+        public string FurtherEducationTypeName { get; set; }
     }
 }
