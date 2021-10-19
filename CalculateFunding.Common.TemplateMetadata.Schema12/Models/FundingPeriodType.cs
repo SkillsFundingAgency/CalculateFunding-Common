@@ -8,6 +8,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Models
     {
         AY,
         FY,
-        CY
+        CY,
+        IL
     }
 }

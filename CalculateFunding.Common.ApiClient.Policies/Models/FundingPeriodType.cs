@@ -62,6 +62,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// <summary>
         /// Academies and Schools Academic Year
         /// </summary>
-        AS
+        AS,
+
+        /// <summary>
+        /// Independent Learning Providers
+        /// </summary>
+        IL
     }
 }
