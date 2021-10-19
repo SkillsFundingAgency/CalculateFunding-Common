@@ -59,5 +59,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("dateOpened")]
         public DateTimeOffset? DateOpened { get; set; }
+
+        [JsonProperty("majorVersion")]
+        public int? MajorVersion { get; set; }
+        
+        [JsonProperty("minorVersion")]
+        public int? MinorVersion { get; set; }
     }
 }
