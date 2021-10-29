@@ -69,5 +69,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("releaseChannels")]
         public IEnumerable<FundingConfigurationChannel> ReleaseChannels { get; set; }
+
+        [JsonProperty("releaseActionGroups")]
+        public IEnumerable<ReleaseActionGroup> ReleaseActionGroups { get; set; }
     }    
 }

@@ -31,5 +31,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
 
         public IEnumerable<FundingConfigurationChannel> ReleaseChannels { get; set; }
 
+        public IEnumerable<ReleaseActionGroup> ReleaseActionGroups { get; set; }
+
     }
 }
