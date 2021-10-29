@@ -20,7 +20,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// This code should match the created channel code in the publishing microservice when releasing funding.
         /// When this release action is selected, the following channels will be released to
         /// </summary>
-        [JsonProperty("channels")]
+        [JsonProperty("channelCodes")]
         public IEnumerable<string> ChannelCodes { get; set; }
     }
 }
