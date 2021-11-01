@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  name: Hosted Ubuntu 1604
+  vmImage: ubuntu-18.04
 
 steps:
 - bash: |
