@@ -8,6 +8,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
     {
         Undefined = 0,
         FundingLineValueProfileMismatch,
-        TrustIdMismatch
+        TrustIdMismatch,
+        ProviderNotFunded,
+        PostPaymentOutOfScopeProvider,
+        ProfilingConsistencyCheckFailure,
+        MultipleSuccessors,
+        NoApplicableVariation
     }
 }

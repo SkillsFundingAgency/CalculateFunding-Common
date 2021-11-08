@@ -89,7 +89,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         /// Total funding for this provider
         /// </summary>
         [JsonProperty("totalFunding")]
-        public decimal TotalFunding { get; set; }
+        public decimal? TotalFunding { get; set; }
 
         /// <summary>
         /// Major version
