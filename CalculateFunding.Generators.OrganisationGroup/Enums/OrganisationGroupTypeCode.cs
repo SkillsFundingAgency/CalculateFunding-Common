@@ -93,5 +93,40 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         /// Local Authority Maintained
         /// </summary>
         LocalAuthorityMaintained,
+
+        /// <summary>
+        /// Mainstream
+        /// </summary>
+        Mainstream,
+
+        /// <summary>
+        /// Mainstream Academy
+        /// </summary>
+        MainstreamAcademy,
+
+        /// <summary>
+        /// Non-maintained Special
+        /// </summary>
+        NonMaintainedSpecial,
+
+        /// <summary>
+        /// Pupil Referral Unit
+        /// </summary>
+        PupilReferralUnit,
+
+        /// <summary>
+        /// Alternative provision Academy
+        /// </summary>
+        APAcademy,
+
+        /// <summary>
+        /// Academy Special
+        /// </summary>
+        AcademySpecial,
+
+        /// <summary>
+        /// Special
+        /// </summary>
+        Special
     }
 }
