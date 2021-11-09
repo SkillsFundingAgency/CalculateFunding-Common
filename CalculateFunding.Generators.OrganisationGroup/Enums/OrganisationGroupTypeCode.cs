@@ -100,14 +100,9 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         Mainstream,
 
         /// <summary>
-        /// Mainstream Academy
+        /// Non-maintained Special Schools
         /// </summary>
-        MainstreamAcademy,
-
-        /// <summary>
-        /// Non-maintained Special
-        /// </summary>
-        NonMaintainedSpecial,
+        NonMaintainedSpecialSchools,
 
         /// <summary>
         /// Pupil Referral Unit
@@ -115,18 +110,18 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         PupilReferralUnit,
 
         /// <summary>
-        /// Alternative provision Academy
+        /// Academy Alternative Provision
         /// </summary>
-        APAcademy,
+        AcademyAlternativeProvision,
 
         /// <summary>
-        /// Academy Special
+        /// Special Academies
         /// </summary>
-        AcademySpecial,
+        SpecialAcademies,
 
         /// <summary>
-        /// Special
+        /// Alternative Provision
         /// </summary>
-        Special
+        AlternativeProvision
     }
 }
