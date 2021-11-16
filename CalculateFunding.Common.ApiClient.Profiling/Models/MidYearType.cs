@@ -8,6 +8,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
     {
         OpenerCatchup,
         Opener,
-        Closure
+        Closure,
+        Converter
     }
 }
