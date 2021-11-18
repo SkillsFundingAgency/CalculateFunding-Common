@@ -235,6 +235,21 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
         }
 
         [TestMethod]
+        public async Task RunGenerateCalculationResultQADatabasePopulationJob()
+        {
+            PopulateCalculationResultQADatabaseRequest populateCalculationResultQADatabaseRequest = new PopulateCalculationResultQADatabaseRequest
+            {
+                SpecificationId = NewRandomString()
+            };
+            Job job = new Job();
+
+            await AssertPostRequest($"calculation-results/populate-qa-database",
+                populateCalculationResultQADatabaseRequest,
+                job,
+                () => _client.RunGenerateCalculationResultQADatabasePopulationJob(populateCalculationResultQADatabaseRequest));
+        }
+
+        [TestMethod]
         public async Task GetSpecificationCalculationResultsMetadata()
         {
             string specificationId = NewRandomString();

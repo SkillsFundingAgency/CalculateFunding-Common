@@ -151,5 +151,12 @@ namespace CalculateFunding.Common.ApiClient.Results
             Guard.IsNullOrWhiteSpace(providerId, nameof(providerId));
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
         }
+
+        public async Task<ApiResponse<Job>> RunGenerateCalculationResultQADatabasePopulationJob(PopulateCalculationResultQADatabaseRequest populateCalculationResultQADatabaseRequest)
+        {
+            Guard.ArgumentNotNull(populateCalculationResultQADatabaseRequest, nameof(populateCalculationResultQADatabaseRequest));
+
+            return await PostAsync<Job, PopulateCalculationResultQADatabaseRequest>($"{UrlRoot}/calculation-results/populate-qa-database", populateCalculationResultQADatabaseRequest);
+        }
     }
 }

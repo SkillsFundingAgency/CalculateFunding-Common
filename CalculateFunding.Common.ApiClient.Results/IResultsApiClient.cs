@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -28,5 +27,6 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<HttpStatusCode> QueueMergeSpecificationInformationJob(MergeSpecificationInformationRequest mergeRequest);
         Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
         Task<ApiResponse<SpecificationCalculationResultsMetadata>> GetSpecificationCalculationResultsMetadata(string specificationId);
+        Task<ApiResponse<Job>> RunGenerateCalculationResultQADatabasePopulationJob(PopulateCalculationResultQADatabaseRequest populateCalculationResultQADatabaseRequest);
     }
 }
