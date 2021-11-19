@@ -35,6 +35,9 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         [JsonProperty("approvalStatus")]
         public PublishStatus ApprovalStatus { get; set; }
 
+        [JsonProperty("forceUpdateOnNextRefresh")]
+        public bool? ForceUpdateOnNextRefresh { get; set; }
+
         /// <summary>
         /// Assigned template versions for each funding stream in this specification.
         /// Key is the funding stream ID, value is the version of the funding template for that funding stream

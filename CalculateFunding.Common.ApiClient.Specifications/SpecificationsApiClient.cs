@@ -290,6 +290,13 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await PatchAsync($"{UrlRoot}/{specificationId}/mergeprofilevariationpointers", profileVariationPointers);
         }
 
+        public async Task<HttpStatusCode> ClearForceOnNextRefresh(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PutAsync($"{UrlRoot}/{specificationId}/clearforceonnextrefresh");
+        }
+
         public async Task<ApiResponse<JobModel>> ReIndexSpecification(string specificationId)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));

@@ -197,6 +197,16 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
         }
 
         [TestMethod]
+        public async Task ClearForceOnNextRefresh()
+        {
+            string id = NewRandomString();
+
+            await AssertPutRequest($"{id}/clearforceonnextrefresh",
+                HttpStatusCode.OK,
+                () => _client.ClearForceOnNextRefresh(id));
+        }
+
+        [TestMethod]
         public async Task SelectSpecificationForFunding()
         {
             string id = NewRandomString();
