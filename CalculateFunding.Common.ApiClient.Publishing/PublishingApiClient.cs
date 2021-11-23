@@ -453,6 +453,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                 $"specifications/{specificationId}/releaseProvidersToChannels", releaseProvidersToChannelRequest);
         }
 
+        public async Task<ApiResponse<ReleaseFundingPublishedProvidersSummary>> GetApprovedPublishedProvidersReleaseFundingSummary(string specificationId, ReleaseFundingPublishProvidersRequest request)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(request, nameof(request));
+
+            return await PostAsync<ReleaseFundingPublishedProvidersSummary, ReleaseFundingPublishProvidersRequest>(
+                $"specifications/{specificationId}/publishedproviders/release-funding-summary", request);
+        }
+
         public async Task<ApiResponse<JobCreationResponse>> QueueReleaseManagementDataMigrationJob(params string[] fundingStreamIds)
         {
             string queryString = AddQueryStringParametersIfSupplied("", nameof(fundingStreamIds), fundingStreamIds);

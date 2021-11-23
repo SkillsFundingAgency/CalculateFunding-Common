@@ -138,5 +138,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<JobCreationResponse>> QueueReleaseManagementDataMigrationJob(params string[] fundingStreamIds);
 
         Task<HttpStatusCode> PopulateReferenceData(params string[] fundingStreamIds);
+
+        Task<ApiResponse<ReleaseFundingPublishedProvidersSummary>> GetApprovedPublishedProvidersReleaseFundingSummary(string specificationId, ReleaseFundingPublishProvidersRequest request);
     }
 }

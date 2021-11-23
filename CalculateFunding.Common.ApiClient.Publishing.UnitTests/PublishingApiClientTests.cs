@@ -754,6 +754,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GetApprovedPublishedProvidersReleaseFundingSummary()
+        {
+            ReleaseFundingPublishProvidersRequest request = new ReleaseFundingPublishProvidersRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest($"specifications/{specificationId}/publishedproviders/release-funding-summary",
+                request,
+                new ReleaseFundingPublishedProvidersSummary
+                {
+                },
+                () => _client.GetApprovedPublishedProvidersReleaseFundingSummary(specificationId, request));
+        }
+
+        [TestMethod]
         public async Task QueueReleaseManagementDataMigrationJob()
         {
             string fundingStreamId = NewRandomString();
