@@ -29,5 +29,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         /// </summary>
         [JsonProperty("providerStatus")]
         public IEnumerable<string> ProviderStatus { get; set; }
+
+        /// <summary>
+        /// Determines whether the channel is visible in the UI and can therefore be queried against
+        /// </summary>
+        [JsonProperty("isVisible")]
+        public bool IsVisible { get; set; }
     }
 }
