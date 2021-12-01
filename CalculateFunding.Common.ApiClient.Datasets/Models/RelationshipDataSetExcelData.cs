@@ -10,13 +10,13 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         {
             Ukprn = ukprn;
             FundingLines = new Dictionary<string, decimal?>();
-            Calculations = new Dictionary<string, decimal?>();
+            Calculations = new Dictionary<string, object>();
         }
 
         public string Ukprn { get; }
 
         public IDictionary<string, decimal?> FundingLines { get; set; }
 
-        public IDictionary<string, decimal?> Calculations { get; set; }
+        public IDictionary<string, object> Calculations { get; set; }
     }
 }
