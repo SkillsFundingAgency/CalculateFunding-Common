@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Publishing.Models
@@ -65,5 +66,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         
         [JsonProperty("minorVersion")]
         public int? MinorVersion { get; set; }
+
+        [JsonProperty("releaseChannels")]
+        public IEnumerable<ReleaseChannel> ReleaseChannels { get; set; }
     }
 }
