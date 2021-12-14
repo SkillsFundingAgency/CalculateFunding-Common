@@ -156,7 +156,7 @@ namespace CalculateFunding.Common.ApiClient.Results
         {
             Guard.ArgumentNotNull(populateCalculationResultQADatabaseRequest, nameof(populateCalculationResultQADatabaseRequest));
 
-            return await PostAsync<Job, PopulateCalculationResultQADatabaseRequest>($"{UrlRoot}/calculation-results/populate-qa-database", populateCalculationResultQADatabaseRequest);
+            return await PutAsync<Job, PopulateCalculationResultQADatabaseRequest>($"{UrlRoot}/calculation-results/populate-qa-database", populateCalculationResultQADatabaseRequest);
         }
     }
 }

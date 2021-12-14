@@ -243,7 +243,7 @@ namespace CalculateFunding.Common.ApiClient.Results.UnitTests
             };
             Job job = new Job();
 
-            await AssertPostRequest($"calculation-results/populate-qa-database",
+            await AssertPutRequest($"calculation-results/populate-qa-database",
                 populateCalculationResultQADatabaseRequest,
                 job,
                 () => _client.RunGenerateCalculationResultQADatabasePopulationJob(populateCalculationResultQADatabaseRequest));
