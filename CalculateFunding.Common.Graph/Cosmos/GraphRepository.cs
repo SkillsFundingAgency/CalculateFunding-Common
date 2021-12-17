@@ -55,7 +55,7 @@ namespace CalculateFunding.Common.Graph.Cosmos
             string vertexLabel = GetVertexLabel<TNode>();
 
             string query = $"g.{VertexTraversal(vertexLabel, field)}.as('A')" +
-                           $".repeat({OutEdgeTraversal(relationship)}.inV().simplePath()).times(31).emit(loops().is(gte(1)))" +
+                           $".repeat({OutEdgeTraversal(relationship)}.inV().simplePath()).times(15).emit(loops().is(gte(1)))" +
                            $".{OutEdgeTraversal(relationship)}.inV().where(eq('A')).path()" +
                            ".dedup().by(unfold().order().by(id).dedup().fold())";
 

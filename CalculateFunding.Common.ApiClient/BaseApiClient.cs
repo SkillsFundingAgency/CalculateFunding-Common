@@ -24,6 +24,7 @@ namespace CalculateFunding.Common.ApiClient
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly JsonSerializerSettings _serializerSettings = new JsonSerializerSettings
         {
+            MaxDepth = null,
             Formatting = Formatting.Indented,
             ContractResolver = new CamelCasePropertyNamesContractResolver {
                 NamingStrategy = new CamelCaseNamingStrategy

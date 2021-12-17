@@ -6,8 +6,8 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Graph Client Libraries for Neo4J and CosmosGraph</Description>
-    <Version>3.4.1</Version>
-    <PackageVersion>3.4.1</PackageVersion>
+    <Version>3.4.2</Version>
+    <PackageVersion>3.4.2</PackageVersion>
    
   </PropertyGroup>
 

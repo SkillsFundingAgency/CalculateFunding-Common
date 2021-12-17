@@ -13,6 +13,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         PostPaymentOutOfScopeProvider,
         ProfilingConsistencyCheckFailure,
         MultipleSuccessors,
-        NoApplicableVariation
+        NoApplicableVariation,
+        NoApplicableProfilingUpdateVariation
     }
 }
