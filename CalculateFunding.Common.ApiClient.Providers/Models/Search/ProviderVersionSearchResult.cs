@@ -72,6 +72,10 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
 
         public string LocalGovernmentGroupTypeCode { get; set; }
 
+        public string GovernmentOfficeRegionName { get; set; }
+
+        public string GovernmentOfficeRegionCode { get; set; }
+
         public string CountryName { get; set; }
 
         public string CountryCode { get; set; }
