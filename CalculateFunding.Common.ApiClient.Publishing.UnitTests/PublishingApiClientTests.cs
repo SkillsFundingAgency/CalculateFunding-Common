@@ -211,8 +211,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
 
-            await AssertGetRequest($"publishedprovidertransactions/{specificationId}/{providerId}",
-                Enumerable.Empty<PublishedProviderTransaction>(),
+            await AssertGetRequest($"specifications/{specificationId}/provider/{providerId}/publishedprovidertransactions",
+                Enumerable.Empty<ReleasePublishedProviderTransaction>(),
                 () => _client.GetPublishedProviderTransactions(specificationId, providerId));
         }
 
