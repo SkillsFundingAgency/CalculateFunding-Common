@@ -2,9 +2,9 @@
 
   <PropertyGroup>
 
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6</TargetFramework>
 
-    <Version>2.8.0</Version>
+    <Version>3.0.0</Version>
     <Product>Calculate Funding Service</Product>
     <Description>Organisation Group Generator to group providers into publishing groups for the funding model</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

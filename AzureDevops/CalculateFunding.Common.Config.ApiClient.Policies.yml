@@ -1,7 +1,7 @@
 ﻿name: $(Build.DefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 pool:
-  vmImage: windows-2019
+  vmImage: windows-2022
 
 variables:
  - name: BuildConfiguration
@@ -39,6 +39,6 @@ pr:
 steps:
 - template: templates\nuget-package-build.yml
   parameters:
-    DotNetCoreVersion: ${{ variables.DotnetCoreSdkVersion }}
+    DotNetCoreVersion: ${{ variables.DotnetCoreSdkVersionNet6 }}
     BuildConfiguration: ${{ variables.BuildConfiguration }}
     NugetProjectPath: '$(System.DefaultWorkingDirectory)\CalculateFunding.Common.Config.ApiClient.Policies\*.csproj'

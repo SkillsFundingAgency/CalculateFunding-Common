@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Extensions;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
@@ -266,7 +267,7 @@ namespace CalculateFunding.Common.ApiClient
         {
             HandleNullResponse(url, response, httpClient);
 
-            string bodyContent = response.Content == null ? null: await response.Content.ReadAsStringAsync();
+            string bodyContent = !response.HasContent() ? null: await response.Content.ReadAsStringAsync();
             
             if (response.IsSuccessStatusCode)
             {
@@ -283,7 +284,7 @@ namespace CalculateFunding.Common.ApiClient
             if (response.IsSuccessStatusCode)
             {
                 TResponse responseContent = default(TResponse);
-                if (response.Content != null)
+                if (response.HasContent())
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     responseContent = JsonConvert.DeserializeObject<TResponse>(content, _serializerSettings);
@@ -296,7 +297,7 @@ namespace CalculateFunding.Common.ApiClient
 
             if (apiResponse.StatusCode == HttpStatusCode.BadRequest)
             {
-                if (response.Content != null)
+                if (response.HasContent())
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     apiResponse.ModelState = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(content, _serializerSettings);
@@ -399,7 +400,7 @@ namespace CalculateFunding.Common.ApiClient
 
                 if (apiResponse.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    if (response.Content != null)
+                    if (response.HasContent())
                     {
                         string content = await response.Content.ReadAsStringAsync();
                         apiResponse.ModelState = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(content, _serializerSettings);
