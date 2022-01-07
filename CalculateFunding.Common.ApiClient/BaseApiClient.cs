@@ -269,7 +269,7 @@ namespace CalculateFunding.Common.ApiClient
 
             string bodyContent = !response.HasContent() ? null: await response.Content.ReadAsStringAsync();
             
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && bodyContent != null)
             {
                 return new ApiResponse<T>(response.StatusCode, response.Headers, JsonConvert.DeserializeObject<T>(bodyContent, _serializerSettings));
             }
