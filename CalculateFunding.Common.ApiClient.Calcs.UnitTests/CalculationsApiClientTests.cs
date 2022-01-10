@@ -517,8 +517,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Content
                 .Should()
                 .BeEquivalentTo(expectedObsoleteItems);
-
-
         }
 
         [TestMethod]
@@ -567,6 +565,23 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Content
                 .Should()
                 .BeEquivalentTo(expectedJob);
+        }
+
+        [TestMethod]
+        public async Task GenerateCalculationIdentifier()
+        {
+            GenerateIdentifierModel generateIdentifierModel = new();
+
+            CalculationIdentifier expectedIdentifier = new();
+
+            GivenTheResponse($"calcs/generate-identifier", expectedIdentifier, HttpMethod.Post);
+
+            ApiResponse<CalculationIdentifier> apiResponse = await _client.GenerateCalculationIdentifier(generateIdentifierModel);
+
+            apiResponse
+                .Content
+                .Should()
+                .BeEquivalentTo(expectedIdentifier);
         }
     }
 }

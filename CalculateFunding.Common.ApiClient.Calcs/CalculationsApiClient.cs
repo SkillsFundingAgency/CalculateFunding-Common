@@ -362,5 +362,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs
 
             return await PostAsync<Job>($"{UrlRoot}/{specificationId}/{datasetDefinitionRelationshipId}/remap");
         }
+
+        public async Task<ApiResponse<CalculationIdentifier>> GenerateCalculationIdentifier(GenerateIdentifierModel model)
+        {
+            Guard.ArgumentNotNull(model, nameof(model));
+
+            return await PostAsync<CalculationIdentifier>($"{UrlRoot}/generate-identifier");
+        }
     }
 }
