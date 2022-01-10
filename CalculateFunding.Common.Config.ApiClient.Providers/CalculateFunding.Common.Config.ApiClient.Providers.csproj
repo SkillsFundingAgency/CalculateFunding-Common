@@ -6,7 +6,7 @@
     <Product>Calculate Funding Service</Product>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>    
-    <Version>5.0.1</Version>
+    <Version>5.0.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
   </PropertyGroup>

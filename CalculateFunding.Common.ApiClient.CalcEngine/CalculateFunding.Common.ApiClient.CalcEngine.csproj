@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
     <Description>Calc Engine microservice client</Description>
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <RepositoryUrl>https://dfe-gov-uk.visualstudio.com/Calculate%20Funding%20Service/_git/CalculateFunding-Common</RepositoryUrl>

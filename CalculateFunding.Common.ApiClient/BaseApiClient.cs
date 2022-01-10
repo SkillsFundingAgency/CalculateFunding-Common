@@ -267,7 +267,7 @@ namespace CalculateFunding.Common.ApiClient
         {
             HandleNullResponse(url, response, httpClient);
 
-            string bodyContent = !response.HasContent() ? null: await response.Content.ReadAsStringAsync();
+            string bodyContent = !response.Content.HasContent() ? null: await response.Content.ReadAsStringAsync();
             
             if (response.IsSuccessStatusCode && bodyContent != null)
             {
@@ -284,7 +284,7 @@ namespace CalculateFunding.Common.ApiClient
             if (response.IsSuccessStatusCode)
             {
                 TResponse responseContent = default(TResponse);
-                if (response.HasContent())
+                if (response.Content.HasContent())
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     responseContent = JsonConvert.DeserializeObject<TResponse>(content, _serializerSettings);
@@ -297,7 +297,7 @@ namespace CalculateFunding.Common.ApiClient
 
             if (apiResponse.StatusCode == HttpStatusCode.BadRequest)
             {
-                if (response.HasContent())
+                if (response.Content.HasContent())
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     apiResponse.ModelState = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(content, _serializerSettings);
@@ -400,7 +400,7 @@ namespace CalculateFunding.Common.ApiClient
 
                 if (apiResponse.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    if (response.HasContent())
+                    if (response.Content.HasContent())
                     {
                         string content = await response.Content.ReadAsStringAsync();
                         apiResponse.ModelState = JsonConvert.DeserializeObject<IDictionary<string, IEnumerable<string>>>(content, _serializerSettings);

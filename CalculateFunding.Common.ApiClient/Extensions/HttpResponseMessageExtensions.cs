@@ -6,9 +6,14 @@ namespace CalculateFunding.Common.ApiClient.Extensions
 {
     public static class HttpResponseMessageExtensions
     {
-        public static bool HasContent(this HttpResponseMessage value)
+        public static bool HasContent(this HttpContent httpContent)
         {
-            return value.Content != null && value.Content.Headers.ContentLength > 0;
+            if (httpContent == null)
+            {
+                return false;
+            }
+            var stream = httpContent.ReadAsStreamAsync().Result;
+            return stream.ReadByte() != -1;
         }
     }
 }
