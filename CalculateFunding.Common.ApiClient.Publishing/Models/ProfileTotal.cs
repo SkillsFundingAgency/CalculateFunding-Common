@@ -29,6 +29,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [JsonProperty("profileRemainingPercentage")]
         public decimal? ProfileRemainingPercentage { get; set; }
 
+        [JsonProperty("profilePercentage")]
+        public decimal? ProfilePercentage { get; set; }
+
         [JsonProperty("actualDate")]
         public DateTimeOffset? ActualDate { get; set; }
 
