@@ -120,6 +120,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
             string fundingStreamId);
 
+        Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamReleasedSqlImport(string specificationId,
+            string fundingStreamId);
+
         Task<ApiResponse<LatestPublishedDate>> GetLatestPublishedDate(string fundingStreamId,
             string fundingPeriodId);
 

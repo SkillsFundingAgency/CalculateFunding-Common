@@ -609,6 +609,17 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task QueueSpecificationFundingStreamReleasedSqlImport()
+        {
+            string specificationId = NewRandomString();
+            string fundingStreamId = NewRandomString();
+
+            await AssertGetRequest($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/released/import/queue",
+                new JobCreationResponse(),
+                () => _client.QueueSpecificationFundingStreamReleasedSqlImport(specificationId, fundingStreamId));
+        }
+
+        [TestMethod]
         public async Task GetLatestPublishedDate()
         {
             string fundingPeriodId = NewRandomString();

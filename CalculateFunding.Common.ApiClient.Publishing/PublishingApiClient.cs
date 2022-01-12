@@ -407,6 +407,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<JobCreationResponse>($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/import/queue");
         }
 
+        public async Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamReleasedSqlImport(string specificationId,
+            string fundingStreamId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+
+            return await GetAsync<JobCreationResponse>($"sqlqa/specifications/{specificationId}/funding-streams/{fundingStreamId}/released/import/queue");
+        }
+
         public async Task<ApiResponse<LatestPublishedDate>> GetLatestPublishedDate(string fundingStreamId,
             string fundingPeriodId)
         {
