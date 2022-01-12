@@ -131,6 +131,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<SearchResults<PublishedProviderSearchItem>, SearchModel>(url, searchModel);
         }
 
+        public async Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderIds(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"publishedprovider/publishedprovider-id/{specificationId}";
+
+            return await GetAsync<IEnumerable<string>>(url);
+        }
+
         public async Task<ApiResponse<IEnumerable<string>>> SearchPublishedProviderIds(PublishedProviderIdSearchModel searchModel)
         {
             Guard.ArgumentNotNull(searchModel, nameof(searchModel));
