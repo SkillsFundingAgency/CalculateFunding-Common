@@ -367,7 +367,7 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         {
             Guard.ArgumentNotNull(model, nameof(model));
 
-            return await PostAsync<CalculationIdentifier>($"{UrlRoot}/generate-identifier");
+            return await PostAsync<CalculationIdentifier, GenerateIdentifierModel>($"{UrlRoot}/generate-identifier", model);
         }
     }
 }
