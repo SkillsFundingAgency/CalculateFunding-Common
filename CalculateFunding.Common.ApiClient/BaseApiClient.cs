@@ -234,7 +234,7 @@ namespace CalculateFunding.Common.ApiClient
             CancellationToken cancellationToken,
             TimeSpan? timeout = null)
         {
-            IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put });
+            IsOk(httpMethod, new[] { HttpMethod.Post, HttpMethod.Put, HttpMethod.Patch });
 
             HttpClient httpClient = await PrepareRequest(url,
                 timeout,
@@ -249,6 +249,7 @@ namespace CalculateFunding.Common.ApiClient
             using (HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url))
             {
                 requestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
                 using (HttpResponseMessage response = await httpClient.SendAsync(requestMessage, cancellationToken))
                 {
                     return await ValidatedApiResponse<TResponse>(url, response, httpClient);

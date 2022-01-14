@@ -266,28 +266,28 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<SpecificationsDownloadModel>($"{UrlRoot}/download-report/{reportId}");
         }
 
-        public async Task<HttpStatusCode> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer)
+        public async Task<ValidatedApiResponse<HttpStatusCode>> SetProfileVariationPointer(string specificationId, ProfileVariationPointer profileVariationPointer)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(profileVariationPointer, nameof(profileVariationPointer));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointer", profileVariationPointer);
+            return await ValidatedPutAsync<HttpStatusCode, ProfileVariationPointer>($"{UrlRoot}/{specificationId}/profilevariationpointer", profileVariationPointer);
         }
 
-        public async Task<HttpStatusCode> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        public async Task<ValidatedApiResponse<HttpStatusCode>> SetProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(profileVariationPointers, nameof(profileVariationPointers));
 
-            return await PutAsync($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointers);
+            return await ValidatedPutAsync<HttpStatusCode, IEnumerable<ProfileVariationPointer>>($"{UrlRoot}/{specificationId}/profilevariationpointers", profileVariationPointers);
         }
 
-        public async Task<HttpStatusCode> MergeProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        public async Task<ValidatedApiResponse<HttpStatusCode>> MergeProfileVariationPointers(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(profileVariationPointers, nameof(profileVariationPointers));
 
-            return await PatchAsync($"{UrlRoot}/{specificationId}/mergeprofilevariationpointers", profileVariationPointers);
+            return await ValidatedPatchAsync<HttpStatusCode, IEnumerable<ProfileVariationPointer>>($"{UrlRoot}/{specificationId}/mergeprofilevariationpointers", profileVariationPointers);
         }
 
         public async Task<HttpStatusCode> ClearForceOnNextRefresh(string specificationId)

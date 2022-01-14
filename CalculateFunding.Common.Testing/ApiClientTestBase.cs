@@ -92,6 +92,8 @@ namespace CalculateFunding.Common.Testing
             _messageHandler.SetupStringResponse(uri, response.AsJson(), method: method, customerHeaders: customHeaders);
         }
 
+
+
         protected void GivenTheStatusCode(string uri, HttpStatusCode statusCode, HttpMethod method = null, params string[] customHeaders)
         {
             _messageHandler.SetupStatusCodeResponse(uri, statusCode, method, customHeaders);
@@ -169,7 +171,22 @@ namespace CalculateFunding.Common.Testing
 
             AndTheRequestContentsShouldHaveBeen(request.AsJson());
         }
-        
+
+        protected async Task AssertPutRequest<TRequest, TApiResponse>(string expectedUri,
+            TRequest request,
+            HttpStatusCode expectedResponse,
+            Func<Task<TApiResponse>> action)
+            where TRequest : class
+            where TApiResponse : ApiResponse<HttpStatusCode>
+        {
+            await AssertRequest(expectedUri,
+                expectedResponse,
+                HttpMethod.Put,
+                action);
+
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
+        }
+
         protected async Task AssertPutRequest<TRequest>(string expectedUri,
             TRequest request,
             HttpStatusCode expectedStatusCode,
@@ -202,6 +219,21 @@ namespace CalculateFunding.Common.Testing
                 expectedStatusCode,
                 action,
                 HttpMethod.Patch);
+        }
+
+        protected async Task AssertPatchRequest<TRequest, TApiResponse>(string expectedUri,
+            TRequest request,
+            HttpStatusCode expectedResponse,
+            Func<Task<TApiResponse>> action)
+            where TRequest : class
+            where TApiResponse : ApiResponse<HttpStatusCode>
+        {
+            await AssertRequest(expectedUri,
+                expectedResponse,
+                HttpMethod.Patch,
+                action);
+
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
         }
 
         protected async Task AssertHeadRequest(string expectedUri,
@@ -355,6 +387,22 @@ namespace CalculateFunding.Common.Testing
                 .Be(HttpStatusCode.OK);
 
             apiResponse?.Content
+                .Should()
+                .BeEquivalentTo(expectedResponse);
+        }
+
+        private async Task AssertRequest<TApiResponse>(string expectedUri,
+            HttpStatusCode expectedResponse,
+            HttpMethod method,
+            Func<Task<TApiResponse>> action,
+            params string[] customHeaders)
+            where TApiResponse : ApiResponse<HttpStatusCode>
+        {
+            GivenTheStatusCode(expectedUri, expectedResponse, method, customHeaders);
+
+            TApiResponse apiResponse = await action();
+
+            apiResponse?.StatusCode
                 .Should()
                 .BeEquivalentTo(expectedResponse);
         }

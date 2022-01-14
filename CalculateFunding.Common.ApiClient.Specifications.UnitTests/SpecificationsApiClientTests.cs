@@ -576,6 +576,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             ProfileVariationPointer model = new ProfileVariationPointer();
 
             await AssertPutRequest($"{specificationId}/profilevariationpointer",
+                model,
                 HttpStatusCode.OK,
                 () => _client.SetProfileVariationPointer(specificationId, model));
         }
@@ -587,6 +588,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             IEnumerable<ProfileVariationPointer> model = new List<ProfileVariationPointer>();
 
             await AssertPutRequest($"{specificationId}/profilevariationpointers",
+                model,
                 HttpStatusCode.OK,
                 () => _client.SetProfileVariationPointers(specificationId, model));
         }
@@ -598,6 +600,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             IEnumerable<ProfileVariationPointer> model = new List<ProfileVariationPointer>();
 
             await AssertPatchRequest($"{specificationId}/mergeprofilevariationpointers",
+                model,
                 HttpStatusCode.OK,
                 () => _client.MergeProfileVariationPointers(specificationId, model));
         }
@@ -794,7 +797,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.DownloadSpecificationReport(reportId);
         }
 
-        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)
+        private async Task<ValidatedApiResponse<HttpStatusCode>> WhenTheSpecificationProfileVariationPointerSet(string specificationId, ProfileVariationPointer profileVariationPointer)
         {
             return await _client.SetProfileVariationPointer(specificationId, profileVariationPointer);
         }
@@ -804,12 +807,12 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
             return await _client.SetProviderVersion(specificationId, providerVersionId);
         }
 
-        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersSet(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        private async Task<ValidatedApiResponse<HttpStatusCode>> WhenTheSpecificationProfileVariationPointersSet(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             return await _client.SetProfileVariationPointers(specificationId, profileVariationPointers);
         }
 
-        private async Task<HttpStatusCode> WhenTheSpecificationProfileVariationPointersMerged(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
+        private async Task<ValidatedApiResponse<HttpStatusCode>> WhenTheSpecificationProfileVariationPointersMerged(string specificationId, IEnumerable<ProfileVariationPointer> profileVariationPointers)
         {
             return await _client.MergeProfileVariationPointers(specificationId, profileVariationPointers);
         }
