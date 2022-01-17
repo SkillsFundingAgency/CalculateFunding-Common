@@ -52,5 +52,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("variationPointerIndex")]
         public int? VariationPointerIndex { get; set; }
 
+
+        [JsonProperty("forceSameAsKey")]
+        public string ForceSameAsKey { get; set; }
     }
 }
