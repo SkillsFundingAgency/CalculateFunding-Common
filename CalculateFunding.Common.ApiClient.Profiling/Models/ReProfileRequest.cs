@@ -35,6 +35,12 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("existingPeriods")]
         public IEnumerable<ExistingProfilePeriod> ExistingPeriods { get; set; }
 
+        /// <summary>
+        /// All Profile periods
+        /// </summary>
+        [JsonProperty("allExistingPeriods")]
+        public IEnumerable<ExistingProfilePeriod> AllExistingPeriods { get; set; }
+
         [JsonProperty("configurationType")]
         public ProfileConfigurationType ConfigurationType { get; set; }
         
