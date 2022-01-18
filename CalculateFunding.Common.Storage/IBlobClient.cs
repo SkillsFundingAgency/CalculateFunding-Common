@@ -41,7 +41,9 @@ namespace CalculateFunding.Common.Storage
         IEnumerable<IListBlobItem> ListBlobs(string prefix = null, string containerName = null, bool useFlatBlobListing = false, BlobListingDetails blobListingDetails = BlobListingDetails.None);
 
         Task UploadFileAsync(ICloudBlob blob, Stream data);
-        
+
         Task AddMetadataAsync(ICloudBlob blob, IDictionary<string, string> metadata);
+
+        Task StartCopyFromUriAsync(string sourceContainer, string sourceBlobName, string targetContainer, string targetBlobName);
     }
 }

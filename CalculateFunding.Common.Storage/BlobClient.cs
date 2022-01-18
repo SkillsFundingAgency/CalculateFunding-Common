@@ -185,5 +185,10 @@ namespace CalculateFunding.Common.Storage
         {
             return _blobContainerRepository.GetBlobReferenceFromServerAsync(blobName, containerName);
         }
+
+        public Task StartCopyFromUriAsync(string sourceContainer, string sourceBlobName, string targetContainer, string targetBlobName)
+        {
+            return _blobContainerRepository.StartCopyFromUriAsync(sourceContainer, sourceBlobName, targetContainer, targetBlobName);
+        }
     }
 }

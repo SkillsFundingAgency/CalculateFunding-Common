@@ -100,5 +100,16 @@ namespace CalculateFunding.Common.Storage
 
             return (response.ContinuationToken, response.Results);
         }
+
+        public async Task StartCopyFromUriAsync(string sourceContainer, string sourceBlobName, string targetContainer, string targetBlobName)
+        {
+            CloudBlockBlob source = GetContainer(sourceContainer)
+                .GetBlockBlobReference(sourceBlobName);
+
+            CloudBlockBlob target = GetContainer(targetContainer)
+                .GetBlockBlobReference(targetBlobName);
+
+            await target.StartCopyAsync(source);
+        }
     }
 }

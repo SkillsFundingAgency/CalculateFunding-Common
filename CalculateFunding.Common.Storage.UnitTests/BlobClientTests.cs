@@ -241,6 +241,21 @@ namespace CalculateFunding.Common.Storage.UnitTests
                 .BeEquivalentTo(dictionary);
         }
 
+        [TestMethod]
+        public async Task StartCopyFromUriAsync_Copie_Blob()
+        {
+            string sourceContainer = NewRandomString();
+            string targetContainer = NewRandomString();
+            string sourceBlobName = NewRandomString();
+            string targetBlobName = NewRandomString();
+
+            _blobContainerRepository.Setup(_ => _.StartCopyFromUriAsync(sourceContainer, sourceBlobName, targetContainer, targetBlobName))
+                .Returns(Task.CompletedTask)
+                .Verifiable();
+
+            await _blobClient.StartCopyFromUriAsync(sourceContainer, sourceBlobName, targetContainer, targetBlobName);
+        }
+
         private string NewRandomString() => new RandomString();
         private string NewRandomUrl() => $"http://www.test.com/{new RandomString()}";
     }

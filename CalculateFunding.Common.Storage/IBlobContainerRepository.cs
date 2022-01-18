@@ -19,5 +19,7 @@ namespace CalculateFunding.Common.Storage
         Task<string> DownloadTextAsync(string blobName, string containerName = null);
 
         Task<(BlobContinuationToken, IEnumerable<IListBlobItem>)> BatchProcessBlobs(int batchSize, string containerName = null, BlobContinuationToken continuationToken = null);
+
+        Task StartCopyFromUriAsync(string sourceContainer, string sourceBlobName, string targetContainer, string targetBlobName);
     }
 }
