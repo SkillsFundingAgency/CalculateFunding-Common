@@ -18,5 +18,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("carryOverAmount")]
         public decimal CarryOverAmount { get; set; }
+
+        [JsonProperty("skipReProfiling")]
+        public bool SkipReProfiling { get; set; }
     }
 }
