@@ -206,13 +206,24 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
-        public async Task GetPublishedProviderTransactions()
+        public async Task GetReleasedPublishedProviderTransactions()
         {
             string specificationId = NewRandomString();
             string providerId = NewRandomString();
 
             await AssertGetRequest($"specifications/{specificationId}/provider/{providerId}/publishedprovidertransactions",
                 Enumerable.Empty<ReleasePublishedProviderTransaction>(),
+                () => _client.GetReleasedPublishedProviderTransactions(specificationId, providerId));
+        }
+
+        [TestMethod]
+        public async Task GetPublishedProviderTransactions()
+        {
+            string specificationId = NewRandomString();
+            string providerId = NewRandomString();
+
+            await AssertGetRequest($"publishedprovidertransactions/{specificationId}/{providerId}",
+                Enumerable.Empty<PublishedProviderTransaction>(),
                 () => _client.GetPublishedProviderTransactions(specificationId, providerId));
         }
 

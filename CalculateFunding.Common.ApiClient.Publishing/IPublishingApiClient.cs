@@ -13,7 +13,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<PublishedProviderVersion>> GetPublishedProviderVersion(string fundingStreamId, string fundingPeriodId, string providerId, string version);
 
-        Task<ApiResponse<IEnumerable<ReleasePublishedProviderTransaction>>> GetPublishedProviderTransactions(string specificationId, string providerId);
+        Task<ApiResponse<IEnumerable<ReleasePublishedProviderTransaction>>> GetReleasedPublishedProviderTransactions(string specificationId, string providerId);
+
+        Task<ApiResponse<IEnumerable<PublishedProviderTransaction>>> GetPublishedProviderTransactions(string specificationId, string providerId);
 
         Task<ApiResponse<string>> GetPublishedProviderVersionBody(string publishedProviderVersionId);
 
