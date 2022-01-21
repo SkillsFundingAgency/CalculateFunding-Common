@@ -66,7 +66,7 @@ namespace CalculateFunding.Common.Extensions
 
         private static JsonSerializerSettings NewJsonSerializerSettings(bool useCamelCase)
         {
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented };
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings { Formatting = Formatting.Indented, MaxDepth = 1024 };
 
             if (useCamelCase)
                 jsonSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
