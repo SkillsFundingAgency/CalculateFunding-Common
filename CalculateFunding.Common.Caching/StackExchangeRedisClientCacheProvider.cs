@@ -14,12 +14,19 @@ namespace CalculateFunding.Common.Caching
     public class StackExchangeRedisClientCacheProvider : ICacheProvider, IDisposable
     {
         readonly RedisSettings _systemCacheSettings;
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
         readonly Lazy<ConnectionMultiplexer> _connectionMultiplexer;
+
 
         public StackExchangeRedisClientCacheProvider(
             RedisSettings systemCacheSettings)
         {
             _systemCacheSettings = systemCacheSettings;
+
+            _jsonSerializerSettings = new JsonSerializerSettings()
+            {
+                MaxDepth = 1024,
+            };
 
             _connectionMultiplexer = new Lazy<ConnectionMultiplexer>(() =>
             {
@@ -59,11 +66,10 @@ namespace CalculateFunding.Common.Caching
             RedisCacheValue<T> redisCacheValue;
             if (jsonSerializerSettings == null)
             {
-                redisCacheValue = JsonConvert.DeserializeObject<RedisCacheValue<T>>(cachedValue);
+                redisCacheValue = JsonConvert.DeserializeObject<RedisCacheValue<T>>(cachedValue, _jsonSerializerSettings);
             }
             else
             {
-                jsonSerializerSettings.MaxDepth = 1024;
                 redisCacheValue = JsonConvert.DeserializeObject<RedisCacheValue<T>>(cachedValue, jsonSerializerSettings);
             }
 
@@ -124,7 +130,7 @@ namespace CalculateFunding.Common.Caching
 
             foreach (var item in items)
             {
-                var valueToCache = JsonConvert.SerializeObject(item);
+                var valueToCache = JsonConvert.SerializeObject(item, _jsonSerializerSettings);
 
                 redisValues.Add(valueToCache);
             }
@@ -144,7 +150,7 @@ namespace CalculateFunding.Common.Caching
             {
                 foreach (var item in items)
                 {
-                    T resultItem = JsonConvert.DeserializeObject<T>(item.ToString());
+                    T resultItem = JsonConvert.DeserializeObject<T>(item.ToString(),  _jsonSerializerSettings);
                     results.Add(resultItem);
                 }
                 return results;
@@ -220,7 +226,7 @@ namespace CalculateFunding.Common.Caching
 
             if (jsonSerializerSettings == null)
             {
-                jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings = _jsonSerializerSettings;
             }
 
             string valueToCache = JsonConvert.SerializeObject(redisCacheValue, Formatting.None, jsonSerializerSettings);
@@ -264,7 +270,7 @@ namespace CalculateFunding.Common.Caching
 
             string key = GenerateCacheKey<T>(hashKey);
 
-            string valueToCache = JsonConvert.SerializeObject(value, Formatting.None);
+            string valueToCache = JsonConvert.SerializeObject(value, Formatting.None, _jsonSerializerSettings);
 
             return await database.HashSetAsync(cacheKey, key, valueToCache, When.Always);
         }
@@ -283,7 +289,7 @@ namespace CalculateFunding.Common.Caching
                 return default(T);
             }
 
-            return JsonConvert.DeserializeObject<T>(cachedValue);
+            return JsonConvert.DeserializeObject<T>(cachedValue, _jsonSerializerSettings);
         }
 
         public async Task<bool> DeleteHashSet(string cacheKey)
