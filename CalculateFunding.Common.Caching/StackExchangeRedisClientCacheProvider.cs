@@ -63,6 +63,7 @@ namespace CalculateFunding.Common.Caching
             }
             else
             {
+                jsonSerializerSettings.MaxDepth = 1024;
                 redisCacheValue = JsonConvert.DeserializeObject<RedisCacheValue<T>>(cachedValue, jsonSerializerSettings);
             }
 
