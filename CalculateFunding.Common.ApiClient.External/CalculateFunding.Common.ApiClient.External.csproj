@@ -6,7 +6,7 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>External API HTTP Client</Description>
-    <Version>6.0.2</Version>
+    <Version>6.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     
    

@@ -100,6 +100,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
         [EnumMember(Value = nameof(CountryNameFieldUpdated))]
         CountryNameFieldUpdated,
 
+        [EnumMember(Value = nameof(LondonRegionCodeFieldUpdated))]
+        LondonRegionCodeFieldUpdated,
+
+        [EnumMember(Value = nameof(LondonRegionNameFieldUpdated))]
+        LondonRegionNameFieldUpdated,
+
         [EnumMember(Value = nameof(PaymentOrganisationIdentifierFieldUpdated))]
         PaymentOrganisationIdentifierFieldUpdated,
 

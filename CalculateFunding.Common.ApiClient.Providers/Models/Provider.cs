@@ -159,6 +159,12 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models
         [JsonProperty("countryName")]
         public string CountryName { get; set; }
 
+        [JsonProperty("londonRegionCode")]
+        public string LondonRegionCode { get; set; }
+
+        [JsonProperty("londonRegionName")]
+        public string LondonRegionName { get; set; }
+
         [JsonProperty("localGovernmentGroupTypeCode")]
         public string LocalGovernmentGroupTypeCode { get; set; }
 

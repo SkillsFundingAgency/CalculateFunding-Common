@@ -119,6 +119,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         CountryCode,
 
         /// <summary>
+        /// LondonRegionCode
+        /// </summary>
+        [EnumMember(Value = "LondonRegionCode")]
+        LondonRegionCode,
+
+        /// <summary>
         /// LocalAuthorityClassificationTypeCode
         /// </summary>
         [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]

@@ -1725,6 +1725,108 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenCreatingInformationOrganisationGroupsByLondonRegion_ThenOrganisationGroupsAreCreated()
+        {
+            // Arrange
+            FundingConfiguration fundingConfiguration = new FundingConfiguration()
+            {
+                OrganisationGroupings = new List<OrganisationGroupingConfiguration>()
+                {
+                    new OrganisationGroupingConfiguration()
+                    {
+                        GroupingReason = GroupingReason.Information,
+                        GroupTypeClassification = OrganisationGroupTypeClassification.GeographicalBoundary,
+                        GroupTypeIdentifier = OrganisationGroupTypeIdentifier.LondonRegionCode,
+                        OrganisationGroupTypeCode = OrganisationGroupTypeCode.LondonRegion,
+                        ProviderTypeMatch = new List<ProviderTypeMatch> { new ProviderTypeMatch { ProviderType = "ProviderType", ProviderSubtype = "ProviderSubType" } }
+                    },
+                },
+                PaymentOrganisationSource = PaymentOrganisationSource.PaymentOrganisationAsProvider
+            };
+
+            TargetOrganisationGroup l1 = new TargetOrganisationGroup()
+            {
+                Identifier = "L1",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Inner London",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LondonRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LondonRegionCode == "L1"))
+                .Returns(l1);
+
+            TargetOrganisationGroup l2 = new TargetOrganisationGroup()
+            {
+                Identifier = "L2",
+                Identifiers = new List<OrganisationIdentifier>()
+                {
+                },
+                Name = "Outer London",
+            };
+
+            _organisationGroupTargetProviderLookup
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LondonRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LondonRegionCode == "L2"))
+                .Returns(l2);
+
+
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            // Act
+            IEnumerable<Models.OrganisationGroupResult> result = await _generator.GenerateOrganisationGroup(fundingConfiguration, scopedProviders, _providerVersionId);
+
+            // Assert
+            result
+                .Should()
+                .NotBeNull();
+
+            List<OrganisationGroupResult> expectedResult = new List<OrganisationGroupResult>()
+            {
+                new OrganisationGroupResult()
+                {
+                    Name = "Inner London",
+                    SearchableName = "Inner_London",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LondonRegion,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LondonRegionCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "L1",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LondonRegionCode == "L1")),
+                },
+                new OrganisationGroupResult()
+                {
+                    Name = "Outer London",
+                    SearchableName = "Outer_London",
+                    GroupTypeClassification = Enums.OrganisationGroupTypeClassification.GeographicalBoundary,
+                    GroupTypeCode = Enums.OrganisationGroupTypeCode.LondonRegion,
+                    GroupTypeIdentifier = Enums.OrganisationGroupTypeIdentifier.LondonRegionCode,
+                    GroupReason = Enums.OrganisationGroupingReason.Information,
+                    IdentifierValue = "L2",
+                    Identifiers = new List<OrganisationIdentifier>(),
+                    Providers = new List<Provider>(scopedProviders.Where(p=>p.LondonRegionCode == "L2")),
+                }
+            };
+
+            result
+                .Should()
+                .BeEquivalentTo(expectedResult);
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LondonRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LondonRegionCode == "L1"));
+
+            await _organisationGroupTargetProviderLookup
+                .Received(1)
+                .GetTargetProviderDetails(Arg.Is<OrganisationGroupLookupParameters>(_ => _.GroupTypeIdentifier == OrganisationGroupTypeIdentifier.LondonRegionCode), Arg.Is(GroupingReason.Information),
+                Arg.Is<IEnumerable<Provider>>(_ => _.First().LondonRegionCode == "L2"));
+        }
+
+        [TestMethod]
         public async Task WhenCreatingInformationOrganisationGroupsByLocalAuthorityClassification_ThenOrganisationGroupsAreCreated()
         {
             // Arrange
@@ -3199,6 +3301,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 WardName = "Ward 1",
                 RscRegionCode = "RSC1",
                 RscRegionName = "Rsc Region 1",
+                LondonRegionCode = "L1",
+                LondonRegionName = "Inner London",
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "ProviderType",
@@ -3233,6 +3337,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 WardName = "Ward 1",
                 RscRegionCode = "RSC1",
                 RscRegionName = "Rsc Region 1",
+                LondonRegionCode = "L1",
+                LondonRegionName = "Inner London",
                 CountryCode = "C1",
                 CountryName = "Country 1",
                 ProviderType = "ProviderType",
@@ -3267,6 +3373,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                 WardName = "Ward 2",
                 RscRegionCode = "RSC2",
                 RscRegionName = "Rsc Region 2",
+                LondonRegionCode = "L2",
+                LondonRegionName = "Outer London",
                 CountryCode = "C2",
                 CountryName = "Country 2",
                 ProviderType = "ProviderType",

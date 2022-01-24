@@ -64,6 +64,10 @@ namespace CalculateFunding.Common.ApiClient.External.Models
 
         CountryCodeFieldUpdated,
 
-        CountryNameFieldUpdated
+        CountryNameFieldUpdated,
+
+        LondonRegionCodeFieldUpdated,
+
+        LondonRegionNameFieldUpdated
     }
 }

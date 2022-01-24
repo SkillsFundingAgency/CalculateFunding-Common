@@ -80,6 +80,10 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
 
         public string CountryCode { get; set; }
 
+        public string LondonRegionName { get; set; }
+
+        public string LondonRegionCode { get; set; }
+
         public string Street { get; set; }
 
         public string Locality { get; set; }

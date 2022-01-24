@@ -271,6 +271,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                     return provider.RscRegionName;
                 case OrganisationGroupTypeIdentifier.CountryCode:
                     return provider.CountryName;
+                case OrganisationGroupTypeIdentifier.LondonRegionCode:
+                    return provider.LondonRegionName;
                 case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:
                     return provider.LocalGovernmentGroupTypeName;
                 default:

@@ -283,6 +283,8 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         return c => c.RscRegionCode;
                     case OrganisationGroupTypeIdentifier.CountryCode:
                         return c => c.CountryCode;
+                    case OrganisationGroupTypeIdentifier.LondonRegionCode:
+                        return c => c.LondonRegionCode;
                     case OrganisationGroupTypeIdentifier.LACode:
                         return c => c.LACode;
                     case OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode:

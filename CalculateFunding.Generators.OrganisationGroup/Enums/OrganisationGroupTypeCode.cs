@@ -75,6 +75,11 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         Country,
 
         /// <summary>
+        /// London Region eg Inner / Outer
+        /// </summary>
+        LondonRegion,
+
+        /// <summary>
         /// Local Government Group
         /// </summary>
         LocalGovernmentGroup,

@@ -119,6 +119,12 @@ namespace CalculateFunding.Generators.OrganisationGroup.Enums
         CountryCode,
 
         /// <summary>
+        /// LondonRegionCode
+        /// </summary>
+        [EnumMember(Value = "LondonRegionCode")]
+        LondonRegionCode,
+
+        /// <summary>
         /// LocalAuthorityClassificationTypeCode
         /// </summary>
         [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]

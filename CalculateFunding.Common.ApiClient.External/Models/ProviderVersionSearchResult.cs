@@ -55,6 +55,8 @@ namespace CalculateFunding.Common.ApiClient.External.Models
         public string ParliamentaryConstituencyCode { get; set; }
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
+        public string LondonRegionCode { get; set; }
+        public string LondonRegionName { get; set; }
         public string LocalGovernmentGroupTypeCode { get; set; }
         public string LocalGovernmentGroupTypeName { get; set; }
     }

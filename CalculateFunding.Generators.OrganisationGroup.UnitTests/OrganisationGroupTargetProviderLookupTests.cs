@@ -634,6 +634,36 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
         }
 
         [TestMethod]
+        public async Task WhenLookingUpTargetOrganisationGroupBasedOnLondonRegionInformation_ThenTargetOrganisationGroupReturned()
+        {
+            IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
+
+            OrganisationGroupLookupParameters organisationGroupLookupParameters = new OrganisationGroupLookupParameters
+            {
+                GroupTypeIdentifier = Common.ApiClient.Policies.Models.OrganisationGroupTypeIdentifier.LondonRegionCode,
+                OrganisationGroupTypeCode = Common.ApiClient.Policies.Models.OrganisationGroupTypeCode.LondonRegion
+            };
+
+            TargetOrganisationGroup group = await _organisationGroupTargetProviderLookup.GetTargetProviderDetails(organisationGroupLookupParameters,
+                Common.ApiClient.Policies.Models.GroupingReason.Information,
+                scopedProviders.Where(_ => _.TrustStatus != TrustStatus.SupportedByAMultiAcademyTrust));
+
+            group.Identifiers.Any();
+
+            group.Name
+                .Should()
+                .Be("Inner London");
+
+            group.Identifier
+                .Should()
+                .Be("L1");
+
+            group.Identifiers.Count()
+                .Should()
+                .Be(0);
+        }
+
+        [TestMethod]
         public async Task WhenLookingUpTargetOrganisationGroupBasedOnLocalAuthorityClassificationTypeCodeInformation_ThenTargetOrganisationGroupReturned()
         {
             IEnumerable<Provider> scopedProviders = GenerateScopedProviders();
@@ -760,6 +790,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     WardName = "Ward 1",
                     RscRegionCode = "RSC1",
                     RscRegionName = "Rsc Region 1",
+                    LondonRegionCode = "L1",
+                    LondonRegionName = "Inner London",
                     CountryCode = "C1",
                     CountryName = "Country 1",
                     ProviderType = "Local Authority",
@@ -794,6 +826,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     WardName = "Ward 1",
                     RscRegionCode = "RSC1",
                     RscRegionName = "Rsc Region 1",
+                    LondonRegionCode = "L1",
+                    LondonRegionName = "Inner London",
                     CountryCode = "C1",
                     CountryName = "Country 1",
                     ProviderType = "ProviderType",
@@ -829,6 +863,8 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     WardName = "Ward 2",
                     RscRegionCode = "RSC2",
                     RscRegionName = "Rsc Region 2",
+                    LondonRegionCode = "L2",
+                    LondonRegionName = "Outer London",
                     CountryCode = "C2",
                     CountryName = "Country 2",
                     ProviderType = "ProviderType",

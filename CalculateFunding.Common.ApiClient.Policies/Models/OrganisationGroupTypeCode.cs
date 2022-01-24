@@ -75,6 +75,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         Country,
 
         /// <summary>
+        /// London Region eg Inner / Outer
+        /// </summary>
+        LondonRegion,
+
+        /// <summary>
         /// Local Government Group
         /// </summary>
         LocalGovernmentGroup,
