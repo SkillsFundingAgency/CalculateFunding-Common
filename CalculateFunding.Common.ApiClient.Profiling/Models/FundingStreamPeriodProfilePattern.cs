@@ -46,6 +46,12 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("providerSubTypes")]
         public IEnumerable<string> ProviderSubTypes { get; set; }
 
+        [JsonProperty("profileCacheETag")]
+        public string ProfileCacheETag { get; set; }
+
+        [JsonProperty("eTag")]
+        public string ETag { get; set; }
+
         [JsonProperty("id")]
         public string Id => $"{FundingPeriodId}-{FundingStreamId}-{FundingLineId}{ProfilePatternKeyString}";
 

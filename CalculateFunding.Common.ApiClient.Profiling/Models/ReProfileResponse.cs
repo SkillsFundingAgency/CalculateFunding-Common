@@ -21,5 +21,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("skipReProfiling")]
         public bool SkipReProfiling { get; set; }
+
+        [JsonProperty("strategyKey")]
+        public string StrategyKey { get; set; }
     }
 }

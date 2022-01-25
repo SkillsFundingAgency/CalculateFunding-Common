@@ -34,9 +34,6 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         /// </summary>
         [JsonProperty("existingPeriods")]
         public IEnumerable<ExistingProfilePeriod> ExistingPeriods { get; set; }
-
-        [JsonProperty("configurationType")]
-        public ProfileConfigurationType ConfigurationType { get; set; }
         
         /// <summary>
         /// Flag indicating whether the re profiling
@@ -52,8 +49,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("variationPointerIndex")]
         public int? VariationPointerIndex { get; set; }
 
-
-        [JsonProperty("forceSameAsKey")]
-        public string ForceSameAsKey { get; set; }
+        /// <summary>
+        /// A flag used to set whether re-profile has already happened for the variation index
+        /// </summary>
+        public bool AlreadyPaidUpToIndex { get; set; }
     }
 }
