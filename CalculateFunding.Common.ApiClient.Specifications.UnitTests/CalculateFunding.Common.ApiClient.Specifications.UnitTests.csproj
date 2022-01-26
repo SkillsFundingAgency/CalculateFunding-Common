@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Specifications\CalculateFunding.Common.ApiClient.Specifications.csproj" />
-    <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema10.UnitTests\CalculateFunding.Common.TemplateMetadata.Schema10.UnitTests.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
 

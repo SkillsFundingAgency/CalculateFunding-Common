@@ -83,5 +83,10 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// Non maintained special school
         /// </summary>
         NMSS,
+
+        /// <summary>
+        /// London region
+        /// </summary>
+        LondonRegion,
     }
 }

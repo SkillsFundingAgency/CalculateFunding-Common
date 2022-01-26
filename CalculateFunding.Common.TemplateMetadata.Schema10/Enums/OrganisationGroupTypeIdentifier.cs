@@ -123,5 +123,11 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         /// </summary>
         [EnumMember(Value = "LocalAuthorityClassificationTypeCode")]
         LocalAuthorityClassificationTypeCode,
+
+        /// <summary>
+        /// London Region Code
+        /// </summary>
+        [EnumMember(Value = "LondonRegionCode")]
+        LondonRegionCode,
     }
 }
