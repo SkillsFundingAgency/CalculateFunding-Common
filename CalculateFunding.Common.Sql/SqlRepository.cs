@@ -255,6 +255,7 @@ namespace CalculateFunding.Common.Sql
 
             command.CommandText = sql;
             command.CommandType = CommandType.Text;
+            command.CommandTimeout = 120;
 
             // ReSharper disable once AccessToDisposedClosure
             return _executePolicy.Execute(() => command.ExecuteNonQuery());
