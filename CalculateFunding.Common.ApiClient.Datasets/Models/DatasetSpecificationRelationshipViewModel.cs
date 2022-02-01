@@ -13,6 +13,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public string DatasetId { get; set; }
 
+        public string TargetSpecificationId { get; set; }
+
         public string RelationshipDescription { get; set; }
 
         public bool IsProviderData { get; set; }
