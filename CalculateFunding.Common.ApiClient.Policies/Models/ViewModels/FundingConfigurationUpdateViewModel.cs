@@ -33,7 +33,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
 
         public IEnumerable<ReleaseActionGroup> ReleaseActionGroups { get; set; }
 
-        public bool EnableCaryForward { get; set; }
+        public bool EnableCarryForward { get; set; }
 
     }
 }
