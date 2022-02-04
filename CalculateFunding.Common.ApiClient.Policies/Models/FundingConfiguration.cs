@@ -72,5 +72,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("releaseActionGroups")]
         public IEnumerable<ReleaseActionGroup> ReleaseActionGroups { get; set; }
-    }    
+
+        [JsonProperty("enableCaryForward")]
+        public bool EnableCaryForward { get; set; }
+    }
 }
