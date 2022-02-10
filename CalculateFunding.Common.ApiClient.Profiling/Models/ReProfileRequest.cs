@@ -48,10 +48,5 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         /// </summary>
         [JsonProperty("variationPointerIndex")]
         public int? VariationPointerIndex { get; set; }
-
-        /// <summary>
-        /// A flag used to set whether re-profile has already happened for the variation index
-        /// </summary>
-        public bool AlreadyPaidUpToIndex { get; set; }
     }
 }
