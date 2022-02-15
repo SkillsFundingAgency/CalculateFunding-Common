@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
     <Description>Providers microservice client</Description>
-    <Version>5.1.0</Version>
+    <Version>5.2.0</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
