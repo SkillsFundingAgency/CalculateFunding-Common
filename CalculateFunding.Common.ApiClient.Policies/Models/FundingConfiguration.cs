@@ -22,6 +22,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("defaultTemplateVersion")]
         public string DefaultTemplateVersion { get; set; }
 
+        [JsonProperty("specToSpecChannelCode")]
+        public string SpecToSpecChannelCode { get; set; }
+
         [JsonProperty("variations")]
         public IEnumerable<FundingVariation> Variations { get; set; }
 
