@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.Sql.Interfaces;
 using CalculateFunding.Common.Utility;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Polly;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.Sql
 {
@@ -48,135 +45,20 @@ namespace CalculateFunding.Common.Sql
         }
 
         protected async Task<TEntity> QuerySingle<TEntity>(string sql,
-            object parameters = null) =>
+            object parameters = null,
+            ISqlTransaction transaction = null) =>
             await QuerySingle<TEntity>(sql,
                 CommandType.StoredProcedure,
-                parameters);
+                parameters,
+                transaction);
 
         protected async Task<TEntity> QuerySingleSql<TEntity>(string sql,
-            object parameters = null) =>
+            object parameters = null,
+            ISqlTransaction transaction = null) =>
             await QuerySingle<TEntity>(sql,
                 CommandType.Text,
-                parameters);
-
-        protected async Task<bool> BulkDelete<TEntity>(IList<TEntity> entities,
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation((entity, transaction) =>
-                Delete(entity, transaction),
-                entities,
-                degreeOfParallelism);
-        }
-
-        protected async Task<bool> BulkDelete<TEntity>(IList<TEntity> entities,
-            ISqlTransaction transaction,
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation((entity, transaction) =>
-                Delete(entity, transaction),
-                transaction,
-                entities,
-                degreeOfParallelism);
-        }
-
-        protected async Task<bool> BulkUpdate<TEntity>(IList<TEntity> entities,
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation((entity, transaction) =>
-                Update(entity, transaction),
-                entities,
-                degreeOfParallelism);
-        }
-
-        protected async Task<bool> BulkUpdate<TEntity>(IList<TEntity> entities,
-            ISqlTransaction transaction,
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation((entity, transaction) =>
-                Update(entity, transaction), 
-                transaction, 
-                entities, 
-                degreeOfParallelism);
-        }
-
-        protected async Task<bool> BulkInsert<TEntity>(IList<TEntity> entities,
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation(async (entity, transaction) =>
-                await Insert(entity, transaction) > 0,
-                entities,
-                degreeOfParallelism);
-        }
-
-        protected async Task<bool> BulkInsert<TEntity>(IList<TEntity> entities, 
-            ISqlTransaction  transaction, 
-            int degreeOfParallelism = 5) where TEntity : class
-        {
-            return await BulkOperation(async(entity, transaction) =>
-                await Insert(entity, transaction) > 0,
-                transaction,
-                entities,
-                degreeOfParallelism);
-        }
-
-        private async Task<bool> BulkOperation<TEntity>(Func<TEntity, ISqlTransaction, Task<bool>> action, 
-            IList<TEntity> entities, 
-            int degreeOfParallelism) where TEntity : class
-        {
-            using ISqlTransaction transaction = BeginTransaction();
-
-            try
-            {
-                bool success = await BulkOperation(action, transaction, entities, degreeOfParallelism);
-
-                if (success)
-                {
-                    transaction.Commit();
-                }
-                else
-                {
-                    transaction.Rollback();
-                }
-
-                return success;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-        }
-
-        private async Task<bool> BulkOperation<TEntity>(Func<TEntity, ISqlTransaction, Task<bool>> action, 
-            ISqlTransaction transaction, 
-            IList<TEntity> entities, 
-            int degreeOfParallelism) where TEntity : class
-        {
-            List<Task<bool>> allTasks = new List<Task<bool>>(entities.Count);
-            SemaphoreSlim throttler = new SemaphoreSlim(degreeOfParallelism);
-
-            foreach (TEntity entity in entities)
-            {
-                await throttler.WaitAsync();
-
-                allTasks.Add(
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            return await action(entity, transaction);
-                        }
-                        finally
-                        {
-                            throttler.Release();
-                        }
-                    }));
-            }
-
-            await TaskHelper.WhenAllAndThrow(allTasks.ToArray());
-
-            return allTasks.Select(_ => _.Result).All(_ => _ == true);
-        }
+                parameters,
+                transaction);
 
         protected async Task<int> Insert<TEntity>(TEntity entity, ISqlTransaction transaction = null) where TEntity : class
         {
@@ -225,54 +107,97 @@ namespace CalculateFunding.Common.Sql
 
         private async Task<TEntity> QuerySingle<TEntity>(string sql,
             CommandType commandType,
-            object parameters)
+            object parameters,
+            ISqlTransaction transaction)
         {
-            using IDbConnection connection = NewOpenConnection();
+            if (transaction == null)
+            {
+                using IDbConnection connection = NewOpenConnection();
+                return await QuerySingleInternal<TEntity>(sql, commandType, parameters, connection);
+            }
+            else
+            {
+                SqlTransaction sqlTransaction = transaction as SqlTransaction;
+                return await QuerySingleInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.InternalTransaction);
+            }
 
-            return await _queryAsyncPolicy.ExecuteAsync(() => connection.QuerySingleOrDefaultAsync<TEntity>(sql,
-                parameters ?? new
-                {
-                },
-                commandType: commandType));
+            async Task<TEntity> QuerySingleInternal<TEntityInternal>(string sql, CommandType commandType, object parameters, IDbConnection connection, IDbTransaction dbTransaction = null)
+            {
+                return await _queryAsyncPolicy.ExecuteAsync(() => connection.QuerySingleOrDefaultAsync<TEntity>(sql,
+                                    parameters ?? new { },
+                                    commandType: commandType,
+                                    transaction: dbTransaction));
+            }
         }
 
         protected async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
-            object parameters = null) =>
+            object parameters = null,
+            ISqlTransaction transaction = null) =>
             await Query<TEntity>(sql,
                 CommandType.StoredProcedure,
-                parameters);
+                parameters,
+                transaction);
 
         protected async Task<IEnumerable<TEntity>> QuerySql<TEntity>(string sql,
-            object parameters = null) =>
+            object parameters = null,
+            ISqlTransaction transaction = null) =>
             await Query<TEntity>(sql,
                 CommandType.Text,
-                parameters);
+                parameters,
+                transaction);
 
-        protected int ExecuteNoneQuery(string sql)
+        protected int ExecuteNonQuery(string sql, ISqlTransaction transaction = null)
         {
-            using IDbConnection connection = NewOpenConnection();
-            using IDbCommand command = connection.CreateCommand();
+            if (transaction == null)
+            {
+                using IDbConnection connection = NewOpenConnection();
+                return ExecuteInternal(sql, connection);
+            }
+            else
+            {
+                SqlTransaction sqlTransaction = transaction as SqlTransaction;
+                return ExecuteInternal(sql, sqlTransaction.InternalConnection);
+            }
 
-            command.CommandText = sql;
-            command.CommandType = CommandType.Text;
-            command.CommandTimeout = 120;
+            int ExecuteInternal(string sql, IDbConnection connection, IDbTransaction dbTransaction = null)
+            {
+                IDbCommand command = connection.CreateCommand();
+                command.CommandText = sql;
+                command.CommandType = CommandType.Text;
+                command.CommandTimeout = 120;
 
-            // ReSharper disable once AccessToDisposedClosure
-            return _executePolicy.Execute(() => command.ExecuteNonQuery());
+                // ReSharper disable once AccessToDisposedClosure
+                return _executePolicy.Execute(() => command.ExecuteNonQuery());
+            }
         }
 
         private async Task<IEnumerable<TEntity>> Query<TEntity>(string sql,
             CommandType commandType,
-            object parameters)
+            object parameters,
+            ISqlTransaction transaction)
         {
-            using IDbConnection connection = NewOpenConnection();
 
-            return (await _queryAsyncPolicy.ExecuteAsync(() => connection.QueryAsync<TEntity>(sql,
-                    parameters ?? new
-                    {
-                    },
-                    commandType: commandType)))
-                .ToArray();
+            if (transaction == null)
+            {
+                using IDbConnection connection = NewOpenConnection();
+
+                return await QueryInternal<TEntity>(sql, commandType, parameters, connection);
+            }
+            else
+            {
+                SqlTransaction sqlTransaction = transaction as SqlTransaction;
+
+                return await QueryInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.InternalTransaction);
+            }
+
+            async Task<IEnumerable<TEntity>> QueryInternal<TEntityInternal>(string sql, CommandType commandType, object parameters, IDbConnection connection, IDbTransaction dbTransaction = null)
+            {
+                return (await _queryAsyncPolicy.ExecuteAsync(() => connection.QueryAsync<TEntity>(sql,
+                        parameters ?? new { },
+                        commandType: commandType,
+                        transaction: dbTransaction)))
+                    .ToArray();
+            }
         }
 
         private IDbConnection NewOpenConnection()

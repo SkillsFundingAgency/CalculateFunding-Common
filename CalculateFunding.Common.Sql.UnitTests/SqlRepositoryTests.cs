@@ -34,67 +34,45 @@ namespace CalculateFunding.Common.Sql.UnitTests
         }
 
         [TestMethod]
-        [DataRow(true, false, false)]
-        [DataRow(false, false, false)]
-        [DataRow(true, false, true)]
-        [DataRow(false, false, true)]
-        [DataRow(false, true, true)]
-        public async Task InsertsEntity(bool supplyTransactions, bool rollback, bool useBulkOperation)
+        [DataRow(true, false)]
+        [DataRow(false, false)]
+        public async Task InsertsEntity(bool supplyTransactions, bool rollback)
         {
-            int identity = rollback ? - 1 : 1;
+            int identity = rollback ? -1 : 1;
 
             SqlRepositoryTest sqlRepository = new SqlRepositoryTest(_connectionFactory.Object,
                 _sqlPolicyFactory.Object);
 
             TestEntity testEntity = new TestEntity { name = "TestEntity" };
-            TestEntity expectedEntity  = new TestEntity { id = identity, name = "TestEntity" };
+            TestEntity expectedEntity = new TestEntity { id = identity, name = "TestEntity" };
 
             SetupCommandAsync(_connection);
 
             _command.Protected()
                            .Setup<Task<DbDataReader>>("ExecuteDbDataReaderAsync", ItExpr.IsAny<CommandBehavior>(), ItExpr.IsAny<CancellationToken>())
                            .ReturnsAsync(() => (new[] { expectedEntity }).ToDataTable(typeof(TestEntity)).ToDataTableReader());
-            
+
             IEnumerable<TestEntity> entities = null;
             int retValue = 0;
 
-            if (useBulkOperation)
-            {
-                entities = await sqlRepository.InsertAll(new[] { testEntity }, supplyTransactions);
-            }
-            else
-            {
-                retValue = await sqlRepository.InsertOne(testEntity, supplyTransactions);
-            }
+
+            retValue = await sqlRepository.InsertOne(testEntity, supplyTransactions);
+
 
             if (rollback)
             {
                 _transaction.Verify(_ => _.Rollback(), Times.Once);
             }
 
-            if (useBulkOperation)
-            {
-                entities
-                    .First()
-                    .id
-                    .Should()
-                    .Be(identity);
-            }
-            else
-            {
-                retValue
-                    .Should()
-                    .Be(identity);
-            }
+            retValue
+                .Should()
+                .Be(identity);
         }
 
         [TestMethod]
-        [DataRow(true, false, false)]
-        [DataRow(false, false, false)]
-        [DataRow(true, false, true)]
-        [DataRow(false, false, true)]
-        [DataRow(false, true, true)]
-        public async Task DeletesEntity(bool supplyTransactions, bool rollback, bool useBulkOperation)
+        [DataRow(true, false)]
+        [DataRow(false, false)]
+        public async Task DeletesEntity(bool supplyTransactions, bool rollback)
         {
             SqlRepositoryTest sqlRepository = new SqlRepositoryTest(_connectionFactory.Object,
                 _sqlPolicyFactory.Object);
@@ -108,7 +86,7 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             bool success;
 
-            success = useBulkOperation ? await sqlRepository.DeleteAll(new[] { testEntity }, supplyTransactions) : await sqlRepository.DeleteOne(testEntity, supplyTransactions);
+            success = await sqlRepository.DeleteOne(testEntity, supplyTransactions);
 
             if (rollback)
             {
@@ -121,12 +99,9 @@ namespace CalculateFunding.Common.Sql.UnitTests
         }
 
         [TestMethod]
-        [DataRow(true, false, false)]
-        [DataRow(false, false, false)]
-        [DataRow(true, false, true)]
-        [DataRow(false, false, true)]
-        [DataRow(false, true, true)]
-        public async Task UpdatesEntity(bool supplyTransactions, bool rollback, bool useBulkOperation)
+        [DataRow(true, false)]
+        [DataRow(false, false)]
+        public async Task UpdatesEntity(bool supplyTransactions, bool rollback)
         {
             SqlRepositoryTest sqlRepository = new SqlRepositoryTest(_connectionFactory.Object,
                 _sqlPolicyFactory.Object);
@@ -140,7 +115,7 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             bool success;
 
-            success = useBulkOperation ? await sqlRepository.UpdateAll(new[] { testEntity }, supplyTransactions) : await sqlRepository.UpdateOne(testEntity, supplyTransactions);
+            success = await sqlRepository.UpdateOne(testEntity, supplyTransactions);
 
             if (rollback)
             {
@@ -149,7 +124,7 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
             success
                 .Should()
-                .Be(rollback ? false: true);
+                .Be(rollback ? false : true);
         }
 
         public void SetupCommandAsync<TConnection>(Mock<TConnection> mock)

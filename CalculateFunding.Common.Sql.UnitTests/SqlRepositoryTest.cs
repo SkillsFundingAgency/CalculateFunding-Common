@@ -14,20 +14,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
 
         }
 
-        public async Task<IEnumerable<TestEntity>> InsertAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
-        {
-            if (transaction)
-            {
-                await BulkInsert(testEntities.ToList(), BeginTransaction());
-            }
-            else
-            {
-                await BulkInsert(testEntities.ToList());
-            }
-
-            return testEntities;
-        }
-
         public async Task<int> InsertOne(TestEntity testEnty, bool transaction = false)
         {
             if (transaction)
@@ -40,18 +26,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
             }
         }
 
-        public async Task<bool> UpdateAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
-        {
-            if (transaction)
-            {
-                return await BulkUpdate(testEntities.ToList(), BeginTransaction());
-            }
-            else
-            {
-                return await BulkUpdate(testEntities.ToList());
-            }
-        }
-
         public async Task<bool> UpdateOne(TestEntity testEnty, bool transaction = false)
         {
             if (transaction)
@@ -61,18 +35,6 @@ namespace CalculateFunding.Common.Sql.UnitTests
             else
             {
                 return await Update(testEnty);
-            }
-        }
-
-        public async Task<bool> DeleteAll(IEnumerable<TestEntity> testEntities, bool transaction = false)
-        {
-            if (transaction)
-            {
-                return await BulkDelete(testEntities.ToList(), BeginTransaction());
-            }
-            else
-            {
-                return await BulkDelete(testEntities.ToList());
             }
         }
 
