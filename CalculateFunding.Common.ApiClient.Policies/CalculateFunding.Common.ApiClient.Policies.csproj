@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
     <Description>Policies microservice client</Description>
-    <Version>8.1.0</Version>
+    <Version>8.2.0</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

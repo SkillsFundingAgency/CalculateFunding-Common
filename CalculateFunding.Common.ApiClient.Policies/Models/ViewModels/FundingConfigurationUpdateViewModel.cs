@@ -7,7 +7,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public IEnumerable<OrganisationGroupingConfiguration> OrganisationGroupings { get; set; }
 
         public string DefaultTemplateVersion { get; set; }
-        
+
+        public string SpecToSpecChannelCode { get; set; }
+
         public ApprovalMode ApprovalMode { get; set; }
 
         public IEnumerable<string> ErrorDetectors { get; set; }
