@@ -5,6 +5,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 {
     public class ApplyCustomProfileRequest
     {
+        public string SpecificationId { get; set; }
+
         public string FundingStreamId { get; set; }
 
         public string FundingPeriodId { get; set; }
