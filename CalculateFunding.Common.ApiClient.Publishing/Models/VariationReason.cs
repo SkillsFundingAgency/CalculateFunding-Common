@@ -150,5 +150,11 @@ namespace CalculateFunding.Common.ApiClient.Publishing.Models
 
         [EnumMember(Value = nameof(IndicativeToLive))]
         IndicativeToLive,
+
+        [EnumMember(Value = nameof(FurtherEducationTypeCodeUpdated))]
+        FurtherEducationTypeCodeUpdated,
+
+        [EnumMember(Value = nameof(FurtherEducationTypeNameUpdated))]
+        FurtherEducationTypeNameUpdated,
     }
 }
