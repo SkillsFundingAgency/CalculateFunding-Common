@@ -86,13 +86,16 @@ namespace CalculateFunding.Common.Testing
             _messageHandler.SetupStringResponse(uri, response.ToString().ToLower(), method: method, customerHeaders: customHeaders);
         }
 
+        protected void GivenTheResponse(string uri, double? response, HttpMethod method = null, params string[] customHeaders)
+        {
+            _messageHandler.SetupDoubleResponse(uri, response, method: method, customerHeaders: customHeaders);
+        }
+
         protected void GivenTheResponse<TResponse>(string uri, TResponse response, HttpMethod method = null, params string[] customHeaders)
             where TResponse : class
         {
             _messageHandler.SetupStringResponse(uri, response.AsJson(), method: method, customerHeaders: customHeaders);
         }
-
-
 
         protected void GivenTheStatusCode(string uri, HttpStatusCode statusCode, HttpMethod method = null, params string[] customHeaders)
         {
@@ -146,6 +149,21 @@ namespace CalculateFunding.Common.Testing
             where TRequest : class
             where TResponse : class
             where TApiResponse : ApiResponse<TResponse>
+        {
+            await AssertRequest(expectedUri,
+                request,
+                expectedResponse,
+                HttpMethod.Post,
+                action);
+
+            AndTheRequestContentsShouldHaveBeen(request.AsJson());
+        }
+
+        protected async Task AssertPostRequest<TRequest>(string expectedUri,
+            TRequest request,
+            double? expectedResponse,
+            Func<TRequest, Task<ApiResponse<double?>>> action)
+            where TRequest : class
         {
             await AssertRequest(expectedUri,
                 request,
@@ -347,15 +365,36 @@ namespace CalculateFunding.Common.Testing
                 .Be(expectedStatusCode);
         }
 
-        private async Task AssertRequest<TRequest, TResponse, TApiResponse>(string expectedUri,
+        private async Task AssertRequest<TRequest>(string expectedUri,
             TRequest request,
-            TResponse expectedResponse,
+            double? expectedResponse,
             HttpMethod method,
-            Func<TRequest, Task<TApiResponse>> action,
+            Func<TRequest, Task<ApiResponse<double?>>> action,
             params string[] customHeaders)
             where TRequest : class
-            where TResponse : class
-            where TApiResponse : ApiResponse<TResponse>
+        {
+            GivenTheResponse(expectedUri, expectedResponse, method, customHeaders);
+
+            ApiResponse<double?> apiResponse = await action(request);
+
+            apiResponse?.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+
+            apiResponse?.Content
+                .Should()
+                .Equals(expectedResponse);
+        }
+
+        private async Task AssertRequest<TRequest, TResponse, TApiResponse>(string expectedUri,
+        TRequest request,
+        TResponse expectedResponse,
+        HttpMethod method,
+        Func<TRequest, Task<TApiResponse>> action,
+        params string[] customHeaders)
+        where TRequest : class
+        where TResponse : class
+        where TApiResponse : ApiResponse<TResponse>
         {
             GivenTheResponse(expectedUri, expectedResponse, method, customHeaders);
 

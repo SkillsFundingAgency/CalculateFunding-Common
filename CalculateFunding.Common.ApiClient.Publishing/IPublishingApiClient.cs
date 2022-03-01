@@ -34,6 +34,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ValidatedApiResponse<JobCreationResponse>> PublishFundingForBatchProviders(string specificationId, PublishedProviderIdsRequest publishProvidersRequest);
 
         Task<ApiResponse<SearchResults<PublishedProviderSearchItem>>> SearchPublishedProvider(SearchModel searchModel);
+        
+        Task<ApiResponse<double?>> GetFundingValue(SearchModel searchModel);
 
         Task<ApiResponse<IEnumerable<string>>> GetPublishedProviderIds(string specificationId);
 
@@ -131,6 +133,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             string fundingPeriodId);
 
         Task<ApiResponse<BatchUploadResponse>> UploadBatch(BatchUploadRequest request);
+
         Task<ValidatedApiResponse<JobCreationResponse>> QueueBatchUploadValidation(BatchUploadValidationRequest request);
         Task<ApiResponse<IEnumerable<string>>> GetBatchPublishedProviderIds(string batchId);
 

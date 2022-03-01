@@ -259,6 +259,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         }
 
         [TestMethod]
+        public async Task GetFundingValue()
+        {
+            await AssertPostRequest("publishedprovider/fundingvalue-search",
+                new SearchModel(),
+                0,
+                _client.GetFundingValue);
+        }
+
+        [TestMethod]
         public async Task SearchPublishedProviderIds()
         {
             IEnumerable<string> result = new List<string>();

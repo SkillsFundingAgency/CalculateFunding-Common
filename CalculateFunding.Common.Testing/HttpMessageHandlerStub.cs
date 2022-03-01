@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -44,6 +45,17 @@ namespace CalculateFunding.Common.Testing
             _queuedResponses.Add(new QueuedResponse(new HttpResponseMessage(statusCode)
             {
                 Content = responseContent == null ? null : new StringContent(responseContent)
+            }, uri, method, customerHeaders));
+        }
+
+        public void SetupDoubleResponse(string uri, double? responseContent,
+            HttpStatusCode statusCode = HttpStatusCode.OK,
+            HttpMethod method = null,
+            params string[] customerHeaders)
+        {
+            _queuedResponses.Add(new QueuedResponse(new HttpResponseMessage(statusCode)
+            {
+                Content = responseContent.HasValue ? new ByteArrayContent(BitConverter.GetBytes(responseContent.Value)) : null
             }, uri, method, customerHeaders));
         }
 
