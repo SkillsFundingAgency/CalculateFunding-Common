@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 
 namespace CalculateFunding.Common.Sql.Interfaces
 {
@@ -7,5 +8,7 @@ namespace CalculateFunding.Common.Sql.Interfaces
         void Commit();
 
         void Rollback();
+
+        IDbTransaction CurrentTransaction { get; }
     }
 }
