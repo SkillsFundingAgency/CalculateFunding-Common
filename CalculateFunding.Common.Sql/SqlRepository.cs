@@ -71,7 +71,7 @@ namespace CalculateFunding.Common.Sql
             else
             {
                 SqlTransaction sqlTransaction = transaction as SqlTransaction;
-                return await sqlTransaction.InternalConnection.InsertAsync(entity, sqlTransaction.InternalTransaction);
+                return await sqlTransaction.InternalConnection.InsertAsync(entity, sqlTransaction.CurrentTransaction);
             }
         }
 
@@ -86,7 +86,7 @@ namespace CalculateFunding.Common.Sql
             else
             {
                 SqlTransaction sqlTransaction = transaction as SqlTransaction;
-                return await sqlTransaction.InternalConnection.UpdateAsync(entity, sqlTransaction.InternalTransaction);
+                return await sqlTransaction.InternalConnection.UpdateAsync(entity, sqlTransaction.CurrentTransaction);
             }
         }
 
@@ -101,7 +101,7 @@ namespace CalculateFunding.Common.Sql
             else
             {
                 SqlTransaction sqlTransaction = transaction as SqlTransaction;
-                return await sqlTransaction.InternalConnection.DeleteAsync(entity, sqlTransaction.InternalTransaction);
+                return await sqlTransaction.InternalConnection.DeleteAsync(entity, sqlTransaction.CurrentTransaction);
             }
         }
 
@@ -118,7 +118,7 @@ namespace CalculateFunding.Common.Sql
             else
             {
                 SqlTransaction sqlTransaction = transaction as SqlTransaction;
-                return await QuerySingleInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.InternalTransaction);
+                return await QuerySingleInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.CurrentTransaction);
             }
 
             async Task<TEntity> QuerySingleInternal<TEntityInternal>(string sql, CommandType commandType, object parameters, IDbConnection connection, IDbTransaction dbTransaction = null)
@@ -187,7 +187,7 @@ namespace CalculateFunding.Common.Sql
             {
                 SqlTransaction sqlTransaction = transaction as SqlTransaction;
 
-                return await QueryInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.InternalTransaction);
+                return await QueryInternal<TEntity>(sql, commandType, parameters, sqlTransaction.InternalConnection, sqlTransaction.CurrentTransaction);
             }
 
             async Task<IEnumerable<TEntity>> QueryInternal<TEntityInternal>(string sql, CommandType commandType, object parameters, IDbConnection connection, IDbTransaction dbTransaction = null)

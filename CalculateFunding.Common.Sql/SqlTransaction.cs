@@ -1,8 +1,5 @@
 ﻿using CalculateFunding.Common.Sql.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace CalculateFunding.Common.Sql
 {
@@ -14,7 +11,7 @@ namespace CalculateFunding.Common.Sql
 
         internal virtual IDbConnection InternalConnection => _connection;
 
-        internal virtual IDbTransaction InternalTransaction => _transaction ??= _connection.BeginTransaction();
+        public virtual IDbTransaction CurrentTransaction => _transaction ??= _connection.BeginTransaction();
 
         internal SqlTransaction(IDbConnection connection)
         {
@@ -23,12 +20,12 @@ namespace CalculateFunding.Common.Sql
 
         public void Commit()
         {
-            InternalTransaction.Commit();
+            CurrentTransaction.Commit();
         }
 
         public void Rollback()
         {
-            InternalTransaction.Rollback();
+            CurrentTransaction.Rollback();
         }
 
         public void Dispose()
