@@ -147,12 +147,13 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             CalculationCreateModel calculationCreateModel,
             bool skipCalcRun,
             bool skipQueueCodeContextCacheUpdate,
-            bool overrideCreateModelAuthor)
+            bool overrideCreateModelAuthor,
+            bool updateBuildProject)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(calculationCreateModel, nameof(calculationCreateModel));
 
-            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}";
+            string url = $"{UrlRoot}/specifications/{specificationId}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}/{updateBuildProject}";
 
             return await ValidatedPostAsync<Calculation, CalculationCreateModel>(url, calculationCreateModel);
         }

@@ -197,11 +197,12 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
             bool skipCalcRun = NewRandomBoolean();
             bool skipQueueCodeContextCacheUpdate = NewRandomBoolean();
             bool overrideCreateModelAuthor = NewRandomBoolean();
+            bool updateBuildProject = NewRandomBoolean();
 
-            await AssertPostRequest($"specifications/{id}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}",
+            await AssertPostRequest($"specifications/{id}/calculations/{skipCalcRun}/{skipQueueCodeContextCacheUpdate}/{overrideCreateModelAuthor}/{updateBuildProject}",
                 calculationCreateModel,
                 new Calculation(),
-                () => _client.CreateCalculation(id, calculationCreateModel, skipCalcRun, skipQueueCodeContextCacheUpdate, overrideCreateModelAuthor));
+                () => _client.CreateCalculation(id, calculationCreateModel, skipCalcRun, skipQueueCodeContextCacheUpdate, overrideCreateModelAuthor, updateBuildProject));
         }
 
         [TestMethod]

@@ -33,7 +33,8 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             CalculationCreateModel calculationCreateModel,
             bool skipCalcRun,
             bool skipQueueCodeContextCacheUpdate,
-            bool overrideCreateModelAuthor);
+            bool overrideCreateModelAuthor,
+            bool updateBuildProject);
 
         Task<ValidatedApiResponse<Calculation>> EditCalculation(string specificationId, string calculationId, CalculationEditModel calculationEditModel);
 
