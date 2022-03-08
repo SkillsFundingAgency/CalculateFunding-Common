@@ -139,8 +139,10 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<IEnumerable<AvailableVariationPointerFundingLine>>> GetAvailableFundingLineProfilePeriodsForVariationPointers(string specificationId);
 
-        Task<ApiResponse<JobCreationResponse>> QueueReleaseProviderVersions(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest);
+        Task<ValidatedApiResponse<JobCreationResponse>> QueueReleaseProviderVersions(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest);
 
+        Task<ValidatedApiResponse<JobCreationResponse>> QueueRelease(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest);
+        
         Task<ApiResponse<IEnumerable<Channel>>> GetAllChannels();
 
         Task<ValidatedApiResponse<Channel>> UpsertChannel(ChannelRequest request);

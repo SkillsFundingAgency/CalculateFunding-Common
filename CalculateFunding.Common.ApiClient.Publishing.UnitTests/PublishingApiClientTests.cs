@@ -776,12 +776,26 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest = new ReleaseProvidersToChannelRequest();
             string specificationId = NewRandomString();
 
-            await AssertPostRequest($"specifications/{specificationId}/releaseProvidersToChannels",
+            await AssertPostRequest($"specifications/{specificationId}/release-providers",
                 releaseProvidersToChannelRequest,
                 new JobCreationResponse
                 {
                 },
                 () => _client.QueueReleaseProviderVersions(specificationId, releaseProvidersToChannelRequest));
+        }
+
+        [TestMethod]
+        public async Task QueueRelease()
+        {
+            ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest = new ReleaseProvidersToChannelRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest($"specifications/{specificationId}/release",
+                releaseProvidersToChannelRequest,
+                new JobCreationResponse
+                {
+                },
+                () => _client.QueueRelease(specificationId, releaseProvidersToChannelRequest));
         }
 
         [TestMethod]

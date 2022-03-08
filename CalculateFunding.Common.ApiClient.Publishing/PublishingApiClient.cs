@@ -479,13 +479,22 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await GetAsync<IEnumerable<AvailableVariationPointerFundingLine>>($"specifications/{specificationId}/availablePeriodsForVariationPointers");
         }
 
-        public async Task<ApiResponse<JobCreationResponse>> QueueReleaseProviderVersions(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest)
+        public async Task<ValidatedApiResponse<JobCreationResponse>> QueueReleaseProviderVersions(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest)
         {
             Guard.ArgumentNotNull(specificationId, nameof(specificationId));
             Guard.ArgumentNotNull(releaseProvidersToChannelRequest, nameof(releaseProvidersToChannelRequest));
 
-            return await PostAsync<JobCreationResponse, ReleaseProvidersToChannelRequest>(
-                $"specifications/{specificationId}/releaseProvidersToChannels", releaseProvidersToChannelRequest);
+            return await ValidatedPostAsync<JobCreationResponse, ReleaseProvidersToChannelRequest>(
+                $"specifications/{specificationId}/release-providers", releaseProvidersToChannelRequest);
+        }
+
+        public async Task<ValidatedApiResponse<JobCreationResponse>> QueueRelease(string specificationId, ReleaseProvidersToChannelRequest releaseProvidersToChannelRequest)
+        {
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(releaseProvidersToChannelRequest, nameof(releaseProvidersToChannelRequest));
+
+            return await ValidatedPostAsync<JobCreationResponse, ReleaseProvidersToChannelRequest>(
+                $"specifications/{specificationId}/release", releaseProvidersToChannelRequest);
         }
 
         public async Task<ApiResponse<ReleaseFundingPublishedProvidersSummary>> GetApprovedPublishedProvidersReleaseFundingSummary(string specificationId, ReleaseFundingPublishProvidersRequest request)
