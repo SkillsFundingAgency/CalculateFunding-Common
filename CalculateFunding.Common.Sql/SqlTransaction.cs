@@ -3,13 +3,13 @@ using System.Data;
 
 namespace CalculateFunding.Common.Sql
 {
-    public class SqlTransaction : ISqlTransaction 
+    public class SqlTransaction : ISqlTransaction
     {
         private readonly IDbConnection _connection;
 
         private IDbTransaction _transaction;
 
-        internal virtual IDbConnection InternalConnection => _connection;
+        public virtual IDbConnection Connection => _connection;
 
         public virtual IDbTransaction CurrentTransaction => _transaction ??= _connection.BeginTransaction();
 

@@ -9,6 +9,8 @@ namespace CalculateFunding.Common.Sql.Interfaces
 
         void Rollback();
 
+        IDbConnection Connection { get; }
+
         IDbTransaction CurrentTransaction { get; }
     }
 }

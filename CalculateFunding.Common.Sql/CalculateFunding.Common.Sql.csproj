@@ -7,7 +7,7 @@
         <Product>Calculate Funding Service</Product>
         <Description>Azure Sql Client</Description>
         <Version>4.3.0</Version>
-        <PackageVersion>4.3.0</PackageVersion>
+        <PackageVersion>4.3.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
