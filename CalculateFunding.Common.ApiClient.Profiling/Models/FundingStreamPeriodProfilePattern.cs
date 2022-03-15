@@ -18,7 +18,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("fundingLineId")]
         public string FundingLineId { get; set; }
-        
+
         [JsonProperty("profilePatternKey")]
         public string ProfilePatternKey { get; set; }
 
@@ -40,11 +40,11 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("profilePatternDescription")]
         public string ProfilePatternDescription { get; set; }
 
-        [JsonProperty("providerTypes")]
-        public IEnumerable<string> ProviderTypes { get; set; }
+        [JsonProperty("providerTypeSubTypes")]
+        public IEnumerable<ProviderTypeSubType> ProviderTypeSubTypes { get; set; }
 
-        [JsonProperty("providerSubTypes")]
-        public IEnumerable<string> ProviderSubTypes { get; set; }
+        [JsonProperty("reProfilingConfiguration")]
+        public ProfilePatternReProfilingConfiguration ReProfilingConfiguration { get; set; }
 
         [JsonProperty("profileCacheETag")]
         public string ProfileCacheETag { get; set; }
