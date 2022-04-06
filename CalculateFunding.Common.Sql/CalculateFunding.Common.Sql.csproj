@@ -6,8 +6,8 @@
         <Company>Department for Education</Company>
         <Product>Calculate Funding Service</Product>
         <Description>Azure Sql Client</Description>
-        <Version>4.3.3</Version>
-        <PackageVersion>4.3.3</PackageVersion>
+        <Version>4.3.4</Version>
+        <PackageVersion>4.3.4</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +16,6 @@
       <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
       <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
       <PackageReference Include="Polly" Version="7.1.0" />
-      <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     </ItemGroup>
 
     <ItemGroup>
