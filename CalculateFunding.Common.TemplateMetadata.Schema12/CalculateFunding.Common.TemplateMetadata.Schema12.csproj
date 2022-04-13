@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <Description>Common Template Metadata Schema functionality for Schema 1.2 of the funding model</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

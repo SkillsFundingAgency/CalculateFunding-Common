@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\template.with.payment.fundingline.exceeding.max.allowed.character.limit.json" />
     <EmbeddedResource Include="Resources\template.with.duplicate.calculation.name.json" />
     <EmbeddedResource Include="Resources\template.perfect.json" />
     <None Remove="Resources\template.with.invalid.groupRate.numerator.json" />
+    <None Remove="Resources\template.with.payment.fundingline.exceeding.max.allowed.character.limit.json" />
     <EmbeddedResource Include="Resources\template.with.invalid.groupRate.numerator.json" />
     <None Remove="Resources\template.with.enum.type.but.no.allowed.enums.json" />
     <EmbeddedResource Include="Resources\template.with.enum.type.but.no.allowed.enums.json" />

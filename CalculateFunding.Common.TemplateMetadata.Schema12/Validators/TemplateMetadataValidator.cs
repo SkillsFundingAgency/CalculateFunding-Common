@@ -11,6 +11,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Validators
 {
     public class TemplateMetadataValidator : AbstractValidator<SchemaJson>
     {
+        private const int MaxAllowedPaymentFundingLineNameCharacterLimit = 100;
+
         private List<ValidationFailure> _failures;
         private List<SchemaJsonFundingLine> _flattenedLines;
         private List<SchemaJsonCalculation> _flattenedCalculations;
@@ -86,6 +88,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Validators
 
             CheckForDuplicateNames(context, fundingLine, fundingLineName);
 
+            CheckForPaymentNameLimitIssues(context, fundingLine, fundingLineName);
+
             var fundingLineClones = _flattenedLines
                 .Where(x => x.TemplateLineId == fundingLine.TemplateLineId && x.Id != fundingLine.Id);
             foreach (var clone in fundingLineClones)
@@ -117,6 +121,18 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Validators
             fundingLine.FundingLines?.ToList().ForEach(x => ValidateFundingLine(context, x));
 
             fundingLine.Calculations?.ToList().ForEach(x => ValidateCalculation(context, x));
+        }
+
+        private void CheckForPaymentNameLimitIssues(CustomContext context, SchemaJsonFundingLine fundingLine, string fundingLineName)
+        {
+            if(fundingLine.Type == FundingLineType.Payment)
+            {
+                if(fundingLineName.Length >= MaxAllowedPaymentFundingLineNameCharacterLimit)
+                {
+                    AddFailure(context, "FundingLine",
+                        $"Funding Line '{fundingLine.Name}' with id '{fundingLine.TemplateLineId}' - Funding line name may not exceed 100 characters in length for payment type lines");
+                }
+            }
         }
 
         private void CheckForDuplicateNames(CustomContext context, SchemaJsonFundingLine fundingLine, string fundingLineName)

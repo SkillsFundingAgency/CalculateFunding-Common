@@ -40,6 +40,8 @@ namespace CalculateFunding.TemplateMetadata.Schema12.UnitTests
             "CalculateFunding.TemplateMetadata.Schema12.UnitTests.Resources.template.with.recursive.percentageChange.json";
         private const string TemplateWithPercentageChangeCalculationASameAsCalculationB =
             "CalculateFunding.TemplateMetadata.Schema12.UnitTests.Resources.template.with.percentageChange.CalculationA.same.as.CalculationB.json";
+        private const string TemplateWithPaymentFundingLineExceedingMaxAllowedCharacterLimit =
+            "CalculateFunding.TemplateMetadata.Schema12.UnitTests.Resources.template.with.payment.fundingline.exceeding.max.allowed.character.limit.json";
 
         [TestInitialize]
         public void SetUp()
@@ -70,6 +72,21 @@ namespace CalculateFunding.TemplateMetadata.Schema12.UnitTests
             result.Errors.First(x => x.PropertyName == "Calculation").ErrorMessage
                 .Should()
                 .Be("Calculation with name 'Calculation 2' and id '2' has child calculations which don't match.");
+        }
+
+        [TestMethod]
+        public void TemplateMetadataValidatorSchema12_WithPaymentFundingLineExceedingMaxAllowedCharacterLimit_ReturnsInvalid()
+        {
+            ValidationResult result = WhenTheTemplateIsValidated(TemplateWithPaymentFundingLineExceedingMaxAllowedCharacterLimit);
+
+            result.IsValid.Should().BeFalse();
+
+            result.Errors.Where(x => x.PropertyName == "FundingLine")
+                .Should().HaveCount(1);
+
+            result.Errors.First(x => x.PropertyName == "FundingLine").ErrorMessage
+                .Should()
+                .Be($"Funding Line 'FundingLine1FundingLine2FundingLine3FundingLine4FundingLine5FundingLine6FundingLine7FundingLine8FundingLine9FundingLine10' with id '1' - Funding line name may not exceed 100 characters in length for payment type lines");
         }
 
         [TestMethod]
