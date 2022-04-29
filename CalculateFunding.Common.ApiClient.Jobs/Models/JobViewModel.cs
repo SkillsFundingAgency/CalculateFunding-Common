@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CalculateFunding.Common.ApiClient.Jobs.Models
-{ 
+{
     public class JobViewModel
     {
         [JsonProperty("id")]
@@ -56,6 +56,9 @@ namespace CalculateFunding.Common.ApiClient.Jobs.Models
 
         [JsonProperty("outcome")]
         public string Outcome { get; set; }
+
+        [JsonProperty("lastUpdated")]
+        public DateTimeOffset LastUpdated { get; set;}
 
         [JsonProperty("childJobs")]
         public ICollection<JobViewModel> ChildJobs { get; } = new List<JobViewModel>();
