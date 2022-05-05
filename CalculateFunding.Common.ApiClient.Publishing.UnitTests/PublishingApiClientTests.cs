@@ -361,11 +361,12 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string providerType = NewRandomString();
             string localAuthority = NewRandomString();
             string status = NewRandomString();
+            string[] statuses = new string[] { status };
 
             await AssertGetRequest(
-                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened=",
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&statuses={status}&monthYearOpened=",
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
-                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status));
+                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, statuses));
         }
 
         [TestMethod]
@@ -375,13 +376,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             string providerType = NewRandomString();
             string localAuthority = NewRandomString();
             string status = NewRandomString();
+            string[] statuses = new string[] { status };
             bool? isIndicative = NewRandomBoolean();
             string monthYearOpened = NewRandomString();
 
             await AssertGetRequest(
-                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened={monthYearOpened}&isIndicative={isIndicative.Value}",
+                $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&statuses={status}&monthYearOpened={monthYearOpened}&isIndicative={isIndicative.Value}",
                 Enumerable.Empty<ProviderFundingStreamStatusResponse>(),
-                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, status, isIndicative, monthYearOpened));
+                () => _client.GetProviderStatusCounts(specificationId, providerType, localAuthority, statuses, isIndicative, monthYearOpened));
         }
 
         [TestMethod]

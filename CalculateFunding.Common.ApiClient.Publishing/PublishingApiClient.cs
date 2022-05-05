@@ -6,6 +6,7 @@ using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Utility;
 using Serilog;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -213,13 +214,15 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         public async Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId,
             string providerType = null,
             string localAuthority = null,
-            string status = null,
+            IEnumerable<string> statuses = null,
             bool? isIndicative = null,
             string monthYearOpened = null)
         {
             Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
 
-            string url = $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}&status={status}&monthYearOpened={monthYearOpened}";
+            string statusQueryString = statuses == null ? null : $"&{string.Join("&", statuses.Select(_ => $"statuses={_}"))}";
+
+            string url = $"specifications/{specificationId}/publishedproviders/publishingstatus?providerType={providerType}&localAuthority={localAuthority}{statusQueryString}&monthYearOpened={monthYearOpened}";
 
             if (isIndicative.HasValue)
             {

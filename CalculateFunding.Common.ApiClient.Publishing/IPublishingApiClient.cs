@@ -44,7 +44,7 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<ProviderFundingStreamStatusResponse>>> GetProviderStatusCounts(string specificationId,
             string providerType = null,
             string localAuthority = null,
-            string status = null,
+            IEnumerable<string> statuses = null,
             bool? isIndicative = null,
             string monthYearOpened = null);
 
