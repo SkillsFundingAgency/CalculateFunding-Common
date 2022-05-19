@@ -36,6 +36,7 @@ namespace CalculateFunding.Common.ApiClient.Providers.Models.Search
         public string ProviderProfileIdType { get; set; }
 
         public string LaCode { get; set; }
+        public string LaOrg { get; set; }
 
         public string NavVendorNo { get; set; }
 

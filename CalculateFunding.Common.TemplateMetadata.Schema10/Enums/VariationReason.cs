@@ -22,6 +22,9 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema10.Enums
         [EnumMember(Value = "LACodeFieldUpdated")]
         LACodeFieldUpdated,
 
+        [EnumMember(Value = "LAOrgeFieldUpdated")]
+        LAOrgeFieldUpdated,
+
         [EnumMember(Value = "LegalNameFieldUpdated")]
         LegalNameFieldUpdated,
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <Description>Common Template Metadata Schema functionality for Schema 1.0 of the funding model</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>

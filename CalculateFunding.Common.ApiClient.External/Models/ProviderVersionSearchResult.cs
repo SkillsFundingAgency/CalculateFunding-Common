@@ -18,6 +18,7 @@ namespace CalculateFunding.Common.ApiClient.External.Models
         public DateTimeOffset? DateClosed { get; set; }
         public string ProviderProfileIdType { get; set; }
         public string LaCode { get; set; }
+        public string LaOrg { get; set; }
         public string NavVendorNo { get; set; }
         public string CrmAccountId { get; set; }
         public string LegalName { get; set; }

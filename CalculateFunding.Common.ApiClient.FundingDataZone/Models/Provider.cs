@@ -34,6 +34,7 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone.Models
         public DateTimeOffset? DateClosed { get; set; }
 
         public string LACode { get; set; }
+        public string LAOrg { get; set; }
 
         public string NavVendorNo { get; set; }
 

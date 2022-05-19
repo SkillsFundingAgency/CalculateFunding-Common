@@ -16,6 +16,8 @@ namespace CalculateFunding.Common.ApiClient.External.Models
 
         LACodeFieldUpdated,
 
+        LAOrgFieldUpdated,
+
         LegalNameFieldUpdated,
 
         TrustCodeFieldUpdated,
