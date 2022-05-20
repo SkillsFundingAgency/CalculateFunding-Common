@@ -23,6 +23,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         LACode,
 
         /// <summary>
+        /// LAOrg
+        /// </summary>
+        [EnumMember(Value = "LAOrg")]
+        LAOrg,
+
+        /// <summary>
         /// UPIN
         /// </summary>
         [EnumMember(Value = "UPIN")]

@@ -317,9 +317,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
 
             group.Identifiers.Count()
                 .Should()
-                .Be(1);
+                .Be(2);
 
             group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.LACode)
+               .Should()
+               .Be(true);
+
+            group.Identifiers.Any(_ => _.Type == Enums.OrganisationGroupTypeIdentifier.UKPRN)
                .Should()
                .Be(true);
 
@@ -327,6 +331,13 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
             {
                 Type = Enums.OrganisationGroupTypeIdentifier.LACode,
                 Value = "101"
+            });
+
+
+            group.Identifiers.Should().ContainEquivalentOf(new OrganisationIdentifier()
+            {
+                Type = Enums.OrganisationGroupTypeIdentifier.UKPRN,
+                Value = "LA101"
             });
         }
 
@@ -770,6 +781,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Name = "Provider 1",
                     UKPRN = "1001",
                     LACode = "101",
+                    LAOrg = "LA101",
                     Authority = "Local Authority 1",
                     DfeEstablishmentNumber = "Dfe Establishment Number",
                     TrustCode = "101",
@@ -807,6 +819,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Name = "Provider 2",
                     UKPRN = "1002",
                     LACode = "101",
+                    LAOrg = "LA101",
                     Authority = "Local Authority 1",
                     TrustCode = "101",
                     TrustName = "Academy Trust 1",
@@ -843,6 +856,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Name = "Provider 3",
                     UKPRN = "1003",
                     LACode = "102",
+                    LAOrg = "LA102",
                     Authority = "Local Authority 2",
                     TrustCode = "102",
                     TrustName = "Academy Trust 2",
@@ -880,6 +894,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Name = "Provider 3",
                     UKPRN = "1004",
                     LACode = "103",
+                    LAOrg = "LA103",
                     TrustCode = "103",
                     TrustName = "Academy Trust 3",
                     Authority = "Local Authority 3",
@@ -898,6 +913,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.UnitTests
                     Name = "Provider 5",
                     UKPRN = "1004",
                     LACode = "103",
+                    LAOrg = "LA103",
                     TrustCode = "103",
                     TrustName = "Academy Trust 3",
                     Authority = "Local Authority 3",

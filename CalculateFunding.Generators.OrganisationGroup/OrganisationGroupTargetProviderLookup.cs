@@ -48,7 +48,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>> informationKeys = new Dictionary<OrganisationGroupTypeCode, IEnumerable<OrganisationGroupTypeIdentifier>>();
 
             informationKeys.Add(OrganisationGroupTypeCode.AcademyTrust, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.CompaniesHouseNumber, OrganisationGroupTypeIdentifier.GroupId, OrganisationGroupTypeIdentifier.AcademyTrustCode });
-            informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LACode });
+            informationKeys.Add(OrganisationGroupTypeCode.LocalAuthority, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.LAOrg });
             informationKeys.Add(OrganisationGroupTypeCode.GovernmentOfficeRegion, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.GovernmentOfficeRegionCode });
             informationKeys.Add(OrganisationGroupTypeCode.LocalGovernmentGroup, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode });
             informationKeys.Add(OrganisationGroupTypeCode.Provider, new OrganisationGroupTypeIdentifier[] { OrganisationGroupTypeIdentifier.UKPRN, OrganisationGroupTypeIdentifier.LACode, OrganisationGroupTypeIdentifier.UPIN, OrganisationGroupTypeIdentifier.URN, OrganisationGroupTypeIdentifier.UID, OrganisationGroupTypeIdentifier.CompaniesHouseNumber });
@@ -186,6 +186,10 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         else if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode)
                         {
                             typeIdentifier = Enums.OrganisationGroupTypeIdentifier.LocalAuthorityClassificationTypeCode;
+                        }
+                        else if (organisationGroupTypeIdentifier == OrganisationGroupTypeIdentifier.LAOrg)
+                        {
+                            typeIdentifier = Enums.OrganisationGroupTypeIdentifier.UKPRN;
                         }
                         else
                         {
