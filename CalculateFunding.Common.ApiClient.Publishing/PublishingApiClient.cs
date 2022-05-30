@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
+﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
@@ -29,6 +30,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return await GetAsync<IEnumerable<ProfileTotal>>(
                 $"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/providers/{providerId}/profilinghistory");
+        }
+
+        public async Task<ApiResponse<Job>> QueueReportJobs(GeneratePublishingCsvJobsCreationAction createAction,
+            string specificationId)
+        {
+            Guard.ArgumentNotNull(createAction, nameof(createAction));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<Job>(
+                $"specifications/{createAction}/{specificationId}/queue-report-jobs");
         }
 
         public async Task<HttpStatusCode> SavePaymentDates(string paymentDatesCsv, string fundingStreamId, string fundingPeriodId)
@@ -415,6 +426,14 @@ namespace CalculateFunding.Common.ApiClient.Publishing
             return await PostAsync<PublishedProviderDataDownload, string>(
                 $"specifications/{specificationId}/publishedproviders/generate-csv-for-release/all",
                 string.Empty);
+        }
+
+        public async Task<ApiResponse<Job>> QueueAllCsvJobs(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await GetAsync<Job>(
+                $"specifications/{specificationId}/queue-all-csv-jobs");
         }
 
         public async Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForApproval(

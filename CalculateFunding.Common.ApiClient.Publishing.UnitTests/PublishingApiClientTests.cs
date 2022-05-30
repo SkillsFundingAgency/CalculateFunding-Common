@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Extensions;
@@ -40,6 +41,27 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
             await AssertGetRequest($"fundingstreams/{fundingStreamId}/fundingperiods/{fundingPeriodId}/providers/{providerId}/profilinghistory",
                 Enumerable.Empty<ProfileTotal>(),
                 () => _client.GetProfileHistory(fundingStreamId, fundingPeriodId, providerId));
+        }
+
+        [TestMethod]
+        public async Task QueueReportJobs()
+        {
+            GeneratePublishingCsvJobsCreationAction createAction = GeneratePublishingCsvJobsCreationAction.Refresh;
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"specifications/{createAction}/{specificationId}/queue-report-jobs",
+                new Job(),
+                () => _client.QueueReportJobs(createAction, specificationId));
+        }
+
+        [TestMethod]
+        public async Task QueueAllCsvJobs()
+        {
+            string specificationId = NewRandomString();
+
+            await AssertGetRequest($"specifications/{specificationId}/queue-all-csv-jobs",
+                new Job(),
+                () => _client.QueueAllCsvJobs(specificationId));
         }
 
         [TestMethod]

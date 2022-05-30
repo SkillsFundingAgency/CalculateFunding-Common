@@ -1,4 +1,5 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
+﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
 using CalculateFunding.Common.Models.Search;
 using System.Collections.Generic;
@@ -59,6 +60,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<ProfileTotal>>> GetProfileHistory(string fundingStreamId,
             string fundingPeriodId,
             string providerId);
+
+        Task<ApiResponse<Job>> QueueReportJobs(GeneratePublishingCsvJobsCreationAction createAction,
+            string specificationId);
 
         Task<HttpStatusCode> AssignProfilePatternKeyToPublishedProvider(string fundingStreamId,
             string fundingPeriodId,
@@ -122,6 +126,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
         Task<ApiResponse<PublishedProviderDataDownload>> GenerateCsvForAllPublishedProvidersForApproval(
             string specificationId);
+
+        Task<ApiResponse<Job>> QueueAllCsvJobs(string specificationId);
 
         Task<ApiResponse<JobCreationResponse>> QueueSpecificationFundingStreamSqlImport(string specificationId,
             string fundingStreamId);
