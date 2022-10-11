@@ -43,6 +43,9 @@ namespace CalculateFunding.Common.ApiClient.Providers
         Task<ApiResponse<ProviderVersionSearchResults>> SearchCurrentProviderVersionForFundingStream(string fundingStreamId,
             SearchModel search);
 
+        Task<ApiResponse<ProviderVersionSearchResults>> SearchProvidersForSpecification(string providerVersionId,
+            SearchModel search);
+
         Task<ApiResponse<IEnumerable<string>>> GetLocalAuthorityNamesByProviderVersionId(string providerVersionId);
 
         Task<ApiResponse<IEnumerable<string>>> GetLocalAuthorityNamesByFundingStreamId(string fundingStreamId);

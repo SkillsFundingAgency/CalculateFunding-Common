@@ -175,6 +175,16 @@ namespace CalculateFunding.Common.ApiClient.Providers
                 search);
         }
 
+        public async Task<ApiResponse<ProviderVersionSearchResults>> SearchProvidersForSpecification(string providerVersionId,
+            SearchModel search)
+        {
+            Guard.IsNullOrWhiteSpace(providerVersionId, nameof(providerVersionId));
+            Guard.ArgumentNotNull(search, nameof(search));
+
+            return await PostAsync<ProviderVersionSearchResults, SearchModel>($"providers/providerversions/{providerVersionId}/current/search",
+                search);
+        }
+
         public async Task<ApiResponse<IEnumerable<string>>> GetLocalAuthorityNamesByProviderVersionId(string providerVersionId)
         {
             Guard.ArgumentNotNull(providerVersionId, nameof(providerVersionId));
