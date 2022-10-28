@@ -92,5 +92,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             string etag = null);
 
         Task<ApiResponse<IEnumerable<SpecificationSummary>>> GetSpecificationsWithProviderVersionUpdatesAsUseLatest();
+
+        Task<ApiResponse<IEnumerable<string>>> GetDistinctProviderVersionIdsFromSpecifications(IEnumerable<string> specificationIds);
     }
 }

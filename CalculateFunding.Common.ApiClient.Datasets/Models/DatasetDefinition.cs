@@ -23,5 +23,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         [JsonProperty("validateProviders")]
         public bool ValidateProviders{ get; set; }
+
+        [JsonProperty("validateProvidersByYearRange")]
+        public int? ValidateProvidersByYearRange { get; set; }
     }
 }

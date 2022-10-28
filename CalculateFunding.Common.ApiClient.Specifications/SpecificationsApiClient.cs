@@ -347,5 +347,18 @@ namespace CalculateFunding.Common.ApiClient.Specifications
             return await GetAsync<IEnumerable<SpecificationSummary>>($"{UrlRoot}/specifications-with-provider-version-updates-uselatest");
         }
 
+        public async Task<ApiResponse<IEnumerable<string>>> GetDistinctProviderVersionIdsFromSpecifications(IEnumerable<string> specificationIds)
+        {           
+            Guard.ArgumentNotNull(specificationIds, nameof(specificationIds));
+
+            if (!specificationIds.Any())
+            {
+                return new ApiResponse<IEnumerable<string>>(HttpStatusCode.OK, Enumerable.Empty<string>());
+            }           
+
+            string api = $"{UrlRoot}/providerversionid-from-specifications";
+          
+            return await PostAsync<IEnumerable<string>, IEnumerable<string>>(api, specificationIds);
+        }
     }
 }

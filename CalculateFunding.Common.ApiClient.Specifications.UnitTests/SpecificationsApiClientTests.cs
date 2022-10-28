@@ -777,6 +777,17 @@ namespace CalculateFunding.Common.ApiClient.Specifications.UnitTests
                 "If-None-Match", etag);
         }
 
+        [TestMethod]
+        public async Task GetDistinctProviderVersionIdsFromSpecifications()
+        {
+            IEnumerable<string> ids = NewEnumerable(NewRandomString(), NewRandomString());
+
+            await AssertPostRequest($"providerversionid-from-specifications",
+                ids,
+                Enumerable.Empty<string>(),
+                () => _client.GetDistinctProviderVersionIdsFromSpecifications(ids));
+        }
+
         private async Task<ApiResponse<SpecificationSummary>> WhenTheSpecificationSummaryIsQueriedById(string specificationId)
         {
             return await _client.GetSpecificationSummaryById(specificationId);
