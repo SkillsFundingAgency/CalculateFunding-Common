@@ -899,5 +899,18 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
         {
             Value = new RandomNumberBetween(999, int.MaxValue)
         };
+
+        [TestMethod]
+        public async Task CheckAndGetApprovedProviderIds()
+        {
+            IEnumerable<string> providerIds = NewEnumerable(NewRandomString(), NewRandomString());
+            IEnumerable<string> ApprovedproviderIds = NewEnumerable(NewRandomString(), NewRandomString());
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest($"publishedprovider/approvedproviderids/{specificationId}",
+                 providerIds,
+                 ApprovedproviderIds,
+                () => _client.CheckAndGetApprovedProviderIds(providerIds, specificationId));
+        }
     }
 }

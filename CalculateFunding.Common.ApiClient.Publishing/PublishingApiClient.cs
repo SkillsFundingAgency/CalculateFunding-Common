@@ -568,5 +568,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
 
             return queryString.Length == 0 ? queryStringParameter : $"{queryString}&{queryStringParameter}";
         }
+        public async Task<ApiResponse<IEnumerable<string>>> CheckAndGetApprovedProviderIds(
+          IEnumerable<string> providerIds,
+           string specificationId)
+        {
+            Guard.ArgumentNotNull(providerIds, nameof(providerIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<IEnumerable<string>, IEnumerable<string>>(
+                $"publishedprovider/approvedproviderids/{specificationId}",
+                providerIds);
+        }
     }
 }

@@ -158,5 +158,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<HttpStatusCode> PopulateReferenceData(params string[] fundingStreamIds);
 
         Task<ApiResponse<ReleaseFundingPublishedProvidersSummary>> GetApprovedPublishedProvidersReleaseFundingSummary(string specificationId, ReleaseFundingPublishProvidersRequest request);
+        
+        Task<ApiResponse<IEnumerable<string>>> CheckAndGetApprovedProviderIds(
+          IEnumerable<string> providerIds,
+           string specificationId);
     }
 }
