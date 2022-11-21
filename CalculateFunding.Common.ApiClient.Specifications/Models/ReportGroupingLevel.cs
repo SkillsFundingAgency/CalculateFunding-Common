@@ -9,6 +9,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         Undefined,
         Current,
         All,
-        Released
+        Released,
+        Channel
     }
 }
