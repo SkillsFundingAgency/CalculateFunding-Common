@@ -17,6 +17,7 @@ namespace CalculateFunding.Common.ApiClient.Specifications.Models
         HistoryPublishedProviderEstate,
         CalcResult,
         PublishedGroups,
-        PublishedProviderStateSummary
+        PublishedProviderStateSummary,
+        ChannelLevelPublishedGroup
     }
 }
