@@ -17,5 +17,9 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
         public string Description { get; set; }
 
         public Reference Author { get; set; }
+        
+        public bool WasTemplateCalculation { get; set; } = false;
+
+        public string FundingStreamId { get; set; }
     }
 }
