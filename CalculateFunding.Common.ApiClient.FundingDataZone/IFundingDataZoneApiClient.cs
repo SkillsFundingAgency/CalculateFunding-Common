@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.FundingDataZone.Models;
 using CalculateFunding.Common.ApiClient.Models;
@@ -24,8 +25,9 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
         Task<ApiResponse<IEnumerable<PaymentOrganisation>>> GetAllOrganisations(
             int providerSnapshotId);
         Task<ApiResponse<IEnumerable<string>>> ListFundingStreamsWithProviderSnapshots();
-        Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetProviderSnapshotsForFundingStream(string fundingStreamId);
+        Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetProviderSnapshotsForFundingStream(string fundingStreamId ,[Optional]string fundingPeriodId);
         Task<ApiResponse<IEnumerable<Provider>>> GetProviderSnapshotMetadata(int providerSnapshotId);
         Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreams();
+        Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreamsWithFundingPeriod();
     }
 }

@@ -147,10 +147,11 @@ namespace CalculateFunding.Common.ApiClient.FDZ.UnitTests
         public async Task GetProviderSnapshotsForFundingStream()
         {
             string fundingStreamId = NewRandomString();
+            string fundingPeriodId = NewRandomString();
 
-            await AssertGetRequest($"providers/fundingStreams/{fundingStreamId}/snapshots",
+            await AssertGetRequest($"providers/fundingStreams/{fundingStreamId}/{fundingPeriodId}/snapshots",
                 Enumerable.Empty<ProviderSnapshot>(),
-                () => _client.GetProviderSnapshotsForFundingStream(fundingStreamId));
+                () => _client.GetProviderSnapshotsForFundingStream(fundingStreamId, fundingPeriodId));
         }
 
         [TestMethod]

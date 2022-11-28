@@ -97,11 +97,11 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
         }
 
         public async Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetProviderSnapshotsForFundingStream(
-            string fundingStreamId)
+            string fundingStreamId ,string fundingPeriodId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
 
-            return await GetAsync<IEnumerable<ProviderSnapshot>>($"providers/fundingStreams/{fundingStreamId}/snapshots");
+            return await GetAsync<IEnumerable<ProviderSnapshot>>($"providers/fundingStreams/{fundingStreamId}/{fundingPeriodId}/snapshots");
         }
 
         public async Task<ApiResponse<IEnumerable<string>>> ListFundingStreamsWithProviderSnapshots()
@@ -112,6 +112,11 @@ namespace CalculateFunding.Common.ApiClient.FundingDataZone
         public async Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreams()
         {
             return await GetAsync<IEnumerable<ProviderSnapshot>>($"providers/fundingStreams/snapshots/latest");
+        }
+
+        public async Task<ApiResponse<IEnumerable<ProviderSnapshot>>> GetLatestProviderSnapshotsForAllFundingStreamsWithFundingPeriod()
+        {
+            return await GetAsync<IEnumerable<ProviderSnapshot>>($"providers/fundingStreams/FundingPeriod/snapshots/latest");
         }
     }
 }
