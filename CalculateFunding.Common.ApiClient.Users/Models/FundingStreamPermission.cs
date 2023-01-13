@@ -40,6 +40,12 @@ namespace CalculateFunding.Common.ApiClient.Users.Models
         [JsonProperty("canReleaseFunding")]
         public bool CanReleaseFunding { get; set; }
 
+        [JsonProperty("canReleaseFundingForStatement")]
+        public bool CanReleaseFundingForStatement { get; set; }
+
+        [JsonProperty("canReleaseFundingForPaymentOrContract")]
+        public bool CanReleaseFundingForPaymentOrContract { get; set; }
+
         [JsonProperty("canCreateTemplates")]
         public bool CanCreateTemplates { get; set; }
 
