@@ -82,6 +82,12 @@ namespace CalculateFunding.Common.Identity.Authorization
                 case SpecificationActionTypes.CanReleaseFunding:
                     return actualPermissions.CanReleaseFunding;
 
+                case SpecificationActionTypes.CanReleaseFundingForStatement:
+                    return actualPermissions.CanReleaseFundingForStatement;
+
+                case SpecificationActionTypes.CanReleaseFundingForPaymentOrContract:
+                    return actualPermissions.CanReleaseFundingForPaymentOrContract;
+
                 case SpecificationActionTypes.CanRefreshFunding:
                     return actualPermissions.CanRefreshFunding;
 

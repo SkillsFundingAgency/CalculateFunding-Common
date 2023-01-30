@@ -203,6 +203,16 @@ namespace CalculateFunding.Common.Identity.UnitTests
             };
             yield return new object[]
             {
+                new EffectiveSpecificationPermission { CanReleaseFundingForStatement = true },
+                SpecificationActionTypes.CanReleaseFundingForStatement
+            };
+            yield return new object[]
+            {
+                new EffectiveSpecificationPermission { CanReleaseFundingForPaymentOrContract = true },
+                SpecificationActionTypes.CanReleaseFundingForPaymentOrContract
+            };
+            yield return new object[]
+            {
                 new EffectiveSpecificationPermission { CanApproveAllCalculations = true },
                 SpecificationActionTypes.CanApproveAllCalculations
             };

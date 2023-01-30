@@ -9,6 +9,8 @@
         CanChooseFunding,
         CanApproveFunding,
         CanReleaseFunding,
+        CanReleaseFundingForStatement,
+        CanReleaseFundingForPaymentOrContract,
         CanRefreshFunding,
         CanApproveSpecification,
         CanAdministerFundingStream,
