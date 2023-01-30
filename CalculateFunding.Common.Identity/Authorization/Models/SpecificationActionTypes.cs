@@ -8,9 +8,7 @@
         CanMapDatasets,
         CanChooseFunding,
         CanApproveFunding,
-        CanReleaseFunding,
-        CanReleaseFundingForStatement,
-        CanReleaseFundingForPaymentOrContract,
+        CanReleaseFunding,       
         CanRefreshFunding,
         CanApproveSpecification,
         CanAdministerFundingStream,
@@ -18,5 +16,7 @@
         CanApproveAnyCalculations,
         CanApproveAllCalculations,
         CanRefreshPublishedQa,
+        CanReleaseFundingForStatement,
+        CanReleaseFundingForPaymentOrContract,
     }
 }
