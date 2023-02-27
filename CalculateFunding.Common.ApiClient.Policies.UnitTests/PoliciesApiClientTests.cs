@@ -285,5 +285,18 @@ namespace CalculateFunding.Common.ApiClient.Policies.UnitTests
                  new TemplateMetadataDistinctCalculationsContents(),
                 () => _client.GetDistinctTemplateMetadataCalculationsContents(fundingStreamId, fundingPeriodId, templateVersion));
         }
+
+        [TestMethod]
+        public async Task GetCashCalcsForFundingLines()
+        {
+            string fundingPeriodId = NewRandomString();
+            string templateVersion = NewRandomString();
+            string fundingStreamId = NewRandomString();
+            string etag = NewRandomHeaderValue();
+
+            await AssertGetRequest($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/cash-calculations",
+                 new TemplateMetadataFundingLineCashCalculationsContents(),
+                () => _client.GetCashCalcsForFundingLines(fundingStreamId, fundingPeriodId, templateVersion));
+        }
     }
 }

@@ -19,5 +19,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public string DistributionPeriod { get; set; }
 
         public decimal PeriodPatternPercentage { get; set; }
+
+        public int? PeriodPatternCalculationId { get; set; }
     }
 }

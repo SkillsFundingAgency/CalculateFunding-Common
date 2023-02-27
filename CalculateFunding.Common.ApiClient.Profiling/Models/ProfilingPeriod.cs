@@ -21,5 +21,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("distributionPeriod")]
         public string DistributionPeriod { get; set; }
+
+        [JsonProperty("calculationId")]
+        public int? CalculationId { get; set; }
     }
 }

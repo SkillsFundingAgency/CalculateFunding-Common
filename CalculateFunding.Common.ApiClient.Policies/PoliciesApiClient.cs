@@ -195,5 +195,14 @@ namespace CalculateFunding.Common.ApiClient.Policies
 
             return await GetAsync<TemplateMetadataDistinctCalculationsContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/distinct/calculations");
         }
+
+        public async Task<ApiResponse<TemplateMetadataFundingLineCashCalculationsContents>> GetCashCalcsForFundingLines(string fundingStreamId, string fundingPeriodId, string templateVersion)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
+            Guard.IsNullOrWhiteSpace(fundingPeriodId, nameof(fundingPeriodId));
+            Guard.IsNullOrWhiteSpace(templateVersion, nameof(templateVersion));
+
+            return await GetAsync<TemplateMetadataFundingLineCashCalculationsContents>($"templates/{fundingStreamId}/{fundingPeriodId}/{templateVersion}/metadata/cash-calculations");
+        }
     }
 }
