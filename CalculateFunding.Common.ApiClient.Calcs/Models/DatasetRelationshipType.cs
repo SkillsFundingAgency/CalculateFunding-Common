@@ -8,5 +8,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Models
     {
         Uploaded = 0,
         ReleasedData = 1,
+        FDS = 2
     }
 }

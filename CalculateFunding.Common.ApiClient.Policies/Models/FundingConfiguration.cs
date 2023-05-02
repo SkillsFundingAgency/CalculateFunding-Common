@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.Models;
 using Newtonsoft.Json;
 
@@ -89,5 +90,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("enableCarryForward")]
         public bool EnableCarryForward { get; set; }
+
+        [JsonProperty("useFDSData")]
+        public Boolean useFDSData { get; set; }
     }
 }
