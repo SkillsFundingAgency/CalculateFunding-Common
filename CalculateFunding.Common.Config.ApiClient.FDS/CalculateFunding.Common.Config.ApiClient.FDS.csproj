@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net6</TargetFramework>
+	  <Authors>Calculate Funding Service</Authors>
+	  <Company>Department for Education</Company>
+	  <Product>Calculate Funding Service</Product>
+	  <Description>Common API Client functionality</Description>
+	  <Version>1.0.0</Version>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>	 
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculateFunding.Common.ApiClient.FDS\CalculateFunding.Common.ApiClient.FDS.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.Config.ApiClient\CalculateFunding.Common.Config.ApiClient.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -29,5 +29,7 @@
         public const string FDZ = "FDZ";
 
         public const string CalcEngine = "CalcEngine";
+
+        public const string FDS = "FDS";
     }
 }

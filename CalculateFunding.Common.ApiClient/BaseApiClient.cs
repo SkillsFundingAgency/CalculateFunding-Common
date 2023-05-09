@@ -86,7 +86,7 @@ namespace CalculateFunding.Common.ApiClient
             HttpClient httpClient = await PrepareRequest(url,
                 TimeSpan.FromMinutes(5),
                 $"ApiClient {httpMethod}: {{clientKey}}://{{url}}",
-                _clientKey,
+            _clientKey,
                 url);
 
             if (cancellationToken == default(CancellationToken)) cancellationToken = CurrentCancellationToken();
