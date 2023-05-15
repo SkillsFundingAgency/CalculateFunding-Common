@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
 {
@@ -37,6 +38,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public IEnumerable<ReleaseActionGroup> ReleaseActionGroups { get; set; }
 
         public bool EnableCarryForward { get; set; }
+
+        public Boolean useFDSData { get; set; }
 
     }
 }
