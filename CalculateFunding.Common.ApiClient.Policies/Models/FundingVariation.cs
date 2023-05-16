@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -10,7 +11,10 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         
         [JsonProperty("order")]
         public int Order { get; set; }
-        
+
+        [JsonProperty("enableRestrictedProviderMetaData")]
+        public Boolean enableRestrictedProviderMetaData { get; set; }
+
         [JsonProperty("fundingLineCodes")]
         public IEnumerable<string> FundingLineCodes { get; set; }
     }
