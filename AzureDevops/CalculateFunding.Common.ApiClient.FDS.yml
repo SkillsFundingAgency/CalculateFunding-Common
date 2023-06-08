@@ -1,0 +1,43 @@
+﻿name: $(Build.DefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+pool:
+  vmImage: windows-2022
+
+variables:
+ - name: BuildConfiguration
+   value: 'release'
+ - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+   value: true
+ - name: DOTNET_CLI_TELEMETRY_OPTOUT 
+   value: true
+ - group: 'Dotnet Core SDK Version'
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - CalculateFunding.Common.ApiClient.FDS.UnitTests/*
+    - CalculateFunding.Common.ApiClient.FDS/*
+    - CalculateFunding.Common.ApiClient/*
+    - CalculateFunding.Common.Models/*
+    - CalculateFunding.Common/*
+
+pr:
+  paths:
+    include:
+    - CalculateFunding.Common.ApiClient.FDS.UnitTests/*
+    - CalculateFunding.Common.ApiClient.FDS/*
+    - CalculateFunding.Common.ApiClient/*
+    - CalculateFunding.Common.Models/*
+    - CalculateFunding.Common/*
+
+steps:
+- template: templates\nuget-package-build.yml
+  parameters:
+    DotNetCoreVersion: ${{ variables.DotnetCoreSdkVersionNet6 }}
+    BuildConfiguration: ${{ variables.BuildConfiguration }}
+    NugetProjectPath: '$(System.DefaultWorkingDirectory)\CalculateFunding.Common.ApiClient.FDS\*.csproj'
+    UnitTestProjectPath: '$(System.DefaultWorkingDirectory)\CalculateFunding.Common.ApiClient.FDS.UnitTests\*.csproj'
