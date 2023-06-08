@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
-    <Version>3.0.4</Version>
+    <Version>3.0.5</Version>
     <Description>Common API Client functionality</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>

@@ -1,14 +1,13 @@
-﻿using CalculateFunding.Common.ApiClient.Models;
-using System;
+﻿using CalculateFunding.Common.ApiClient.FDS.Models;
+using CalculateFunding.Common.ApiClient.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ApiClient.FDS
 {
     public interface IFDSApiClient
     {
-        Task<ApiResponse<dynamic>> GetFundingStream();
+        Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetForFundingStream(string fundingStream);
+        Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId);
     }
 }
