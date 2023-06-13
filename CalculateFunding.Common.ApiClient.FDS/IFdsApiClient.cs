@@ -9,5 +9,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
     {
         Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetForFundingStream(string fundingStream);
         Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId);
+        Task<ApiResponse<IEnumerable<FDSDatasetVersion>>> GetDatasetVersionsByDefinitionId(string definitionId);
+        Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId);
     }
 }

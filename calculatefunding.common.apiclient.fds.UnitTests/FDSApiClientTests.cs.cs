@@ -45,5 +45,27 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 Enumerable.Empty< DatasetDefinitionByFundingStream >(),
                 _ => _client.GetDatasetForFundingStream(_));
         }
+
+        [TestMethod]
+        public async Task GetDatasetVersionsByDefinitionIdMakesGetCall()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"FundingData/FundingDataVersions/Schema/{id}",
+                id,
+                Enumerable.Empty<FDSDatasetVersion>(),
+                _ => _client.GetDatasetVersionsByDefinitionId(_));
+        }
+
+        [TestMethod]
+        public async Task GetDatasetVersionsCountByDefinitionIdMakesGetCall()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"FundingData/FundingDataVersions/Schema/count/{id}",
+                id,
+                new FundingDataVersionCount(),
+                _ => _client.GetDatasetVersionsCountByDefinitionId(_));
+        }
     }
 }

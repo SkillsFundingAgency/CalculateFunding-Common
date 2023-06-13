@@ -26,5 +26,14 @@ namespace CalculateFunding.Common.ApiClient.FDS
         {
             return await GetAsync<FDSDatasetDefinition>($"FundingData/schema/" + definitionId);
         }
+        public async Task<ApiResponse<IEnumerable<FDSDatasetVersion>>> GetDatasetVersionsByDefinitionId(string definitionId)
+        {
+            return await GetAsync<IEnumerable<FDSDatasetVersion>>($"FundingData/FundingDataVersions/Schema/" + definitionId);
+        }
+
+        public async Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId)
+        {
+            return await GetAsync<FundingDataVersionCount>($"FundingData/FundingDataVersions/Schema/count/" + definitionId);
+        }
     }
 }
