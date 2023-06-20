@@ -18,9 +18,6 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("version")]
         public int Version { get; set; }
 
-        [JsonProperty("fundingStreamId")]
-        public string FundingStreamId { get; set; }
-
         [JsonProperty("fundingStreamCode")]
         public string FundingStreamCode { get; set; }
 
