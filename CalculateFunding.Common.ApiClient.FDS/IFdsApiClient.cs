@@ -11,5 +11,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
         Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId);
         Task<ApiResponse<IEnumerable<FDSDatasetVersion>>> GetDatasetVersionsByDefinitionId(string definitionId);
         Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId);
+        Task<ApiResponse<FDSDatasourceDataModel>> GetDatasourceDataBySnapshotId(string snapshotId);
+        Task<ApiResponse<FDSDatasetVersion>> GetDatasetVersionsBySnapshotId(string snapshotId);
     }
 }

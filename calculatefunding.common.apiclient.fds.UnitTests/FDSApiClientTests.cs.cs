@@ -58,6 +58,17 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task GetDatasetVersionsBySnapshotIdMakesGetCall()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"FundingData/FundingDataVersions/{id}",
+                id,
+                new FDSDatasetVersion(),
+                _ => _client.GetDatasetVersionsBySnapshotId(_));
+        }
+
+        [TestMethod]
         public async Task GetDatasetVersionsCountByDefinitionIdMakesGetCall()
         {
             string id = NewRandomString();
@@ -66,6 +77,17 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 id,
                 new FundingDataVersionCount(),
                 _ => _client.GetDatasetVersionsCountByDefinitionId(_));
+        }
+
+        [TestMethod]
+        public async Task GetDatasourceDataMakesGetCall()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"FundingData/{id}",
+                id,
+                new FDSDatasourceDataModel(),
+                _ => _client.GetDatasourceDataBySnapshotId(_));
         }
     }
 }
