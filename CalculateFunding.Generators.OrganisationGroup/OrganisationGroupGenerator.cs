@@ -39,6 +39,28 @@ namespace CalculateFunding.Generators.OrganisationGroup
             string providerVersionId,
             int? providerSnapshotId = null)
         {
+            if (fundingConfiguration.OrganisationGroupings == null)
+            {
+                List<OrganisationGroupingConfiguration> organisationGroupingConfigurations = new List<OrganisationGroupingConfiguration>();
+                fundingConfiguration.ReleaseChannels.ToList().ForEach(_ =>
+                {
+                    _.OrganisationGroupings.ToList().ForEach(orgGroup =>
+                    {
+                        OrganisationGroupingConfiguration organisationGroupingConfiguration = new OrganisationGroupingConfiguration()
+                        {
+                            GroupingReason = orgGroup.GroupingReason,
+                            GroupTypeClassification = orgGroup.GroupTypeClassification,
+                            GroupTypeIdentifier = orgGroup.GroupTypeIdentifier,
+                            OrganisationGroupTypeCode = orgGroup.OrganisationGroupTypeCode,
+                            ProviderStatus = orgGroup.ProviderStatus,
+                            ProviderTypeMatch = orgGroup.ProviderTypeMatch
+                        };
+                        organisationGroupingConfigurations.Add(organisationGroupingConfiguration);
+                    });
+                });
+                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations;
+            }
+            
             return await GenerateOrganisationGroup(fundingConfiguration.OrganisationGroupings, fundingConfiguration.ProviderSource,
                 fundingConfiguration.PaymentOrganisationSource, scopedProviders, providerVersionId, providerSnapshotId);
         }
