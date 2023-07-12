@@ -13,15 +13,18 @@ namespace CalculateFunding.Common.ApiClient.FDS
 {
     public class FDSApiClient : BaseApiClient, IFDSApiClient
     {
-        private const string FDSPrefix = "FDS_";
         public FDSApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null) 
             : base(httpClientFactory, HttpClientKeys.FDS, logger, cancellationTokenProvider)
         {
         }
 
-        public async Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetForFundingStream(string fundingStream)
+        public async Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetFDSDataSchema(string fundingStream, string fundingPeriod)
         {
-            return await GetAsync<IEnumerable<DatasetDefinitionByFundingStream>>($"FundingData/schemas/" + fundingStream);
+            return await PostAsync<IEnumerable<DatasetDefinitionByFundingStream>, DataSchemaRequest>($"FundingData/schema/versions/query", new DataSchemaRequest()
+            {
+                FundingPeriodCode = fundingPeriod,
+                FundingStreamCode = fundingStream
+            });
         }
         public async Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId)
         {
@@ -32,7 +35,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
             }
             if (fdsDefinition.Content.Name != null)
             {
-                fdsDefinition.Content.Name = FDSPrefix + fdsDefinition.Content.Name;
+                fdsDefinition.Content.Name = fdsDefinition.Content.DatasetDefinitionName;
                 fdsDefinition.Content.FDSTableDefinitions[0].Name = fdsDefinition.Content.Name;
             }
             return fdsDefinition;

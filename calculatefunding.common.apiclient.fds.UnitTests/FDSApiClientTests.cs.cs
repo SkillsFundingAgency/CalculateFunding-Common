@@ -36,14 +36,20 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
-        public async Task GetDatasetForFundingStreamMakesGetCall()
+        public async Task GetFDSDataSchemaMakesGetCall()
         {
             string fundingStream = NewRandomString();
+            string fundingPeriod = NewRandomString();
+            DataSchemaRequest request = new DataSchemaRequest()
+            {
+                FundingPeriodCode = fundingPeriod,
+                FundingStreamCode = fundingStream
+            };
 
-            await AssertGetRequest($"FundingData/schemas/{fundingStream}",
-                fundingStream,
+            await AssertPostRequest($"FundingData/schema/versions/query",
+                request,
                 Enumerable.Empty< DatasetDefinitionByFundingStream >(),
-                _ => _client.GetDatasetForFundingStream(_));
+                _ => _client.GetFDSDataSchema(fundingStream, fundingPeriod));
         }
 
         [TestMethod]

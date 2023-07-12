@@ -7,7 +7,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
 {
     public interface IFDSApiClient
     {
-        Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetDatasetForFundingStream(string fundingStream);
+        Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetFDSDataSchema(string fundingStream, string fundingPeriod);
         Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId);
         Task<ApiResponse<IEnumerable<FDSDatasetVersion>>> GetDatasetVersionsByDefinitionId(string definitionId);
         Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId);

@@ -48,5 +48,11 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("tableDefinitions")]
         public List<FDSTableDefinitions> FDSTableDefinitions { get; set; }
 
+        /// <summary>
+        /// Unique Dataschema file name which feed in to CFS
+        /// </summary>
+        public string DatasetDefinitionName =>
+            $"FDS_{FundingPeriodCode}_{Version}_{Name}";
+
     }
 }
