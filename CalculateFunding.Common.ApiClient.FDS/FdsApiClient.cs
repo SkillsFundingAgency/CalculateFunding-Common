@@ -13,6 +13,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
 {
     public class FDSApiClient : BaseApiClient, IFDSApiClient
     {
+        private string FDSPrefix = "FDS";
         public FDSApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null) 
             : base(httpClientFactory, HttpClientKeys.FDS, logger, cancellationTokenProvider)
         {
@@ -35,8 +36,8 @@ namespace CalculateFunding.Common.ApiClient.FDS
             }
             if (fdsDefinition.Content.Name != null)
             {
-                fdsDefinition.Content.Name = fdsDefinition.Content.DatasetDefinitionName;
-                fdsDefinition.Content.FDSTableDefinitions[0].Name = fdsDefinition.Content.Name;
+                fdsDefinition.Content.Name = FDSPrefix + fdsDefinition.Content.Id + "_" + fdsDefinition.Content.Name;
+                fdsDefinition.Content.FDSTableDefinitions[0].Name = FDSPrefix + fdsDefinition.Content.Id + "_" + fdsDefinition.Content.Name;
             }
             return fdsDefinition;
         }
