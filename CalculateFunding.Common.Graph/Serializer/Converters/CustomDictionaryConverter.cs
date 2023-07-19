@@ -52,6 +52,7 @@ namespace CalculateFunding.Common.Graph.Serializer.Converters
                         dic.Add(reader.Value.ToString().ToLowerInvariant(), ExpectDictionaryOrArrayOrPrimitive(reader));
                         break;
                     case JsonToken.EndObject:
+                    case JsonToken.EndArray:
                         return dic;
                     default:
                         throw new JsonSerializationException($"Unrecognized token: {reader.TokenType}");
