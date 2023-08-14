@@ -23,5 +23,7 @@ namespace CalculateFunding.Generators.OrganisationGroup.Interfaces
             IEnumerable<Provider> scopedProviders,
             string providerVersionId,
             int? providerSnapshotId = null);
+
+        Task<IEnumerable<string>> GetGroupTypeIdentifierList(FundingConfiguration fundingConfiguration);
     }
 }

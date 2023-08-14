@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.FundingDataZone;
 using CalculateFunding.Common.ApiClient.Models;
@@ -63,6 +64,39 @@ namespace CalculateFunding.Generators.OrganisationGroup
             
             return await GenerateOrganisationGroup(fundingConfiguration.OrganisationGroupings, fundingConfiguration.ProviderSource,
                 fundingConfiguration.PaymentOrganisationSource, scopedProviders, providerVersionId, providerSnapshotId);
+        }
+
+        public async Task<IEnumerable<OrganisationGroupingConfiguration>> ExtractOrganizatioGroupConfig(FundingConfiguration fundingConfiguration)
+        {
+            if (fundingConfiguration.OrganisationGroupings == null)
+            {
+                List<OrganisationGroupingConfiguration> organisationGroupingConfigurations = new List<OrganisationGroupingConfiguration>();
+                fundingConfiguration.ReleaseChannels.ToList().ForEach(_ =>
+                {
+                    _.OrganisationGroupings.ToList().ForEach(orgGroup =>
+                    {
+                        OrganisationGroupingConfiguration organisationGroupingConfiguration = new OrganisationGroupingConfiguration()
+                        {
+                            GroupingReason = orgGroup.GroupingReason,
+                            GroupTypeClassification = orgGroup.GroupTypeClassification,
+                            GroupTypeIdentifier = orgGroup.GroupTypeIdentifier,
+                            OrganisationGroupTypeCode = orgGroup.OrganisationGroupTypeCode,
+                            ProviderStatus = orgGroup.ProviderStatus,
+                            ProviderTypeMatch = orgGroup.ProviderTypeMatch
+                        };
+                        organisationGroupingConfigurations.Add(organisationGroupingConfiguration);
+                    });
+                });
+                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations;
+            }
+            return fundingConfiguration.OrganisationGroupings;
+        }
+
+        public async Task<IEnumerable<string>> GetGroupTypeIdentifierList(FundingConfiguration fundingConfiguration)
+        {
+            List<string> groupTypeIdentifierList = new List<string>();
+            IEnumerable<OrganisationGroupingConfiguration> extractedOrganizationGroupConfig = await ExtractOrganizatioGroupConfig(fundingConfiguration);
+            return extractedOrganizationGroupConfig.Select(x => x.GroupTypeIdentifier.ToString()).Distinct().ToList();
         }
 
         public async Task<IEnumerable<OrganisationGroupResult>> GenerateOrganisationGroup(
