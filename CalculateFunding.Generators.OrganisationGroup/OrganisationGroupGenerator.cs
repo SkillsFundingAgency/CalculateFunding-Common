@@ -46,27 +46,28 @@ namespace CalculateFunding.Generators.OrganisationGroup
                 {
                     _.OrganisationGroupings.ToList().ForEach(orgGroup =>
                     {
-                        OrganisationGroupingConfiguration organisationGroupingConfiguration = new OrganisationGroupingConfiguration()
+                        List<OrganisationGroupingConfiguration> duplicateGroupConfig = organisationGroupingConfigurations.Where(c => c.GroupingReason == orgGroup.GroupingReason
+                                && c.OrganisationGroupTypeCode == orgGroup.OrganisationGroupTypeCode
+                                && c.GroupTypeClassification == orgGroup.GroupTypeClassification
+                                && c.GroupTypeIdentifier == orgGroup.GroupTypeIdentifier).ToList();
+                        if (duplicateGroupConfig.Any())
                         {
-                            GroupingReason = orgGroup.GroupingReason,
-                            GroupTypeClassification = orgGroup.GroupTypeClassification,
-                            GroupTypeIdentifier = orgGroup.GroupTypeIdentifier,
-                            OrganisationGroupTypeCode = orgGroup.OrganisationGroupTypeCode,
-                            ProviderStatus = orgGroup.ProviderStatus,
-                            ProviderTypeMatch = orgGroup.ProviderTypeMatch
-                        };
-                        organisationGroupingConfigurations.Add(organisationGroupingConfiguration);
+                            duplicateGroupConfig.FirstOrDefault().ProviderStatus = duplicateGroupConfig.FirstOrDefault().ProviderStatus.Any()
+                                        ? duplicateGroupConfig.FirstOrDefault().ProviderStatus
+                                        : orgGroup.ProviderStatus;
+                            duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch = duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch.Any()
+                                        ? duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch
+                                        : orgGroup.ProviderTypeMatch;
+                        }
+                        else
+                        {
+                            organisationGroupingConfigurations.Add(orgGroup);
+                        }
                     });
                 });
-                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations.DistinctBy(c => new
-                {
-                    c.GroupingReason,
-                    c.OrganisationGroupTypeCode,
-                    c.GroupTypeClassification,
-                    c.GroupTypeIdentifier
-                });
+                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations;
             }
-            
+
             return await GenerateOrganisationGroup(fundingConfiguration.OrganisationGroupings, fundingConfiguration.ProviderSource,
                 fundingConfiguration.PaymentOrganisationSource, scopedProviders, providerVersionId, providerSnapshotId);
         }
