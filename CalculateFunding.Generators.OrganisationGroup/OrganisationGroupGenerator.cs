@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.FundingDataZone;
 using CalculateFunding.Common.ApiClient.Models;
@@ -59,7 +58,13 @@ namespace CalculateFunding.Generators.OrganisationGroup
                         organisationGroupingConfigurations.Add(organisationGroupingConfiguration);
                     });
                 });
-                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations;
+                fundingConfiguration.OrganisationGroupings = organisationGroupingConfigurations.DistinctBy(c => new
+                {
+                    c.GroupingReason,
+                    c.OrganisationGroupTypeCode,
+                    c.GroupTypeClassification,
+                    c.GroupTypeIdentifier
+                });
             }
             
             return await GenerateOrganisationGroup(fundingConfiguration.OrganisationGroupings, fundingConfiguration.ProviderSource,
