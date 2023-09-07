@@ -39,7 +39,7 @@ namespace CalculateFunding.Generators.OrganisationGroup
             string providerVersionId,
             int? providerSnapshotId = null)
         {
-            if (fundingConfiguration.OrganisationGroupings == null)
+            if (!fundingConfiguration.OrganisationGroupings.Any())
             {
                 List<OrganisationGroupingConfiguration> organisationGroupingConfigurations = new List<OrganisationGroupingConfiguration>();
                 fundingConfiguration.ReleaseChannels.ToList().ForEach(_ =>
