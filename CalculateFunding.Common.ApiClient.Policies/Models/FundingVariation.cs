@@ -12,9 +12,6 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models
         [JsonProperty("order")]
         public int Order { get; set; }
 
-        [JsonProperty("enableRestrictedProviderMetaData")]
-        public Boolean enableRestrictedProviderMetaData { get; set; }
-
         [JsonProperty("fundingLineCodes")]
         public IEnumerable<string> FundingLineCodes { get; set; }
     }

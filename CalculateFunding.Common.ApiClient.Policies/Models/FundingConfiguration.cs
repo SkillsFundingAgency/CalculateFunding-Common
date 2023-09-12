@@ -32,6 +32,9 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("errorDetectors")]
         public IEnumerable<string> ErrorDetectors { get; set; }
 
+        [JsonProperty("nonRestrictedProviderMetaData")]
+        public IEnumerable<string> NonRestrictedProviderMetaData { get; set; }
+
         [JsonProperty("approvalMode")]
         public ApprovalMode ApprovalMode { get; set; }
 
