@@ -41,8 +41,5 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
 
         [JsonProperty("rows")]
         public List<Row> Rows { get; set; }
-
-        [JsonProperty("schema")]
-        public Schema Schema { get; set; }
     }
 }
