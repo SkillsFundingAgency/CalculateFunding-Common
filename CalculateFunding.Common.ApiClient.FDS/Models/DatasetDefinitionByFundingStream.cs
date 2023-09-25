@@ -18,5 +18,8 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("description")]
         public string Description { get; set; }
 
+        [JsonProperty("oldSchemaName")]
+        public string OldSchemaName { get; set; }
+
     }
 }
