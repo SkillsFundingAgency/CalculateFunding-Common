@@ -9,5 +9,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public int Version { get; set; }
         public Reference Author { get; set; }
         public DateTimeOffset Date { get; set; }
+        public string Comment { get; set; }
     }
 }
