@@ -39,8 +39,14 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("createdDt")]
         public DateTime CreatedDt { get; set; }
 
+        [JsonProperty("updatedBy")]
+        public string UpdatedBy { get; set; }
+
+        [JsonProperty("updatedDt")]
+        public DateTime? UpdatedDt { get; set; }
+
         [JsonProperty("comment")]
-        public object Comment { get; set; }
+        public string Comment { get; set; }
 
         [JsonProperty("isActive")]
         public bool IsActive { get; set; }

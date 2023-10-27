@@ -195,6 +195,15 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 assignDatasourceModel);
         }
 
+        public async Task<ApiResponse<DefinitionSpecificationRelationship>> UpdateFDSDatasetSchemaVersionOfRelationship(UpdateFDSDatasetSchemaVersionModel updateFDSDatasetSchemaVersionModel)
+        {
+            Guard.ArgumentNotNull(updateFDSDatasetSchemaVersionModel, nameof(updateFDSDatasetSchemaVersionModel));
+
+            return await PostAsync<DefinitionSpecificationRelationship, UpdateFDSDatasetSchemaVersionModel>(
+                DataSetsUriFor("update-fds-dataschema-version-of-relationship"),
+                updateFDSDatasetSchemaVersionModel);
+        }
+
         public async Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null)
         {
             Guard.IsNullOrWhiteSpace(datasetId, nameof(datasetId));
@@ -399,6 +408,16 @@ namespace CalculateFunding.Common.ApiClient.DataSets
             Guard.IsNullOrWhiteSpace(relationshipId, nameof(relationshipId));
 
             return await GetAsync<PublishedSpecificationConfiguration>($"datasets/definition-relationships/{relationshipId}/get-funding-line-calculations");
+        }
+
+        public async Task<ApiResponse<DatasetDefinitionViewModel>> GetNewFDSDatasetSchemaVersion(string fundingStreamCode, string fundingPeriodCode, string datasetDefinitionName)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamCode, nameof(fundingStreamCode));
+            Guard.IsNullOrWhiteSpace(fundingPeriodCode, nameof(fundingPeriodCode));
+            Guard.IsNullOrWhiteSpace(datasetDefinitionName, nameof(datasetDefinitionName));
+
+            return await GetAsync<DatasetDefinitionViewModel>(DataSetsUriFor($"get-new-fds-dataschema-version?" +
+                $"fundingStreamCode={fundingStreamCode}&fundingPeriodCode={fundingPeriodCode}&datasetDefinitionName={datasetDefinitionName}"));
         }
     }
 }

@@ -35,6 +35,8 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ApiResponse<IEnumerable<DatasetSpecificationRelationshipViewModel>>> GetCurrentRelationshipsBySpecificationId(string specificationId);
         Task<ApiResponse<SelectDatasourceModel>> GetDataSourcesByRelationshipId(string relationshipId, int? top, int? pageNumber);
         Task<ApiResponse<JobCreationResponse>> AssignDatasourceVersionToRelationship(AssignDatasourceModel assignDatasourceModel);
+        Task<ApiResponse<DefinitionSpecificationRelationship>> UpdateFDSDatasetSchemaVersionOfRelationship(
+            UpdateFDSDatasetSchemaVersionModel updateFDSDatasetSchemaVersionModel);
         Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null);
         Task<HttpStatusCode> UploadDatasetFileRaw(string filename, DatasetMetadataViewModelRaw datasetMetadataViewModelRaw);
         Task<HttpStatusCode> UploadDatasetFile(string filename, DatasetMetadataViewModel datasetMetadataViewModel);
@@ -70,5 +72,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ValidatedApiResponse<DefinitionSpecificationRelationshipVersion>> UpdateDefinitionSpecificationRelationship(UpdateDefinitionSpecificationRelationshipModel model, string specificationId, string relationshipId);
         Task<ApiResponse<PublishedSpecificationConfiguration>> GetFundingLinesCalculations(string relationshipId);
         Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateAndPersistNewDataset(CreateNewDatasetModel createNewDatasetModel);
+        Task<ApiResponse<DatasetDefinitionViewModel>> GetNewFDSDatasetSchemaVersion(string fundingStreamCode, 
+            string fundingPeriodCode, string datasetDefinitionName);
     }
 }
