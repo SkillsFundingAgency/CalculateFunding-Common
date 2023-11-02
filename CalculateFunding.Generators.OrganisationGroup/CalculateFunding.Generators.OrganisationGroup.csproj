@@ -4,7 +4,7 @@
 
     <TargetFramework>net6</TargetFramework>
 
-    <Version>3.1.6</Version>
+    <Version>3.1.7</Version>
     <Product>Calculate Funding Service</Product>
     <Description>Organisation Group Generator to group providers into publishing groups for the funding model</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

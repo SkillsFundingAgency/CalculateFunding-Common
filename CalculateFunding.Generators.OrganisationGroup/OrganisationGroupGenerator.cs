@@ -50,14 +50,15 @@ namespace CalculateFunding.Generators.OrganisationGroup
                                 && c.OrganisationGroupTypeCode == orgGroup.OrganisationGroupTypeCode
                                 && c.GroupTypeClassification == orgGroup.GroupTypeClassification
                                 && c.GroupTypeIdentifier == orgGroup.GroupTypeIdentifier).ToList();
+                        //Bug 145880 : Duplicate organization config can be seen in different channels. Avoiding duplicate and take the one which has providerStatus and ProviderTypeMatch
                         if (duplicateGroupConfig.Any())
                         {
-                            duplicateGroupConfig.FirstOrDefault().ProviderStatus = duplicateGroupConfig.FirstOrDefault().ProviderStatus.Any()
-                                        ? duplicateGroupConfig.FirstOrDefault().ProviderStatus
-                                        : orgGroup.ProviderStatus;
-                            duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch = duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch.Any()
-                                        ? duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch
-                                        : orgGroup.ProviderTypeMatch;
+                            duplicateGroupConfig.FirstOrDefault().ProviderStatus = (duplicateGroupConfig.FirstOrDefault().ProviderStatus == null || !duplicateGroupConfig.FirstOrDefault().ProviderStatus.Any())
+                                        ? orgGroup.ProviderStatus
+                                        : duplicateGroupConfig.FirstOrDefault().ProviderStatus;
+                            duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch = (duplicateGroupConfig.FirstOrDefault().ProviderStatus == null || !duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch.Any())
+                                        ? orgGroup.ProviderTypeMatch
+                                        : duplicateGroupConfig.FirstOrDefault().ProviderTypeMatch;
                         }
                         else
                         {
