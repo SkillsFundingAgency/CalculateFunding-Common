@@ -96,5 +96,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
 
         [JsonProperty("useFDSData")]
         public Boolean useFDSData { get; set; }
+
+        [JsonProperty("reProfilingOnDemandEnabled")]
+        public bool reProfilingOnDemandEnabled { get; set; }
     }
 }

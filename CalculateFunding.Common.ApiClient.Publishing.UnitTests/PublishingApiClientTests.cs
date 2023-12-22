@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.ApiClient.Publishing.Models.Reprofiling;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Models.Search;
 using CalculateFunding.Common.Testing;
@@ -492,6 +493,33 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                     IndicativeProviderTotalFunding = NewRandomInt()
                 },
                 () => _client.GetProviderBatchForApprovalCount(publishProvidersRequest, specificationId));
+        }
+
+        [TestMethod]
+        public async Task GetProviderBatchForReprofilingSummary()
+        {
+            string specificationId = NewRandomString();
+
+            PublishedProviderIdsRequest publishProvidersRequest = new PublishedProviderIdsRequest();
+
+            await AssertPostRequest($"specifications/{specificationId}/reprofiling/providerstatus-for-reprofilingondemand",
+                publishProvidersRequest,
+                new ReprofilingSummaryResult
+                {
+                    TotalProviders = NewRandomInt(),
+                    TotalEligibleProviders = NewRandomInt(),
+                    Url = NewRandomString(),
+                    ProviderSummaryResult = new List<ProviderSummaryResult>()
+                    {
+                        new ProviderSummaryResult()
+                        {
+                            UKPRN = NewRandomString(),
+                            ErrorMessage = NewRandomString(),
+                            IsEligible = NewRandomBoolean(),
+                        }
+                    }
+                },
+                () => _client.GetProviderBatchForReprofilingSummary(publishProvidersRequest, specificationId));
         }
 
         [TestMethod]

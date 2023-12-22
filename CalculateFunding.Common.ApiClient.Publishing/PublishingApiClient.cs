@@ -1,6 +1,7 @@
 ﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.ApiClient.Publishing.Models.Reprofiling;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.Interfaces;
 using CalculateFunding.Common.Models.Search;
@@ -579,5 +580,20 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                 $"publishedprovider/approvedproviderids/{specificationId}",
                 providerIds);
         }
+
+        #region Reprofiling on demand
+
+        public async Task<ApiResponse<ReprofilingSummaryResult>> GetProviderBatchForReprofilingSummary(
+            PublishedProviderIdsRequest publishedProviderIds,
+            string specificationId)
+        {
+            Guard.ArgumentNotNull(publishedProviderIds, nameof(publishedProviderIds));
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            return await PostAsync<ReprofilingSummaryResult, PublishedProviderIdsRequest>($"specifications/{specificationId}/reprofiling/providerstatus-for-reprofilingondemand",
+                publishedProviderIds);
+        }
+
+        #endregion
     }
 }

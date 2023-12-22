@@ -1,6 +1,7 @@
 ﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ApiClient.Publishing.Models;
+using CalculateFunding.Common.ApiClient.Publishing.Models.Reprofiling;
 using CalculateFunding.Common.Models.Search;
 using System.Collections.Generic;
 using System.Net;
@@ -162,5 +163,9 @@ namespace CalculateFunding.Common.ApiClient.Publishing
         Task<ApiResponse<IEnumerable<string>>> CheckAndGetApprovedProviderIds(
           IEnumerable<string> providerIds,
            string specificationId);
+
+        Task<ApiResponse<ReprofilingSummaryResult>> GetProviderBatchForReprofilingSummary(
+            PublishedProviderIdsRequest publishedProviderIds,
+            string specificationId);
     }
 }
