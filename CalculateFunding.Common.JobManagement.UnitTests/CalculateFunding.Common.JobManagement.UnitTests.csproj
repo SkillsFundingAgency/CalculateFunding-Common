@@ -18,6 +18,7 @@
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.JobManagement\CalculateFunding.Common.JobManagement.csproj" />
+    <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
 
 </Project>

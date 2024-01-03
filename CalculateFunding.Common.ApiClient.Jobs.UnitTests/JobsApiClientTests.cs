@@ -202,6 +202,25 @@ namespace CalculateFunding.Common.ApiClient.Jobs.UnitTests
                 () => _client.GetLatestJobByTriggerEntityId(specificationId, entityId));
         }
 
+        [TestMethod]
+        public async Task GetJobsCountByJobDefinitionIdAndStatus()
+        {
+            string specificationId = NewRandomString();
+            string jobDefinitionId = NewRandomString();
+            string runningStatus = NewRandomString();
+            string completionStatus = NewRandomString();
+            int jobsCount = 1;
+
+            GivenTheResponse($"jobs/count?specificationId={specificationId}&jobDefinitionId={jobDefinitionId}&runningStatus={runningStatus}&completionStatus={completionStatus}", jobsCount.ToString(), HttpMethod.Get);
+
+            ApiResponse<int> apiResponse = await _client.GetJobsCountByJobDefinitionIdAndStatus(specificationId, jobDefinitionId, runningStatus, completionStatus);
+
+            apiResponse?
+                .Content
+                .Should()
+                .Equals(jobsCount);
+        }
+
         private JobCreateModel NewCreateModel() => new JobCreateModel();
         
         private Job NewJob() => new Job();

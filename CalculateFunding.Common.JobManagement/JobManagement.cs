@@ -301,5 +301,13 @@ namespace CalculateFunding.Common.JobManagement
             return jobViewModel;
         }
 
+        public async Task<int> GetJobsCountByJobDefinitionIdAndStatus(string specificationId, string jobDefinitionId, string runningStatus, string completionStatus)
+        {
+            ApiResponse<int> jobResponse = await _jobsApiClientPolicy.ExecuteAsync(
+                () => _jobsApiClient.GetJobsCountByJobDefinitionIdAndStatus(specificationId, jobDefinitionId, runningStatus, completionStatus));
+
+            return jobResponse.Content;
+        }
+
     }
 }

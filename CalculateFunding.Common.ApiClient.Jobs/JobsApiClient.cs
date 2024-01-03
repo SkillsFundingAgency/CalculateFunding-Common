@@ -161,5 +161,17 @@ namespace CalculateFunding.Common.ApiClient.Jobs
 
             return await GetAsync<JobSummary>(api);
         }
+
+        public async Task<ApiResponse<int>> GetJobsCountByJobDefinitionIdAndStatus(string specificationId, string jobDefinitionId, string runningStatus, string completionStatus)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(jobDefinitionId, nameof(jobDefinitionId));
+            Guard.ArgumentNotNull(runningStatus, nameof(runningStatus));
+            Guard.ArgumentNotNull(completionStatus, nameof(completionStatus));
+
+            string api = $"jobs/count?specificationId={specificationId}&jobDefinitionId={jobDefinitionId}&runningStatus={runningStatus}&completionStatus={completionStatus}";
+
+            return await GetAsync<int>(api);
+        }
     }
 }

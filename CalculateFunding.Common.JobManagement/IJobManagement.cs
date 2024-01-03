@@ -22,5 +22,6 @@ namespace CalculateFunding.Common.JobManagement
 
         Task<JobViewModel> GetJobById(string jobId);
         Task<JobCreateResult> TryQueueJob(JobCreateModel jobCreateModel);
+        Task<int> GetJobsCountByJobDefinitionIdAndStatus(string specificationId, string jobDefinitionId, string runningStatus, string completionStatus);
     }
 }

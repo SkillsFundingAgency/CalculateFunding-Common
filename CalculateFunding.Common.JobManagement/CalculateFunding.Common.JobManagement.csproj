@@ -5,7 +5,7 @@
     <TargetFramework>net6</TargetFramework>   
     <ApplicationIcon />
     <StartupObject />
-    <Version>8.0.0</Version>
+    <Version>8.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

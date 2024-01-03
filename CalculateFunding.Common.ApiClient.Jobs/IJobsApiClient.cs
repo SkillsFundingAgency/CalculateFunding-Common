@@ -33,5 +33,7 @@ namespace CalculateFunding.Common.ApiClient.Jobs
         Task<ApiResponse<JobSummary>> GetLatestSuccessfulJobForSpecification(string specificationId, string jobDefinitionId);
 
         Task<ApiResponse<JobSummary>> GetLatestJobByTriggerEntityId(string specificationId, string entityId);
+
+        Task<ApiResponse<int>> GetJobsCountByJobDefinitionIdAndStatus(string specificationId, string jobDefinitionId, string runningStatus, string completionStatus);
     }
 }

@@ -7,6 +7,7 @@ using CalculateFunding.Common.ApiClient.Jobs;
 using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.ApiClient.Models;
 using CalculateFunding.Common.ServiceBus.Interfaces;
+using CalculateFunding.Common.Testing;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -859,6 +860,47 @@ namespace CalculateFunding.Common.JobManagement.UnitTests
             viewModel
                 .Should()
                 .Be(jvm);
+        }
+
+        [TestMethod]
+        public async Task GetJobsCountByJobDefinitionIdAndStatus_Called_ReturnsJobsCount()
+        {
+            string specificationId = NewRandomString();
+            string jobDefinitionId = NewRandomString();
+            string runningStatus = NewRandomString();
+            string completionStatus = NewRandomString();
+
+            IJobsApiClient jobsApiClient = Substitute.For<IJobsApiClient>();
+            JobManagementResiliencePolicies policies = new JobManagementResiliencePolicies
+            {
+                JobsApiClient = Policy.NoOpAsync()
+            };
+            IMessengerService messengerService = Substitute.For<IMessengerService>();
+            ILogger logger = Substitute.For<ILogger>();
+
+
+            ApiResponse<int> jobsCountApiResponse
+                = new ApiResponse<int>(HttpStatusCode.OK, 0);
+
+            jobsApiClient
+                .GetJobsCountByJobDefinitionIdAndStatus(specificationId, jobDefinitionId, runningStatus, completionStatus)
+                .Returns(jobsCountApiResponse);
+
+            JobManagement jobManagement = new JobManagement(jobsApiClient, logger, policies, messengerService);
+
+            //Act
+            int result = await jobManagement.GetJobsCountByJobDefinitionIdAndStatus(specificationId, jobDefinitionId, runningStatus, completionStatus);
+
+            Assert.AreEqual(result, 0);
+
+            await jobsApiClient
+                .Received(1)
+                .GetJobsCountByJobDefinitionIdAndStatus(specificationId, jobDefinitionId, runningStatus, completionStatus);
+        }
+
+        private string NewRandomString()
+        {
+            return new RandomString();
         }
     }
 }
