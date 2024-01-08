@@ -940,5 +940,19 @@ namespace CalculateFunding.Common.ApiClient.Publishing.UnitTests
                  ApprovedproviderIds,
                 () => _client.CheckAndGetApprovedProviderIds(providerIds, specificationId));
         }
+
+        [TestMethod]
+        public async Task ReProfilingOnDemand()
+        {
+            PublishedProviderIdsRequest publishedProviderIdsRequest = new PublishedProviderIdsRequest();
+            string specificationId = NewRandomString();
+
+            await AssertPostRequest($"specifications/{specificationId}/reprofilingondemand",
+                publishedProviderIdsRequest,
+                new JobCreationResponse
+                {
+                },
+                () => _client.ReProfilingOnDemand(specificationId, publishedProviderIdsRequest));
+        }
     }
 }

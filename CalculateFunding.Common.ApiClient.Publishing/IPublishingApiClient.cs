@@ -164,6 +164,8 @@ namespace CalculateFunding.Common.ApiClient.Publishing
           IEnumerable<string> providerIds,
            string specificationId);
 
+        Task<ValidatedApiResponse<JobCreationResponse>> ReProfilingOnDemand(string specificationId, PublishedProviderIdsRequest publishedProviderIdsRequest);
+
         Task<ApiResponse<ReprofilingSummaryResult>> GetProviderBatchForReprofilingSummary(
             PublishedProviderIdsRequest publishedProviderIds,
             string specificationId);

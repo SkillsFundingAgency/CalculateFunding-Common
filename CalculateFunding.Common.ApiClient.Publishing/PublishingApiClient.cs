@@ -594,6 +594,16 @@ namespace CalculateFunding.Common.ApiClient.Publishing
                 publishedProviderIds);
         }
 
+        public async Task<ValidatedApiResponse<JobCreationResponse>> ReProfilingOnDemand(string specificationId, PublishedProviderIdsRequest publishedProviderIdsRequest)
+        {
+
+            Guard.ArgumentNotNull(specificationId, nameof(specificationId));
+            Guard.ArgumentNotNull(publishedProviderIdsRequest, nameof(publishedProviderIdsRequest));
+
+            return await ValidatedPostAsync<JobCreationResponse, PublishedProviderIdsRequest>(
+                $"specifications/{specificationId}/reprofilingondemand", publishedProviderIdsRequest);
+        }
         #endregion
+
     }
 }
