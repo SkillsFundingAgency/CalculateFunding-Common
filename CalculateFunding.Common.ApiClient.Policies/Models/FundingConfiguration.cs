@@ -97,7 +97,13 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         [JsonProperty("useFDSData")]
         public Boolean useFDSData { get; set; }
 
-        [JsonProperty("reProfilingOnDemandEnabled")]
-        public bool reProfilingOnDemandEnabled { get; set; }
+        [JsonProperty("reprofilingOnDemandEnabled")]
+        public bool ReprofilingOnDemandEnabled { get; set; }
+
+        /// <summary>
+        /// Variations to run during Reprofiling OnDemand Service
+        /// </summary>
+        [JsonProperty("reprofilingOnDemandVariations")]
+        public IEnumerable<FundingVariation> ReprofilingOnDemandVariations { get; set; }
     }
 }

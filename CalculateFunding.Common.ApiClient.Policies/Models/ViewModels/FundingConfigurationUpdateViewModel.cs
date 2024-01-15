@@ -41,6 +41,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
 
         public Boolean useFDSData { get; set; }
 
-        public bool reProfilingOnDemandEnabled { get; set; }
+        public bool ReprofilingOnDemandEnabled { get; set; }
+     
+        public IEnumerable<FundingVariation> ReprofilingOnDemandVariations { get; set; }
     }
 }
