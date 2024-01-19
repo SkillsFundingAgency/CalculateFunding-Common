@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -41,7 +42,20 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         /// </summary>
         [JsonProperty("midYearType")]
         public MidYearType? MidYearType { get; set; }
-        
+
+        /// <summary>
+        /// Date Opened of a published provider
+        /// </summary>
+        [JsonProperty("dateOpened")]
+        public DateTimeOffset? DateOpened { get; set; }
+
+        /// <summary>
+        /// Flag to identify if the request is from ReprofileOnDemand
+        /// </summary>
+        [JsonProperty("isReProfileOnDemandTriggered")]
+        public bool IsReProfileOnDemandTriggered { get; set; }
+
+
         /// <summary>
         /// The index into the ordered refresh profile periods
         /// to start paying from
