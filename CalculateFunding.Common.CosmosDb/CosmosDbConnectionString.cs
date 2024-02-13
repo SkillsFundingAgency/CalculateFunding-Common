@@ -16,6 +16,12 @@ namespace CalculateFunding.Common.CosmosDb
             MaxRequestsPerTcpConnection = 300,
         };
 
+        private static readonly CosmosClientOptions DefaultDevCosmosClientOptions = new CosmosClientOptions
+        {
+            ConnectionMode = ConnectionMode.Gateway,
+            RequestTimeout = new TimeSpan(1, 0, 0)
+        };
+
         /// <summary>
         /// Parse cosmos client connection string and return a cosmos client 
         /// </summary>
@@ -31,7 +37,9 @@ namespace CalculateFunding.Common.CosmosDb
 
             if (cosmosClientOptions == null)
             {
-                cosmosClientOptions = DefaultCosmosClientOptions;
+                cosmosClientOptions = (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                    ? DefaultDevCosmosClientOptions
+                    : DefaultCosmosClientOptions;
             }
 
             if (ParseImpl(connectionString, cosmosClientOptions, out var ret, err => throw new FormatException(err)))
