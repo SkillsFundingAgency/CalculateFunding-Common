@@ -584,5 +584,16 @@ namespace CalculateFunding.Common.ApiClient.Calcs.Tests
                 .Should()
                 .BeEquivalentTo(expectedIdentifier);
         }
+
+        [TestMethod]
+        public async Task GetCompiledBuildProjectBySpecificationId()
+        {
+            string id = NewRandomString();
+
+            await AssertGetRequest($"get-compiled-buildproject-by-specification-id?specificationId={id}",
+                id,
+                new BuildProject(),
+                _client.GetCompiledBuildProjectBySpecificationId);
+        }
     }
 }

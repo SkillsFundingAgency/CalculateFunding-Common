@@ -82,5 +82,6 @@ namespace CalculateFunding.Common.ApiClient.Calcs
         Task<ApiResponse<Job>> ReMapSpecificationReference(string specificationId, string datasetDefinitionRelationshipId);
         Task<ApiResponse<Job>> QueueCalculationRun(string specificationId, QueueCalculationRunModel model);
         Task<ApiResponse<CalculationIdentifier>> GenerateCalculationIdentifier(GenerateIdentifierModel model);
+        Task<ApiResponse<BuildProject>> GetCompiledBuildProjectBySpecificationId(string specificationId);
     }
 }

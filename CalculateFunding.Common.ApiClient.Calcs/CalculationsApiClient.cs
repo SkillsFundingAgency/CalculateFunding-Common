@@ -369,6 +369,16 @@ namespace CalculateFunding.Common.ApiClient.Calcs
             Guard.ArgumentNotNull(model, nameof(model));
 
             return await PostAsync<CalculationIdentifier, GenerateIdentifierModel>($"{UrlRoot}/generate-identifier", model);
+        }               
+
+        public async Task<ApiResponse<BuildProject>> GetCompiledBuildProjectBySpecificationId(string specificationId)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+
+            string url = $"{UrlRoot}/get-compiled-buildproject-by-specification-id?specificationId={specificationId}";
+
+            return await GetAsync<BuildProject>(url);
         }
+
     }
 }
