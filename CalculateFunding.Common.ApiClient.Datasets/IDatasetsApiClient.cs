@@ -74,5 +74,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets
         Task<ValidatedApiResponse<NewDatasetVersionResponseModel>> CreateAndPersistNewDataset(CreateNewDatasetModel createNewDatasetModel);
         Task<ApiResponse<DatasetDefinitionViewModel>> GetNewFDSDatasetSchemaVersion(string fundingStreamCode, 
             string fundingPeriodCode, string datasetDefinitionName);
+
+        Task<ApiResponse<DatasetUpgradeResponseModel>> GetFDSDatasetComparisonResult(DatasetUpgradeRequestModel datasetUpgradeModel);
     }
 }

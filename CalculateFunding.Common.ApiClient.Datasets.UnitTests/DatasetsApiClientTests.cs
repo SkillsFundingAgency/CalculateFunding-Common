@@ -286,6 +286,15 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         }
 
         [TestMethod]
+        public async Task GetFDSDatasetComparisonResult()
+        {
+            await AssertPostRequest("get-fds-dataschema-comparision-Results",
+                new DatasetUpgradeRequestModel(),
+                new DatasetUpgradeResponseModel(),
+                _ => _client.GetFDSDatasetComparisonResult(_));
+        }
+
+        [TestMethod]
         [DataRow(null)]
         [DataRow("version")]
         public async Task DownloadDatasetFileMakesGetCallWithSuppliedId(string version)

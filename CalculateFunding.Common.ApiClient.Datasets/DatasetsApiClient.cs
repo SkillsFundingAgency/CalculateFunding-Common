@@ -204,6 +204,15 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 updateFDSDatasetSchemaVersionModel);
         }
 
+        public async Task<ApiResponse<DatasetUpgradeResponseModel>> GetFDSDatasetComparisonResult(DatasetUpgradeRequestModel datasetUpgradeModel)
+        {
+            Guard.ArgumentNotNull(datasetUpgradeModel, nameof(datasetUpgradeModel));
+
+            return await PostAsync<DatasetUpgradeResponseModel, DatasetUpgradeRequestModel>(
+                DataSetsUriFor("get-fds-dataschema-comparision-Results"),
+                datasetUpgradeModel);
+        }
+
         public async Task<ApiResponse<DatasetDownloadModel>> DownloadDatasetFile(string datasetId, string datasetVersion = null)
         {
             Guard.IsNullOrWhiteSpace(datasetId, nameof(datasetId));
