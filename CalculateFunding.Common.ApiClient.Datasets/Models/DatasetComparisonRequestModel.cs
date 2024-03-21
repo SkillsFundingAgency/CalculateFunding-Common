@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
-    public class DatasetUpgradeRequestModel
+    public class DatasetComparisonRequestModel
     {
         [JsonProperty("currentDataschemaId")]
         public string CurrentDataschemaId { get; set; }
@@ -16,6 +16,6 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         [JsonProperty("includeAffectedCalcs")]
         public bool IncludeAffectedCalcs { get; set; }
         [JsonProperty("removedFields")]
-        public List<string> RemovedFields { get; set; }
+        public List<DatasetComparisonField> RemovedFields { get; set; }
     }
 }

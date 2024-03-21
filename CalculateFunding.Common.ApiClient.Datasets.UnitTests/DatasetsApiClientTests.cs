@@ -289,8 +289,8 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         public async Task GetFDSDatasetComparisonResult()
         {
             await AssertPostRequest("get-fds-dataschema-comparision-Results",
-                new DatasetUpgradeRequestModel(),
-                new DatasetUpgradeResponseModel(),
+                new DatasetComparisonRequestModel(),
+                new DatasetComparisonResponseModel(),
                 _ => _client.GetFDSDatasetComparisonResult(_));
         }
 

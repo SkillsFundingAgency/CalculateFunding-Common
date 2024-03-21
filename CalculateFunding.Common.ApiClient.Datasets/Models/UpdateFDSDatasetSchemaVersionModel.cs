@@ -1,4 +1,6 @@
-﻿namespace CalculateFunding.Common.ApiClient.DataSets.Models
+﻿using System.Collections.Generic;
+
+namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class UpdateFDSDatasetSchemaVersionModel
     {
@@ -6,6 +8,6 @@
 
         public string DatasetDefintionId { get; set; }
 
-        public string Description { get; set; }
+        public List<DatasetComparisonField> RemovedFields { get; set; }
     }
 }

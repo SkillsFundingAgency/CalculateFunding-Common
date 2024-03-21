@@ -195,20 +195,20 @@ namespace CalculateFunding.Common.ApiClient.DataSets
                 assignDatasourceModel);
         }
 
-        public async Task<ApiResponse<DefinitionSpecificationRelationship>> UpdateFDSDatasetSchemaVersionOfRelationship(UpdateFDSDatasetSchemaVersionModel updateFDSDatasetSchemaVersionModel)
+        public async Task<ApiResponse<UpdateFDSDataSchemaResponseModel>> UpdateFDSDatasetSchemaVersionOfRelationship(UpdateFDSDatasetSchemaVersionModel updateFDSDatasetSchemaVersionModel)
         {
             Guard.ArgumentNotNull(updateFDSDatasetSchemaVersionModel, nameof(updateFDSDatasetSchemaVersionModel));
 
-            return await PostAsync<DefinitionSpecificationRelationship, UpdateFDSDatasetSchemaVersionModel>(
+            return await PostAsync<UpdateFDSDataSchemaResponseModel, UpdateFDSDatasetSchemaVersionModel>(
                 DataSetsUriFor("update-fds-dataschema-version-of-relationship"),
                 updateFDSDatasetSchemaVersionModel);
         }
 
-        public async Task<ApiResponse<DatasetUpgradeResponseModel>> GetFDSDatasetComparisonResult(DatasetUpgradeRequestModel datasetUpgradeModel)
+        public async Task<ApiResponse<DatasetComparisonResponseModel>> GetFDSDatasetComparisonResult(DatasetComparisonRequestModel datasetUpgradeModel)
         {
             Guard.ArgumentNotNull(datasetUpgradeModel, nameof(datasetUpgradeModel));
 
-            return await PostAsync<DatasetUpgradeResponseModel, DatasetUpgradeRequestModel>(
+            return await PostAsync<DatasetComparisonResponseModel, DatasetComparisonRequestModel>(
                 DataSetsUriFor("get-fds-dataschema-comparision-Results"),
                 datasetUpgradeModel);
         }
