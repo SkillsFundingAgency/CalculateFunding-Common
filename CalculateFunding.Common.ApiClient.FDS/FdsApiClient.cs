@@ -24,7 +24,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
                 FundingStreamCode = fundingStream
             });
         }
-        public async Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetRemovedFieldsFromFDSDataSchema(string fundingStream, string fundingPeriod, string schemaName)
+        public async Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetAllVersionsofSchema(string fundingStream, string fundingPeriod, string schemaName)
         {
             return await PostAsync<IEnumerable<RemovedFieldDefinition>, DataSchemaRequest>($"FundingData/schema/all/query", new DataSchemaRequest()
             {

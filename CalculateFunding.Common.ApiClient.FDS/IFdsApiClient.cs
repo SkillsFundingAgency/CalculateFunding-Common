@@ -13,6 +13,6 @@ namespace CalculateFunding.Common.ApiClient.FDS
         Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId);
         Task<ApiResponse<FDSDatasourceDataModel>> GetDatasourceDataBySnapshotId(string snapshotId);
         Task<ApiResponse<FDSDatasetVersion>> GetDatasetVersionsBySnapshotId(string snapshotId);
-        Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetRemovedFieldsFromFDSDataSchema(string fundingStream, string fundingPeriod, string schemaName);
+        Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetAllVersionsofSchema(string fundingStream, string fundingPeriod, string schemaName);
     }
 }
