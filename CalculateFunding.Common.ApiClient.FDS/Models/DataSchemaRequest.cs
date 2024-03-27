@@ -15,5 +15,8 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("fundingPeriodCode")]
         public string FundingPeriodCode { get; set; }
 
+        [JsonProperty("schemaName")]
+        public string SchemaName { get; set; }
+
     }
 }

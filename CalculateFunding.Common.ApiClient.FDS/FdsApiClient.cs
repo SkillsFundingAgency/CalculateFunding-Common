@@ -3,11 +3,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Interfaces;
 using Serilog;
-using System.Threading;
-using System;
 using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.FDS.Models;
-using System.Linq;
 
 namespace CalculateFunding.Common.ApiClient.FDS
 {
@@ -27,6 +24,16 @@ namespace CalculateFunding.Common.ApiClient.FDS
                 FundingStreamCode = fundingStream
             });
         }
+        public async Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetRemovedFieldsFromFDSDataSchema(string fundingStream, string fundingPeriod, string schemaName)
+        {
+            return await PostAsync<IEnumerable<RemovedFieldDefinition>, DataSchemaRequest>($"FundingData/schema/all/query", new DataSchemaRequest()
+            {
+                FundingPeriodCode = fundingPeriod,
+                FundingStreamCode = fundingStream,
+                SchemaName = schemaName
+            });
+        }
+
         public async Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId)
         {
             ApiResponse<FDSDatasetDefinition> fdsDefinition = await GetAsync<FDSDatasetDefinition>($"FundingData/schema/" + definitionId);

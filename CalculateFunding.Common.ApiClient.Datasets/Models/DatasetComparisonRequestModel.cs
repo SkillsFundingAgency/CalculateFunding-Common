@@ -5,10 +5,14 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 {
     public class DatasetComparisonRequestModel
     {
-        [JsonProperty("currentDataschemaId")]
-        public string CurrentDataschemaId { get; set; }
-        [JsonProperty("newDataschemaId")]
-        public string NewDataschemaId { get; set; }
+        [JsonProperty("fundingStreamCode")]
+        public string FundingStreamCode { get; set; }
+
+        [JsonProperty("fundingPeriodCode")]
+        public string FundingPeriodCode { get; set; }
+
+        [JsonProperty("schemaName")]
+        public string SchemaName { get; set; }
         [JsonProperty("specificationId")]
         public string SpecificationId { get; set; }
         [JsonProperty("relationshipId")]
