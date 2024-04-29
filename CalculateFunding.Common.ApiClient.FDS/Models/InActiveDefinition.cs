@@ -8,5 +8,7 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         public int DefinitionId { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
+        [JsonProperty("datatype")]
+        public string Datatype { get; set; }
     }
 }
