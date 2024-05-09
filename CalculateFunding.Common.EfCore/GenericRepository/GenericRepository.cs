@@ -46,7 +46,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         public virtual IEnumerable<T> Get()
         {
             IQueryable<T> lstObj = Entities;
-            return lstObj.ToList();
+            return lstObj.AsNoTracking().ToList();
         }
         public virtual async Task<IEnumerable<T>> GetAllAsyn()
         {
@@ -68,7 +68,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// <returns></returns>
         public virtual IEnumerable<T> GetMany(Func<T, bool> where)
         {
-            return Entities.Where(where).ToList();
+            return Entities.AsNoTracking().Where(where).ToList();
         }
         /// <summary>
         /// generic method to get many record on the basis of a condition but query able.
@@ -77,7 +77,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// <returns></returns>
         public virtual IQueryable<T> GetManyAsQueryable(Expression<Func<T, Boolean>> where)
         {
-            return Entity.Where(where);
+            return Entity.AsNoTracking().Where(where);
         }
         /// <summary>
         /// generic get method , fetches data for the entities on the basis of condition.
@@ -86,7 +86,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// <returns></returns>
         public virtual T GetFirstorDefault(Func<T, Boolean> where)
         {
-            return Entities.Where(where).FirstOrDefault();
+            return Entities.AsNoTracking().Where(where).FirstOrDefault();
         }
 
 
@@ -97,17 +97,17 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// <returns>A single record that matches the specified criteria</returns>
         public T GetSingle(Func<T, bool> predicate)
         {
-            return Entities.Single<T>(predicate);
+            return Entities.AsNoTracking().Single<T>(predicate);
         }
 
         public T GetSingleAsQueryable(Expression<Func<T, bool>> predicate)
         {
-            return Entity.Single<T>(predicate);
+            return Entity.AsNoTracking().Single<T>(predicate);
         }
 
         public T GetFirstAsQueryable(Expression<Func<T, bool>> predicate)
         {
-            return Entity.FirstOrDefault<T>(predicate);
+            return Entity.AsNoTracking().FirstOrDefault<T>(predicate);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// <returns>A single record containing the first record matching the specified criteria</returns>
         public T GetFirst(Func<T, bool> predicate)
         {
-            return Entities.First<T>(predicate);
+            return Entities.AsNoTracking().First<T>(predicate);
         }
 
         /// <summary>
