@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.EfCore.UnitOfWork
@@ -55,8 +52,8 @@ namespace CalculateFunding.Common.EfCore.UnitOfWork
             {
                 try
                 {
-                    this.context.SaveChangesAsync();
-                    transaction.Commit();
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
