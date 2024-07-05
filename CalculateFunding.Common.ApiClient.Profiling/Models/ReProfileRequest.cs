@@ -55,6 +55,11 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("isReProfileOnDemandTriggered")]
         public bool IsReProfileOnDemandTriggered { get; set; }
 
+        /// <summary>
+        /// Flag to identify if the fundingline is ReprofiledOnDemand previously
+        /// </summary>
+        [JsonProperty("hasPreviouslyReProfiledOnDemand")]
+        public bool HasPreviouslyReProfiledOnDemand { get; set; }
 
         /// <summary>
         /// The index into the ordered refresh profile periods
