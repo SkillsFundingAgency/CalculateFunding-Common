@@ -158,5 +158,14 @@ namespace CalculateFunding.Common.ApiClient.Results
 
             return await PutAsync<Job, PopulateCalculationResultQADatabaseRequest>($"{UrlRoot}/calculation-results/populate-qa-database", populateCalculationResultQADatabaseRequest);
         }
+
+        public async Task<ApiResponse<IEnumerable<AggregateCalculationResults>>> GetAggregateCalculationResults(string specificationId, IEnumerable<string> calculationIds)
+        {
+            Guard.IsNullOrWhiteSpace(specificationId, nameof(specificationId));
+            Guard.IsNotEmpty(calculationIds, nameof(calculationIds));
+
+            return await PostAsync<IEnumerable<AggregateCalculationResults>, IEnumerable<string>>(
+                $"{UrlRoot}/aggregateCalculationResults/{specificationId}", calculationIds);
+        }
     }
 }

@@ -28,5 +28,6 @@ namespace CalculateFunding.Common.ApiClient.Results
         Task<ApiResponse<Job>> RunGenerateCalculationCsvResultsJob(string specificationId);
         Task<ApiResponse<SpecificationCalculationResultsMetadata>> GetSpecificationCalculationResultsMetadata(string specificationId);
         Task<ApiResponse<Job>> RunGenerateCalculationResultQADatabasePopulationJob(PopulateCalculationResultQADatabaseRequest populateCalculationResultQADatabaseRequest);
+        Task<ApiResponse<IEnumerable<AggregateCalculationResults>>> GetAggregateCalculationResults(string specificationId, IEnumerable<string> calculationIds);
     }
 }
