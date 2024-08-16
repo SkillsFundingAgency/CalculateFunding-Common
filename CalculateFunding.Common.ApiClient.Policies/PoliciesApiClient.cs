@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CalculateFunding.Common.ApiClient.Models;
@@ -52,6 +51,13 @@ namespace CalculateFunding.Common.ApiClient.Policies
             Guard.IsNullOrWhiteSpace(schemaVersion, nameof(schemaVersion));
 
             return await GetAsync<string>($"schemas/{schemaVersion}");
+        }
+
+        public async Task<ApiResponse<AdultStreamSchemaResponse>> GetAdultFundingSchema(string fundingStreamCode)
+        {
+            Guard.IsNullOrWhiteSpace(fundingStreamCode, nameof(fundingStreamCode));
+
+            return await GetAsync<AdultStreamSchemaResponse>($"adults/{fundingStreamCode}/schemas");
         }
 
         public async Task<ApiResponse<FundingStream>> GetFundingStreamById(string fundingStreamId)
