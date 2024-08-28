@@ -18,7 +18,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
 
         public async Task<ApiResponse<IEnumerable<DatasetDefinitionByFundingStream>>> GetFDSDataSchema(string fundingStream, string fundingPeriod)
         {
-            fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
+            //fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
 
             return await PostAsync<IEnumerable<DatasetDefinitionByFundingStream>, DataSchemaRequest>($"FundingData/schema/versions/query", new DataSchemaRequest()
             {
@@ -28,7 +28,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
         }
         public async Task<ApiResponse<IEnumerable<RemovedFieldDefinition>>> GetAllVersionsofSchema(string fundingStream, string fundingPeriod, string schemaName)
         {
-            fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
+            //fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
 
             return await PostAsync<IEnumerable<RemovedFieldDefinition>, DataSchemaRequest>($"FundingData/schema/all/query", new DataSchemaRequest()
             {

@@ -53,13 +53,6 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<string>($"schemas/{schemaVersion}");
         }
 
-        public async Task<ApiResponse<AdultStreamSchemaResponse>> GetAdultFundingSchema(string fundingStreamCode)
-        {
-            Guard.IsNullOrWhiteSpace(fundingStreamCode, nameof(fundingStreamCode));
-
-            return await GetAsync<AdultStreamSchemaResponse>($"adults/{fundingStreamCode}/schemas");
-        }
-
         public async Task<ApiResponse<FundingStream>> GetFundingStreamById(string fundingStreamId)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));

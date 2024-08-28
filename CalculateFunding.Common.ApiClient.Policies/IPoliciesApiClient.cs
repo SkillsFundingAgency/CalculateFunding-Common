@@ -40,6 +40,5 @@ namespace CalculateFunding.Common.ApiClient.Policies
         Task<ApiResponse<TemplateMetadataDistinctFundingLinesContents>> GetDistinctTemplateMetadataFundingLinesContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
         Task<ApiResponse<TemplateMetadataDistinctCalculationsContents>> GetDistinctTemplateMetadataCalculationsContents(string fundingStreamId, string fundingPeriodId, string templateVersion);
         Task<ApiResponse<TemplateMetadataFundingLineCashCalculationsContents>> GetCashCalcsForFundingLines(string fundingStreamId, string fundingPeriodId, string templateVersion);
-        Task<ApiResponse<AdultStreamSchemaResponse>> GetAdultFundingSchema(string fundingStreamCode);
     }
 }

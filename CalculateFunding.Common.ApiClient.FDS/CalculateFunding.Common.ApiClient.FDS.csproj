@@ -4,7 +4,7 @@
 	  <TargetFramework>net6</TargetFramework>
 	  <RootNamespace>CalculateFunding.Common.ApiClient.FDS</RootNamespace>
 	  <Description>FDS external client</Description>
-	  <Version>1.1.7</Version>
+	  <Version>1.1.8</Version>
 	  <Authors>Calculate Funding Service</Authors>
 	  <Company>Department for Education</Company>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>   
