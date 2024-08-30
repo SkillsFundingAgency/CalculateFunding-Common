@@ -105,5 +105,11 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         /// </summary>
         [JsonProperty("reprofilingOnDemandVariations")]
         public IEnumerable<FundingVariation> ReprofilingOnDemandVariations { get; set; }
+
+        /// <summary>
+        /// Adult stream related config to find out the non applicable schemas
+        /// </summary>
+        [JsonProperty("adultNonApplicableSchemas")]
+        public IEnumerable<string> AdultNonApplicableSchemas { get; set; }
     }
 }

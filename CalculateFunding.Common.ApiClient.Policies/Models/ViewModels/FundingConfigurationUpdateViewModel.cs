@@ -44,5 +44,7 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.ViewModels
         public bool ReprofilingOnDemandEnabled { get; set; }
      
         public IEnumerable<FundingVariation> ReprofilingOnDemandVariations { get; set; }
+
+        public IEnumerable<string> AdultNonApplicableSchemas { get; set; }
     }
 }
