@@ -14,6 +14,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
 
         public bool IsAggregable { get; set; }
 
+        public bool IsNumeric { get; set; }
         public string FullyQualifiedSourceName
         {
             get
