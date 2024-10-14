@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CalculateFunding.Common.ApiClient.FDS.Models
+namespace CalculateFunding.Common.Models.Adult
 {
     public static class AdultStream
     {
@@ -9,12 +9,15 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         {
             ADF,
             ASF,
-            ALL
+            ALL,
+            ASFC,
+            ASFG,
+            LOANS
         }
 
         private static string ParentType = nameof(Type.ADF);
 
-        private static List<string> ChildTypes = new List<string>() { nameof(Type.ALL), nameof(Type.ASF) };
+        private static List<string> ChildTypes = new List<string>() { nameof(Type.ALL), nameof(Type.ASF) , nameof(Type.ASFC) , nameof(Type.ASFG) , nameof(Type.LOANS) };
 
         public static string GetParent()
         {

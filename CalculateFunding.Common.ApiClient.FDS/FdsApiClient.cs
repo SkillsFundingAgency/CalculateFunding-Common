@@ -5,6 +5,7 @@ using CalculateFunding.Common.Interfaces;
 using Serilog;
 using System.Collections.Generic;
 using CalculateFunding.Common.ApiClient.FDS.Models;
+using CalculateFunding.Common.Models.Adult;
 
 namespace CalculateFunding.Common.ApiClient.FDS
 {
