@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CalculateFunding.Common.Models.Adult
+namespace CalculateFunding.Common.ApiClient.FDS.Models
 {
     public static class AdultStream
     {
