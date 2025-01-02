@@ -11,7 +11,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
     public class FDSApiClient : BaseApiClient, IFDSApiClient
     {
         private string FDSPrefix = "_FDS";
-        private string DomianPrefix = "api/FundingData";
+        private string FundingDataApiPrefix = "api/FundingData";
         public FDSApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null, string clientKey = null) 
             : base(httpClientFactory, clientKey ?? HttpClientKeys.FDS, logger, cancellationTokenProvider)
         {
@@ -21,7 +21,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
         {
             fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
 
-            return await PostAsync<IEnumerable<DatasetDefinitionByFundingStream>, DataSchemaRequest>($"{DomianPrefix}/schema/versions/query", new DataSchemaRequest()
+            return await PostAsync<IEnumerable<DatasetDefinitionByFundingStream>, DataSchemaRequest>($"{FundingDataApiPrefix}/schema/versions/query", new DataSchemaRequest()
             {
                 FundingPeriodCode = fundingPeriod,
                 FundingStreamCode = fundingStream
@@ -31,7 +31,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
         {
             fundingStream = AdultStream.IsExists(fundingStream) ? AdultStream.GetParent() : fundingStream;
 
-            return await PostAsync<IEnumerable<RemovedFieldDefinition>, DataSchemaRequest>($"{DomianPrefix}/schema/all/query", new DataSchemaRequest()
+            return await PostAsync<IEnumerable<RemovedFieldDefinition>, DataSchemaRequest>($"{FundingDataApiPrefix}/schema/all/query", new DataSchemaRequest()
             {
                 FundingPeriodCode = fundingPeriod,
                 FundingStreamCode = fundingStream,
@@ -41,7 +41,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
 
         public async Task<ApiResponse<FDSDatasetDefinition>> GetDatasetDefinition(string definitionId)
         {
-            ApiResponse<FDSDatasetDefinition> fdsDefinition = await GetAsync<FDSDatasetDefinition>($"{DomianPrefix}/schema/" + definitionId);
+            ApiResponse<FDSDatasetDefinition> fdsDefinition = await GetAsync<FDSDatasetDefinition>($"{FundingDataApiPrefix}/schema/" + definitionId);
             if (fdsDefinition == null || fdsDefinition.Content == null)
             {
                 return fdsDefinition;
@@ -56,22 +56,22 @@ namespace CalculateFunding.Common.ApiClient.FDS
 
         public async Task<ApiResponse<IEnumerable<FDSDatasetVersion>>> GetDatasetVersionsByDefinitionId(string definitionId)
         {
-            return await GetAsync<IEnumerable<FDSDatasetVersion>>($"{DomianPrefix}/FundingDataVersions/Schema/" + definitionId);
+            return await GetAsync<IEnumerable<FDSDatasetVersion>>($"{FundingDataApiPrefix}/FundingDataVersions/Schema/" + definitionId);
         }
 
         public async Task<ApiResponse<FundingDataVersionCount>> GetDatasetVersionsCountByDefinitionId(string definitionId)
         {
-            return await GetAsync<FundingDataVersionCount>($"{DomianPrefix}/FundingDataVersions/Schema/count/" + definitionId);
+            return await GetAsync<FundingDataVersionCount>($"{FundingDataApiPrefix}/FundingDataVersions/Schema/count/" + definitionId);
         }
 
         public async Task<ApiResponse<FDSDatasetVersion>> GetDatasetVersionsBySnapshotId(string snapshotId)
         {
-            return await GetAsync<FDSDatasetVersion>($"{DomianPrefix}/FundingDataVersions/" + snapshotId);
+            return await GetAsync<FDSDatasetVersion>($"{FundingDataApiPrefix}/FundingDataVersions/" + snapshotId);
         }
 
         public async Task<ApiResponse<FDSDatasourceDataModel>> GetDatasourceDataBySnapshotId(string snapshotId)
         {
-            return await GetAsync<FDSDatasourceDataModel>($"{DomianPrefix}/" + snapshotId);
+            return await GetAsync<FDSDatasourceDataModel>($"{FundingDataApiPrefix}/" + snapshotId);
         }
     }
 }
