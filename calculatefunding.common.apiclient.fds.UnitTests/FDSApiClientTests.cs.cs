@@ -14,7 +14,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
     [TestClass]
     public class DatasetsApiClientTests : ApiClientTestBase
     {
-        private string FundingDataApiPrefix = "api/FundingData";
+        private string FundingDataApiPrefix = "/api/FundingData";
         private FDSApiClient _client;
 
         [TestInitialize]

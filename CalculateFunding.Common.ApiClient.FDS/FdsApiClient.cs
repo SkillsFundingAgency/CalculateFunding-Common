@@ -11,7 +11,7 @@ namespace CalculateFunding.Common.ApiClient.FDS
     public class FDSApiClient : BaseApiClient, IFDSApiClient
     {
         private string FDSPrefix = "_FDS";
-        private string FundingDataApiPrefix = "api/FundingData";
+        private string FundingDataApiPrefix = "/api/FundingData";
         public FDSApiClient(IHttpClientFactory httpClientFactory, ILogger logger, ICancellationTokenProvider cancellationTokenProvider = null, string clientKey = null) 
             : base(httpClientFactory, clientKey ?? HttpClientKeys.FDS, logger, cancellationTokenProvider)
         {
