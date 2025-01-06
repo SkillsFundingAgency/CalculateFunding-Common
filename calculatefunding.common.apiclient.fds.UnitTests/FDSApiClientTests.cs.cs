@@ -5,16 +5,16 @@ using NSubstitute;
 using Serilog;
 using CalculateFunding.Common.ApiClient.FDS;
 using CalculateFunding.Common.ApiClient.FDS.Models;
-using System.Collections.Generic;
 using System.Linq;
 
 // ReSharper disable HeapView.CanAvoidClosure
 
 namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
-{
+{    
     [TestClass]
     public class DatasetsApiClientTests : ApiClientTestBase
     {
+        private string FundingDataApiPrefix = "/api/FundingData";
         private FDSApiClient _client;
 
         [TestInitialize]
@@ -29,7 +29,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"FundingData/schema/{id}",
+            await AssertGetRequest($"{FundingDataApiPrefix}/schema/{id}",
                 id,
                 new FDSDatasetDefinition(),
                 _ => _client.GetDatasetDefinition(_));
@@ -46,7 +46,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
                 FundingStreamCode = fundingStream
             };
 
-            await AssertPostRequest($"FundingData/schema/versions/query",
+            await AssertPostRequest($"{FundingDataApiPrefix}/schema/versions/query",
                 request,
                 Enumerable.Empty< DatasetDefinitionByFundingStream >(),
                 _ => _client.GetFDSDataSchema(fundingStream, fundingPeriod));
@@ -57,7 +57,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"FundingData/FundingDataVersions/Schema/{id}",
+            await AssertGetRequest($"{FundingDataApiPrefix}/FundingDataVersions/Schema/{id}",
                 id,
                 Enumerable.Empty<FDSDatasetVersion>(),
                 _ => _client.GetDatasetVersionsByDefinitionId(_));
@@ -68,7 +68,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"FundingData/FundingDataVersions/{id}",
+            await AssertGetRequest($"{FundingDataApiPrefix}/FundingDataVersions/{id}",
                 id,
                 new FDSDatasetVersion(),
                 _ => _client.GetDatasetVersionsBySnapshotId(_));
@@ -79,7 +79,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"FundingData/FundingDataVersions/Schema/count/{id}",
+            await AssertGetRequest($"{FundingDataApiPrefix}/FundingDataVersions/Schema/count/{id}",
                 id,
                 new FundingDataVersionCount(),
                 _ => _client.GetDatasetVersionsCountByDefinitionId(_));
@@ -90,7 +90,7 @@ namespace CalculateFunding.Common.ApiClient.Datasets.UnitTests
         {
             string id = NewRandomString();
 
-            await AssertGetRequest($"FundingData/{id}",
+            await AssertGetRequest($"{FundingDataApiPrefix}/{id}",
                 id,
                 new FDSDatasourceDataModel(),
                 _ => _client.GetDatasourceDataBySnapshotId(_));
