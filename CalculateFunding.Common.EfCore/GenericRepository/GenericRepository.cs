@@ -100,6 +100,11 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             return Entities.AsNoTracking().Single<T>(predicate);
         }
 
+        public T GetSingleOrDefault(Func<T, bool> predicate)
+        {
+            return Entities.AsNoTracking().SingleOrDefault<T>(predicate);
+        }
+
         public T GetSingleAsQueryable(Expression<Func<T, bool>> predicate)
         {
             return Entity.AsNoTracking().Single<T>(predicate);
@@ -109,6 +114,29 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         {
             return Entity.AsNoTracking().FirstOrDefault<T>(predicate);
         }
+
+        /// <summary>
+        /// Fetch the First or default item asynchronously
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => await Entity.AsNoTracking().FirstOrDefaultAsync(predicate);
+       
+        /// <summary>
+        /// Fetch the single or default item asynchronously
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate) => await Entity.AsNoTracking().SingleOrDefaultAsync(predicate);
+
+        /// <summary>
+        /// Get the Max of a selector asynchronously
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public async Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector) => await Entity.AsNoTracking().MaxAsync(selector);
+
 
         /// <summary>
         /// The first record matching the specified criteria
@@ -133,9 +161,40 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             return query.Where(predicate);
         }
 
+        /// <summary>
+        /// Query the database with joins and selects
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="filter"></param>
+        /// <param name="select"></param>
+        /// <param name="join"></param>
+        /// <returns></returns>
+        public IQueryable<TResult> Query<TResult>(
+            Expression<Func<T, bool>> filter,
+            Expression<Func<T, TResult>> select,
+            Func<IQueryable<T>, IQueryable<TResult>> join = null)
+        {
+            var query = Entities.Where(filter);
+
+            return (join != null) ? join(query) : query.Select(select);
+        }
+
         public virtual void Insert(T entity)
         {
             Entities.Add(entity);
+        }
+
+        public virtual void Insert(IEnumerable<T> EntityList)
+        {
+            foreach (T entity in EntityList)
+            {
+                Entities.Add(entity);
+            }  
+        }
+
+        public virtual async void BulkInsertAsync(IEnumerable<T> EntityList)
+        {
+            await Entities.AddRangeAsync(EntityList);
         }
 
         public virtual void Delete(object id)
@@ -186,6 +245,23 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
                     context.Entry(entity).State = EntityState.Modified;
                 }
 
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+        }
+
+        public virtual void BulkUpdate(IEnumerable<T> EntityList)
+        {
+            try
+            {
+                foreach (T entity in EntityList)
+                {
+                    context.Entry(entity).State = EntityState.Modified;
+                }
+                Entities.AttachRange(EntityList);
             }
             catch (Exception e)
             {
