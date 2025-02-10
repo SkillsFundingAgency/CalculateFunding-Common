@@ -1,11 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
@@ -13,10 +10,8 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.Storage\CalculateFunding.Common.Storage.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
-
 </Project>

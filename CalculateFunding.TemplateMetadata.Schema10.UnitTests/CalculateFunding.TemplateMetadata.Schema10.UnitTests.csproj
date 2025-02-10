@@ -1,11 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\dsg-lap1.0-missingcalculations.json" />
     <None Remove="Resources\dsg-lap1.0.valid.json" />
@@ -15,7 +12,6 @@
     <None Remove="Resources\dsg1.0.json" />
     <None Remove="Resources\psg1.0.json" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\dsg-lap1.0.valid.json" />
     <EmbeddedResource Include="Resources\dsg-lap1.0-missingcalculations.json" />
@@ -26,7 +22,6 @@
     <EmbeddedResource Include="Resources\dsg1.0.json" />
     <EmbeddedResource Include="Resources\psg1.0.json" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
@@ -34,13 +29,10 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
     <PackageReference Include="NSubstitute" Version="4.2.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema10\CalculateFunding.Common.TemplateMetadata.Schema10.csproj" />
   </ItemGroup>
-
 </Project>

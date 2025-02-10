@@ -1,20 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Description>Publishing Service API Client</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
-    <Version>8.7.3</Version>
+    <Version>9.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-   
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Jobs\CalculateFunding.Common.ApiClient.Jobs.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj" />
   </ItemGroup>
-
 </Project>

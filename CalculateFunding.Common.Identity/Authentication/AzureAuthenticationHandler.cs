@@ -18,8 +18,8 @@ namespace CalculateFunding.Common.Identity.Authentication
         private const string EasyAuthProviderHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";
         private const string PrincipalHeaderName = "X-MS-CLIENT-PRINCIPAL";
 
-        public AzureAuthenticationHandler(IOptionsMonitor<AzureAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-            : base(options, logger, encoder, clock)
+        public AzureAuthenticationHandler(IOptionsMonitor<AzureAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder)
+            : base(options, logger, encoder)
         {
         }
 
