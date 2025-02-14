@@ -68,6 +68,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             ILoggerFactory logger = Substitute.For<ILoggerFactory>();
             UrlEncoder encoder = Substitute.For<UrlEncoder>();
+            ISystemClock clock = new SystemClock();
 
             HeaderDictionary headers = new HeaderDictionary
             {
@@ -82,7 +83,7 @@ namespace CalculateFunding.Common.Identity.UnitTests
 
             AuthenticationScheme scheme = new AuthenticationScheme(AzureAuthenticationDefaults.AuthenticationScheme, AzureAuthenticationDefaults.DisplayName, typeof(AzureAuthenticationHandler));
 
-            AzureAuthenticationHandler handler = new AzureAuthenticationHandler(optionsMonitor, logger, encoder);
+            AzureAuthenticationHandler handler = new AzureAuthenticationHandler(optionsMonitor, logger, encoder, clock);
             await handler.InitializeAsync(scheme, context);
             return handler;
         }
