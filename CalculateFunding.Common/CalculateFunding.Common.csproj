@@ -4,8 +4,8 @@
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Description>Calculate Funding Service Common Functionality</Description>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <AssemblyVersion>4.0.0</AssemblyVersion>
+    <FileVersion>4.0.0</FileVersion>
     <Version>4.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
