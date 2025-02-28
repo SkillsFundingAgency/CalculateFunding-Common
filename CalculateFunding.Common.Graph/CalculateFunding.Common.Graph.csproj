@@ -6,13 +6,12 @@
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Graph Client Libraries for Neo4J and CosmosGraph</Description>
-    <Version>4.0.1</Version>
-    <PackageVersion>4.0.1</PackageVersion>
-   
+    <Version>4.0.2</Version>
+	<PackageVersion>4.0.2</PackageVersion>  
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Gremlin.Net" Version="3.4.10" />
+    <PackageReference Include="Gremlin.Net" Version="3.4.13" />
     <PackageReference Include="Neo4j.Driver.Signed" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
