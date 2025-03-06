@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace CalculateFunding.Common.ApiClient.Bearer
 {
@@ -14,10 +13,6 @@ namespace CalculateFunding.Common.ApiClient.Bearer
         }
 
         public MissingBearerTokenException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected MissingBearerTokenException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

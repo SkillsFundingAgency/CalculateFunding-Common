@@ -1,11 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\template.with.payment.fundingline.exceeding.max.allowed.character.limit.json" />
     <EmbeddedResource Include="Resources\template.with.duplicate.calculation.name.json" />
@@ -28,7 +25,6 @@
     <None Remove="Resources\template.with.percentageChange.CalculationA.same.as.CalculationB.json" />
     <EmbeddedResource Include="Resources\template.with.percentageChange.CalculationA.same.as.CalculationB.json" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
@@ -36,19 +32,15 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
     <PackageReference Include="NSubstitute" Version="4.2.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata.Schema12\CalculateFunding.Common.TemplateMetadata.Schema12.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Resources\template.with.duplicate.allowed.enum.json" />
     <EmbeddedResource Include="Resources\template.with.duplicate.allowed.enum.json" />
   </ItemGroup>
-
 </Project>
