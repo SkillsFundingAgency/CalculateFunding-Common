@@ -39,7 +39,7 @@ pr:
 steps:
 - template: templates\nuget-package-build.yml
   parameters:
-    DotNetCoreVersion: ${{ variables.DotnetCoreSdkVersionNet6 }}
+    DotNetCoreVersion: ${{ variables.DotnetCoreSdkVersionNet8 }}
     BuildConfiguration: ${{ variables.BuildConfiguration }}
     NugetProjectPath: '$(System.DefaultWorkingDirectory)\CalculateFunding.Common.ApiClient.Policies\*.csproj'
     UnitTestProjectPath: '$(System.DefaultWorkingDirectory)\CalculateFunding.Common.ApiClient.Profiling.Policies\*.csproj'
