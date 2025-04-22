@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-	  <Description>Common repositories for entity framework core</Description>
-	 <Authors>Calculate Funding Service</Authors>
-	 <Company>Department for Education</Company>
-	 <Product>Calculate Funding Service</Product>
-	  <Version>1.0.3</Version>
-	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFramework>net8.0</TargetFramework>
+    <Description>Common repositories for entity framework core</Description>
+    <Authors>Calculate Funding Service</Authors>
+    <Company>Department for Education</Company>
+    <Product>Calculate Funding Service</Product>
+    <Version>2.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.12" />
   </ItemGroup>
-
 </Project>

@@ -1,19 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
     <Description>Common API Client functionality</Description>
-    <Version>6.0.2</Version>
+    <Version>7.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient.Datasets\CalculateFunding.Common.ApiClient.Datasets.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Config.ApiClient\CalculateFunding.Common.Config.ApiClient.csproj" />
   </ItemGroup>
-
 </Project>

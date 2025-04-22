@@ -1,11 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\exampleFundingLines-rounding-adjustment.json" />
     <None Remove="Resources\exampleFundingLines-rounding.json" />
@@ -13,7 +10,6 @@
     <None Remove="Resources\exampleFundingLinesWithAllNullCalculations.json" />
     <None Remove="Resources\exampleFundingLinesWithNullCalculation.json" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\exampleFundingLines-rounding-adjustment.json" />
     <EmbeddedResource Include="Resources\exampleFundingLines-rounding.json" />
@@ -21,7 +17,6 @@
     <EmbeddedResource Include="Resources\exampleFundingLinesWithNullCalculation.json" />
     <EmbeddedResource Include="Resources\exampleFundingLines.json" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
@@ -29,10 +24,8 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
     <PackageReference Include="NSubstitute" Version="4.2.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.Testing\CalculateFunding.Common.Testing.csproj" />
     <ProjectReference Include="..\CalculateFunding.Generators.Funding\CalculateFunding.Generators.Funding.csproj" />
   </ItemGroup>
-
 </Project>

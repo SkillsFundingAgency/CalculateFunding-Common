@@ -1,28 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
-    <Version>3.2.0</Version>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>4.0.0</Version>
     <Description>Common Template Metadata Schema functionality for Schema 1.0 of the funding model</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata\CalculateFunding.Common.TemplateMetadata.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Enums\" />
     <Folder Include="Validators\" />
   </ItemGroup>
-
 </Project>

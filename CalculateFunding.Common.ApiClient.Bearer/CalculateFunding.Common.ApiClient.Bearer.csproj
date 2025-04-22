@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Description>Bearer Token client for Azure Active Directory</Description>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <Product>Calculate Funding Service</Product>
-    <Version>3.1.0</Version>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>4.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Caching\CalculateFunding.Common.Caching.csproj" />
   </ItemGroup>
-
 </Project>

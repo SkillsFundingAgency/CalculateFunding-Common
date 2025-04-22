@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Description>Policies microservice client</Description>
     <Version>9.0.1</Version>
     <Authors>Calculate Funding Service</Authors>
@@ -9,11 +8,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common.ApiClient\CalculateFunding.Common.ApiClient.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.Models\CalculateFunding.Common.Models.csproj" />
     <ProjectReference Include="..\CalculateFunding.Common.TemplateMetadata\CalculateFunding.Common.TemplateMetadata.csproj" />
   </ItemGroup>
-
 </Project>
