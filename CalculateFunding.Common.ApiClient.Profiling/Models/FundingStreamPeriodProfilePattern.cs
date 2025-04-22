@@ -37,6 +37,9 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         [JsonProperty("profilePattern")]
         public ProfilePeriodPattern[] ProfilePattern { get; set; }
 
+        [JsonProperty("profilePatternOpenDateConfiguration")]
+        public IEnumerable<ProfilePatternOpenDateConfiguration> ProfilePatternOpenDateConfiguration { get; set; }
+
         [JsonProperty("profilePatternDisplayName")]
         public string ProfilePatternDisplayName { get; set; }
 

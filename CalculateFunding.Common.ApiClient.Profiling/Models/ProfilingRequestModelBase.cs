@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using System;
+
 namespace CalculateFunding.Common.ApiClient.Profiling.Models
 {
     public abstract class ProfilingRequestModelBase
@@ -13,5 +16,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public string ProviderType { get; set; }
         
         public string ProviderSubType { get; set; }
+
+        public DateTimeOffset? DateOpened { get; set; }
     }
 }
