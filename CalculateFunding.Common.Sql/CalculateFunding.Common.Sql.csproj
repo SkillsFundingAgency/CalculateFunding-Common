@@ -6,7 +6,7 @@
     <Product>Calculate Funding Service</Product>
     <Description>Azure Sql Client</Description>
     <Version>5.0.1</Version>
-    <PackageVersion>5.0.0</PackageVersion>
+    <PackageVersion>5.0.1</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.90" />
