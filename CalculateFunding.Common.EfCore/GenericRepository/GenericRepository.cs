@@ -257,11 +257,11 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         {
             try
             {
+                Entities.AttachRange(EntityList);
                 foreach (T entity in EntityList)
                 {
                     context.Entry(entity).State = EntityState.Modified;
                 }
-                Entities.AttachRange(EntityList);
             }
             catch (Exception e)
             {
