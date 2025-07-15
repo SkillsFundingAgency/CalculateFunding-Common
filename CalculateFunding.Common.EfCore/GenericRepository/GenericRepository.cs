@@ -296,7 +296,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
 
         // Example : repo.Upsert(myEntity , e => e.Id == myEntity.Id)
-        public virtual HttpStatusCode Upsert(T entity, Expression<Func<T, bool>> predicate)
+        public virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
         {
             var exists = Entities.Any(predicate);
 
@@ -304,13 +304,11 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 Entities.Attach(entity);
                 context.Entry(entity).State = EntityState.Modified;
-                return HttpStatusCode.OK;
-            }
 
+            }
             else
             {
                 entities.Add(entity);
-                return HttpStatusCode.Created;
             }
         }
 
