@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.EfCore.GenericRepository
@@ -272,7 +271,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         }
 
         public IQueryable<TResult> InnerJoin<TResult>(
-         Expression<Func<T, bool>> predicate,
+         Expression<Func<T, bool>> predicate,               //if no flier required then predicate: o => true
          Func<IQueryable<T>, IQueryable<T>> includeFunc = null,
          Func<IQueryable<T>, IQueryable<TResult>>? joinSelector = null)
         {
@@ -300,185 +299,30 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         {
             var exists = Entities.Any(predicate);
 
+            var entityType = entity.GetType();
+            var hasCreatedAt = entityType.GetProperty("CreatedAt") != null;
+            var hasUpdatedAt = entityType.GetProperty("UpdatedAt") != null;
+
             if (exists)
             {
+                if (hasUpdatedAt)
+                {
+                    entityType.GetProperty("UpdatedAt")?.SetValue(entity, DateTime.Now);
+                }
                 Entities.Attach(entity);
-                context.Entry(entity).State = EntityState.Modified;
+                context.Entry(entity).State = EntityState.Modified;              
 
             }
             else
             {
-                entities.Add(entity);
+                if (hasCreatedAt && hasUpdatedAt)
+                {
+                    entityType.GetProperty("CreatedAt")?.SetValue(entity, DateTime.Now);
+                    entityType.GetProperty("UpdatedAt")?.SetValue(entity, DateTime.Now);
+                }
+                Entities.Add(entity);
             }
         }
-
-        private async Task BulkInsertAsyncc(IEnumerable<T> EntityList)
-        {
-            await Entities.AddRangeAsync(EntityList);
-        }
-
-        public virtual async Task UpsertAsync(IEnumerable<T> entityList, int batchSize = 5000)
-        {
-            var entityType = context.Model.FindEntityType(typeof(T));
-            var primaryKey = entityType.FindPrimaryKey();
-            var keyProperty = primaryKey.Properties.First(); //Single Column Key only
-            var keyName = keyProperty.Name;
-
-            var keyValues = entityList
-                .Select(e => keyProperty.PropertyInfo.GetValue(e))
-                .Where(k => k != null)
-                .ToHashSet();
-
-            var existingEntities = await Entities.
-                Where(e => keyValues.Contains(EF.Property<Object>(e, keyName)))
-                .AsNoTracking()
-                .ToListAsync();
-
-            var existingEntityMap = existingEntities
-                .ToDictionary(e => keyProperty.PropertyInfo.GetValue(e));
-
-            var insertList = new List<T>();
-            var updateList = new List<T>();
-
-            foreach (var entity in entityList)
-            {
-
-                var key = keyProperty.PropertyInfo.GetValue(entity);
-
-                if (key == null || !existingEntityMap.ContainsKey(key))
-                {
-
-                    //Prepare to insert
-                    insertList.Add(entity);
-                }
-                else
-                {
-
-                    //Prepare to update
-                    updateList.Add(entity);
-                }
-
-                if (updateList.Count >= batchSize)
-                {
-                    await BulkInsertAsyncc(insertList);
-                    updateList.Clear();
-                }
-            }
-
-            //Insert remaining records
-            if (insertList.Count > 0)
-            {
-                await BulkInsertAsyncc(insertList);
-
-            }
-
-            if (updateList.Count > 0)
-            {
-                await BulkUpdateAsync(updateList);
-            }
-
-
-        }
-
-        public async Task BulkUpdateAsync(IEnumerable<T> updateList)
-        {
-            //foreach (var entity in updateList)
-            //{
-            //    var entityType = context.Model.FindEntityType(typeof(T));
-            //    var primaryKey = entityType.FindPrimaryKey();
-            //    var keyProperty = primaryKey.Properties.First(); 
-            //    var key = keyProperty.PropertyInfo.GetValue(entity);
-
-            //    var trackEntity = await Entities.FindAsync(key);
-
-            //    if (trackEntity != null)
-            //    {
-            //        context.Entry(trackEntity).CurrentValues.SetValues(entity);
-            //        context.Entry(trackEntity).State = EntityState.Modified;
-            //    }
-            //    else
-            //    {
-            //        Entities.Attach(entity);
-            //        context.Entry(trackEntity).State = EntityState.Modified;
-            //    }
-
-            //}
-
-            // Improved BulkUpdateAsync
-
-            var entityType = context.Model.FindEntityType(typeof(T));
-            var primaryKey = entityType.FindPrimaryKey();
-            var keyProperty = primaryKey.Properties.First();
-            var keys = entities.Select(e => keyProperty.PropertyInfo.GetValue(e)).ToList();
-
-            //Load all existing entities in one query
-
-            var existingEntities = await Entities
-                .Where(e => keys.Contains(keyProperty.PropertyInfo.GetValue(e))).ToListAsync();
-
-            var existingDict = existingEntities.ToDictionary(e => keyProperty.PropertyInfo.GetValue(e), e => e);
-
-            foreach (var entity in updateList)
-            {
-
-                var key = keyProperty.PropertyInfo.GetValue(entity);
-
-                if (existingDict.TryGetValue(key, out var trackedEntity))
-                {
-
-                    context.Entry(trackedEntity).CurrentValues.SetValues(entity);
-                }
-                else
-                {
-                    Entities.Attach(entity);
-                    context.Entry(trackedEntity).State = EntityState.Modified;
-                }
-            }
-        }
-
-        public async Task BulkInsertOrUpdateAsync(IEnumerable<T> entities)
-        {
-            if (entities == null || !entities.Any()) return;
-
-            var entityList = entities.ToList();
-
-            //Extract Key using Reflection
-            var entityType = context.Model.FindEntityType(typeof(T));
-            var primaryKey = entityType.FindPrimaryKey();
-            var keyProperty = primaryKey.Properties.First();
-
-
-            //extract key using reflections
-            var keys = entityList.Select(e => keyProperty.PropertyInfo.GetValue(e))
-                .Where(k => k != null).ToHashSet();
-
-            //Disable change tracking for perfromance
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
-
-            var existingEntities = await Entities
-             .Where(e => keys.Contains(keyProperty.PropertyInfo.GetValue(e))).ToListAsync();
-
-            var existingDict = existingEntities.ToDictionary(e => keyProperty.PropertyInfo.GetValue(e));
-
-            var toInsert = new List<T>();
-            foreach (var entity in entityList)
-            {
-                var key = keyProperty.PropertyInfo.GetValue(entity);
-                if (existingDict.TryGetValue(key, out var existing))
-                {
-                    context.Entry(existing).CurrentValues.SetValues(entity);
-
-                }
-                else
-                {
-                    toInsert.Add(entity);
-                }
-            }
-
-            if (toInsert.Count > 0)
-            {
-                await context.AddRangeAsync(toInsert);
-            }
-        }
+        
     }
 }
