@@ -114,5 +114,8 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         /// </summary>
         [JsonProperty("adultNonApplicableSchemas")]
         public IEnumerable<string> AdultNonApplicableSchemas { get; set; }
+
+        [JsonProperty("displayFundingPeriod")]
+        public bool DisplayFundingPeriod {  get; set; }
     }
 }
