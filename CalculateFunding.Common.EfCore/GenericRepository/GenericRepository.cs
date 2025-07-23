@@ -308,8 +308,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             if (exists)
             {
                 if (updatedAt != null)
-                {
-                    entityType.GetProperty("UpdatedAt")?.SetValue(entity, DateTime.Now);
+                {                 
                     updatedAt.SetValue(entity, DateTime.Now);
                 }
                 Entities.Attach(entity);
