@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.EfCore.GenericRepository
@@ -295,32 +297,33 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
 
         // Example : repo.Upsert(myEntity , e => e.Id == myEntity.Id)
-        public virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
+        public async virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
         {
-            var exists = Entities.Any(predicate);
-
-            var entityType = entity.GetType();
-            var hasCreatedAt = entityType.GetProperty("CreatedAt") != null;
-            var hasUpdatedAt = entityType.GetProperty("UpdatedAt") != null;
+            var exists = await Entities.AsNoTracking().AnyAsync(predicate);
+            
+            var entityType = typeof(T);
+            var createdAt = entityType.GetProperty("CreatedAt");
+            var updatedAt = entityType.GetProperty("UpdatedAt");
 
             if (exists)
             {
-                if (hasUpdatedAt)
+                if (updatedAt != null)
                 {
                     entityType.GetProperty("UpdatedAt")?.SetValue(entity, DateTime.Now);
+                    updatedAt.SetValue(entity, DateTime.Now);
                 }
                 Entities.Attach(entity);
-                context.Entry(entity).State = EntityState.Modified;              
+                context.Entry(entity).State = EntityState.Modified;
 
             }
             else
             {
-                if (hasCreatedAt && hasUpdatedAt)
+                if (createdAt !=null && updatedAt !=null)
                 {
-                    entityType.GetProperty("CreatedAt")?.SetValue(entity, DateTime.Now);
-                    entityType.GetProperty("UpdatedAt")?.SetValue(entity, DateTime.Now);
+                    createdAt.SetValue(entity, DateTime.Now);
+                    updatedAt.SetValue(entity,DateTime.Now);                 
                 }
-                Entities.Add(entity);
+                 await Entities.AddAsync(entity);
             }
         }
         
