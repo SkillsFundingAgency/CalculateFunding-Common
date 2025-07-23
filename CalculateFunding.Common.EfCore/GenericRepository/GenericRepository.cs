@@ -272,8 +272,17 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
         }
 
+        /// <summary>
+        /// Join the multiple table using InnerJoin Method
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="predicate">if no filter o => true or c => !c.IsDeleted</param>
+        /// <param name="includeFunc"></param>
+        /// <param name="joinSelector">Join the Multiple table</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public IQueryable<TResult> InnerJoin<TResult>(
-         Expression<Func<T, bool>> predicate,               //if no flier required then predicate: o => true
+         Expression<Func<T, bool>> predicate,               
          Func<IQueryable<T>, IQueryable<T>> includeFunc = null,
          Func<IQueryable<T>, IQueryable<TResult>>? joinSelector = null)
         {
@@ -295,8 +304,11 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
         }
 
-
-        // Example : repo.Upsert(myEntity , e => e.Id == myEntity.Id)
+        /// <summary>
+        /// Insert and Update table using Upsert Method
+        /// </summary>
+        /// <param name="entity">Create Enitity Model and Map</param>
+        /// <param name="predicate"> e => e.Id == myEntity.Id</param>
         public async virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
         {
             var exists = await Entities.AsNoTracking().AnyAsync(predicate);
