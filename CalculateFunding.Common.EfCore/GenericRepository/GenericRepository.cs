@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.EfCore.GenericRepository
@@ -270,5 +272,71 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
         }
 
+        /// <summary>
+        /// Join the multiple table using InnerJoin Method
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="predicate">if no filter o => true or c => !c.IsDeleted</param>
+        /// <param name="includeFunc"></param>
+        /// <param name="joinSelector">Join the Multiple table</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public IQueryable<TResult> InnerJoin<TResult>(
+         Expression<Func<T, bool>> predicate,               
+         Func<IQueryable<T>, IQueryable<T>> includeFunc = null,
+         Func<IQueryable<T>, IQueryable<TResult>>? joinSelector = null)
+        {
+            IQueryable<T> query = Entities.AsNoTracking();
+
+            if (includeFunc != null)
+                query = includeFunc(query);
+
+            query = query.Where(predicate);
+
+            if (joinSelector != null)
+                return joinSelector(query);
+
+            if (typeof(TResult) == typeof(T))
+                return (IQueryable<TResult>)query;
+
+            throw new NotImplementedException("Join selector required when TResult != T.");
+
+
+        }
+
+        /// <summary>
+        /// Insert and Update table using Upsert Method
+        /// </summary>
+        /// <param name="entity">Create Enitity Model and Map</param>
+        /// <param name="predicate"> e => e.Id == myEntity.Id</param>
+        public async virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
+        {
+            var exists = await Entities.AsNoTracking().AnyAsync(predicate);
+            
+            var entityType = typeof(T);
+            var createdAt = entityType.GetProperty("CreatedAt");
+            var updatedAt = entityType.GetProperty("UpdatedAt");
+
+            if (exists)
+            {
+                if (updatedAt != null)
+                {                 
+                    updatedAt.SetValue(entity, DateTime.Now);
+                }
+                Entities.Attach(entity);
+                context.Entry(entity).State = EntityState.Modified;
+
+            }
+            else
+            {
+                if (createdAt !=null && updatedAt !=null)
+                {
+                    createdAt.SetValue(entity, DateTime.Now);
+                    updatedAt.SetValue(entity,DateTime.Now);                 
+                }
+                 await Entities.AddAsync(entity);
+            }
+        }
+        
     }
 }
