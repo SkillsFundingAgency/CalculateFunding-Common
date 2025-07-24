@@ -114,5 +114,12 @@ namespace CalculateFunding.Common.ApiClient.Policies.Models.FundingConfig
         /// </summary>
         [JsonProperty("adultNonApplicableSchemas")]
         public IEnumerable<string> AdultNonApplicableSchemas { get; set; }
+
+        /// <summary>
+        /// DisplayFundingPeriod flag used to display multiple funding period which
+        /// help to create previous and future datasets.
+        /// </summary>
+        [JsonProperty("displayFundingPeriod")]
+        public bool DisplayFundingPeriod {  get; set; }
     }
 }
