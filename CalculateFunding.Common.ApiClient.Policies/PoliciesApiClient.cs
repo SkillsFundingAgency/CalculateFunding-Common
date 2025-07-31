@@ -65,6 +65,11 @@ namespace CalculateFunding.Common.ApiClient.Policies
             return await GetAsync<IEnumerable<FundingStream>>("fundingstreams");
         }
 
+        public async Task<ApiResponse<IEnumerable<FundingStream>>> GetFundingStreamsForExternal()
+        {
+            return await GetAsync<IEnumerable<FundingStream>>("fundingstreams/external");
+        }
+
         public async Task<ApiResponse<FundingTemplateContents>> GetFundingTemplate(string fundingStreamId, string fundingPeriodId, string templateVersion)
         {
             Guard.IsNullOrWhiteSpace(fundingStreamId, nameof(fundingStreamId));
