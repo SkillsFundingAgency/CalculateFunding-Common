@@ -12,12 +12,14 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
             ALL,
             ASFC,
             ASFG,
-            LOANS
+            LOANS,
+            ALLPMP,
+            ASFPMP
         }
 
         private static string ParentType = nameof(Type.ADF);
 
-        private static List<string> ChildTypes = new List<string>() { nameof(Type.ALL), nameof(Type.ASF) , nameof(Type.ASFC) , nameof(Type.ASFG) , nameof(Type.LOANS) };
+        private static List<string> ChildTypes = new List<string>() { nameof(Type.ALL), nameof(Type.ASF) , nameof(Type.ASFC) , nameof(Type.ASFG) , nameof(Type.LOANS), nameof(Type.ALLPMP) , nameof(Type.ASFPMP) };
 
         public static string GetParent()
         {
