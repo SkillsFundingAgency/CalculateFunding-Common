@@ -25,5 +25,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public IEnumerable<uint> FundingLineIds { get; set; }
 
         public IEnumerable<uint> CalculationIds { get; set; }
+
+        public string FundingPeriodName { get; set; }   
     }
 }
