@@ -41,5 +41,8 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
 
         [JsonProperty("rows")]
         public List<Row> Rows { get; set; }
+
+        [JsonProperty("dataGranularity")]
+        public string DataGranularity { get; set; }
     }
 }

@@ -32,6 +32,7 @@ namespace CalculateFunding.Common.ApiClient.DataSets.Models
         public DatasetRelationshipType RelationshipType { get; set; }
 
         public PublishedSpecificationConfiguration PublishedSpecificationConfiguration { get; set; }
+        public string DataGranularity { get; set; }
 
         public string FundingPeriodName { get; set; }
     }

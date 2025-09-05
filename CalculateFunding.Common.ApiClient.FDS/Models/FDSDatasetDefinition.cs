@@ -54,5 +54,8 @@ namespace CalculateFunding.Common.ApiClient.FDS.Models
         [JsonProperty("tableDefinitions")]
         public List<FDSTableDefinitions> FDSTableDefinitions { get; set; }
 
+        [JsonProperty("dataGranularity")]
+        public string DataGranularity { get; set; }
+
     }
 }
