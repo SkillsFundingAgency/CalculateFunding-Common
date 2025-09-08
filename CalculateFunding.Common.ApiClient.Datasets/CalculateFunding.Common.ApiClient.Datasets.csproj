@@ -3,7 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>CalculateFunding.Common.ApiClient.DataSets</RootNamespace>
     <Description>Datasets microservice client</Description>
-    <Version>9.0.1</Version>
+    <Version>9.0.2</Version>
     <Authors>Calculate Funding Service</Authors>
     <Company>Department for Education</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
