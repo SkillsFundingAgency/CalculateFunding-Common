@@ -1,10 +1,13 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.EfCore.GenericRepository
@@ -309,34 +312,53 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
         /// </summary>
         /// <param name="entity">Create Enitity Model and Map</param>
         /// <param name="predicate"> e => e.Id == myEntity.Id</param>
-        public async virtual void Upsert(T entity, Expression<Func<T, bool>> predicate)
+        public async Task Upsert(T entity, Expression<Func<T, bool>> predicate)
         {
-            var exists = await Entities.AsNoTracking().AnyAsync(predicate);
-            
-            var entityType = typeof(T);
-            var createdAt = entityType.GetProperty("CreatedAt");
-            var updatedAt = entityType.GetProperty("UpdatedAt");
+            ArgumentNullException.ThrowIfNull(entity, "entity");
+            ArgumentNullException.ThrowIfNull(predicate, "predicate");
+            T existingEntity = await Entities.FirstOrDefaultAsync(predicate);
+            DateTime now = DateTime.Now;
+            IEntityType entityType = context.Model.FindEntityType(typeof(T)) ?? throw new InvalidOperationException("Entity type " + typeof(T).Name + " not found in the current DbContext model");
+            PropertyInfo createdAt = typeof(T).GetProperty("CreatedAt");
+            PropertyInfo updatedAt = typeof(T).GetProperty("UpdatedAt");
 
-            if (exists)
+            HashSet<string> concurrentProps = (from p in entityType.GetProperties()
+                                               where p.IsConcurrencyToken
+                                               select p.Name).ToHashSet();
+            if (existingEntity != null)
             {
+                EntityEntry<T> entry = context.Entry(existingEntity);
                 if (updatedAt != null)
-                {                 
-                    updatedAt.SetValue(entity, DateTime.Now);
+                {
+                    updatedAt.SetValue(existingEntity, now);
+                    entry.Property(updatedAt.Name).IsModified = true;
                 }
-                Entities.Attach(entity);
-                context.Entry(entity).State = EntityState.Modified;
 
+                foreach (PropertyEntry property in entry.Properties)
+                {
+                    if (!property.Metadata.IsKey() && !concurrentProps.Contains(property.Metadata.Name) && !(property.Metadata.Name == updatedAt?.Name))
+                    {
+                        object newValue = typeof(T).GetProperty(property.Metadata.Name)?.GetValue(entity);
+                        object currentValue = property.CurrentValue;
+                        if (!object.Equals(newValue, currentValue))
+                        {
+                            property.CurrentValue = newValue;
+                            property.IsModified = true;
+                        }
+                    }
+                }
             }
             else
             {
-                if (createdAt !=null && updatedAt !=null)
+                if (createdAt != null && updatedAt != null)
                 {
-                    createdAt.SetValue(entity, DateTime.Now);
-                    updatedAt.SetValue(entity,DateTime.Now);                 
+                    createdAt.SetValue(entity, now);
+                    updatedAt.SetValue(entity, now);
                 }
-                 await Entities.AddAsync(entity);
+
+                await Entities.AddAsync(entity);
             }
         }
-        
+
     }
 }
