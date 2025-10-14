@@ -1,9 +1,9 @@
-﻿using CalculateFunding.Common.ApiClient.Jobs.Models;
+﻿using Azure.Messaging.ServiceBus;
+using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.ServiceBus.Interfaces;
 using CalculateFunding.Common.ServiceBus.Options;
 using FluentAssertions;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
@@ -11,8 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AzureCore = Microsoft.Azure.ServiceBus.Core;
-using AzureServiceBus = Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
+
 
 namespace CalculateFunding.Common.ServiceBus.UnitTests
 {
@@ -21,10 +21,10 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
     {
         private MessengerService _messengerService;
         private Mock<IMessageReceiverFactory> _messageReceiverFactory;
-        private Mock<AzureCore.IMessageReceiver> _azureMessageReceiver;
+        private Mock<IMessageReceiver> _azureMessageReceiver;
         private Mock<IManagementClient> _managementClient;
-        private Mock<ITopicClient> _topicClient;
-        private Mock<AzureServiceBus.IQueueClient> _queueClient;
+        private Mock<ServiceBusSender> _topicClient;
+        private Mock<ServiceBusSender> _queueClient;
         private const string JobDefinitionId = "PopulateScopedProvidersJob";
         private const string TopicName = "TopicName";
         private const string SubscriptionName = "SubscriptionName";
@@ -33,11 +33,11 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         [TestInitialize]
         public void SetUp()
         {
-            _azureMessageReceiver = new Mock<AzureCore.IMessageReceiver>();
+            _azureMessageReceiver = new Mock<IMessageReceiver>();
             _managementClient = new Mock<IManagementClient>();
             _messageReceiverFactory = new Mock<IMessageReceiverFactory>();
-            _topicClient = new Mock<ITopicClient>();
-            _queueClient = new Mock<AzureServiceBus.IQueueClient>();
+            _topicClient = new Mock<ServiceBusSender>();
+            _queueClient = new Mock<ServiceBusSender>();
             _messengerService = new MessengerService(_managementClient.Object,
                 _messageReceiverFactory.Object);
         }
@@ -70,9 +70,9 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             Predicate<Job> predicate = _ => _.JobDefinitionId == JobDefinitionId;
 
             _messageReceiverFactory.Setup(_ => _.Receiver(QueueName))
-                .Returns(_azureMessageReceiver.Object);
+                .Returns((ServiceBusReceiver)_azureMessageReceiver.Object);
 
-            Message message = NewMessage(_ => _.WithLockToken(lockToken)
+            ServiceBusMessage message = NewMessage(_ => _.WithLockToken(lockToken)
                 .WithBody(JsonConvert.SerializeObject(job).AsUTF8Bytes()));
 
             GivenMessageReceiverReturned(QueueName);
@@ -90,7 +90,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             Job job = new Job { JobDefinitionId = JobDefinitionId };
             Predicate<Job> predicate = _ => _.JobDefinitionId == JobDefinitionId;
 
-            Message ignoreMessage = NewMessage(_ => _.WithLockToken(lockToken)
+            ServiceBusMessage ignoreMessage = NewMessage(_ => _.WithLockToken(lockToken)
                 .WithBody(JsonConvert.SerializeObject(Guid.NewGuid()).AsUTF8Bytes()));
 
             GivenMessageReceiverReturned(QueueName);
@@ -104,7 +104,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task CreateSubscription_SubscriptionGetsCreated()
         {
             await _messengerService.CreateSubscription(TopicName, SubscriptionName);
-            _managementClient.Verify(_ => _.CreateSubscription(
+            _managementClient.Verify(_ => _.CreateSubscriptionAsync(
                 TopicName,
                 SubscriptionName)
             );
@@ -114,7 +114,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task DeleteSubscription_SubscriptionGetsDeleted()
         {
             await _messengerService.DeleteSubscription(TopicName, SubscriptionName);
-            _managementClient.Verify(_ => _.DeleteSubscription(
+            _managementClient.Verify(_ => _.DeleteSubscriptionAsync(
                 TopicName,
                 SubscriptionName)
             );
@@ -124,7 +124,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task CreateQueue_QueueGetsCreated()
         {
             await _messengerService.CreateQueue(QueueName);
-            _managementClient.Verify(_ => _.CreateQueue(
+            _managementClient.Verify(_ => _.CreateQueueAsync(
                 QueueName)
             );
         }
@@ -133,7 +133,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task DeleteQueue_QueueGetsDeleted()
         {
             await _messengerService.DeleteQueue(QueueName);
-            _managementClient.Verify(_ => _.DeleteQueue(
+            _managementClient.Verify(_ => _.DeleteQueueAsync(
                 QueueName)
             );
         }
@@ -142,7 +142,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task CreateTopic_TopicGetsCreated()
         {
             await _messengerService.CreateTopic(TopicName);
-            _managementClient.Verify(_ => _.CreateTopic(
+            _managementClient.Verify(_ => _.CreateTopicAsync(
                 TopicName)
             );
         }
@@ -151,7 +151,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         public async Task DeleteTopic_TopicGetsDeleted()
         {
             await _messengerService.DeleteTopic(TopicName);
-            _managementClient.Verify(_ => _.DeleteTopic(
+            _managementClient.Verify(_ => _.DeleteTopicAsync(
                 TopicName)
             );
         }
@@ -164,13 +164,13 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         {
             string sessionId = Guid.NewGuid().ToString();
             Job job = new Job { JobDefinitionId = JobDefinitionId };
-            Message message = NewMessage(_ => _.WithUserProperty("job_id", "job_id"));
+            ServiceBusMessage message = NewMessage(_ => _.WithUserProperty("job_id", "job_id"));
 
             GivenTopic(TopicName);
 
             await WhenMessageSentToTopic(TopicName,
                 job,
-                message.UserProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
+                message.ApplicationProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
                 sessionId: sessionId,
                 compressData: compressData,
                 processingDelay: processingDelay);
@@ -184,13 +184,13 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         {
             string sessionId = Guid.NewGuid().ToString();
             Job job = new Job { JobDefinitionId = JobDefinitionId };
-            Message message = NewMessage(_ => _.WithUserProperty("job_id", "job_id"));
+            ServiceBusMessage message = NewMessage(_ => _.WithUserProperty("job_id", "job_id"));
 
             GivenQueue(QueueName);
 
             await WhenMessageSentToQueue(QueueName,
                 job,
-                message.UserProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
+                message.ApplicationProperties.ToDictionary(_ => _.Key, _ => _.Value.ToString()),
                 sessionId: sessionId);
 
             ThenMessageSentToQueue(sessionId);
@@ -199,21 +199,21 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
 
         private void GivenPeekSuccessful()
         {
-            _azureMessageReceiver.Setup(_ => _.PeekAsync(1))
-                .ReturnsAsync(new List<Message>())
-                .Verifiable();
+            _azureMessageReceiver.Setup(_ => _.PeekMessagesAsync(1))
+            .ReturnsAsync(new List<ServiceBusReceivedMessage>())
+            .Verifiable();
         }
 
         private void GivenTopic(string topicName)
         {
-            _managementClient.Setup(_ => _.GetTopicClient(It.Is<string>(_ => _ == topicName)))
+            _managementClient.Setup(_ => _.GetTopicSender(It.Is<string>(_ => _ == topicName)))
                 .Returns(_topicClient.Object)
                 .Verifiable(); ;
         }
 
         private void GivenQueue(string queueName)
         {
-            _managementClient.Setup(_ => _.GetQueueClient(It.Is<string>(_ => _ == queueName)))
+            _managementClient.Setup(_ => _.GetQueueSender(It.Is<string>(_ => _ == queueName)))
                 .Returns(_queueClient.Object)
                 .Verifiable();
         }
@@ -225,7 +225,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                 .Verifiable();
         }
 
-        private void AndMessageReturnedFromServiceBus(Message message)
+        private void AndMessageReturnedFromServiceBus(ServiceBusMessage message)
         {
             _azureMessageReceiver.Setup(_ => _.ReceiveAsync(It.Is<TimeSpan>(_ => _.TotalSeconds == 5)))
                 .ReturnsAsync(message)
@@ -269,24 +269,24 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         {
             if (compressData)
             {
-                _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId && _.ContentType == "application/gzip")));
+                _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId && _.ContentType == "application/gzip")));
             }
             else
             {
                 if (processingDelay.HasValue)
                 {
-                    _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId && _.ScheduledEnqueueTimeUtc.ToString("g") == DateTime.UtcNow.AddMinutes(processingDelay.Value).ToString("g"))));
+                    _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId && _.ScheduledEnqueueTimeUtc.ToString("g") == DateTime.UtcNow.AddMinutes(processingDelay.Value).ToString("g"))));
                 }
                 else
                 {
-                    _topicClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+                    _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId)));
                 }
             }
         }
 
         private void ThenMessageSentToQueue(string sessionId)
         {
-            _queueClient.Verify(_ => _.SendAsync(It.Is<Message>(_ => _.SessionId == sessionId)));
+            _queueClient.Verify(_ => _.SendMessageAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId)));
         }
 
         private void ThenTargetMessageReceived<T>(T message, Predicate<T> predicate)
@@ -315,7 +315,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                 .BeTrue();
         }
 
-        private Message NewMessage(Action<MessageBuilder> setup = null)
+        private ServiceBusMessage NewMessage(Action<MessageBuilder> setup = null)
         {
             MessageBuilder messageBuilder = new MessageBuilder();
 

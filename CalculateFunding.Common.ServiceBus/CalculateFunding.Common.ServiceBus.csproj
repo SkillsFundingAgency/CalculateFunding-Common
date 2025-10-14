@@ -11,9 +11,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
-    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.4" />
-    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.2.0" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.0" />
+	<PackageReference Include="azure.messaging.servicebus" Version="7.16.0" />
+	<PackageReference Include="azure.storage.queues" Version="12.15.1" />
+	<PackageReference Include="azure.storage.blobs" Version="12.19.1"  />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CalculateFunding.Common\CalculateFunding.Common.csproj" />

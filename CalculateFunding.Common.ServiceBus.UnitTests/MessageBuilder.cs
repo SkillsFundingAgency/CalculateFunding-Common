@@ -1,46 +1,46 @@
 using CalculateFunding.Common.Testing;
-using Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus;
 using System;
-using System.Reflection;
 
 namespace CalculateFunding.Common.ServiceBus.UnitTests
 {
     public class MessageBuilder : TestEntityBuilder
     {
-        private readonly Message _message = new Message();
-        
+        private ServiceBusMessage _message = new ServiceBusMessage();
+
         public MessageBuilder WithUserProperty(string key, string value)
         {
-            _message.UserProperties.Add(key, value);
+            _message.ApplicationProperties.Add(key, value);
 
             return this;
         }
 
         public MessageBuilder WithoutUserProperty(string key)
         {
-            _message.UserProperties.Remove(key);
+            _message.ApplicationProperties.Remove(key);
 
             return this;
         }
 
         public MessageBuilder WithBody(byte[] body)
         {
-            _message.Body = body;
+            _message = new ServiceBusMessage(BinaryData.FromBytes(body));
 
             return this;
         }
 
         public MessageBuilder WithLockToken(Guid lockToken)
         {
-            Message.SystemPropertiesCollection systemProperties = _message.SystemProperties;
-            Type type = systemProperties.GetType();
-            type.GetMethod("set_LockTokenGuid", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { lockToken });
-            type.GetMethod("set_SequenceNumber", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { 0 });
+            //Todo - dotnet - correct this for the tests
+            //Message.SystemPropertiesCollection systemProperties = _message.SystemProperties;
+            //Type type = systemProperties.GetType();
+            //type.GetMethod("set_LockTokenGuid", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { lockToken });
+            //type.GetMethod("set_SequenceNumber", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { 0 });
 
             return this;
         }
 
-        public Message Build()
+        public ServiceBusMessage Build()
         {
             return _message;
         }
