@@ -32,7 +32,7 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 // Only way to check if connection string is correct is try receiving a message, 
                 // which isn't possible for topics as don't have a subscription
-                ServiceBusReceiver receiver = _messageReceiverFactory.Receiver(queueName);
+                IMessageReceiver receiver = _messageReceiverFactory.Receiver(queueName);
                 IReadOnlyList<ServiceBusReceivedMessage> messages = await receiver.PeekMessagesAsync(1);
                 return (true, string.Empty);
             }
@@ -158,7 +158,7 @@ namespace CalculateFunding.Common.ServiceBus
         {
             List<T> messages = new List<T>();
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-            ServiceBusReceiver receiver = _messageReceiverFactory.Receiver(entityPath);
+            IMessageReceiver receiver = _messageReceiverFactory.Receiver(entityPath);
 
             _ = Task.Run(() =>
             {

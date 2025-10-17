@@ -12,9 +12,11 @@ namespace CalculateFunding.Common.ServiceBus
             _client = new ServiceBusClient(connectionString);
         }
 
-        public ServiceBusReceiver Receiver(string queueName)
+        public IMessageReceiver Receiver(string queueName)
         {
-            return _client.CreateReceiver(queueName);
+            var receiver = _client.CreateReceiver(queueName);
+            return new AzureMessageReceiver(receiver);
+
         }
 
 

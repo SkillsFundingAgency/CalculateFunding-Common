@@ -2,7 +2,6 @@
 using CalculateFunding.Common.ApiClient.Jobs.Models;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.ServiceBus.Interfaces;
-using CalculateFunding.Common.ServiceBus.Options;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -11,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus.Administration;
+using System.Threading;
 
 
 namespace CalculateFunding.Common.ServiceBus.UnitTests
@@ -70,7 +69,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
             Predicate<Job> predicate = _ => _.JobDefinitionId == JobDefinitionId;
 
             _messageReceiverFactory.Setup(_ => _.Receiver(QueueName))
-                .Returns((ServiceBusReceiver)_azureMessageReceiver.Object);
+                .Returns((IMessageReceiver)_azureMessageReceiver.Object);
 
             ServiceBusMessage message = NewMessage(_ => _.WithLockToken(lockToken)
                 .WithBody(JsonConvert.SerializeObject(job).AsUTF8Bytes()));
@@ -227,9 +226,9 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
 
         private void AndMessageReturnedFromServiceBus(ServiceBusMessage message)
         {
-            _azureMessageReceiver.Setup(_ => _.ReceiveAsync(It.Is<TimeSpan>(_ => _.TotalSeconds == 5)))
-                .ReturnsAsync(message)
-                .Verifiable();
+            _azureMessageReceiver.Verify(_ => _.ReceiveMessageAsync(
+                    It.Is<TimeSpan>(t => t == TimeSpan.FromSeconds(5))),
+                Times.Once);
         }
 
         private async Task<bool> WhenHealthChecked()
@@ -269,24 +268,48 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         {
             if (compressData)
             {
-                _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId && _.ContentType == "application/gzip")));
+                _topicClient.Verify(s => s.SendMessageAsync(
+                        It.Is<ServiceBusMessage>(m =>
+                            m.SessionId == sessionId &&
+                            m.ContentType == "application/gzip"),
+                        It.IsAny<CancellationToken>()),
+                    Times.Once);
             }
             else
             {
                 if (processingDelay.HasValue)
                 {
-                    _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId && _.ScheduledEnqueueTimeUtc.ToString("g") == DateTime.UtcNow.AddMinutes(processingDelay.Value).ToString("g"))));
+                    var expected = DateTimeOffset.UtcNow.AddMinutes(processingDelay.Value);
+                    var lower = expected.AddSeconds(-5);
+                    var upper = expected.AddSeconds(5);
+
+                    _topicClient.Verify(s => s.ScheduleMessageAsync(
+                            It.Is<ServiceBusMessage>(m => m.SessionId == sessionId),
+                            It.Is<DateTimeOffset>(t => t >= lower && t <= upper),
+                            It.IsAny<CancellationToken>()),
+                        Times.Once);
                 }
                 else
                 {
-                    _topicClient.Verify(_ => _.SendAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId)));
+                    _topicClient.Verify(s => s.SendMessageAsync(
+                        It.Is<ServiceBusMessage>(m => m.SessionId == sessionId),
+                        It.IsAny<CancellationToken>()),
+                        Times.Once);
                 }
             }
         }
 
         private void ThenMessageSentToQueue(string sessionId)
         {
-            _queueClient.Verify(_ => _.SendMessageAsync(It.Is<ServiceBusMessage>(_ => _.SessionId == sessionId)));
+            ServiceBusMessage? captured = null;
+
+            _queueClient
+                .Setup(q => q.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()))
+                .Callback<ServiceBusMessage, CancellationToken>((m, _) => captured = m)
+                .Returns(Task.CompletedTask);
+
+            captured.Should().NotBeNull();
+            captured!.SessionId.Should().Be(sessionId);
         }
 
         private void ThenTargetMessageReceived<T>(T message, Predicate<T> predicate)

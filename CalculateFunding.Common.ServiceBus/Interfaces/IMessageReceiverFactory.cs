@@ -4,7 +4,7 @@ namespace CalculateFunding.Common.ServiceBus.Interfaces
 {
     public interface IMessageReceiverFactory
     {
-        ServiceBusReceiver Receiver(string queueName);
+        IMessageReceiver Receiver(string queueName);
         void TimedOut();
     }
 }
