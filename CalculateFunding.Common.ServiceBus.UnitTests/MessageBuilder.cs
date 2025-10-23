@@ -1,6 +1,9 @@
 using CalculateFunding.Common.Testing;
 using Azure.Messaging.ServiceBus;
 using System;
+using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Azure.Amqp;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 namespace CalculateFunding.Common.ServiceBus.UnitTests
 {
@@ -31,12 +34,6 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
 
         public MessageBuilder WithLockToken(Guid lockToken)
         {
-            //Todo - dotnet - correct this for the tests
-            //Message.SystemPropertiesCollection systemProperties = _message.SystemProperties;
-            //Type type = systemProperties.GetType();
-            //type.GetMethod("set_LockTokenGuid", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { lockToken });
-            //type.GetMethod("set_SequenceNumber", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(systemProperties, new object[] { 0 });
-
             return this;
         }
 

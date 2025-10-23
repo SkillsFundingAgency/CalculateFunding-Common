@@ -228,7 +228,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
         {
             _azureMessageReceiver.Verify(_ => _.ReceiveMessageAsync(
                     It.Is<TimeSpan>(t => t == TimeSpan.FromSeconds(5))),
-                Times.Once);
+                Times.Never);
         }
 
         private async Task<bool> WhenHealthChecked()
@@ -287,7 +287,17 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
                             It.Is<ServiceBusMessage>(m => m.SessionId == sessionId),
                             It.Is<DateTimeOffset>(t => t >= lower && t <= upper),
                             It.IsAny<CancellationToken>()),
+                        Times.Never);
+
+                    _topicClient.Verify(s => s.SendMessageAsync(
+                            It.Is<ServiceBusMessage>(m =>
+                                m.SessionId == sessionId &&
+                                m.ScheduledEnqueueTime >= lower &&
+                                m.ScheduledEnqueueTime <= upper),
+                            It.IsAny<CancellationToken>()),
                         Times.Once);
+
+
                 }
                 else
                 {
@@ -301,15 +311,10 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
 
         private void ThenMessageSentToQueue(string sessionId)
         {
-            ServiceBusMessage? captured = null;
-
-            _queueClient
-                .Setup(q => q.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()))
-                .Callback<ServiceBusMessage, CancellationToken>((m, _) => captured = m)
-                .Returns(Task.CompletedTask);
-
-            captured.Should().NotBeNull();
-            captured!.SessionId.Should().Be(sessionId);
+            _queueClient.Verify(s => s.SendMessageAsync(
+                It.Is<ServiceBusMessage>(m => m.SessionId == sessionId),
+                It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         private void ThenTargetMessageReceived<T>(T message, Predicate<T> predicate)
