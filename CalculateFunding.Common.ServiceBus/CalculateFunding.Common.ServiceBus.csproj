@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
-	<PackageReference Include="azure.messaging.servicebus" Version="7.16.0" />
+	<PackageReference Include="azure.messaging.servicebus" Version="7.18.1" />
 	<PackageReference Include="azure.storage.queues" Version="12.15.1" />
 	<PackageReference Include="azure.storage.blobs" Version="12.19.1" />
   </ItemGroup>
