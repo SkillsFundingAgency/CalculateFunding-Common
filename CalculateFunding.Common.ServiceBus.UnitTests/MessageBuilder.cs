@@ -27,7 +27,7 @@ namespace CalculateFunding.Common.ServiceBus.UnitTests
 
         public MessageBuilder WithBody(byte[] body)
         {
-            _message = new ServiceBusMessage(BinaryData.FromBytes(body));
+            _message.Body = BinaryData.FromBytes(body);
 
             return this;
         }

@@ -1,8 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Queue;
+﻿using Azure.Storage.Queues.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CalculateFunding.Common.ServiceBus.Interfaces
@@ -11,9 +8,9 @@ namespace CalculateFunding.Common.ServiceBus.Interfaces
     {
         Task CreateQueue(string entityPath);
         Task DeleteQueue(string entityPath);
-        Task<CloudQueueMessage> GetMessage(string entityPath);
-        Task DeleteMessage(string entityPath, CloudQueueMessage message);
-        Task AddMessage(string entityPath, CloudQueueMessage message, TimeSpan? timeSpan = null);
+        Task<QueueMessage?> GetMessage(string entityPath);
+        Task DeleteMessage(string entityPath, QueueMessage message);
+        Task AddMessage(string entityPath, string messageText, TimeSpan? initialVisibilityDelay = null);
         Task<bool> Exists(string entityPath);
         void TimedOut();
     }
