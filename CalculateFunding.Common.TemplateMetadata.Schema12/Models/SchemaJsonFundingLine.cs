@@ -17,6 +17,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Models
 
         public string Name { get; set; }
 
+        public string ExternalFundingLineName { get; set; }
+
         public string FundingLineCode { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

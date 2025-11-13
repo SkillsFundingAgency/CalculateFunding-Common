@@ -11,6 +11,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Models
 
         public string Name { get; set; }
 
+        public string ExternalFundingLineName { get; set; }
+
         public string FundingLineCode { get; set; }
         
         public decimal Value { get; set; }

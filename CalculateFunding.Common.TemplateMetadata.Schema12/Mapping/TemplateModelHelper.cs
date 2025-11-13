@@ -55,6 +55,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Mapping
             return new FundingLine
             {
                 Name = source.Name,
+                ExternalFundingLineName = source.ExternalFundingLineName,
                 TemplateLineId = source.TemplateLineId,
                 FundingLineCode = source.FundingLineCode,
                 Type = source.Type.AsMatchingEnum<FundingLineType>(),
