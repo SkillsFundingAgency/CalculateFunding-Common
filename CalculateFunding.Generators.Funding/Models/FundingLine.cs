@@ -18,6 +18,12 @@ namespace CalculateFunding.Generators.Funding.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// External FundingLine Name - Optional field used for communicate funding team.
+        /// </summary>
+        [JsonProperty("externalFundingLineName")]
+        public string ExternalFundingLineName { get; set; }
+
+        /// <summary>
         /// Funding Line Code - unique code within the template to lookup this specific funding line.
         /// Used to map this funding line in consuming systems (eg nav for payment)
         /// </summary>
