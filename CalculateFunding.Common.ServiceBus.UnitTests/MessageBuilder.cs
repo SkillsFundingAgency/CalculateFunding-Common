@@ -1,9 +1,6 @@
 using CalculateFunding.Common.Testing;
 using Azure.Messaging.ServiceBus;
 using System;
-using Microsoft.Azure.Amqp.Framing;
-using Microsoft.Azure.Amqp;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 namespace CalculateFunding.Common.ServiceBus.UnitTests
 {
