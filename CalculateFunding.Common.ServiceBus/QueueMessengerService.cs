@@ -104,7 +104,7 @@ namespace CalculateFunding.Common.ServiceBus
             QueueMessage<T> queueMessage = new QueueMessage<T>
             {
                 Data = data,
-                UserProperties = properties
+                ApplicationProperties = properties
             };
 
             string queueMessageJson = JsonConvert.SerializeObject(queueMessage);
@@ -132,7 +132,7 @@ namespace CalculateFunding.Common.ServiceBus
                 data = "null";
             }
 
-            string queueMessageJson = $"{{\"Data\":{data},\"UserProperties\":{propertiesJson}}}";
+            string queueMessageJson = $"{{\"Data\":{data},\"ApplicationProperties\":{propertiesJson}}}";
 
             string message = compressData ? CompressData(queueMessageJson) : queueMessageJson;
 

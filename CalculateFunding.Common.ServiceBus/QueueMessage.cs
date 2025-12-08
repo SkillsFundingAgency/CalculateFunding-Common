@@ -6,10 +6,10 @@ namespace CalculateFunding.Common.ServiceBus
     {
         public QueueMessage()
         {
-            UserProperties = new Dictionary<string, string>();
+            ApplicationProperties = new Dictionary<string, string>();
         }
 
-        public IDictionary<string, string> UserProperties { get; set; }
+        public IDictionary<string, string> ApplicationProperties { get; set; }
 
         public T Data { get; set; }
     }

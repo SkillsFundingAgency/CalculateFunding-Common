@@ -23,7 +23,16 @@ namespace CalculateFunding.Common.ServiceBus
         {
             return _topicSenders.GetOrAdd(topicName, key =>
             {
-                var client = new ServiceBusClient(_connectionString);
+                var client = new ServiceBusClient(_connectionString,
+                new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets,
+                    RetryOptions = new ServiceBusRetryOptions
+                    {
+                        TryTimeout = TimeSpan.FromSeconds(90)
+                    }
+                });
+                Task.Delay(100); // Small delay before CreateSender
                 return client.CreateSender(key);
             });
         }
@@ -32,7 +41,16 @@ namespace CalculateFunding.Common.ServiceBus
         {
             return _queueSenders.GetOrAdd(queueName, key =>
             {
-                var client = new ServiceBusClient(_connectionString);
+                var client = new ServiceBusClient(_connectionString, 
+                new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets,
+                    RetryOptions = new ServiceBusRetryOptions
+                    {
+                        TryTimeout = TimeSpan.FromSeconds(120)
+                    }
+                });
+                Task.Delay(100); // Small delay before CreateSender
                 return client.CreateSender(key);
             });
         }

@@ -4,11 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
-    <Version>5.0.0</Version>
+    <Version>4.0.1.5</Version>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="azure.messaging.servicebus" Version="7.18.1" />
+	<PackageReference Include="azure.messaging.servicebus" Version="7.17.0" />
 	<PackageReference Include="azure.storage.queues" Version="12.15.1" />
 	<PackageReference Include="azure.storage.blobs" Version="12.19.1" />
   </ItemGroup>

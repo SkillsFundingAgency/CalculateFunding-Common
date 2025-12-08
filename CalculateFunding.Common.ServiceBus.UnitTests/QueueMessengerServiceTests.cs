@@ -114,7 +114,7 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             string expectedPayload = JsonConvert.SerializeObject(new QueueMessage<Job>
             {
                 Data = job,
-                UserProperties = null
+                ApplicationProperties = null
             });
 
             // ACT
@@ -150,7 +150,7 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             var job = new Job { JobDefinitionId = JobDefinitionId };
             string jobAsString = JsonConvert.SerializeObject(job);
 
-            string expectedPayload = $"{{\"Data\":{jobAsString},\"UserProperties\":null}}";
+            string expectedPayload = $"{{\"Data\":{jobAsString},\"ApplicationProperties\":null}}";
 
             // ACT first
             await WhenMessageSentToQueueAsJson(QueueName, jobAsString, null, sessionId);
@@ -188,7 +188,7 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             string expectedPayload = JsonConvert.SerializeObject(new QueueMessage<Job>
             {
                 Data = job,
-                UserProperties = null
+                ApplicationProperties = null
             });
 
             // Act
@@ -207,7 +207,7 @@ namespace CalculateFunding.Common.ServiceBus.ServiceBus
             var job = new Job { JobDefinitionId = JobDefinitionId };
             string jobAsString = JsonConvert.SerializeObject(job);
 
-            string expectedPayload = $"{{\"Data\":{jobAsString},\"UserProperties\":null}}";
+            string expectedPayload = $"{{\"Data\":{jobAsString},\"ApplicationProperties\":null}}";
 
             // Act
             await WhenMessageSentToTopicAsJson(QueueName, jobAsString, null, sessionId);
