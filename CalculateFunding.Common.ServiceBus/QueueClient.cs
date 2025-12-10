@@ -1,6 +1,7 @@
-﻿using Azure.Storage.Queues.Models;
+﻿using Azure;
 using Azure.Storage.Queues;
-using Azure;
+using Azure.Storage.Queues.Models;
+using CalculateFunding.Common.Helpers;
 using CalculateFunding.Common.ServiceBus.Interfaces;
 using System;
 using System.Collections.Concurrent;
@@ -64,13 +65,20 @@ namespace CalculateFunding.Common.ServiceBus
         {
             var queue = GetQueueClient(entityPath);
             await queue.CreateIfNotExistsAsync();
-
+            string base64Message = Base64Utils.Encode(messageText);
             await queue.SendMessageAsync(
-                messageText,
+                base64Message,
                 timeToLive: null,                 // null => service default TTL (typically 7 days)
                 visibilityTimeout: initialVisibilityDelay);
         }
 
         public void TimedOut() { /* parity no-op */ }
+
+        public string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
     }
 }
