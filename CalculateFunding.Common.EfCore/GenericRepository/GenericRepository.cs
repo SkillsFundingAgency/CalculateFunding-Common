@@ -323,11 +323,19 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             PropertyInfo updatedAt = typeof(T).GetProperty("UpdatedAt");
 
             HashSet<string> concurrentProps = (from p in entityType.GetProperties()
-                                               where p.IsConcurrencyToken
-                                               select p.Name).ToHashSet();
+                 where p.IsConcurrencyToken
+                 select p.Name).ToHashSet();
             if (existingEntity != null)
             {
                 EntityEntry<T> entry = context.Entry(existingEntity);
+
+                if (createdAt != null &&
+                    (DateTime)createdAt.GetValue(existingEntity)! == DateTime.MinValue)
+                {
+                    createdAt.SetValue(existingEntity, now);
+                    entry.Property(createdAt.Name).IsModified = true;
+                }
+
                 if (updatedAt != null)
                 {
                     updatedAt.SetValue(existingEntity, now);
@@ -336,11 +344,10 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
                 foreach (PropertyEntry property in entry.Properties)
                 {
-                    if (!property.Metadata.IsKey() && !concurrentProps.Contains(property.Metadata.Name) && !(property.Metadata.Name == updatedAt?.Name))
+                    if (!property.Metadata.IsKey() && !concurrentProps.Contains(property.Metadata.Name) && property.Metadata.Name != updatedAt?.Name && property.Metadata.Name != createdAt?.Name)
                     {
                         object newValue = typeof(T).GetProperty(property.Metadata.Name)?.GetValue(entity);
-                        object currentValue = property.CurrentValue;
-                        if (!object.Equals(newValue, currentValue))
+                        if (!Equals(newValue, property.CurrentValue))
                         {
                             property.CurrentValue = newValue;
                             property.IsModified = true;
@@ -356,9 +363,9 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
                     updatedAt.SetValue(entity, now);
                 }
 
-                await Entities.AddAsync(entity);
+                    await Entities.AddAsync(entity);
+                }
             }
-        }
 
     }
 }
