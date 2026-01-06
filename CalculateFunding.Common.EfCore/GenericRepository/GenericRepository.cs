@@ -329,16 +329,9 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 EntityEntry<T> entry = context.Entry(existingEntity);
 
-                if (createdAt != null &&
-                    (DateTime)createdAt.GetValue(existingEntity)! == DateTime.MinValue)
-                {
-                    createdAt.SetValue(existingEntity, now);
-                    entry.Property(createdAt.Name).IsModified = true;
-                }
-
+                SetDateIfEmptyOrMinValue(updatedAt, existingEntity, now);
                 if (updatedAt != null)
                 {
-                    updatedAt.SetValue(existingEntity, now);
                     entry.Property(updatedAt.Name).IsModified = true;
                 }
 
@@ -359,13 +352,24 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 if (createdAt != null && updatedAt != null)
                 {
-                    createdAt.SetValue(entity, now);
-                    updatedAt.SetValue(entity, now);
+                    SetDateIfEmptyOrMinValue(createdAt, existingEntity, now);
+                    SetDateIfEmptyOrMinValue(updatedAt, existingEntity, now);                 
                 }
 
                     await Entities.AddAsync(entity);
                 }
             }
+
+        private static void SetDateIfEmptyOrMinValue(PropertyInfo propertyInfo , object target ,DateTime value)
+        {
+            if (propertyInfo == null) return;
+            object? currentValue = propertyInfo.GetValue(target);
+
+            if(currentValue == null || (currentValue is DateTime dt && dt == DateTime.MinValue))
+            {
+                propertyInfo.SetValue(target, value);
+            }
+        }
 
     }
 }
