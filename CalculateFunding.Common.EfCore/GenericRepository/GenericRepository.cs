@@ -352,8 +352,8 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 if (createdAt != null && updatedAt != null)
                 {
-                    SetDateIfEmptyOrMinValue(createdAt, existingEntity, now);
-                    SetDateIfEmptyOrMinValue(updatedAt, existingEntity, now);                 
+                    SetDateIfEmptyOrMinValue(createdAt, entity, now);
+                    SetDateIfEmptyOrMinValue(updatedAt, entity, now);                 
                 }
 
                     await Entities.AddAsync(entity);
@@ -362,8 +362,9 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
 
         private static void SetDateIfEmptyOrMinValue(PropertyInfo propertyInfo , object target ,DateTime value)
         {
-            if (propertyInfo == null) return;
-            object? currentValue = propertyInfo.GetValue(target);
+            if (propertyInfo == null || target == null) return;
+
+            var currentValue = propertyInfo.GetValue(target);
 
             if(currentValue == null || (currentValue is DateTime dt && dt == DateTime.MinValue))
             {
