@@ -328,10 +328,10 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             if (existingEntity != null)
             {
                 EntityEntry<T> entry = context.Entry(existingEntity);
-
-                SetDateIfEmptyOrMinValue(updatedAt, existingEntity, now);
+                
                 if (updatedAt != null)
                 {
+                    updatedAt.SetValue(existingEntity, now);
                     entry.Property(updatedAt.Name).IsModified = true;
                 }
 
