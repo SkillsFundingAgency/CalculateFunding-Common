@@ -317,7 +317,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             ArgumentNullException.ThrowIfNull(entity, "entity");
             ArgumentNullException.ThrowIfNull(predicate, "predicate");
             T existingEntity = await Entities.FirstOrDefaultAsync(predicate);
-            DateTime now = DateTime.Now;
+            DateTime currentDateTime = DateTime.Now;
             IEntityType entityType = context.Model.FindEntityType(typeof(T)) ?? throw new InvalidOperationException("Entity type " + typeof(T).Name + " not found in the current DbContext model");
             PropertyInfo createdAt = typeof(T).GetProperty("CreatedAt");
             PropertyInfo updatedAt = typeof(T).GetProperty("UpdatedAt");
@@ -331,7 +331,7 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
                 
                 if (updatedAt != null)
                 {
-                    updatedAt.SetValue(existingEntity, now);
+                    updatedAt.SetValue(existingEntity, currentDateTime);
                     entry.Property(updatedAt.Name).IsModified = true;
                 }
 
@@ -352,8 +352,8 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 if (createdAt != null && updatedAt != null)
                 {
-                    SetDateIfEmptyOrMinValue(createdAt, entity, now);
-                    SetDateIfEmptyOrMinValue(updatedAt, entity, now);                 
+                    SetDateIfEmptyOrMinValue(createdAt, entity, currentDateTime);
+                    SetDateIfEmptyOrMinValue(updatedAt, entity, currentDateTime);                 
                 }
 
                     await Entities.AddAsync(entity);
