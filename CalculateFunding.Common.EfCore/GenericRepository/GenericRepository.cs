@@ -317,30 +317,30 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             ArgumentNullException.ThrowIfNull(entity, "entity");
             ArgumentNullException.ThrowIfNull(predicate, "predicate");
             T existingEntity = await Entities.FirstOrDefaultAsync(predicate);
-            DateTime now = DateTime.Now;
+            DateTime currentDateTime = DateTime.Now;
             IEntityType entityType = context.Model.FindEntityType(typeof(T)) ?? throw new InvalidOperationException("Entity type " + typeof(T).Name + " not found in the current DbContext model");
             PropertyInfo createdAt = typeof(T).GetProperty("CreatedAt");
             PropertyInfo updatedAt = typeof(T).GetProperty("UpdatedAt");
 
             HashSet<string> concurrentProps = (from p in entityType.GetProperties()
-                                               where p.IsConcurrencyToken
-                                               select p.Name).ToHashSet();
+                 where p.IsConcurrencyToken
+                 select p.Name).ToHashSet();
             if (existingEntity != null)
             {
                 EntityEntry<T> entry = context.Entry(existingEntity);
+                
                 if (updatedAt != null)
                 {
-                    updatedAt.SetValue(existingEntity, now);
+                    updatedAt.SetValue(existingEntity, currentDateTime);
                     entry.Property(updatedAt.Name).IsModified = true;
                 }
 
                 foreach (PropertyEntry property in entry.Properties)
                 {
-                    if (!property.Metadata.IsKey() && !concurrentProps.Contains(property.Metadata.Name) && !(property.Metadata.Name == updatedAt?.Name))
+                    if (!property.Metadata.IsKey() && !concurrentProps.Contains(property.Metadata.Name) && property.Metadata.Name != updatedAt?.Name && property.Metadata.Name != createdAt?.Name)
                     {
                         object newValue = typeof(T).GetProperty(property.Metadata.Name)?.GetValue(entity);
-                        object currentValue = property.CurrentValue;
-                        if (!object.Equals(newValue, currentValue))
+                        if (!Equals(newValue, property.CurrentValue))
                         {
                             property.CurrentValue = newValue;
                             property.IsModified = true;
@@ -352,11 +352,23 @@ namespace CalculateFunding.Common.EfCore.GenericRepository
             {
                 if (createdAt != null && updatedAt != null)
                 {
-                    createdAt.SetValue(entity, now);
-                    updatedAt.SetValue(entity, now);
+                    SetDateIfEmptyOrMinValue(createdAt, entity, currentDateTime);
+                    SetDateIfEmptyOrMinValue(updatedAt, entity, currentDateTime);                 
                 }
 
-                await Entities.AddAsync(entity);
+                    await Entities.AddAsync(entity);
+                }
+            }
+
+        private static void SetDateIfEmptyOrMinValue(PropertyInfo propertyInfo , object target ,DateTime value)
+        {
+            if (propertyInfo == null || target == null) return;
+
+            var currentValue = propertyInfo.GetValue(target);
+
+            if(currentValue == null || (currentValue is DateTime dt && dt == DateTime.MinValue))
+            {
+                propertyInfo.SetValue(target, value);
             }
         }
 
