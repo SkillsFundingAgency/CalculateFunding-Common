@@ -57,7 +57,6 @@ namespace CalculateFunding.Common.ServiceBus
         public async Task DeleteMessage(string entityPath, QueueMessage message)
         {
             var queue = GetQueueClient(entityPath);
-            // v12 requires MessageId + PopReceipt (returned by Receive/Update)
             await queue.DeleteMessageAsync(message.MessageId, message.PopReceipt);
         }
 
