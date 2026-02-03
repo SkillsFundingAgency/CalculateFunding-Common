@@ -1,25 +1,33 @@
 ﻿using CalculateFunding.Common.ServiceBus.Interfaces;
-using Microsoft.Azure.ServiceBus.Management;
+using Azure.Messaging.ServiceBus;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using AzureCore = Microsoft.Azure.ServiceBus.Core;
 
 namespace CalculateFunding.Common.ServiceBus
 {
     public class MessageReceiverFactory : IMessageReceiverFactory
     {
-        private string _connectionString;
+        private readonly ServiceBusClient _client;
 
         public MessageReceiverFactory(string connectionString)
         {
-            _connectionString = connectionString;
+            _client = new ServiceBusClient(connectionString,
+                new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets,
+                    RetryOptions = new ServiceBusRetryOptions
+                    {
+                        TryTimeout = TimeSpan.FromSeconds(120)
+                    }
+                });
         }
 
-        public AzureCore.IMessageReceiver Receiver(string queueName)
+        public IMessageReceiver Receiver(string queueName)
         {
-            return new AzureCore.MessageReceiver(_connectionString, queueName);
+            var receiver = _client.CreateReceiver(queueName);
+            return new AzureMessageReceiver(receiver);
+
         }
+
 
         public void TimedOut()
         {

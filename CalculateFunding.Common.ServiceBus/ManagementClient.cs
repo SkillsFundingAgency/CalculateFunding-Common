@@ -1,83 +1,107 @@
 ﻿using CalculateFunding.Common.ServiceBus.Interfaces;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Management;
+using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using AzureManagement = Microsoft.Azure.ServiceBus.Management;
-using AzureServiceBus = Microsoft.Azure.ServiceBus;
 
 namespace CalculateFunding.Common.ServiceBus
 {
     public class ManagementClient : IManagementClient
     {
-        private static readonly ConcurrentDictionary<string, AzureServiceBus.IQueueClient> _queueClients = new ConcurrentDictionary<string, AzureServiceBus.IQueueClient>();
-        private static readonly ConcurrentDictionary<string, ITopicClient> _topicClients = new ConcurrentDictionary<string, ITopicClient>();
+        private static readonly ConcurrentDictionary<string, ServiceBusSender> _queueSenders = new();
+        private static readonly ConcurrentDictionary<string, ServiceBusSender> _topicSenders = new();
         private readonly string _connectionString;
 
-        private AzureManagement.ManagementClient Client => new AzureManagement.ManagementClient(_connectionString);
-
+        private ServiceBusAdministrationClient _adminClient => new ServiceBusAdministrationClient(_connectionString);
         public ManagementClient(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        public ITopicClient GetTopicClient(string topicName)
+        public ServiceBusSender GetTopicSender(string topicName)
         {
-            return _topicClients.GetOrAdd(topicName, (key) =>
+            return _topicSenders.GetOrAdd(topicName, key =>
             {
-                return new TopicClient(_connectionString, key, RetryPolicy.Default);
+                var client = new ServiceBusClient(_connectionString);
+                return client.CreateSender(key);
             });
         }
 
-        public AzureServiceBus.IQueueClient GetQueueClient(string queueName)
+        public ServiceBusSender GetQueueSender(string queueName)
         {
-            return _queueClients.GetOrAdd(queueName, (key) =>
+            return _queueSenders.GetOrAdd(queueName, key =>
             {
-                return new AzureServiceBus.QueueClient(_connectionString, key, ReceiveMode.PeekLock, RetryExponential.Default);
+                var client = new ServiceBusClient(_connectionString);
+                return client.CreateSender(key);
             });
         }
 
-        public async Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan)
+        public async Task CreateSubscriptionAsync(string topicName, string subscriptionName, TimeSpan timeSpan)
         {
-            SubscriptionDescription subscriptionDescription = new SubscriptionDescription(topicName, subscriptionName)
+            var subscriptionOptions = new CreateSubscriptionOptions(topicName, subscriptionName)
             {
                 DefaultMessageTimeToLive = timeSpan
             };
-
-            await Client.CreateSubscriptionAsync(subscriptionDescription);
+            if (!await _adminClient.SubscriptionExistsAsync(topicName, subscriptionName))
+            {
+                await _adminClient.CreateSubscriptionAsync(subscriptionOptions);
+            }
         }
 
-        public async Task CreateSubscription(string topicName, string subscriptionName)
+
+        public async Task CreateSubscriptionAsync(string topicName, string subscriptionName)
         {
-            await Client.CreateSubscriptionAsync(topicName, subscriptionName);
+            if (!await _adminClient.SubscriptionExistsAsync(topicName, subscriptionName))
+            {
+                await _adminClient.CreateSubscriptionAsync(topicName, subscriptionName);
+            }
         }
 
-        public async Task DeleteSubscription(string topicName, string subscriptionName)
+        public async Task DeleteSubscriptionAsync(string topicName, string subscriptionName)
         {
-            await Client.DeleteSubscriptionAsync(topicName, subscriptionName);
+            if (await _adminClient.SubscriptionExistsAsync(topicName, subscriptionName))
+            {
+                await _adminClient.DeleteSubscriptionAsync(topicName, subscriptionName);
+            }
+
         }
 
-        public async Task<AzureManagement.QueueDescription> CreateQueue(string queuePath)
+        public async Task<QueueProperties> CreateQueueAsync(string queuePath)
         {
-            return await Client.CreateQueueAsync(queuePath);
+            if (!await _adminClient.QueueExistsAsync(queuePath))
+            {
+                return await _adminClient.CreateQueueAsync(queuePath);
+            }
+            return await _adminClient.GetQueueAsync(queuePath);
         }
 
-        public async Task DeleteQueue(string queuePath)
+        public async Task DeleteQueueAsync(string queuePath)
         {
-            await Client.DeleteQueueAsync(queuePath);
+            if (await _adminClient.QueueExistsAsync(queuePath))
+            {
+                await _adminClient.DeleteQueueAsync(queuePath);
+            }
+
         }
 
-        public async Task<AzureManagement.TopicDescription> CreateTopic(string topicName)
+        public async Task<TopicProperties> CreateTopicAsync(string topicName)
         {
-            return await Client.CreateTopicAsync(topicName);
+            if (!await _adminClient.TopicExistsAsync(topicName))
+            {
+                return await _adminClient.CreateTopicAsync(topicName);
+            }
+            return await _adminClient.GetTopicAsync(topicName);
         }
 
-        public async Task DeleteTopic(string topicName)
+
+        public async Task DeleteTopicAsync(string topicName)
         {
-            await Client.DeleteTopicAsync(topicName);
+            if (await _adminClient.TopicExistsAsync(topicName))
+            {
+                await _adminClient.DeleteTopicAsync(topicName);
+            }
+
         }
     }
 }

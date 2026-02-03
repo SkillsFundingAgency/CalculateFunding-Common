@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CalculateFunding.Common.Extensions;
 using CalculateFunding.Common.ServiceBus.Interfaces;
-using CalculateFunding.Common.ServiceBus.Options;
 using CalculateFunding.Common.Utility;
-using Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
-using AzureCore = Microsoft.Azure.ServiceBus.Core;
-using AzureServiceBus = Microsoft.Azure.ServiceBus;
 
 namespace CalculateFunding.Common.ServiceBus
 {
@@ -36,12 +32,11 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 // Only way to check if connection string is correct is try receiving a message, 
                 // which isn't possible for topics as don't have a subscription
-                AzureCore.IMessageReceiver receiver = _messageReceiverFactory.Receiver(queueName);
-                IList<Message> message = await receiver.PeekAsync(1);
-                await receiver.CloseAsync();
-                return await Task.FromResult((true, string.Empty));
+                IMessageReceiver receiver = _messageReceiverFactory.Receiver(queueName);
+                IReadOnlyList<ServiceBusReceivedMessage> messages = await receiver.PeekMessagesAsync(1);
+                return (true, string.Empty);
             }
-            catch (ServiceBusCommunicationException ex)
+            catch (ServiceBusException ex) when (ex.Reason == ServiceBusFailureReason.ServiceCommunicationProblem)
             {
                 return (false, ex.Message);
             }
@@ -49,37 +44,37 @@ namespace CalculateFunding.Common.ServiceBus
 
         public async Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan)
         {
-            await _managementClient.CreateSubscription(topicName, subscriptionName, timeSpan);
+            await _managementClient.CreateSubscriptionAsync(topicName, subscriptionName, timeSpan);
         }
 
         public async Task CreateSubscription(string topicName, string subscriptionName)
         {
-            await _managementClient.CreateSubscription(topicName, subscriptionName);
+            await _managementClient.CreateSubscriptionAsync(topicName, subscriptionName);
         }
 
         public async Task DeleteSubscription(string topicName, string subscriptionName)
         {
-            await _managementClient.DeleteSubscription(topicName, subscriptionName);
+            await _managementClient.DeleteSubscriptionAsync(topicName, subscriptionName);
         }
 
         public async Task CreateQueue(string queuePath)
         {
-            await _managementClient.CreateQueue(queuePath);
+            await _managementClient.CreateQueueAsync(queuePath);
         }
 
         public async Task DeleteQueue(string queuePath)
         {
-            await _managementClient.DeleteQueue(queuePath);
+            await _managementClient.DeleteQueueAsync(queuePath);
         }
 
         public async Task CreateTopic(string topicName)
         {
-            await _managementClient.CreateTopic(topicName);
+            await _managementClient.CreateTopicAsync(topicName);
         }
 
         public async Task DeleteTopic(string topicName)
         {
-            await _managementClient.DeleteTopic(topicName);
+            await _managementClient.DeleteTopicAsync(topicName);
         }
 
         public async Task SendToQueue<T>(string queueName,
@@ -103,21 +98,22 @@ namespace CalculateFunding.Common.ServiceBus
         {
             Guard.IsNullOrWhiteSpace(queueName, nameof(queueName));
 
-            Message message = ConstructMessage(data, compressData, sessionId);
+            ServiceBusMessage message = ConstructMessage(data, compressData, sessionId);
+
 
             foreach (KeyValuePair<string, string> property in properties)
             {
-                message.UserProperties.Add(property.Key, property.Value);
+                message.ApplicationProperties.Add(property.Key, property.Value);
             }
 
             if (processingDelay.HasValue)
             {
-                message.ScheduledEnqueueTimeUtc = DateTime.UtcNow.AddMinutes(processingDelay.Value);
+                message.ScheduledEnqueueTime = DateTimeOffset.UtcNow.AddMinutes(processingDelay.Value);
             }
 
-            AzureServiceBus.IQueueClient queueClient = _managementClient.GetQueueClient(queueName);
+            ServiceBusSender queueClient = _managementClient.GetQueueSender(queueName);
 
-            await queueClient.SendAsync(message);
+            await queueClient.SendMessageAsync(message);
         }
 
         public async Task SendToTopic<T>(string topicName,
@@ -141,28 +137,28 @@ namespace CalculateFunding.Common.ServiceBus
         {
             Guard.IsNullOrWhiteSpace(topicName, nameof(topicName));
 
-            Message message = ConstructMessage(data, compressData, sessionId);
+            ServiceBusMessage message = ConstructMessage(data, compressData, sessionId);
 
             foreach (KeyValuePair<string, string> property in properties)
             {
-                message.UserProperties.Add(property.Key, property.Value);
+                message.ApplicationProperties.Add(property.Key, property.Value);
             }
 
             if (processingDelay.HasValue)
             {
-                message.ScheduledEnqueueTimeUtc = DateTime.UtcNow.AddMinutes(processingDelay.Value);
+                message.ScheduledEnqueueTime = DateTimeOffset.UtcNow.AddMinutes(processingDelay.Value);
             }
 
-            ITopicClient topicClient = _managementClient.GetTopicClient(topicName);
+            ServiceBusSender topicClient = _managementClient.GetTopicSender(topicName);
 
-            await topicClient.SendAsync(message);
+            await topicClient.SendMessageAsync(message);
         }
 
         protected async override Task ReceiveMessages<T>(string entityPath, Predicate<T> predicate, TimeSpan timeout)
         {
             List<T> messages = new List<T>();
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-            AzureCore.IMessageReceiver receiver = _messageReceiverFactory.Receiver(entityPath);
+            IMessageReceiver receiver = _messageReceiverFactory.Receiver(entityPath);
 
             _ = Task.Run(() =>
             {
@@ -177,22 +173,14 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 while (true)
                 {
-                    Message message = await receiver.ReceiveAsync(TimeSpan.FromSeconds(5));
+                    ServiceBusReceivedMessage message = await receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(5));
 
                     try
                     {
                         if (message != null)
                         {
-                            await receiver.CompleteAsync(message.SystemProperties.LockToken);
-                            string json = null;
-
-                            using (MemoryStream inputStream = new MemoryStream(message.Body))
-                            {
-                                using (StreamReader streamReader = new StreamReader(inputStream))
-                                {
-                                    json = streamReader.ReadToEnd();
-                                }
-                            }
+                            await receiver.CompleteMessageAsync(message);
+                            string json = message.Body.ToString();
 
                             T messageOfType = JsonConvert.DeserializeObject<T>(json);
 
@@ -219,15 +207,15 @@ namespace CalculateFunding.Common.ServiceBus
             }
         }
 
-        private static Message ConstructMessage(string data, bool compressData, string sessionId = null)
+        private static ServiceBusMessage ConstructMessage(string data, bool compressData, string sessionId = null)
         {
-            Message message = null;
+            ServiceBusMessage message = null;
 
             if (!string.IsNullOrWhiteSpace(data))
             {
                 byte[] bytes = compressData ? data.Compress() : Encoding.UTF8.GetBytes(data);
 
-                message = new Message(bytes);
+                message = new ServiceBusMessage(bytes);
 
                 if (compressData)
                 {
@@ -236,7 +224,7 @@ namespace CalculateFunding.Common.ServiceBus
             }
             else
             {
-                message = new Message();
+                message = new ServiceBusMessage();
             }
 
             if (!string.IsNullOrWhiteSpace(sessionId))

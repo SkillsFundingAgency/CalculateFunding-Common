@@ -1,31 +1,30 @@
-﻿using Microsoft.Azure.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
+using Azure.Messaging.ServiceBus.Administration;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using AzureManagement = Microsoft.Azure.ServiceBus.Management;
-using AzureServiceBus = Microsoft.Azure.ServiceBus;
+using AzureManagement = Azure.Messaging.ServiceBus.Administration;
+using AzureServiceBus = Azure.Messaging.ServiceBus;
 
 namespace CalculateFunding.Common.ServiceBus.Interfaces
 {
     public interface IManagementClient
     {
-        ITopicClient GetTopicClient(string topicName);
+        ServiceBusSender GetTopicSender(string topicName);
 
-        AzureServiceBus.IQueueClient GetQueueClient(string queueName);
+        AzureServiceBus.ServiceBusSender GetQueueSender(string queueName);
 
-        Task CreateSubscription(string topicName, string subscriptionName, TimeSpan timeSpan);
+        Task CreateSubscriptionAsync(string topicName, string subscriptionName, TimeSpan timeSpan);
 
-        Task CreateSubscription(string topicName, string subscriptionName);
+        Task CreateSubscriptionAsync(string topicName, string subscriptionName);
 
-        Task DeleteSubscription(string topicName, string subscriptionName);
+        Task DeleteSubscriptionAsync(string topicName, string subscriptionName);
 
-        Task<AzureManagement.QueueDescription> CreateQueue(string queuePath);
+        Task<AzureManagement.QueueProperties> CreateQueueAsync(string queuePath);
 
-        Task DeleteQueue(string queuePath);
+        Task DeleteQueueAsync(string queuePath);
 
-        Task<AzureManagement.TopicDescription> CreateTopic(string topicName);
+        Task<TopicProperties> CreateTopicAsync(string topicName);
 
-        Task DeleteTopic(string topicName);
+        Task DeleteTopicAsync(string topicName);
     }
 }

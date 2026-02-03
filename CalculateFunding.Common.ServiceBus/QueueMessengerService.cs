@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using System.Threading;
 using CalculateFunding.Common.ServiceBus.Interfaces;
 using CalculateFunding.Common.Utility;
 using CalculateFunding.Common.Extensions;
+using Azure.Storage.Queues.Models;
 
 namespace CalculateFunding.Common.ServiceBus
 {
@@ -62,11 +62,11 @@ namespace CalculateFunding.Common.ServiceBus
             {
                 while (true)
                 {
-                    CloudQueueMessage message = await _client.GetMessage(entityPath);
+                    QueueMessage message = await _client.GetMessage(entityPath);
 
                     if (message != null)
                     {
-                        QueueMessage<T> queueMessage = JsonConvert.DeserializeObject<QueueMessage<T>>(message.AsString);
+                        QueueMessage<T> queueMessage = JsonConvert.DeserializeObject<QueueMessage<T>>(message.MessageText);
 
                         try
                         {
@@ -104,21 +104,12 @@ namespace CalculateFunding.Common.ServiceBus
             QueueMessage<T> queueMessage = new QueueMessage<T>
             {
                 Data = data,
-                UserProperties = properties
+                ApplicationProperties = properties
             };
 
             string queueMessageJson = JsonConvert.SerializeObject(queueMessage);
 
-            CloudQueueMessage message = null;
-
-            if (!compressData)
-            {
-                message = new CloudQueueMessage(queueMessageJson);
-            }
-            else
-            {
-                message = new CloudQueueMessage(CompressData(queueMessageJson));
-            }
+            string message = (!compressData) ? queueMessageJson : CompressData(queueMessageJson);
 
             await _client.AddMessage(queueName,
                 message,
@@ -141,9 +132,9 @@ namespace CalculateFunding.Common.ServiceBus
                 data = "null";
             }
 
-            string queueMessageJson = $"{{\"Data\":{data},\"UserProperties\":{propertiesJson}}}";
+            string queueMessageJson = $"{{\"Data\":{data},\"ApplicationProperties\":{propertiesJson}}}";
 
-            CloudQueueMessage message = compressData ? new CloudQueueMessage(CompressData(queueMessageJson)) : new CloudQueueMessage(queueMessageJson);
+            string message = compressData ? CompressData(queueMessageJson) : queueMessageJson;
 
             await _client.AddMessage(queueName, 
                 message, 
