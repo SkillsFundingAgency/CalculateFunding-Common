@@ -14,6 +14,12 @@ namespace CalculateFunding.Generators.Funding.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Providers will see this in allocation statement
+        /// </summary>[JsonProperty("value")]
+        [JsonProperty("externalCalculationName")]
+        public string ExternalCalculationName { get; set; }
+
+        /// <summary>
         /// The template calculation id (i.e. a way to get to this property in the template).
         /// This value can be the same for multiple calculations within the hierarchy. 
         /// This indicates they will return the same value from the output.
