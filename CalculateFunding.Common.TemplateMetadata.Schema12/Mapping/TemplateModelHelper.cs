@@ -15,6 +15,7 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Mapping
             return new Calculation
             {
                 Name = source.Name,
+                ExternalCalculationName = source.ExternalCalculationName,
                 ValueFormat = source.ValueFormat.AsMatchingEnum<CalculationValueFormat>(),
                 AggregationType = source.AggregationType.AsMatchingEnum<AggregationType>(),
                 Type = source.Type.AsMatchingEnum<CalculationType>(),

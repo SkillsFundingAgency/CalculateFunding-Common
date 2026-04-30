@@ -16,6 +16,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Models
 
         public string Name { get; set; }
 
+        public string ExternalCalculationName { get; set; }
+
         public uint TemplateCalculationId { get; set; }
 
         public object Value { get; set; }

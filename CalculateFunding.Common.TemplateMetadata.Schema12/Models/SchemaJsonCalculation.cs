@@ -14,6 +14,8 @@ namespace CalculateFunding.Common.TemplateMetadata.Schema12.Models
 
         public string Name { get; set; }
 
+        public string ExternalCalculationName { get; set; }
+
         [EnumDataType(typeof(FundingCalculationType))]
         public FundingCalculationType Type { get; set; }
 
