@@ -18,5 +18,7 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
         public string ProviderSubType { get; set; }
 
         public DateTimeOffset? DateOpened { get; set; }
+
+        public string ReasonEstablishmentOpened { get; set; }
     }
 }
