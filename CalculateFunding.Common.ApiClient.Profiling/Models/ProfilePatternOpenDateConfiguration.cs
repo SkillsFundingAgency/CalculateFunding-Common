@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace CalculateFunding.Common.ApiClient.Profiling.Models
 {
@@ -13,5 +14,8 @@ namespace CalculateFunding.Common.ApiClient.Profiling.Models
 
         [JsonProperty("providerType")]
         public string ProviderType { get; set; }
+
+        [JsonProperty("openReason")]
+        public IEnumerable<string> OpenReason { get; set; }
     }
 }
